@@ -1,0 +1,93 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.creditsms.plugins</groupId>
+	<artifactId>frontlinesms-plugin-credit</artifactId>
+	<name>FrontlineSMS HTTP Trigger plugin</name>
+	<version>0.01.01-SNAPSHOT</version>
+	<description>CreditSMS plugin for FrontlineSMS</description>
+	<licenses>
+		<license>
+			<name>GNU Lesser General Public License v3 or later</name>
+			<url>http://www.gnu.org/copyleft/lesser.html</url>
+			<distribution>manual</distribution>
+			<comments>
+	  			FrontlineSMS - http://www.frontlinesms.com
+				Copyright 2007, 2008 kiwanja
+				
+				This file is part of FrontlineSMS.
+				
+				FrontlineSMS is free software: you can redistribute it and/or modify it
+				under the terms of the GNU Lesser General Public License as published by
+				the Free Software Foundation, either version 3 of the License, or (at
+				your option) any later version.
+				
+				FrontlineSMS is distributed in the hope that it will be useful, but
+				WITHOUT ANY WARRANTY; without even the implied warranty of
+				MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+				General Public License for more details.
+				
+				You should have received a copy of the GNU Lesser General Public License
+				along with FrontlineSMS. If not, see http://www.gnu.org/licenses/.
+			</comments>
+		</license>
+	</licenses>
+	
+	<repositories>
+		<repository>
+			<id>cleone.net.repo</id>
+			<name>Temporary FrontlineSMS repository on cleone.net</name>
+			<url>http://m2repo.cleone.net</url>
+		</repository>
+		<repository>
+			<!-- Repository from the makers of Jetty -->
+			<id>codehaus-release-repo</id>
+			<name>Codehaus Release Repo</name>
+			<url>http://repository.codehaus.org</url>
+		</repository>
+	</repositories>
+	
+	<distributionManagement>
+		<repository>
+			<id>cleone.net.repo</id>
+			<name>Temporary FrontlineSMS repository on cleone.net</name>
+			<url>ftp://m2repo.cleone.net</url>
+		</repository>
+	</distributionManagement>
+
+	<properties>
+		<!-- Force Maven to use UTF-8 encoding when copying resources, rather than using the 
+			platform default. -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+  
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+  
+	<dependencies>
+		<dependency>
+			<groupId>net.frontlinesms.core</groupId>
+			<artifactId>frontlinesms</artifactId>
+			<version>1.6.08-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+</project>
