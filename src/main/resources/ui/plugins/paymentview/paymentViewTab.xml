@@ -1,69 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name=":paymentView" text="i18n.paymentview.manager">
-	<!-- Parent container for the payment view UI -->
-	<panel top="9" right="9" bottom="9" left="9" gap="9" columns="2" weightx="1" weighty="1">
-		
-		<!-- Column 1: Banner and help button -->		
-		<panel columns="1" rowspan="2" weighty="1">
-			<!-- Banner for the payment view tab -->
+	<splitpane divider="400" rowspan="2" weightx="1" weighty="1">				
+		<panel gap="9" top="9" left="9" bottom="9" right="9" columns="2" weightx="1" weighty="1">
 			<label icon="/icons/header/paymentView.png" weighty="1" valign="top"/>
-			<!-- Help button -->
-			<button tooltip="i18n.tooltip.click.for.help" valign="bottom" icon="/icons/big_help.png" type="link"/>			
+			<panel name="pnlClients" text="Clients" icon="/icons/user.png" rowspan="2" columns="1" gap="5" top="5" left="5" bottom="5" right="5" weightx="1" weighty="1" border="true">
+				<list name="lstClients" weightx="1" weighty="1">
+				</list>
+				<panel name="buttonsPanel" gap="5" weightx="1">
+					<button name="btnNewClient" text="i18n.action.add" />
+					<button name="btnEditClient" text="i18n.action.edit" />
+					<button name="btnDeleteClient" text="i18n.action.delete" />
+				</panel>
+			</panel>
+			<button tooltip="i18n.tooltip.click.for.help" valign="bottom" icon="/icons/big_help.png" type="link"/>
 		</panel>
-		
-		<!-- Column 2: Split pane view -->
-		<splitpane divider="850" rowspan="2" weightx="1" weighty="1">
-			<panel gap="9" left="9" right="9" columns="1">
-				<panel gap="5" columns="2">
-					<label text="i18n.paymentview.search"/>
-					<textfield name="txtPaymentViewSearch" weightx="1"/>
-				</panel>
-				
-				<panel top="3" right="3" bottom="3" left="3" gap="8" border="true" weightx="1" weighty="1">
-					<!-- TabbedPane  -->
-					<tabbedpane weightx="1" weighty="1">
-						<!-- Clients tab -->
-						<tab name="tbClientTab" text="i18n.paymentview.tab.clients">
-							<panel weightx="1" weighty="1" top="3" right="3" bottom="3" left="3">
-								<!-- Client list table -->
-								<table name="tblClientList" weightx="1" weighty="1">
-									<header>
-										<column text="i18n.paymentview.client.name" width="350" />
-										<column text="i18n.paymentview.client.balance" width="150"/>
-										<column text="i18n.common.phone.number" width="150"/>
-										<column text="i18n.common.other.phone.number"/>
-									</header>
-								</table>
+		<panel columns="1" gap="9" top="9" right="9" bottom="9" left="9" weightx="1" weighty="1">
+			<panel columns="1" gap="5" top="5" right="5" bottom="5" left="5" weightx="1" weighty="1" border="true">
+				<tabbedpane weightx="1" weighty="1">
+					<tab name="tbDeposits" text="i18n.paymentview.tab.deposits">
+						<panel gap="5" top="5" right="5" bottom="5" left="5">
+							<table name="tblDeposits" weightx="1" weighty="1">
+								<header>
+									<column text="i18n.common.sender" width="350"/>
+									<column text="i18n.paymentview.transaction.paymentsystem" width="150"/>
+									<column text="i18n.paymentview.transaction.amount" width="100"/>
+									<column text="i18n.paymentview.transaction.date" />
+								</header>
+							</table>
+						</panel>
+					</tab>
+					<tab name="tbWithdrawals" text="i18n.paymentview.tab.withdrawals">
+						<panel gap="5" top="5" right="5" bottom="5" left="5">
+							<table name="tblWithdrawals" weightx="1" weighty="1">
+								<header>
+									<column text="i18n.common.recipient" width="350" />
+									<column text="i18n.paymentview.transaction.paymentsystem" width="150" />
+									<column text="i18n.paymentview.transaction.amount" width="100" />
+									<column text="i18n.paymentview.transaction.date" />
+								</header>
+							</table>
+						</panel>
+					</tab>
+					<tab name="tbSettings" text="i18n.paymentview.tab.settings">
+						<splitpane divider="200" weightx="1" weighty="1">
+							<panel gap="5" top="5" left="5" bottom="5" right="5" weightx="1" weighty="1">
+								<tree angle="true" line="false" weightx="1" weighty="1">
+									<node text="Payment Systems" />
+									<node text="Message Filtering" />
+									<node text="Network Operators" />
+									<node text="Quick Dial Codes" />
+									<node text="Countries" />
+									<node text="MIS Integration" />
+								</tree>
 							</panel>
-						</tab>
-						<!-- Deposits tab -->
-						<tab name="tbClientDeposits" text="i18n.paymentview.tab.deposits">
-							<panel name="pnlClientDeposits" weightx="1" weighty="1" top="3" right="3" bottom="3" left="3">
-								<table name="tblClientDeposits" weightx="1" weighty="1">
-									<header>
-										<column text="i18n.paymentview.client.name" width="350"/>
-										<column text="i18n.paymentview.transaction.amount" width="150"/>
-										<column text="i18n.paymentview.transaction.date"/>
-									</header>
-								</table>
+							<panel gap="5" top="5" left="5" bottom="5" right="5" weightx="1" weighty="1">
+								<panel name="pnlSettingsRightPane" weightx="1" weighty="1" border="true" />
 							</panel>
-						</tab>
-						<!-- Loans tab -->
-						<tab name="tbClientLoans" text="i18n.paymentview.tab.loans">
-						</tab>
-						<!-- Repayments tab -->
-						<tab name="tbClientRepayments" text="i18n.paymentview.tab.repayments">
-						</tab>
-						<!-- Network operators tab -->
-						<tab name="tbNetworkOperators" text="i18n.paymentview.tab.networks">
-						</tab>
-					</tabbedpane>
-				</panel>
+						</splitpane>
+					</tab>
+				</tabbedpane>
 			</panel>
-			
-			<!-- Right side pane of the split pane -->
-			<panel name="pnlPaymentViewRightPane" border="true" gap="9" left="9" right="9" weightx="1" weighty="1">
-			</panel>
-		</splitpane>
-	</panel>
+		</panel>	
+	</splitpane>
 </tab>
