@@ -32,7 +32,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 		springConfigLocation=PluginControllerProperties.NO_VALUE,
 		hibernateConfigPath=PluginControllerProperties.NO_VALUE
 		//springConfigLocation="classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml",
-		//hibernateConfigPath="classpath:org/credit/sms/plugins/paymentview/paymentview.hibernate.cfg.xml"
+		//hibernateConfigPath="classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml"
 		)
 public class PaymentViewPluginController extends BasePluginController implements IncomingMessageListener {
 	
