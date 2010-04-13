@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import net.frontlinesms.data.EntityField;
+
 /**
  * Data object representing a payment service. A payment service is usually associated with
  * a network operator but this does not have to be the case
@@ -16,6 +18,11 @@ import javax.persistence.*;
 @Entity
 public class PaymentService {
 //>	COLUMN NAME CONSTANTS
+	/** Field name for {@link #serviceName} */
+	private static final String FIELD_NAME = "name";
+	/** Field name for {@link #networkOperators} */
+	private static final String FIELD_NETWORK_OPERATOR_ID = "NetworkOperator_id";
+	
 	/** Column name for {@link #sendMoneyTextMessage}*/
 	private static final String FIELD_SEND_MONEY_TEXT = "send_money_text";
 	/** Column name for {@link #withdrawMoneyTextMessage}*/
@@ -23,15 +30,28 @@ public class PaymentService {
 	/** Column name for {@link #balanceEnquiryTextMessage}*/
 	private static final String FIELD_BALANCE_ENQUIRY_TEXT = "balance_enquiry_text";
 	
+	public enum Field implements EntityField<PaymentService>{
+		/** Field mapping for {@link PaymentService#serviceName} */
+		NAME(FIELD_NAME);
+		
+		private final String fieldName;
+		
+		Field(String fieldName) { this.fieldName = fieldName; }
+		
+		public String getFieldName() { return this.fieldName; }
+	}
+	
 //>	PROPERTIES
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY) @Column(unique=true,nullable=false,updatable=false)
 	private long id;
 	/** Name of the payment system*/
+	@Column(name=FIELD_NAME, unique=true,nullable=false)
 	private String serviceName;
 	/** PIN Number used to transact using this payment service*/
 	private String pinNumber;
 	/** The networks in which {@link PaymentService} operates in*/
 	@OneToMany(targetEntity=NetworkOperator.class, fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@Column(name=FIELD_NETWORK_OPERATOR_ID)
 	private List<NetworkOperator> networkOperators = new ArrayList<NetworkOperator>();
 	/** Short code used to transact on this payment service*/
 	private String smsShortCode;
@@ -162,5 +182,13 @@ public class PaymentService {
 	 */
 	public void setBalanceEnquiryTextMessage(String template){
 		balanceEnquiryTextMessage = template;
+	}
+	
+	/**
+	 * Adds new network operator to the list of network operators for this payment service
+	 * @param operator {@link NetworkOperator} to be added
+	 */
+	public void addNetworkOperator(NetworkOperator operator){
+		networkOperators.add(operator);
 	}
 }

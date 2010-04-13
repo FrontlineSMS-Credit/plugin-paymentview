@@ -4,8 +4,10 @@ import java.util.Date;
 
 import javax.persistence.*;
 
+import net.frontlinesms.data.EntityField;
+
 /**
- * Data object respresenting a mobile payment service transaction. A transaction may either be a deposit or
+ * Data object representing a payment service transaction. A transaction may either be a deposit or
  * a withdrawal. Deposits are payments received from clients whereas withdrawals are funds transfers to 
  * clients
  * 
@@ -13,6 +15,7 @@ import javax.persistence.*;
  *
  */
 @Entity
+@Table(uniqueConstraints={@UniqueConstraint(columnNames={"paymentService_id", "transaction_code"})})
 public class PaymentServiceTransaction {
 //>	CONSTANTS
 	/** Flags the transaction as a deposit */
@@ -22,18 +25,37 @@ public class PaymentServiceTransaction {
 	/** Flags the transaction as a balance enquiry */
 	public static final int TYPE_BALANCE_ENQUIRY = 2;
 	
+	/** Field name for {@link #transactionType} */
+	private static final String FIELD_TRANSACTION_TYPE = "transaction_type";
+	/** Field name for {@link #paymentService} */
+	//private static final String FIELD_PAYMENT_SERVICE_ID = "payment_service_id";
+	/** Field name for {@link #transactionCode} */
+	private static final String FIELD_TRANSACTION_CODE = "transaction_code";
+	
+	public enum Field implements EntityField<PaymentServiceTransaction>{
+		/** Field mapping for {@link PaymentServiceTransaction#transactionType} */
+		TRANSACTION_TYPE(FIELD_TRANSACTION_TYPE);
+		
+		private final String fieldName;
+		
+		Field(String fieldName) { this.fieldName = fieldName; }
+		
+		public String getFieldName() { return this.fieldName; }
+	}
+	
 //>	PROPERTIES
-	@Id @GeneratedValue(strategy=GenerationType.IDENTITY) 
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(unique=true,nullable=false,updatable=false)
 	private long id;
-	@Column(nullable=false)
+	
+	@ManyToOne(targetEntity=Client.class, optional=false)
 	private Client client;
 	
-	@ManyToOne
-	@Column(nullable=false)
+	@ManyToOne(targetEntity=PaymentService.class, optional=false)
+	//@Column(name=FIELD_PAYMENT_SERVICE)
 	private PaymentService paymentService;
 	
-	@Column(nullable=false)
+	@Column(name=FIELD_TRANSACTION_TYPE, nullable=false)
 	private int transactionType;
 	
 	@Column(nullable=false)
@@ -42,7 +64,7 @@ public class PaymentServiceTransaction {
 	@Column(nullable=false)
 	private Date transactionDate;
 	
-	@Column(unique=true,nullable=false)
+	@Column(name=FIELD_TRANSACTION_CODE, nullable=false)
 	private String transactionCode;
 	
 	/**
