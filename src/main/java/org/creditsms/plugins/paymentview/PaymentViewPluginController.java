@@ -29,10 +29,8 @@ import net.frontlinesms.ui.UiGeneratorController;
  *
  */
 @PluginControllerProperties(name="Payment View", iconPath="/icons/creditsms.png",
-		springConfigLocation=PluginControllerProperties.NO_VALUE,
-		hibernateConfigPath=PluginControllerProperties.NO_VALUE
-		//springConfigLocation="classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml",
-		//hibernateConfigPath="classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml"
+		springConfigLocation="classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml",
+		hibernateConfigPath="classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml"
 		)
 public class PaymentViewPluginController extends BasePluginController implements IncomingMessageListener {
 	
