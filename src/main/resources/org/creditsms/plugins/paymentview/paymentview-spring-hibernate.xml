@@ -14,5 +14,16 @@
 	<tx:annotation-driven />
 
 	<!-- Bean wiring for the Payment View plugin  -->
-
+	<bean id="clientDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateClientDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="networkOperatorDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateNetworkOperatorDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="paymentServiceDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernatePaymentServiceDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>	
+	<bean id="paymentServiceTransactionDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernatePaymentServiceTransactionDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
 </beans>
