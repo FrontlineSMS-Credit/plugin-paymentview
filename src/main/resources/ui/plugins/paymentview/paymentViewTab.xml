@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name=":paymentView" text="i18n.paymentview.manager">
-	<splitpane divider="400" rowspan="2" weightx="1" weighty="1">				
+	<splitpane divider="430" rowspan="2" weightx="1" weighty="1">				
 		<panel gap="9" top="9" left="9" bottom="9" right="9" columns="2" weightx="1" weighty="1">
 			<label icon="/icons/header/paymentView.png" weighty="1" valign="top"/>
-			<panel name="pnlClients" text="Clients" icon="/icons/user.png" rowspan="2" columns="1" gap="5" top="5" left="5" bottom="5" right="5" weightx="1" weighty="1" border="true">
-				<list name="lstClients" weightx="1" weighty="1">
+			<panel name="pnClients" text="Clients" icon="/icons/user.png" rowspan="2" columns="1" gap="5" top="5" left="5" bottom="5" right="5" weightx="1" weighty="1" border="true">
+				<panel name="pnSearchClients" weightx="1" gap="5">
+				    <label icon="/icons/search.png" text="i18n.common.search"/>
+				    <textfield name="fldLiveSearch" weightx="1" action="liveClientSearch(fldLiveSearch)"/>
+				</panel>
+				<list name="lsClients" weightx="1" weighty="1" action="selectClient(lsClients)" perform="showClientDetails(lsClients)">
 				</list>
 				<panel name="buttonsPanel" gap="5" weightx="1">
-					<button name="btnNewClient" text="i18n.action.add" />
-					<button name="btnEditClient" text="i18n.action.edit" />
-					<button name="btnDeleteClient" text="i18n.action.delete" />
+					<button name="btNewClient" text="i18n.action.add" action="showNewClientForm"/>
+					<button name="btEditClient" text="i18n.action.edit" enabled="false" />
+					<button name="btDeleteClient" text="i18n.action.delete" enabled="false"/>
 				</panel>
 			</panel>
 			<button tooltip="i18n.tooltip.click.for.help" valign="bottom" icon="/icons/big_help.png" type="link"/>
@@ -17,9 +21,9 @@
 		<panel columns="1" gap="9" top="9" right="9" bottom="9" left="9" weightx="1" weighty="1">
 			<panel columns="1" gap="5" top="5" right="5" bottom="5" left="5" weightx="1" weighty="1" border="true">
 				<tabbedpane weightx="1" weighty="1">
-					<tab name="tbDeposits" text="i18n.paymentview.tab.deposits">
+					<tab name="tbDispersals" text="i18n.paymentview.tab.deposits">
 						<panel gap="5" top="5" right="5" bottom="5" left="5">
-							<table name="tblDeposits" weightx="1" weighty="1">
+							<table name="tblDispersals" weightx="1" weighty="1">
 								<header>
 									<column text="i18n.common.sender" width="350"/>
 									<column text="i18n.paymentview.transaction.paymentsystem" width="150"/>
@@ -29,7 +33,7 @@
 							</table>
 						</panel>
 					</tab>
-					<tab name="tbWithdrawals" text="i18n.paymentview.tab.withdrawals">
+					<tab name="tbRepayments" text="i18n.paymentview.tab.withdrawals">
 						<panel gap="5" top="5" right="5" bottom="5" left="5">
 							<table name="tblWithdrawals" weightx="1" weighty="1">
 								<header>
@@ -54,7 +58,7 @@
 								</tree>
 							</panel>
 							<panel gap="5" top="5" left="5" bottom="5" right="5" weightx="1" weighty="1">
-								<panel name="pnlSettingsRightPane" weightx="1" weighty="1" border="true" />
+								<panel name="pnSettingsRightPane" weightx="1" weighty="1" border="true" />
 							</panel>
 						</splitpane>
 					</tab>
