@@ -15,7 +15,9 @@ public class NetworkOperator {
 //>	CONSTANTS	
 	private static final String FIELD_NAME = "name";
 	
-	public enum Field implements EntityField<NetworkOperator>{		
+	public enum Field implements EntityField<NetworkOperator> {
+		/** Field mapping for {@link NetworkOperator#id } */
+		ID("id"),
 		/** Field mapping for {@link NetworkOperator#operatorName }*/
 		NAME(FIELD_NAME);
 		
