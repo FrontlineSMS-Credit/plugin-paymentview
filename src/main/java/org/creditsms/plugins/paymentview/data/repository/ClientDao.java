@@ -19,6 +19,13 @@ public interface ClientDao {
 	public List<Client> getAllClients(int startIndex, int limit);
 	
 	/**
+	 * Returns a list of clients whose name is similar to the specified string
+	 * @param name string to be used to match the names
+	 * @return
+	 */
+	public List<Client> filterClientsByName(String name);
+	
+	/**
 	 * Retrieves the client with a specific name
 	 * @param name Name of the client to be retrieved
 	 * @return
@@ -41,6 +48,14 @@ public interface ClientDao {
 	 * @throws DuplicateKeyException
 	 */
 	public void saveClient(Client client) throws DuplicateKeyException;
+	
+	
+	/**
+	 * Updates the details of an existing client
+	 * @param client {@link Client} whose details are to be updated
+	 * @throws DuplicateKeyException if the details of the new client conflict with those of an existing client
+	 */
+	public void updateClient(Client client) throws DuplicateKeyException;
 	
 	/**
 	 * Deletes a client from the system

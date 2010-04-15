@@ -7,6 +7,8 @@ import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 
 public class HibernateClientDao extends BaseHibernateDao<Client> implements ClientDao {
 
@@ -14,39 +16,54 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements Clie
 		super(Client.class);
 	}
 	
+	/** @see ClientDao#deleteClient(Client) */
 	public void deleteClient(Client client) throws DuplicateKeyException {
-		// TODO Auto-generated method stub
-
+		super.delete(client);
 	}
-
+	
+	/** @see ClientDao#getAllClients() */
 	public List<Client> getAllClients() {
-		// TODO Auto-generated method stub
-		return null;
+		return super.getAll();
 	}
 
+	/** @see ClientDao#getAllClients(int, int) */
 	public List<Client> getAllClients(int startIndex, int limit) {
-		// TODO Auto-generated method stub
-		return null;
+		return super.getAll(startIndex, limit);
 	}
 
+	/** @see ClientDao#getClientByName(String) */
 	public Client getClientByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq(Client.Field.NAME.getFieldName(), name));
+		return super.getUnique(criteria);
+	}
+
+	/** @see ClientDao#filterClientsByName(String) */
+	public List<Client> filterClientsByName(String name) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.ilike(Client.Field.NAME.getFieldName(), "%"+name+"%"));
+		return super.getList(criteria);
 	}
 
 	public Client getClientByPhoneNumber(String phoneNumber) {
-		// TODO Auto-generated method stub
-		return null;
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq(Client.Field.PHONE_NUMBER.getFieldName(), phoneNumber));
+		return super.getUnique(criteria);
 	}
 
+	/** @see ClientDao#getClientCount() */
 	public int getClientCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return super.countAll();
 	}
 
+	/** @see ClientDao#saveClient(Client) */
 	public void saveClient(Client client) throws DuplicateKeyException {
-		// TODO Auto-generated method stub
-
+		 super.save(client);
+	}
+	
+	/** @see ClientDao#updateClient(Client) */
+	public void updateClient(Client client) throws DuplicateKeyException{
+		super.update(client);
 	}
 
 }
