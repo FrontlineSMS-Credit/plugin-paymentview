@@ -15,7 +15,7 @@ import net.frontlinesms.data.EntityField;
  *
  */
 @Entity
-@Table(uniqueConstraints={@UniqueConstraint(columnNames={"paymentService_id", "transaction_code"})})
+@Table(uniqueConstraints={@UniqueConstraint(columnNames={"payment_service_id", "transaction_code"})})
 public class PaymentServiceTransaction {
 //>	CONSTANTS
 	/** Flags the transaction as a deposit */
@@ -28,13 +28,17 @@ public class PaymentServiceTransaction {
 	/** Field name for {@link #transactionType} */
 	private static final String FIELD_TRANSACTION_TYPE = "transaction_type";
 	/** Field name for {@link #paymentService} */
-	//private static final String FIELD_PAYMENT_SERVICE_ID = "payment_service_id";
+	private static final String FIELD_PAYMENT_SERVICE_ID = "payment_service_id";
 	/** Field name for {@link #transactionCode} */
 	private static final String FIELD_TRANSACTION_CODE = "transaction_code";
 	
 	public enum Field implements EntityField<PaymentServiceTransaction>{
+		/** Field mapping for {@link PaymentServiceTransaction#client }*/
+		CLIENT_ID("id"),
+		/** Field mapping for {@link PaymentServiceTransaction#paymentService}*/
+		PAYMENT_SERVICE_ID("paymentService"),
 		/** Field mapping for {@link PaymentServiceTransaction#transactionType} */
-		TRANSACTION_TYPE(FIELD_TRANSACTION_TYPE);
+		TRANSACTION_TYPE("transactionType");
 		
 		private final String fieldName;
 		
@@ -52,7 +56,7 @@ public class PaymentServiceTransaction {
 	private Client client;
 	
 	@ManyToOne(targetEntity=PaymentService.class, optional=false)
-	//@Column(name=FIELD_PAYMENT_SERVICE)
+	@JoinColumn(name=FIELD_PAYMENT_SERVICE_ID)
 	private PaymentService paymentService;
 	
 	@Column(name=FIELD_TRANSACTION_TYPE, nullable=false)
@@ -103,7 +107,7 @@ public class PaymentServiceTransaction {
 	 * Gets the amount transacted during this transaction
 	 * @return {@link #transactionAmount}
 	 */
-	public double getTransactionAmount(){
+	public double getAmount(){
 		return transactionAmount;
 	}
 	
@@ -111,7 +115,7 @@ public class PaymentServiceTransaction {
 	 * Gets the date of this transaction
 	 * @return {@link #transactionDate}
 	 */
-	public Date getTransactionDate(){
+	public Date getDate(){
 		return transactionDate;
 	}
 	
