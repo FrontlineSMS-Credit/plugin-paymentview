@@ -20,9 +20,8 @@ public class PaymentService {
 //>	COLUMN NAME CONSTANTS
 	/** Field name for {@link #serviceName} */
 	private static final String FIELD_NAME = "name";
-	/** Field name for {@link #networkOperators} */
-	private static final String FIELD_NETWORK_OPERATOR_ID = "NetworkOperator_id";
-	
+	/** Field name for {@link #smsShortCode} */
+	private static final String FIELD_SMS_SHORT_CODE = "sms_short_code";	
 	/** Column name for {@link #sendMoneyTextMessage}*/
 	private static final String FIELD_SEND_MONEY_TEXT = "send_money_text";
 	/** Column name for {@link #withdrawMoneyTextMessage}*/
@@ -42,7 +41,7 @@ public class PaymentService {
 	}
 	
 //>	PROPERTIES
-	@Id @GeneratedValue(strategy=GenerationType.IDENTITY) @Column(unique=true,nullable=false,updatable=false)
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY) @Column(unique=true,nullable=false,updatable=false)	
 	private long id;
 	/** Name of the payment system*/
 	@Column(name=FIELD_NAME, unique=true,nullable=false)
@@ -51,9 +50,9 @@ public class PaymentService {
 	private String pinNumber;
 	/** The networks in which {@link PaymentService} operates in*/
 	@OneToMany(targetEntity=NetworkOperator.class, fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	@Column(name=FIELD_NETWORK_OPERATOR_ID)
 	private List<NetworkOperator> networkOperators = new ArrayList<NetworkOperator>();
 	/** Short code used to transact on this payment service*/
+	@Column(name=FIELD_SMS_SHORT_CODE)
 	private String smsShortCode;
 	/** SMS template for sending money via the payment service */
 	@Column(name=FIELD_SEND_MONEY_TEXT)
