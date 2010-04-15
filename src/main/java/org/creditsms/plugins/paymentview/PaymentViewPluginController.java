@@ -7,6 +7,10 @@
  */
 package org.creditsms.plugins.paymentview;
 
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.NetworkOperatorDao;
+import org.creditsms.plugins.paymentview.data.repository.PaymentServiceDao;
+import org.creditsms.plugins.paymentview.data.repository.PaymentServiceTransactionDao;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.springframework.context.ApplicationContext;
 
@@ -41,20 +45,46 @@ public class PaymentViewPluginController extends BasePluginController implements
 //> INSTANCE PROPERTIES
 	/** The {@link #FrontlineSMS} instance that this plug-in is attached to */
 	private FrontlineSMS frontlineController;
+	/** DAO for clients*/
+	private ClientDao clientDao;
+	/** DAO for network operators */
+	private NetworkOperatorDao networkOperatorDao;
+	/** DAO for payment services */
+	private PaymentServiceDao paymentServiceDao;
+	/** DAO for payment service transactions */
+	private PaymentServiceTransactionDao transactionDao;
 
 //> CONFIG METHODS
 	/** @see net.frontlinesms.plugins.PluginController#init(FrontlineSMS, ApplicationContext) */
 	public void init(FrontlineSMS frontlineController,	ApplicationContext applicationContext) throws PluginInitialisationException {
 		this.frontlineController = frontlineController;
 		this.frontlineController.addIncomingMessageListener(this);
+		
+		//Initialize the DAO for the domain objects
+		try{
+			this.clientDao = (ClientDao)applicationContext.getBean("clientDao");
+			this.networkOperatorDao = (NetworkOperatorDao)applicationContext.getBean("networkOperatorDao");
+			this.paymentServiceDao = (PaymentServiceDao)applicationContext.getBean("paymentServiceDao");
+			this.transactionDao = (PaymentServiceTransactionDao)applicationContext.getBean("paymentServiceTransactionDao");
+		}catch(Throwable t){
+			log.warn("Unable to load DAO objects for the Payment View plugin", t);
+			throw new PluginInitialisationException(t);
+		}
 	}
 
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
 	public Object initThinletTab(UiGeneratorController uiController) {
 		PaymentViewThinletTabController tabController = new PaymentViewThinletTabController(this, uiController);
+		tabController.setClientDao(clientDao);
+		tabController.setContactDao(this.frontlineController.getContactDao());
+		tabController.setNetworkOperatorDao(networkOperatorDao);
+		tabController.setPaymentServiceDao(paymentServiceDao);
+		tabController.setPaymentServiceTranscationDao(transactionDao);
 		
 		Object paymentViewTab = uiController.loadComponentFromFile(XML_PAYMENT_VIEW_TAB, tabController);
 		tabController.setTabComponent(paymentViewTab);
+		
+		tabController.refresh();
 		
 		return paymentViewTab;
 	}
