@@ -40,15 +40,14 @@ public class HibernatePaymentServiceTransactionDao extends BaseHibernateDao<Paym
 	/** @see PaymentServiceTransactionDao#getTransactionsByClient(Client) */
 	public List<PaymentServiceTransaction> getTransactionsByClient(Client client) {
 		DetachedCriteria criteria = super.getCriterion();
-		//TODO: Add restriction for client
-		//criteria.add(Restrictions.e)
+		criteria.add(Restrictions.eq(PaymentServiceTransaction.Field.CLIENT_ID.getFieldName(), new Long(client.getId())));
 		return super.getList(criteria);
 	}
 
 	/** @see PaymentServiceTransactionDao#getTransactionsByClient(Client, int) */
 	public List<PaymentServiceTransaction> getTransactionsByClient(Client client, int transactionType) {
 		DetachedCriteria criteria = super.getCriterion();
-		//TODO: Add criteria for the client
+		criteria.add(Restrictions.eq(PaymentServiceTransaction.Field.CLIENT_ID.getFieldName(), new Long(client.getId())));
 		criteria.add(Restrictions.eq(PaymentServiceTransaction.Field.TRANSACTION_TYPE.getFieldName(), transactionType));
 		return super.getList(criteria);
 	}
@@ -56,7 +55,7 @@ public class HibernatePaymentServiceTransactionDao extends BaseHibernateDao<Paym
 	/** @see PaymentServiceTransactionDao#getTransactionsByNetworkOperator(NetworkOperator) */
 	public List<PaymentServiceTransaction> getTransactionsByNetworkOperator(NetworkOperator operator) {
 		DetachedCriteria criteria = super.getCriterion();
-		// TODO Add criteria for the network operator
+		criteria.add(Restrictions.eq(NetworkOperator.Field.ID.getFieldName(), new Long(operator.getId())));
 		return super.getList(criteria);
 	}
 
