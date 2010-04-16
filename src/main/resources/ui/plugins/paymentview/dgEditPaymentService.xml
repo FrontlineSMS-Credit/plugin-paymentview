@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog name="paymentServiceDialog" text="i18n.paymentview.common.paymentservice" modal="true" closable="true" close="removeDialog(this)" columns="1" weightx="1" weighty="1" gap="9" top="9" left="9" bottom="9" right="9">
+    <panel border="true" columns="2" weightx="1" gap="5" top="5" right="5" bottom="5" left="5">
+	    <label text="i18n.common.name" />
+	    <textfield name="fldServiceName" columns="50"/>
+        <label text="SMS Short Code" />
+        <textfield name="fldSmsShortCode" />
+	    <label text="Pin Number"/>
+	    <passwordfield name="fldPinNumber"/>
+	    <label colspan="2" text="Network Operators"/>
+	    <panel gap="5" top="5" left="5" bottom="5" right="5" colspan="2" columns="3">
+	        <list name="lstAllOperators" line="false" width="235" height="100" action="toggleMoveOperatorButton(this, btAddNetworkOperator)">
+	        </list>
+	        <panel columns="1" gap="5" top="5" bottom="5" right="5" width="25" height="100">
+	           <button text=">" enabled="false" name="btAddNetworkOperator" action="moveNetworkOperator(lstAllOperators, lstSelectedOperators)"/>
+	           <button text="<" enabled="false" name="btRemoveNetworkOperator" action="moveNetworkOperator(lstSelectedOperators, lstAllOperators"/>
+	        </panel>
+	        <list name="lstSelectedOperators" line="false" width="230" height="100" action="toggleMoveOperatorButton(this, btRemoveNetworkOperator)">
+	        </list>
+	    </panel>
+	    <label text="Send Money Text" />
+	    <textarea name="fldSendMoneyText" columns="50" rows="3" />
+	    <label text="Withdraw Money Text" />
+	    <textarea name="fieldWithdrawMoneyText" columns="50" rows="3" />
+	    <label text="Balance Enquiry Text" />
+	    <textarea name="fldBalanceEnquiryText" columns="50" rows="2" />
+	    <panel colspan="2" halign="right" gap="5" top="5" right="5" bottom="5" left="5" weightx="1">
+	       <button name="btnSavePaymentService" icon="/icons/tick.png" text="i18n.action.save" />
+	       <button name="btnCancel" icon="/icons/cross.png" text="i18n.action.cancel" action="removeDialog(paymentServiceDialog)" />
+	    </panel>
+    </panel>
+</dialog>
