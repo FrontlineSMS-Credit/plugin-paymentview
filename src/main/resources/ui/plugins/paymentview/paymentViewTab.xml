@@ -46,19 +46,17 @@
 						</panel>
 					</tab>
 					<tab name="tbSettings" text="i18n.paymentview.tab.settings">
-						<splitpane divider="200" weightx="1" weighty="1">
+						<splitpane divider="220" weightx="1" weighty="1">
 							<panel gap="5" top="5" left="5" bottom="5" right="5" weightx="1" weighty="1">
-								<tree angle="true" line="false" weightx="1" weighty="1">
-									<node text="Payment Systems" />
-									<node text="Message Filtering" />
-									<node text="Network Operators" />
-									<node text="Quick Dial Codes" />
-									<node text="Countries" />
-									<node text="MIS Integration" />
+								<tree angle="true" line="false" weightx="1" weighty="1" action="showSettingsItem(tbSettings, this)">
+									<node name="ndPaymentSystems" text="i18n.paymentview.settings.payment.systems" />
+									<node name="ndMessageParsing" text="i18n.paymentview.settings.message.parsing"></node>
+									<node name="ndNetworkOperators" text="i18n.paymentview.settings.network.operators"></node>
 								</tree>
 							</panel>
 							<panel gap="5" top="5" left="5" bottom="5" right="5" weightx="1" weighty="1">
-								<panel name="pnSettingsRightPane" weightx="1" weighty="1" border="true" />
+								<panel name="pnSettingsRightPane" weightx="1" weighty="1" border="true" gap="5" top="5" right="5" bottom="5" left="5">
+								</panel>
 							</panel>
 						</splitpane>
 					</tab>
