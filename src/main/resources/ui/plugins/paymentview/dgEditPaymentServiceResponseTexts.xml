@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog name="paymentServiceResponseTextDialog" text="i18n.paymentview.common.paymentservice" modal="true" closable="true" close="removeDialog(this)" columns="1" weightx="1" weighty="1" gap="9" top="9" left="9" bottom="9" right="9">
+    <panel border="true" text="i18n.paymentview.common.dispersals" columns="2" gap="5" top="5" right="5" bottom="5" left="5">
+        <label text="i18n.paymentview.common.confirm.dispersal.text" />
+        <textarea name="fldDispersalConfirmText" columns="50" rows="3"/>
+        <label text="i18n.paymentview.common.confirm.keyword"/>
+        <textfield name="fldDispersalConfirmKeyword" weightx="1"/>
+    </panel>
+    <panel border="true" text="i18n.paymentview.common.repayments" columns="2" gap="5" top="5" right="5" bottom="5" left="5">
+        <label text="i18n.paymentview.common.confirm.repayment.text" />
+        <textarea name="fldRepaymentConfirmText" columns="50" rows="3" />
+        <label text="i18n.paymentview.common.confirm.keyword" />
+        <textfield name="fldRepaymentConfirmKeyword" weightx="1"/>
+    </panel>
+    <panel border="true" text="i18n.paymentview.common.balance.enquiry" columns="2" gap="5" top="5" right="5" bottom="5" left="5">
+        <label text="i18n.paymentview.common.confirm.balance.enquiry.text" />
+        <textarea name="fldBalanceEnquiryResponseText" columns="50" rows="3" />
+        <label text="i18n.paymentview.common.confirm.keyword" />
+        <textfield name="fldBalanceEnquiryConfirmKeyword" weightx="1"/>
+       </panel>
+    <panel colspan="2" halign="right" gap="5" top="5" right="5" bottom="5" left="5" weightx="1">
+        <button name="btnSavePaymentService" icon="/icons/tick.png" text="i18n.action.save" action="updatePaymentService(paymentServiceResponseTextDialog)"/>
+        <button name="btnCancel" icon="/icons/cross.png" text="i18n.action.cancel" action="removeDialog(paymentServiceResponseTextDialog)"/>
+    </panel>
+</dialog>
