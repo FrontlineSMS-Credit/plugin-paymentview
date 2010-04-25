@@ -30,6 +30,13 @@ public interface PaymentServiceDao {
 	public PaymentService getPaymentServiceByName(String name);
 	
 	/**
+	 * Gets the payment service that uses the specifed short code or <code>null/</code> if none exists
+	 * @param shortCode short code for the payment service
+	 * @return {@link PaymentService} with the specified name or <code>null</code> if none exists
+	 */
+	public PaymentService getPaymentServiceByShortCode(String shortCode);
+	
+	/**
 	 * Gets the number of payment services in the system
 	 * @return
 	 */
