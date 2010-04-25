@@ -1,7 +1,7 @@
 package org.creditsms.plugins.paymentview.data.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -16,22 +16,23 @@ import net.frontlinesms.data.EntityField;
  */
 
 @Entity
+@Table(uniqueConstraints={
+		@UniqueConstraint(columnNames={"id","repaymentConfirmationKeyword"}),
+		@UniqueConstraint(columnNames={"id","dispersalConfirmationKeyword"})
+		}
+)
 public class PaymentService {
 //>	COLUMN NAME CONSTANTS
 	/** Field name for {@link #serviceName} */
 	private static final String FIELD_NAME = "name";
 	/** Field name for {@link #smsShortCode} */
-	private static final String FIELD_SMS_SHORT_CODE = "sms_short_code";	
-	/** Column name for {@link #sendMoneyTextMessage}*/
-	private static final String FIELD_SEND_MONEY_TEXT = "send_money_text";
-	/** Column name for {@link #withdrawMoneyTextMessage}*/
-	private static final String FIELD_WITHDRAW_MONEY_TEXT = "withdraw_money_text";
-	/** Column name for {@link #balanceEnquiryTextMessage}*/
-	private static final String FIELD_BALANCE_ENQUIRY_TEXT = "balance_enquiry_text";
+	private static final String FIELD_SMS_SHORT_CODE = "smsShortCode";
 	
 	public enum Field implements EntityField<PaymentService>{
 		/** Field mapping for {@link PaymentService#serviceName} */
-		NAME(FIELD_NAME);
+		NAME(FIELD_NAME),
+		/** Field mapping for {@link PaymentService#smsShortCode}*/
+		SHORT_CODE(FIELD_SMS_SHORT_CODE);
 		
 		private final String fieldName;
 		
@@ -50,19 +51,24 @@ public class PaymentService {
 	private String pinNumber;
 	/** The networks in which {@link PaymentService} operates in*/
 	@OneToMany(targetEntity=NetworkOperator.class, fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	private List<NetworkOperator> networkOperators = new ArrayList<NetworkOperator>();
+	private Set<NetworkOperator> networkOperators = new HashSet<NetworkOperator>();
 	/** Short code used to transact on this payment service*/
-	@Column(name=FIELD_SMS_SHORT_CODE)
+	@Column(name=FIELD_SMS_SHORT_CODE, unique=true)
 	private String smsShortCode;
 	/** SMS template for sending money via the payment service */
-	@Column(name=FIELD_SEND_MONEY_TEXT)
 	private String sendMoneyTextMessage;
 	/** SMS template for withdrawing money via the payment service */
-	@Column(name=FIELD_WITHDRAW_MONEY_TEXT)
 	private String withdrawMoneyTextMessage;
 	/** SMS template for enquiring the account balance on the payment service */
-	@Column(name=FIELD_BALANCE_ENQUIRY_TEXT)
 	private String balanceEnquiryTextMessage;
+	/** SMS template for the text message received when money is received from a client*/
+	private String repaymentConfirmationText;
+	/** Keyword to flag the confirmation message as relating to a repayment */
+	private String repaymentConfirmationKeyword;
+	/** SMS template for the text message received after sending money */
+	private String dispersalConfirmationText;
+	/** Keyword used to flag the confirmation text as relating to a dierspal*/
+	private String dispersalConfirmationKeyword;
 	
 	/**
 	 * Returns the database ID of this payment service
@@ -92,7 +98,7 @@ public class PaymentService {
 	 * Gets the network operators for this payment service
 	 * @return {@link #networkOperators}
 	 */
-	public List<NetworkOperator> getNetworkOperators(){
+	public Set<NetworkOperator> getNetworkOperators(){
 		return networkOperators;
 	}
 	
@@ -128,6 +134,38 @@ public class PaymentService {
 	}
 	
 	/**
+	 * Gets the SMS template for the text message received when a dispersal is made
+	 * @return
+	 */
+	public String getDispersalConfirmationText(){
+		return dispersalConfirmationText;
+	}
+	
+	/**
+	 * Gets the SMS template for the text message received when a repayment is received (from a {@link Clinet})
+	 * @return
+	 */
+	public String getRepaymentConfirmationText(){
+		return repaymentConfirmationText;
+	}
+	
+	/**
+	 * Gets the keyword used to flag the received text message as relating to a repayment
+	 * @return
+	 */
+	public String getRepaymentConfirmationKeyword(){
+		return repaymentConfirmationKeyword;
+	}
+	
+	/**
+	 * Gets the keyword used to flag the received text message as relating to a disperal
+	 * @return
+	 */
+	public String getDispersalConfirmationKeyword(){
+		return dispersalConfirmationKeyword;
+	}
+	
+	/**
 	 * Sets the name for this payment service
 	 * @param name new value for {@link #serviceName}
 	 */
@@ -147,7 +185,7 @@ public class PaymentService {
 	 * Sets the network operators for this payment service
 	 * @param operators new value for {@link #networkOperators}
 	 */
-	public void setNetworkOperators(List<NetworkOperator> operators){
+	public void setNetworkOperators(Set<NetworkOperator> operators){
 		networkOperators = operators;
 	}
 	
@@ -181,6 +219,38 @@ public class PaymentService {
 	 */
 	public void setBalanceEnquiryTextMessage(String template){
 		balanceEnquiryTextMessage = template;
+	}
+	
+	/**
+	 * Sets the text message received when a repayment is received from a {@link Client}
+	 * @param text
+	 */
+	public void setRepaymentConfirmationText(String text){
+		repaymentConfirmationText = text;
+	}
+	
+	/**
+	 * Sets the SMS template for the text message received when a dispersal is made
+	 * @param text
+	 */
+	public void setDispersalConfirmationText(String text){
+		dispersalConfirmationText = text;
+	}
+	
+	/**
+	 * Sets the keyword used to flag a text message as the confirmation text for a repayment
+	 * @param keyword
+	 */
+	public void setRepaymentConfirmationKeyword(String keyword){
+		repaymentConfirmationKeyword = keyword;
+	}
+	
+	/**
+	 * Sets the keyword used to flag a text message as the confirmation text for a dispersal
+	 * @param keyword
+	 */
+	public void setDispersalConfirmationKeyword(String keyword){
+		dispersalConfirmationKeyword = keyword;
 	}
 	
 	/**
