@@ -37,6 +37,13 @@ public class HibernatePaymentServiceDao extends BaseHibernateDao<PaymentService>
 		criteria.add(Restrictions.eq(PaymentService.Field.NAME.getFieldName(), name));
 		return super.getUnique(criteria);
 	}
+	
+	/** @see PaymentServiceDao#getPaymentServiceByShortCode(String) */
+	public PaymentService getPaymentServiceByShortCode(String shortCode){
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq(PaymentService.Field.SHORT_CODE.getFieldName(), shortCode));
+		return super.getUnique(criteria);
+	}
 
 	/** @see PaymentServiceDao#getPaymentServicesCount() */
 	public int getPaymentServicesCount() {
