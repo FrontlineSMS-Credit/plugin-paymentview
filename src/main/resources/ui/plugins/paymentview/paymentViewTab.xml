@@ -21,7 +21,7 @@
 		<panel columns="1" gap="9" top="9" right="9" bottom="9" left="9" weightx="1" weighty="1">
 			<panel columns="1" gap="5" top="5" right="5" bottom="5" left="5" weightx="1" weighty="1" border="true">
 				<tabbedpane weightx="1" weighty="1">
-					<tab name="tbDispersals" text="i18n.paymentview.tab.deposits">
+					<tab name="tbDispersals" text="i18n.paymentview.common.repayments">
 						<panel gap="5" top="5" right="5" bottom="5" left="5">
 							<table name="tblDispersals" weightx="1" weighty="1">
 								<header>
@@ -33,7 +33,7 @@
 							</table>
 						</panel>
 					</tab>
-					<tab name="tbRepayments" text="i18n.paymentview.tab.withdrawals">
+					<tab name="tbRepayments" text="i18n.paymentview.common.dispersals">
 						<panel gap="5" top="5" right="5" bottom="5" left="5">
 							<table name="tblWithdrawals" weightx="1" weighty="1">
 								<header>
@@ -50,7 +50,6 @@
 							<panel gap="5" top="5" left="5" bottom="5" right="5" weightx="1" weighty="1">
 								<tree angle="true" line="false" weightx="1" weighty="1" action="showSettingsItem(tbSettings, this)">
 									<node name="ndPaymentSystems" text="i18n.paymentview.settings.payment.systems" />
-									<node name="ndMessageParsing" text="i18n.paymentview.settings.message.parsing"></node>
 									<node name="ndNetworkOperators" text="i18n.paymentview.settings.network.operators"></node>
 								</tree>
 							</panel>
