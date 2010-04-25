@@ -53,6 +53,8 @@ public class PaymentViewPluginController extends BasePluginController implements
 	private PaymentServiceDao paymentServiceDao;
 	/** DAO for payment service transactions */
 	private PaymentServiceTransactionDao transactionDao;
+	/** Tab controller for this plugin*/
+	private PaymentViewThinletTabController tabController;
 
 //> CONFIG METHODS
 	/** @see net.frontlinesms.plugins.PluginController#init(FrontlineSMS, ApplicationContext) */
@@ -74,7 +76,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
 	public Object initThinletTab(UiGeneratorController uiController) {
-		PaymentViewThinletTabController tabController = new PaymentViewThinletTabController(this, uiController);
+		tabController = new PaymentViewThinletTabController(this, uiController);
 		tabController.setClientDao(clientDao);
 		tabController.setContactDao(this.frontlineController.getContactDao());
 		tabController.setNetworkOperatorDao(networkOperatorDao);
@@ -101,7 +103,8 @@ public class PaymentViewPluginController extends BasePluginController implements
 	 * is extracted i.e. transaction type, amount, sender and transaction code (if any)
 	 * The above parameters may vary amongst service providers
 	 */
-	public void incomingMessageEvent(Message message) {		
+	public void incomingMessageEvent(Message message) {
+		tabController.processIncomingMessage(message);
 	}
 
 }
