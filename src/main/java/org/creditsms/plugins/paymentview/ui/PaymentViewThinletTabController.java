@@ -8,17 +8,22 @@ package org.creditsms.plugins.paymentview.ui;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import net.frontlinesms.Utils;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.Contact;
+import net.frontlinesms.data.domain.Message;
 import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.apache.log4j.Logger;
+import org.creditsms.plugins.paymentview.PaymentServiceSmsProcessor;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.NetworkOperator;
@@ -43,13 +48,12 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler {
 	private static final String UI_FILE_PAYMENT_SERVICE_TABLE = "/ui/plugins/paymentview/tbPaymentServices.xml";
 	private static final String UI_FILE_NETWORK_OPERATOR_TABLE = "/ui/plugins/paymentview/tbNetworkOperators.xml";
 	private static final String UI_FILE_NETWORK_OPERATOR_DIALOG = "/ui/plugins/paymentview/dgEditNetworkOperator.xml";
+	private static final String UI_FILE_RESPONSE_TEXTS_DIALOG = "/ui/plugins/paymentview/dgEditPaymentServiceResponseTexts.xml";
 	
 //> COMPONENT NAME CONSTANTS
 	private static final String COMPONENT_BT_NEW_CLIENT = "btNewClient";
 	private static final String COMPONENT_BT_DELETE_CLIENT = "btDeleteClient";
 	private static final String COMPONENT_BT_EDIT_CLIENT = "btEditClient";
-	private static final String COMPONENT_BT_ADD_NETWORK_OPERATOR = "btAddNetworkOperator";
-	private static final String COMPONENT_BT_REMOVE_NETWORK_OPERATOR = "btRemoveNetworkOperator";
 	private static final String COMPONENT_LS_CLIENTS = "lsClients";
 	private static final String COMPONENT_LS_ALL_NETWORK_OPERATORS = "lstAllOperators";
 	private static final String COMPONENT_LS_SELECTED_OPERATORS = "lstSelectedOperators";
@@ -68,6 +72,12 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler {
 	private static final String COMPONENT_FLD_WITHDRAW_MONEY_TEXT = "fldWithdrawMoneyText";
 	private static final String COMPONENT_FLD_BALANCE_ENQUIRY_TEXT = "fldBalanceEnquiryText";
 	private static final String COMPONENT_FLD_OPERATOR_NAME = "fldOperatorName";
+	private static final String COMPONENT_FLD_DISPESRAL_CONFIRM_TEXT = "fldDispersalConfirmText";
+	private static final String COMPONENT_FLD_DISPERSAL_CONFIRM_TEXT_KEYWORD = "fldDispersalConfirmKeyword";
+	private static final String COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT = "fldRepaymentConfirmText";
+	private static final String COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT_KEYWORD = "fldRepaymentConfirmKeyword";
+	private static final String COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT = "fldBalanceEnquiryConfirmText";
+	private static final String COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT_KEYWORD = "fldBalanceEnquiryConfirmKeyword";
 	private static final String COMPONENT_DLG_CLIENT_DETAILS = "clientDetailsDialog";
 	private static final String COMPONENT_DLG_NETWORK_OPERATOR = "networkOperatorDialog";
 	private static final String COMPONENT_DLG_PAYMENT_SERVICE = "paymentServiceDialog";
@@ -165,6 +175,61 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler {
 	
 	public void setPaymentServiceTranscationDao(PaymentServiceTransactionDao transactionDao){
 		this.transactionDao = transactionDao;
+	}
+	
+	/**
+	 * Processes the incoming message by extracting the necessary information and updating the client
+	 * records. The processing makes use of message filtering rules. If no rules are present, the 
+	 * no information is extracted from the message
+	 * 
+	 * @param message
+	 */
+	public void processIncomingMessage(Message message){
+		String sender = message.getSenderMsisdn();
+		String content = message.getTextContent();
+		
+		// Get the payment service from which the text message has been sent
+		PaymentService paymentService = paymentServiceDao.getPaymentServiceByShortCode(sender);
+		if(paymentService != null){
+			//Instantiate a transaction
+			PaymentServiceTransaction transaction = new PaymentServiceTransaction();
+			
+			//Set the payment service
+			transaction.setPaymentService(paymentService);
+			
+			//Get the keywords to be used to determine the transaction type in the text message
+			//NOTE: confirm 1 and confirm2 *MUST* not be the same
+			String confirm1 = paymentService.getRepaymentConfirmationKeyword();
+			String confirm2 = paymentService.getDispersalConfirmationKeyword();
+			
+			//Extra validation check just in case...
+			if(confirm1.trim().equalsIgnoreCase(confirm2.trim()))
+				return;
+			
+			//Begin pattern matching and extraction of information from the text message
+			if(content.matches("("+confirm1+")")){
+				transaction.setTransactionType(PaymentServiceTransaction.TYPE_DEPOSIT);
+			}else if(content.matches("("+confirm2+")")){
+				transaction.setTransactionType(PaymentServiceTransaction.TYPE_WITHDRAWAL);
+			}else{
+				return;
+			}
+			
+			PaymentServiceSmsProcessor processor = new PaymentServiceSmsProcessor(content, transaction);
+			transaction.setTransactionAmount(processor.getAmount());
+			transaction.setTransactionCode(processor.getTransactionCode());
+			transaction.setClient(clientDao.getClientByPhoneNumber(processor.getPhoneNumber()));
+			
+			//Set the transaction date to the date when the message was received
+			transaction.setTransactionDate(new Date(message.getDate()));
+			
+			//Information has been extracted, therefore save
+			try{
+				transactionDao.savePaymentServiceTransaction(transaction);
+			}catch(DuplicateKeyException e){
+				LOG.debug("Fatal error: A transaction with the specified code already exists", e);
+			}
+		}
 	}
 	
 //>	THINLET UI & EVENT HELPER METHODS
@@ -544,6 +609,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler {
 	
 	/**
 	 * Gets an instance of the payment services panel
+	 * @param load specified whether the network operator lists are to be loaded
 	 * @return
 	 */
 	private Object getPaymentServiceDialog(boolean load){
@@ -622,7 +688,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler {
 		
 		// Change the contents of the right-most panel depending on the selected tree node 
 		if(uiController.getName(selectedNode).equals("ndPaymentSystems")){
-			Object table = getPaymentServicesTable();
+			Object table = getPaymentServicesTable(true);
 			uiController.add(uiController.find(parentTab, COMPONENT_PN_SETTINGS_RIGHT_PANE), uiController.getParent(table));
 			uiController.repaint();
 		}else if(uiController.getName(selectedNode).equals("ndNetworkOperators")){
@@ -637,10 +703,11 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler {
 	}
 	
 	/**
-	 * Returns a {@link Thinlet} UI table object containing the list of payment services in the system 
+	 * Returns a {@link Thinlet} UI table object containing the list of payment services in the system
+	 * @param load Specifes whether to pupulate the table with the list of payment services
 	 * @return
 	 */
-	private Object getPaymentServicesTable(){		
+	private Object getPaymentServicesTable(boolean load){		
 		Object table = uiController.find(getSettingsRightPane(), COMPONENT_TBL_PAYMENT_SERVICES); 
 		
 		if(table == null){
@@ -648,9 +715,11 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler {
 			table = uiController.find(container, COMPONENT_TBL_PAYMENT_SERVICES);
 		}		
 		
-		for(PaymentService service: paymentServiceDao.getAllPaymentServices()){
-			Object row = getRow(service);
-			uiController.add(table, row);
+		if(load){
+			for(PaymentService service: paymentServiceDao.getAllPaymentServices()){
+				Object row = getRow(service);
+				uiController.add(table, row);
+			}
 		}
 		return table;
 	}
@@ -685,6 +754,11 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler {
 		uiController.add(getPaymentServiceDialog(true));
 	}
 	
+	public void showPaymentService(Object component){
+		Object selectedItem = uiController.getSelectedItem(component);
+		uiController.add(getPaymentServiceDialog(getPaymentService(selectedItem)));
+	}
+	
 	/**
 	 * Displays the network operator dialog
 	 */
@@ -696,6 +770,56 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler {
 	 * Saves a payment service
 	 */
 	public void savePaymentService(){
+		// Fetch the dialog
+		Object dialog = getPaymentServiceDialog(false);
+		
+		// Check if an existing record is being updated
+		boolean serviceExists = (getPaymentService(dialog) == null)? false:true;
+		
+		// Fetch/Create Payment service instance as appropriate
+		PaymentService service = (serviceExists == true)? getPaymentService(dialog) : new PaymentService();
+		
+		// Set the properties for the payment service
+		service.setServiceName(uiController.getText(uiController.find(dialog, COMPONENT_FLD_SERVICE_NAME)));
+		service.setSmsShortCode(uiController.getText(uiController.find(dialog, COMPONENT_FLD_SMS_SHORT_CODE)));
+		service.setPinNumber(uiController.getText(uiController.find(dialog, COMPONENT_FLD_PIN_NUMBER)));
+		service.setSendMoneyTextMessage(uiController.getText(uiController.find(dialog, COMPONENT_FLD_SEND_MONEY_TEXT)));
+		service.setWithdrawMoneyTextMessage(uiController.getText(uiController.find(dialog, COMPONENT_FLD_WITHDRAW_MONEY_TEXT)));
+		service.setBalanceEnquiryTextMessage(uiController.getText(uiController.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_TEXT)));
+		
+		Object[] operatorList = uiController.getItems(uiController.find(dialog, COMPONENT_LS_SELECTED_OPERATORS));
+		
+		// Set to hold the list of selected operators
+		Set<NetworkOperator> operators = new HashSet<NetworkOperator>();
+		
+		for(int i=0; i<operatorList.length; i++){
+			operators.add(getNetworkOperator(operatorList[i]));
+		}
+		
+		service.setNetworkOperators(operators);
+		
+		try{
+			if(serviceExists)
+				paymentServiceDao.updatePaymentService(service);
+			else
+				paymentServiceDao.savePaymentService(service);
+		}catch(DuplicateKeyException e){
+			LOG.debug("The payment service could not be saved. " + e);
+		}
+		
+		if(serviceExists){
+			Object row = uiController.getSelectedItem(getPaymentServicesTable(false));
+			uiController.remove(row);
+		}
+		
+		// Update the list of payment services
+		uiController.add(getPaymentServicesTable(false), getRow(service));
+		uiController.repaint();
+
+		//TODO: Show dialog to allow user to specify the confirmation responses
+		
+		// Close the dialog
+		removeDialog(dialog);
 		
 	}
 	
@@ -742,6 +866,12 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler {
 		// Close the dialog
 		removeDialog(dialog);
 		
+		// If update, remove it from the list and add it again
+		if(operatorExists){
+			Object row = uiController.getSelectedItem(getNetworkOperatorsTable(false));
+			uiController.remove(row);
+		}
+		
 		// Add new/updated record to the display list
 		uiController.add(getNetworkOperatorsTable(false), getRow(operator));
 		uiController.repaint();
@@ -770,9 +900,95 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler {
 		Object selectedItem = uiController.getSelectedItem(sourceList);
 		
 		if(selectedItem != null){
-			uiController.remove(selectedItem);
-			uiController.add(targetList, selectedItem);
+			if(operatorExists(sourceList, selectedItem) && !operatorExists(targetList, selectedItem)){
+				uiController.remove(selectedItem);
+				uiController.add(targetList, selectedItem);
+			}
+			
+			if(operatorExists(sourceList, selectedItem) && operatorExists(targetList, selectedItem)){
+				uiController.remove(selectedItem);
+			}
+				
 		}
 	}
-
+	
+	/**
+	 * Helper method to check if a network operator exists in the target list
+	 * @param targetList List to which the network operator is to be added
+	 * @param listItem {@link Thinlet} UI list item to be added to the target list
+	 * @return
+	 */
+	private boolean operatorExists(Object targetList, Object listItem){
+		Object[] items = uiController.getItems(targetList);
+		
+		NetworkOperator operator = getNetworkOperator(listItem);
+		
+		for(int i=0; i<items.length; i++){
+			NetworkOperator n = getNetworkOperator(items[i]);
+			if(n.getId() == operator.getId())
+				return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Shows the dialog for defining the response text messages for a payment service
+	 * @param serviceDialog
+	 */
+	public void showResponseTextDialog(Object serviceDialog){
+		//Prevent response texts from being defined for a service that does not exist
+		if(getPaymentService(serviceDialog) == null){
+			return;
+		}
+		
+		Object dialog = uiController.loadComponentFromFile(UI_FILE_RESPONSE_TEXTS_DIALOG, this);
+		
+		uiController.setAttachedObject(dialog, getPaymentService(serviceDialog));
+		uiController.add(dialog);
+	}
+	
+	public void updatePaymentService(Object serviceDialog){
+		// Get the attached payment service
+		PaymentService service = getPaymentService(serviceDialog);
+		
+		// Null check(s)
+		if(service == null)
+			return;
+		
+		//Fetch the input value
+		String repaymentText = uiController.getText(uiController.find(serviceDialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT));
+		String repaymentKeyword = uiController.getText(uiController.find(serviceDialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT_KEYWORD));
+		String dispersalText = uiController.getText(uiController.find(serviceDialog, COMPONENT_FLD_DISPERSAL_CONFIRM_TEXT_KEYWORD));
+		String dispersalKeyword = uiController.getText(uiController.find(serviceDialog, COMPONENT_FLD_DISPESRAL_CONFIRM_TEXT));
+		
+		// Prevent the keywords for dispersals and repayments from being the same
+		if(repaymentKeyword.trim().equalsIgnoreCase(dispersalKeyword.trim())){
+			//TODO: Show dialog with appropriate error message
+			return;
+		}
+		
+		// Check if the keywords are contained in their respective confirmation texts
+		if(!repaymentText.matches("("+repaymentKeyword+")") || !dispersalText.matches("("+dispersalKeyword+")")){
+			//TODO: Show error message dialog
+			return;
+		}
+		
+		// Set the confirmation texts and keywords for the payment service
+		service.setRepaymentConfirmationText(repaymentText);
+		service.setRepaymentConfirmationKeyword(repaymentKeyword);
+		service.setDispersalConfirmationKeyword(dispersalText);
+		service.setDispersalConfirmationText(dispersalKeyword);
+		
+		// Update the payment service
+		try{
+			paymentServiceDao.updatePaymentService(service);
+		}catch(DuplicateKeyException e){
+			LOG.debug("Duplicate record for PaymentService", e);
+		}
+		
+		// Close the dialog
+		removeDialog(serviceDialog);
+	}
+	
 }
