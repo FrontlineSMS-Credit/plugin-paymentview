@@ -21,12 +21,16 @@
 	    <label text="Send Money Text" />
 	    <textarea name="fldSendMoneyText" columns="50" rows="3" />
 	    <label text="Withdraw Money Text" />
-	    <textarea name="fieldWithdrawMoneyText" columns="50" rows="3" />
+	    <textarea name="fldWithdrawMoneyText" columns="50" rows="3" />
 	    <label text="Balance Enquiry Text" />
 	    <textarea name="fldBalanceEnquiryText" columns="50" rows="2" />
 	    <panel colspan="2" halign="right" gap="5" top="5" right="5" bottom="5" left="5" weightx="1">
-	       <button name="btnSavePaymentService" icon="/icons/tick.png" text="i18n.action.save" />
+	       <button name="btnSavePaymentService" icon="/icons/tick.png" text="i18n.action.save" action="savePaymentService"/>
 	       <button name="btnCancel" icon="/icons/cross.png" text="i18n.action.cancel" action="removeDialog(paymentServiceDialog)" />
 	    </panel>
+    </panel>
+    <panel gap="5" halign="center">
+        <label icon="/icons/tip.png" text="i18n.paymentview.settings.message.parsing.prompt" />
+        <button text="i18n.paymentview.common.click.here" type="link" action="showResponseTextDialog(paymentServiceDialog)"/>
     </panel>
 </dialog>
