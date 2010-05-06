@@ -20,6 +20,9 @@ import net.frontlinesms.data.domain.Message;
 import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.handler.ComponentPagingHandler;
+import net.frontlinesms.ui.handler.PagedComponentItemProvider;
+import net.frontlinesms.ui.handler.PagedListDetails;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.apache.log4j.Logger;
@@ -41,7 +44,7 @@ import thinlet.Thinlet;
  * @author Emmanuel Kala
  *
  */
-public class PaymentViewThinletTabController implements ThinletUiEventHandler {
+public class PaymentViewThinletTabController implements ThinletUiEventHandler, PagedComponentItemProvider {
 //> UI FILES
 	private static final String UI_FILE_CLIENT_DIALOG = "/ui/plugins/paymentview/dgEditClient.xml";
 	private static final String UI_FILE_PAYMENT_SERVICE_DIALOG = "/ui/plugins/paymentview/dgEditPaymentService.xml";
@@ -82,17 +85,29 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler {
 	private static final String COMPONENT_DLG_NETWORK_OPERATOR = "networkOperatorDialog";
 	private static final String COMPONENT_DLG_PAYMENT_SERVICE = "paymentServiceDialog";
 	private static final String COMPONENT_PN_SETTINGS_RIGHT_PANE = "pnSettingsRightPane";
+	private static final String COMPONENT_PN_CLIENTS = "pnClients";
+	private static final String COMPONENT_PN_DISPERSALS = "pnDispersals";
+	private static final String COMPONENT_PN_REPAYMENTS = "pnRepayments";
 	
 //> CONSTANTS
 	private static final Logger LOG = Utils.getLogger(PaymentViewThinletTabController.class);
 	
-//> PROPERTIES
+//> UI COMPONENTS
 	/** Controller for the PaymentView plug-in */
 	private final PaymentViewPluginController paymentViewController;
 	/** Thinlet UI Controller */
 	private final UiGeneratorController uiController;
 	/** Thinlet tab component whose functionality is handled by this class */
 	private Object paymentViewTab;
+	
+	/** Paging handler for clients */
+	private ComponentPagingHandler clientsPagingHandler;
+	/** Paging handler for dispersals */
+	private ComponentPagingHandler dispersalsPagingHandler;
+	/** Paging handler for repayments*/
+	private ComponentPagingHandler repaymentsPagingHandler;
+
+//> DAO OBJECTS	
 	/** DAO for {@link Client}s */
 	private ClientDao clientDao;
 	/** DAO for {@link NetworkOperator}s */
@@ -119,30 +134,29 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler {
 	 * Refreshes the tab display
 	 */
 	public void refresh(){
-		// Populate the clients list
-		Object clientList = getClientList();
-		uiController.removeAll(clientList);
-		for(Client c: clientDao.getAllClients()){
-			Object item = getListItem(c);
-			uiController.add(clientList, item);
-		}
+		// Populate the clients list and add the paging controls just below the list of clients
+		Object clientList = getClientList();		
+		clientsPagingHandler = new ComponentPagingHandler(this.uiController, this, clientList);		
+		Object pnClients = uiController.find(this.paymentViewTab, COMPONENT_PN_CLIENTS);
+		Object clientPageControls = clientsPagingHandler.getPanel();
 		
-		// Populate repayments table
-		Object repaymentsTable = getRepaymentsTable();
-		uiController.removeAll(repaymentsTable);
-		for(PaymentServiceTransaction t: transactionDao.getTransactionsByType(PaymentServiceTransaction.TYPE_DEPOSIT)){
-			Object row = getRow(t);
-			uiController.add(repaymentsTable, row);
-		}
+		uiController.setHAlign(clientPageControls, Thinlet.RIGHT);
+		uiController.add(pnClients, clientPageControls, 2);
+		clientsPagingHandler.refresh();	
+
+		// Populate the repayments table and add the paging controls just below the list of repayments
+		Object repaymentsTable = getRepaymentsTable();		
+		repaymentsPagingHandler = new ComponentPagingHandler(this.uiController, this, repaymentsTable);		
+		Object pnRepayments = uiController.find(this.paymentViewTab, COMPONENT_PN_REPAYMENTS);
+		uiController.add(pnRepayments, repaymentsPagingHandler.getPanel(), 1);
+		repaymentsPagingHandler.refresh();
 		
-		// Populate the dispersals table
-		Object dispersalsTable = getDispersalsTable();
-		uiController.removeAll(dispersalsTable);
-		for(PaymentServiceTransaction t: transactionDao.getTransactionsByType(PaymentServiceTransaction.TYPE_WITHDRAWAL)){
-			Object row = getRow(t);
-			uiController.add(dispersalsTable, row);
-		}
-		
+		// Populate the dispersals table and add the paging controls just below the list of dispersals 
+		Object dispersalsTable = getDispersalsTable();		
+		dispersalsPagingHandler = new ComponentPagingHandler(this.uiController, this, dispersalsTable);
+		Object pnDispersals = uiController.find(this.paymentViewTab, COMPONENT_PN_DISPERSALS);
+		uiController.add(pnDispersals, dispersalsPagingHandler.getPanel(), 1);
+		dispersalsPagingHandler.refresh();
 	}
 
 //> MUTATORS
@@ -177,6 +191,57 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler {
 		this.transactionDao = transactionDao;
 	}
 	
+// LIST PAGING METHODS
+	/** @see PagedComponentItemProvider#getListDetails(Object, int, int) */
+	public PagedListDetails getListDetails(Object list, int startIndex,	int limit) {
+		if(list.equals(clientsPagingHandler.getList())){
+			return getClientListPagingDetails(startIndex, limit);
+		} else if(list.equals(repaymentsPagingHandler.getList())){
+			return getRepaymentListPagingDetails(startIndex, limit);
+		} else if(list.equals(dispersalsPagingHandler.getList())){
+			return getDispersalListPagingDetails(startIndex, limit);
+		} else throw new IllegalStateException();
+	}
+	
+	private PagedListDetails getClientListPagingDetails(int startIndex, int limit){
+		int totalClientCount = clientDao.getClientCount();
+		
+		List<Client> clients = clientDao.getAllClients(startIndex, limit);
+		Object[] clientRows = new Object[clients.size()];
+		for(int i=0; i< clients.size(); i++){
+			Client client = clients.get(i);
+			clientRows[i] = getListItem(client);
+		}
+		
+		return new PagedListDetails(totalClientCount, clientRows);
+	}
+	
+	private PagedListDetails getRepaymentListPagingDetails(int startIndex, int limit){
+		List<PaymentServiceTransaction> transactions = transactionDao.getTransactionsByType(PaymentServiceTransaction.TYPE_DEPOSIT);
+		int totalItems = transactions.size();
+		
+		Object[] transactionRows = new Object[totalItems];
+		for(int i=0; i<totalItems; ++i){
+			PaymentServiceTransaction t = transactions.get(i);
+			transactionRows[i] = getRow(t);
+		}
+		
+		return new PagedListDetails(totalItems, transactionRows);
+	}
+	
+	private PagedListDetails getDispersalListPagingDetails(int startIndex, int limit){
+		List<PaymentServiceTransaction> transactions = transactionDao.getTransactionsByType(PaymentServiceTransaction.TYPE_WITHDRAWAL);
+		int totalItems = transactions.size();
+		
+		Object[] transactionRows = new Object[totalItems];
+		for(int i=0; i<totalItems; ++i){
+			PaymentServiceTransaction t = transactions.get(i);
+			transactionRows[i] = getRow(t);
+		}
+		
+		return new PagedListDetails(totalItems, transactionRows);
+	}
+
 	/**
 	 * Processes the incoming message by extracting the necessary information and updating the client
 	 * records. The processing makes use of message filtering rules. If no rules are present, the 
@@ -190,45 +255,46 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler {
 		
 		// Get the payment service from which the text message has been sent
 		PaymentService paymentService = paymentServiceDao.getPaymentServiceByShortCode(sender);
-		if(paymentService != null){
-			//Instantiate a transaction
-			PaymentServiceTransaction transaction = new PaymentServiceTransaction();
-			
-			//Set the payment service
-			transaction.setPaymentService(paymentService);
-			
-			//Get the keywords to be used to determine the transaction type in the text message
-			//NOTE: confirm 1 and confirm2 *MUST* not be the same
-			String confirm1 = paymentService.getRepaymentConfirmationKeyword();
-			String confirm2 = paymentService.getDispersalConfirmationKeyword();
-			
-			//Extra validation check just in case...
-			if(confirm1.trim().equalsIgnoreCase(confirm2.trim()))
-				return;
-			
-			//Begin pattern matching and extraction of information from the text message
-			if(content.matches("("+confirm1+")")){
-				transaction.setTransactionType(PaymentServiceTransaction.TYPE_DEPOSIT);
-			}else if(content.matches("("+confirm2+")")){
-				transaction.setTransactionType(PaymentServiceTransaction.TYPE_WITHDRAWAL);
-			}else{
-				return;
-			}
-			
-			PaymentServiceSmsProcessor processor = new PaymentServiceSmsProcessor(content, transaction);
-			transaction.setTransactionAmount(processor.getAmount());
-			transaction.setTransactionCode(processor.getTransactionCode());
-			transaction.setClient(clientDao.getClientByPhoneNumber(processor.getPhoneNumber()));
-			
-			//Set the transaction date to the date when the message was received
-			transaction.setTransactionDate(new Date(message.getDate()));
-			
-			//Information has been extracted, therefore save
-			try{
-				transactionDao.savePaymentServiceTransaction(transaction);
-			}catch(DuplicateKeyException e){
-				LOG.debug("Fatal error: A transaction with the specified code already exists", e);
-			}
+		if(paymentService == null)
+			return;
+
+		//Instantiate a transaction
+		PaymentServiceTransaction transaction = new PaymentServiceTransaction();
+		
+		//Set the payment service
+		transaction.setPaymentService(paymentService);
+		
+		//Get the keywords to be used to determine the transaction type in the text message
+		//NOTE: confirm 1 and confirm2 *MUST* not be the same
+		String confirm1 = paymentService.getRepaymentConfirmationKeyword();
+		String confirm2 = paymentService.getDispersalConfirmationKeyword();
+		
+		//Extra validation check just in case...
+		if(confirm1.trim().equalsIgnoreCase(confirm2.trim()))
+			return;
+		
+		//Begin pattern matching and extraction of information from the text message
+		if(content.matches("("+confirm1+")")){
+			transaction.setTransactionType(PaymentServiceTransaction.TYPE_DEPOSIT);
+		}else if(content.matches("("+confirm2+")")){
+			transaction.setTransactionType(PaymentServiceTransaction.TYPE_WITHDRAWAL);
+		}else{
+			return;
+		}
+		
+		PaymentServiceSmsProcessor processor = new PaymentServiceSmsProcessor(content, transaction);
+		transaction.setTransactionAmount(processor.getAmount());
+		transaction.setTransactionCode(processor.getTransactionCode());
+		transaction.setClient(clientDao.getClientByPhoneNumber(processor.getPhoneNumber()));
+		
+		//Set the transaction date to the date when the message was received
+		transaction.setTransactionDate(new Date(message.getDate()));
+		
+		//Information has been extracted, therefore save
+		try{
+			transactionDao.savePaymentServiceTransaction(transaction);
+		}catch(DuplicateKeyException e){
+			LOG.debug("Fatal error: A transaction with the specified code already exists", e);
 		}
 	}
 	
@@ -468,7 +534,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler {
 	 * Performs input validation for the required client properties 
 	 */
 	public void validateRequiredFields(){
-		
+		//TODO: Implement validation checks
 	}
 	
 	/**
