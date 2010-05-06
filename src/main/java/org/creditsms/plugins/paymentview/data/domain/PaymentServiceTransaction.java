@@ -59,17 +59,28 @@ public class PaymentServiceTransaction {
 	@JoinColumn(name=FIELD_PAYMENT_SERVICE_ID)
 	private PaymentService paymentService;
 	
+	/** Type of transaction; can be DISPERSAL or REPAYMENT */
 	@Column(name=FIELD_TRANSACTION_TYPE, nullable=false)
 	private int transactionType;
 	
+	/** Amount transacted*/
 	@Column(nullable=false)
 	private double transactionAmount;
 	
+	/**Date of the transaction*/
 	@Column(nullable=false)
 	private Date transactionDate;
 	
+	/** Unique code for the transaction */
 	@Column(name=FIELD_TRANSACTION_CODE, nullable=false)
 	private String transactionCode;
+	
+	/** Flag to keep track of whether the transaction has been posted to an MIS */
+	@Column(nullable=false)
+	private boolean postedToMIS;
+	
+	/** Date when the transaction was posted to the MIS */
+	private Date misPostingDate;
 	
 	/**
 	 * Returns the database ID of this transaction
@@ -128,6 +139,22 @@ public class PaymentServiceTransaction {
 	}
 	
 	/**
+	 * Whether the transaction has been posted to an MIS
+	 * @return
+	 */
+	public boolean isPostedToMIS(){
+		return postedToMIS;
+	}
+	
+	/**
+	 * Gets the date when the transaction was posted to an MIS
+	 * @return
+	 */
+	public Date getMisPostingDate(){
+		return misPostingDate;
+	}
+	
+	/**
 	 * Sets the client for this transaction
 	 * @param client
 	 */
@@ -173,5 +200,21 @@ public class PaymentServiceTransaction {
 	 */
 	public void setTransactionCode(String code){
 		transactionCode = code;
+	}
+	
+	/**
+	 * Sets whether a transaction has been posted to an MIS
+	 * @param posted
+	 */
+	public void setPostedToMIS(boolean posted){
+		postedToMIS = posted;
+	}
+	
+	/**
+	 * Sets the date when the transacion was posted to an MIS
+	 * @param date
+	 */
+	public void setMisPostingDate(Date date){
+		misPostingDate = date;
 	}
 }
