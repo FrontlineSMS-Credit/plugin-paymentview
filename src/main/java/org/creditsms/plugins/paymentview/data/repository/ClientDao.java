@@ -76,7 +76,6 @@ public interface ClientDao {
 	/**
 	 * Deletes a client from the system
 	 * @param client
-	 * @throws DuplicateKeyException
 	 */
-	public void deleteClient(Client client) throws DuplicateKeyException;
+	public void deleteClient(Client client);
 }

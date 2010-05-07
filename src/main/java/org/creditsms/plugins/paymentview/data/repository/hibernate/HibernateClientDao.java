@@ -17,7 +17,7 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements Clie
 	}
 	
 	/** @see ClientDao#deleteClient(Client) */
-	public void deleteClient(Client client) throws DuplicateKeyException {
+	public void deleteClient(Client client) {
 		// Delete all the transactions associated with this client
 		super.getHibernateTemplate().bulkUpdate("DELETE FROM PaymentServiceTransaction WHERE client=?", client);
 		
