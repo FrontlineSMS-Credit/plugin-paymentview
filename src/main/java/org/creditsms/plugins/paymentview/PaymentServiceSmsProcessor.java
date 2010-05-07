@@ -9,18 +9,21 @@ import org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction;
 
 public class PaymentServiceSmsProcessor {
 //> CONSTANTS
-	/** Tag for extracting the amount transacted */
-	public static final String TG_AMOUNT = "<AMOUNT>";
+	/** Tag for extracting/inserting the amount transacted */
+	public static final String TG_AMOUNT = "<Amount>";
 	/** Tag for extracting the first name of the sender/recipient */
-	public static final String TG_FIRSTNAME = "<FIRSTNAME>";
+	public static final String TG_FIRSTNAME = "<FirstName>";
 	/** Tag for extracting the last name of the sender/recipient */
-	public static final String TG_LASTNAME = "<LASTNAME>";
+	public static final String TG_LASTNAME = "<LastName>";
 	/** Tag for extracting the balance */
-	public static final String TG_BALANCE = "<BALANCE>";
-	/** Tag for extracting the phone number of the sender/recipient */
-	public static final String TG_PHONENUMBER = "<NUMBER>";
+	public static final String TG_BALANCE = "<Balance>";
+	/** Tag for extracting/inserting the phone number of the sender/recipient */
+	public static final String TG_PHONENUMBER = "<PhoneNumber>";
 	/** Tag for extracting the transaction id */
-	public static final String TG_TRANSACTION_CODE = "<TRANSACTION_CODE>";
+	public static final String TG_TRANSACTION_CODE = "<TransactionCode>";
+	/** Tag for inserting the PIN Number */
+	public static final String TG_PIN_NUMBER = "<PinNumber>";
+	
 //> PROPERTIES	
 	/** SMS received on the connected modem */
 	private String[] sourceMessage;
