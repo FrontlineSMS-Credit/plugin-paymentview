@@ -45,6 +45,13 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements Clie
 		return super.getList(criteria);
 	}
 
+	/** @see ClientDao#filterClientsByName(String, int, int) */
+	public List<Client> filterClientsByName(String name, int startIndex, int limit) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.ilike(Client.Field.NAME.getFieldName(), "%"+name+"%"));
+		return super.getList(criteria, startIndex, limit);
+	}
+
 	public Client getClientByPhoneNumber(String phoneNumber) {
 		DetachedCriteria criteria = super.getCriterion();
 		criteria.add(Restrictions.eq(Client.Field.PHONE_NUMBER.getFieldName(), phoneNumber));
@@ -54,6 +61,12 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements Clie
 	/** @see ClientDao#getClientCount() */
 	public int getClientCount() {
 		return super.countAll();
+	}
+
+	/** @see ClientDao#getFilteredClientCount(String) */
+	public int getFilteredClientCount(String name) {
+		String queryString = "SELECT COUNT(name) FROM Client WHERE name LIKE(?)";
+		return super.getHibernateTemplate().find(queryString, "%" + name + "%").size();
 	}
 
 	/** @see ClientDao#saveClient(Client) */

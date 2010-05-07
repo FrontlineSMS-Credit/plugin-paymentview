@@ -26,6 +26,16 @@ public interface ClientDao {
 	public List<Client> filterClientsByName(String name);
 	
 	/**
+	 * Returns a list of clients whose name is similar to the specified string from a particular
+	 * start index with a maximum number of returned clients set
+	 * @param name 
+	 * @param startIndex 
+	 * @param limit
+	 * @return
+	 */
+	public List<Client> filterClientsByName(String name, int startIndex, int limit);
+	
+	/**
 	 * Retrieves the client with a specific name
 	 * @param name Name of the client to be retrieved
 	 * @return
@@ -42,6 +52,12 @@ public interface ClientDao {
 	/** @return number of clients in the datasource */
 	public int getClientCount();
 	
+	/**
+	 * Gets the number of clients whose name includes part of the specified string
+	 * @param name
+	 * @return 
+	 */
+	public int getFilteredClientCount(String name);
 	/**
 	 * Saves a client to the system
 	 * @param client
