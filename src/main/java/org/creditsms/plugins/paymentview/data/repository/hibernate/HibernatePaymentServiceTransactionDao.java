@@ -3,6 +3,7 @@ package org.creditsms.plugins.paymentview.data.repository.hibernate;
 import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.domain.Message;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
@@ -65,6 +66,19 @@ public class HibernatePaymentServiceTransactionDao extends BaseHibernateDao<Paym
 		criteria.add(Restrictions.eq(PaymentServiceTransaction.Field.TRANSACTION_TYPE.getFieldName(), new Integer(transactionType)));
 		return super.getList(criteria);
 	}
+	
+	/** @see PaymentServiceTransactionDao#getPendingTransactions() */
+	@SuppressWarnings("unchecked")
+	public List<Message> getPendingTransactions() {		
+		DetachedCriteria criteria = DetachedCriteria.forClass(Message.class);
+
+		criteria.add(Restrictions.eq(Message.Field.STATUS.getFieldName(), Message.Status.RECEIVED));
+		criteria.add(Restrictions.eq(Message.Field.TYPE.getFieldName(), Message.Type.RECEIVED));
+		criteria.add(Restrictions.sqlRestriction("senderMsisdn IN (SELECT smsShortCode FROM PaymentService)"));
+		criteria.add(Restrictions.sqlRestriction("id NOT IN (SELECT message_id FROM PaymentServiceTransaction)"));
+		
+		return super.getHibernateTemplate().findByCriteria(criteria);
+	}
 
 	/** @see PaymentServiceTransactionDao#savePaymentServiceTransaction(PaymentServiceTransaction) */
 	public void savePaymentServiceTransaction(PaymentServiceTransaction transaction) throws DuplicateKeyException {
@@ -75,5 +89,5 @@ public class HibernatePaymentServiceTransactionDao extends BaseHibernateDao<Paym
 	public void updatePaymentServiceTransaction(PaymentServiceTransaction transaction) throws DuplicateKeyException {
 		super.update(transaction);
 	}
-
+	
 }

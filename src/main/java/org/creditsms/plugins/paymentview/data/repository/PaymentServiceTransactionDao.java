@@ -3,6 +3,7 @@ package org.creditsms.plugins.paymentview.data.repository;
 import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.domain.Message;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.NetworkOperator;
@@ -52,6 +53,13 @@ public interface PaymentServiceTransactionDao {
 	 * @return
 	 */
 	public List<PaymentServiceTransaction> getTransactionsByType(int transactionType);
+	
+	/**
+	 * Returns a list of all the messages that were sent from a registered payment service
+	 * and transaction records are yet to be created from them
+	 * @return
+	 */
+	public List<Message> getPendingTransactions();
 	
 	/**
 	 * Gets the total number of transactions in the system
