@@ -88,6 +88,9 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 	private static final String COMPONENT_PN_CLIENTS = "pnClients";
 	private static final String COMPONENT_PN_DISPERSALS = "pnDispersals";
 	private static final String COMPONENT_PN_REPAYMENTS = "pnRepayments";
+
+//> I18N KEYS
+	private static final String PAYMENTVIEW_LOADED = "paymentview.loaded";
 	
 //> CONSTANTS
 	private static final Logger LOG = Utils.getLogger(PaymentViewThinletTabController.class);
@@ -119,6 +122,12 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 	/** DAO for contacts */
 	private ContactDao contactDao;
 
+//> PROPERTIES
+	/** String used for the live search */
+	private String liveSearchString;
+	/** Keeps track of the currently selected client */
+	private Client selectedClient;
+	
 //> CONSTRUCTORS
 	/**
 	 * 
@@ -134,6 +143,12 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 	 * Refreshes the tab display
 	 */
 	public void refresh(){
+		// Set the status message
+		uiController.setStatus(InternationalisationUtils.getI18NString(PAYMENTVIEW_LOADED));
+		
+		// Check messages that have not been processed and push them through
+		processPendingTransactions();
+		
 		// Populate the clients list and add the paging controls just below the list of clients
 		Object clientList = getClientList();		
 		clientsPagingHandler = new ComponentPagingHandler(this.uiController, this, clientList);		
@@ -158,6 +173,15 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 		uiController.add(pnDispersals, dispersalsPagingHandler.getPanel(), 1);
 		dispersalsPagingHandler.refresh();
 	}
+	
+	/**
+	 * Internal helper method to process transaction-related messages
+	 */
+	private void processPendingTransactions(){
+		List<Message> pendingTransactions = transactionDao.getPendingTransactions();
+		for(Message message: pendingTransactions)
+			processIncomingMessage(message);
+	}
 
 //> MUTATORS
 	
@@ -171,22 +195,42 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 		this.paymentViewTab = paymentViewTab;
 	}
 	
+	/**
+	 * Sets the client DAO
+	 * @param clientDao
+	 */
 	public void setClientDao(ClientDao clientDao){
 		this.clientDao = clientDao;
 	}
 	
+	/**
+	 * Sets the contacts DAO
+	 * @param contactDao
+	 */
 	public void setContactDao(ContactDao contactDao){
 		this.contactDao = contactDao;
 	}
 	
+	/**
+	 * Sets the network operator DAO
+	 * @param networkOperatorDao
+	 */
 	public void setNetworkOperatorDao(NetworkOperatorDao networkOperatorDao){
 		this.networkOperatorDao = networkOperatorDao;
 	}
 	
+	/**
+	 * Sets the payment service DAO
+	 * @param paymentServiceDao
+	 */
 	public void setPaymentServiceDao(PaymentServiceDao paymentServiceDao){
 		this.paymentServiceDao = paymentServiceDao;
 	}
 	
+	/**
+	 * Sets the payment service transaction DAO
+	 * @param transactionDao
+	 */
 	public void setPaymentServiceTranscationDao(PaymentServiceTransactionDao transactionDao){
 		this.transactionDao = transactionDao;
 	}
@@ -204,10 +248,21 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 	}
 	
 	private PagedListDetails getClientListPagingDetails(int startIndex, int limit){
-		int totalClientCount = clientDao.getClientCount();
+		List<Client> clients = null;
+		int totalClientCount = 0;
 		
-		List<Client> clients = clientDao.getAllClients(startIndex, limit);
+		// Check if there's a search string
+		if(liveSearchString != null){
+			clients = clientDao.filterClientsByName(liveSearchString, startIndex, limit);			
+			totalClientCount = clientDao.getFilteredClientCount(liveSearchString);
+			liveSearchString  = null;
+		}else{
+			clients = clientDao.getAllClients(startIndex, limit);
+			totalClientCount = clientDao.getClientCount();
+		}
+				
 		Object[] clientRows = new Object[clients.size()];
+		
 		for(int i=0; i< clients.size(); i++){
 			Client client = clients.get(i);
 			clientRows[i] = getListItem(client);
@@ -217,7 +272,16 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 	}
 	
 	private PagedListDetails getRepaymentListPagingDetails(int startIndex, int limit){
-		List<PaymentServiceTransaction> transactions = transactionDao.getTransactionsByType(PaymentServiceTransaction.TYPE_DEPOSIT);
+		List<PaymentServiceTransaction> transactions; 
+		
+		// Check for selected client
+		if(selectedClient != null){
+			transactions = transactionDao.getTransactionsByClient(selectedClient, PaymentServiceTransaction.TYPE_DEPOSIT);
+		} else {
+			transactions = transactionDao.getTransactionsByType(PaymentServiceTransaction.TYPE_DEPOSIT);
+		}
+		
+		// Get the number of items returned
 		int totalItems = transactions.size();
 		
 		Object[] transactionRows = new Object[totalItems];
@@ -230,7 +294,16 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 	}
 	
 	private PagedListDetails getDispersalListPagingDetails(int startIndex, int limit){
-		List<PaymentServiceTransaction> transactions = transactionDao.getTransactionsByType(PaymentServiceTransaction.TYPE_WITHDRAWAL);
+		List<PaymentServiceTransaction> transactions;
+		
+		// Check for selected client
+		if(selectedClient != null) {
+			transactions = transactionDao.getTransactionsByClient(selectedClient, PaymentServiceTransaction.TYPE_WITHDRAWAL);
+		} else {
+			transactions = transactionDao.getTransactionsByType(PaymentServiceTransaction.TYPE_WITHDRAWAL);
+		}
+		
+		// Get the number of items returned
 		int totalItems = transactions.size();
 		
 		Object[] transactionRows = new Object[totalItems];
@@ -260,6 +333,12 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 
 		//Instantiate a transaction
 		PaymentServiceTransaction transaction = new PaymentServiceTransaction();
+		
+		// Set the message used to create the transaction
+		transaction.setMessage(message);
+		
+		// Mark the message as not posted to an MIS
+		transaction.setPostedToMIS(false);
 		
 		//Set the payment service
 		transaction.setPaymentService(paymentService);
@@ -426,42 +505,16 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 		// Grab the typed text
 		String searchText = uiController.getText(textField);
 
-		// List object to hold the search data
-		List<Client> searchList = new ArrayList<Client>();
-		
 		// Determine the search criteria to use
-		if(searchText.trim().length() == 0)
-			searchList = clientDao.getAllClients();
-		else
-			searchList = clientDao.filterClientsByName(searchText.trim());
-		
-		LOG.trace("Live search for ["+searchText+"]...");
-		
-		// Clear the lists
-		Object clientList = getClientList();
-		Object tblRepayments = getRepaymentsTable();
-		Object tblDispersals = getDispersalsTable();
-		
-		uiController.removeAll(clientList);
-		uiController.removeAll(tblRepayments);
-		uiController.removeAll(tblDispersals);
-		
-		// Fetch the clients and their transactions
-		for(Client c: searchList){
-			Object item = getListItem(c);
-			uiController.add(clientList, item);
-			
-			// Fetch the transactions for the client and populate appropriate lists
-			for(PaymentServiceTransaction t: transactionDao.getTransactionsByClient(c)){
-				Object row = getRow(t);
-				if(t.getTransactionType() == PaymentServiceTransaction.TYPE_DEPOSIT){
-					uiController.add(tblRepayments, row);
-				}else if(t.getTransactionType() == PaymentServiceTransaction.TYPE_WITHDRAWAL){
-					uiController.add(tblDispersals, row);
-				}
-			}
+		if(searchText.trim().length() > 0){
+			liveSearchString = searchText.trim();
+			LOG.trace("Live search for ["+searchText+"]...");
 		}
-		
+
+		clientsPagingHandler.refresh();
+		dispersalsPagingHandler.refresh();
+		repaymentsPagingHandler.refresh();
+				
 		// Repaint the UI to reflect changes
 		uiController.repaint(paymentViewTab);
 	}
@@ -488,25 +541,17 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 			uiController.setEnabled(btnDeleteClient, true);
 		}
 		
+		// Get the client instance attached to the list item
 		Client client = getClient(uiController.getSelectedItem(component));
-			
-		Object tblRepayments = getRepaymentsTable();
-		Object tblDispersals = getDispersalsTable();
 		
-		uiController.removeAll(tblRepayments);
-		uiController.removeAll(tblDispersals);
-		
+		// Set the selected client
+		selectedClient = client;
+					
 		LOG.debug("Getting transactions for client: " + client);
-
-		for(PaymentServiceTransaction t: transactionDao.getTransactionsByClient(client)){
-			Object row = getRow(t);
-			
-			if(t.getTransactionType() == PaymentServiceTransaction.TYPE_WITHDRAWAL)
-				uiController.add(tblDispersals, row);
-			else if(t.getTransactionType() == PaymentServiceTransaction.TYPE_DEPOSIT)
-				uiController.add(tblRepayments, row);
-		}
 		
+		dispersalsPagingHandler.refresh();
+		repaymentsPagingHandler.refresh();
+
 		uiController.repaint(paymentViewTab);
 	}
 	
@@ -514,14 +559,16 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 	 * Event handler that is triggered when a client record on the UI client list is double clicked
 	 * @param component
 	 */
-	public void showClientDetails(Object component){
-		Client client = getClient(uiController.getSelectedItem(component));
-		
+	public void showClientDetails(){		
 		// Load the client details dialog
-		Object dialog = getClientDialog(client);
+		Object dialog = getClientDialog(selectedClient);
 		uiController.add(dialog);
 	}
 
+	public void deleteClient(){
+		clientDao.deleteClient(selectedClient);
+		clientsPagingHandler.refresh();
+	}
 	/**
 	 * Removes a dialog from the screen when the close action is initated
 	 * @param dialog {@link Thinlet} UI dialog to be removed from the display 
