@@ -8,12 +8,12 @@
 				    <label icon="/icons/search.png" text="i18n.common.search"/>
 				    <textfield name="fldLiveSearch" weightx="1" action="liveClientSearch(fldLiveSearch)"/>
 				</panel>
-				<list name="lsClients" weightx="1" weighty="1" action="selectClient(lsClients)" perform="showClientDetails(lsClients)">
+				<list name="lsClients" weightx="1" weighty="1" action="selectClient(lsClients)" perform="showClientDetails">
 				</list>
 				<panel name="buttonsPanel" gap="5" weightx="1">
 					<button name="btNewClient" text="i18n.action.add" action="showNewClientForm"/>
-					<button name="btEditClient" text="i18n.action.edit" enabled="false" />
-					<button name="btDeleteClient" text="i18n.action.delete" enabled="false"/>
+					<button name="btEditClient" text="i18n.action.edit" action="showClientDetails" enabled="false" />
+					<button name="btDeleteClient" text="i18n.action.delete" action="deleteClient" enabled="false"/>
 				</panel>
 			</panel>
 			<button tooltip="i18n.tooltip.click.for.help" valign="bottom" icon="/icons/big_help.png" type="link"/>
