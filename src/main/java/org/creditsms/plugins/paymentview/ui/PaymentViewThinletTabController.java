@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.frontlinesms.Utils;
 import net.frontlinesms.data.DuplicateKeyException;
@@ -46,139 +48,139 @@ import thinlet.Thinlet;
  */
 public class PaymentViewThinletTabController implements ThinletUiEventHandler, PagedComponentItemProvider {
 //> UI FILES
-	private static final String UI_FILE_CLIENT_DIALOG = "/ui/plugins/paymentview/dgEditClient.xml";
-	private static final String UI_FILE_PAYMENT_SERVICE_DIALOG = "/ui/plugins/paymentview/dgEditPaymentService.xml";
-	private static final String UI_FILE_PAYMENT_SERVICE_TABLE = "/ui/plugins/paymentview/tbPaymentServices.xml";
-	private static final String UI_FILE_NETWORK_OPERATOR_TABLE = "/ui/plugins/paymentview/tbNetworkOperators.xml";
-	private static final String UI_FILE_NETWORK_OPERATOR_DIALOG = "/ui/plugins/paymentview/dgEditNetworkOperator.xml";
-	private static final String UI_FILE_RESPONSE_TEXTS_DIALOG = "/ui/plugins/paymentview/dgPaymentServiceResponseTexts.xml";
+    private static final String UI_FILE_CLIENT_DIALOG = "/ui/plugins/paymentview/dgEditClient.xml";
+    private static final String UI_FILE_PAYMENT_SERVICE_DIALOG = "/ui/plugins/paymentview/dgEditPaymentService.xml";
+    private static final String UI_FILE_PAYMENT_SERVICE_TABLE = "/ui/plugins/paymentview/tbPaymentServices.xml";
+    private static final String UI_FILE_NETWORK_OPERATOR_TABLE = "/ui/plugins/paymentview/tbNetworkOperators.xml";
+    private static final String UI_FILE_NETWORK_OPERATOR_DIALOG = "/ui/plugins/paymentview/dgEditNetworkOperator.xml";
+    private static final String UI_FILE_RESPONSE_TEXTS_DIALOG = "/ui/plugins/paymentview/dgPaymentServiceResponseTexts.xml";
 	
 //> COMPONENT NAME CONSTANTS
-	private static final String COMPONENT_BT_NEW_CLIENT = "btNewClient";
-	private static final String COMPONENT_BT_DELETE_CLIENT = "btDeleteClient";
-	private static final String COMPONENT_BT_EDIT_CLIENT = "btEditClient";
-	private static final String COMPONENT_LS_CLIENTS = "lsClients";
-	private static final String COMPONENT_LS_ALL_NETWORK_OPERATORS = "lstAllOperators";
-	private static final String COMPONENT_LS_SELECTED_OPERATORS = "lstSelectedOperators";
-	private static final String COMPONENT_TBL_DISPERSALS = "tblDispersals";
-	private static final String COMPONENT_TBL_REPAYMENTS = "tblRepayments";
-	private static final String COMPONENT_TBL_NETWORK_OPERATORS = "tblNetworkOperators";
-	private static final String COMPONENT_TBL_PAYMENT_SERVICES = "tblPaymentServices";
-	private static final String COMPONENT_FLD_CLIENT_NAME = "fldClientName";
-	private static final String COMPONENT_FLD_PHONE_NUMBER = "fldPhoneNumber";
-	private static final String COMPONENT_FLD_OTHER_PHONE_NUMBER = "fldOtherPhoneNumber";
-	private static final String COMPONENT_FLD_EMAIL_ADDRESS = "fldEmailAddress";
-	private static final String COMPONENT_FLD_SERVICE_NAME = "fldServiceName";
-	private static final String COMPONENT_FLD_SMS_SHORT_CODE = "fldSmsShortCode";
-	private static final String COMPONENT_FLD_PIN_NUMBER = "fldPinNumber";
-	private static final String COMPONENT_FLD_SEND_MONEY_TEXT = "fldSendMoneyText";
-	private static final String COMPONENT_FLD_WITHDRAW_MONEY_TEXT = "fldWithdrawMoneyText";
-	private static final String COMPONENT_FLD_BALANCE_ENQUIRY_TEXT = "fldBalanceEnquiryText";
-	private static final String COMPONENT_FLD_OPERATOR_NAME = "fldOperatorName";
-	private static final String COMPONENT_FLD_DISPESRAL_CONFIRM_TEXT = "fldDispersalConfirmText";
-	private static final String COMPONENT_FLD_DISPERSAL_CONFIRM_TEXT_KEYWORD = "fldDispersalConfirmKeyword";
-	private static final String COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT = "fldRepaymentConfirmText";
-	private static final String COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT_KEYWORD = "fldRepaymentConfirmKeyword";
-	private static final String COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT = "fldBalanceEnquiryConfirmText";
-	private static final String COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT_KEYWORD = "fldBalanceEnquiryConfirmKeyword";
-	private static final String COMPONENT_DLG_CLIENT_DETAILS = "clientDetailsDialog";
-	private static final String COMPONENT_DLG_NETWORK_OPERATOR = "networkOperatorDialog";
-	private static final String COMPONENT_DLG_PAYMENT_SERVICE = "paymentServiceDialog";
-	private static final String COMPONENT_PN_SETTINGS_RIGHT_PANE = "pnSettingsRightPane";
-	private static final String COMPONENT_PN_CLIENTS = "pnClients";
-	private static final String COMPONENT_PN_DISPERSALS = "pnDispersals";
-	private static final String COMPONENT_PN_REPAYMENTS = "pnRepayments";
+    private static final String COMPONENT_BT_NEW_CLIENT = "btNewClient";
+    private static final String COMPONENT_BT_DELETE_CLIENT = "btDeleteClient";
+    private static final String COMPONENT_BT_EDIT_CLIENT = "btEditClient";
+    private static final String COMPONENT_LS_CLIENTS = "lsClients";
+    private static final String COMPONENT_LS_ALL_NETWORK_OPERATORS = "lstAllOperators";
+    private static final String COMPONENT_LS_SELECTED_OPERATORS = "lstSelectedOperators";
+    private static final String COMPONENT_TBL_DISPERSALS = "tblDispersals";
+    private static final String COMPONENT_TBL_REPAYMENTS = "tblRepayments";
+    private static final String COMPONENT_TBL_NETWORK_OPERATORS = "tblNetworkOperators";
+    private static final String COMPONENT_TBL_PAYMENT_SERVICES = "tblPaymentServices";
+    private static final String COMPONENT_FLD_CLIENT_NAME = "fldClientName";
+    private static final String COMPONENT_FLD_PHONE_NUMBER = "fldPhoneNumber";
+    private static final String COMPONENT_FLD_OTHER_PHONE_NUMBER = "fldOtherPhoneNumber";
+    private static final String COMPONENT_FLD_EMAIL_ADDRESS = "fldEmailAddress";
+    private static final String COMPONENT_FLD_SERVICE_NAME = "fldServiceName";
+    private static final String COMPONENT_FLD_SMS_SHORT_CODE = "fldSmsShortCode";
+    private static final String COMPONENT_FLD_PIN_NUMBER = "fldPinNumber";
+    private static final String COMPONENT_FLD_SEND_MONEY_TEXT = "fldSendMoneyText";
+    private static final String COMPONENT_FLD_WITHDRAW_MONEY_TEXT = "fldWithdrawMoneyText";
+    private static final String COMPONENT_FLD_BALANCE_ENQUIRY_TEXT = "fldBalanceEnquiryText";
+    private static final String COMPONENT_FLD_OPERATOR_NAME = "fldOperatorName";
+    private static final String COMPONENT_FLD_DISPESRAL_CONFIRM_TEXT = "fldDispersalConfirmText";
+    private static final String COMPONENT_FLD_DISPERSAL_CONFIRM_TEXT_KEYWORD = "fldDispersalConfirmKeyword";
+    private static final String COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT = "fldRepaymentConfirmText";
+    private static final String COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT_KEYWORD = "fldRepaymentConfirmKeyword";
+    private static final String COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT = "fldBalanceEnquiryConfirmText";
+    private static final String COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT_KEYWORD = "fldBalanceEnquiryConfirmKeyword";
+    private static final String COMPONENT_DLG_CLIENT_DETAILS = "clientDetailsDialog";
+    private static final String COMPONENT_DLG_NETWORK_OPERATOR = "networkOperatorDialog";
+    private static final String COMPONENT_DLG_PAYMENT_SERVICE = "paymentServiceDialog";
+    private static final String COMPONENT_PN_SETTINGS_RIGHT_PANE = "pnSettingsRightPane";
+    private static final String COMPONENT_PN_CLIENTS = "pnClients";
+    private static final String COMPONENT_PN_DISPERSALS = "pnDispersals";
+    private static final String COMPONENT_PN_REPAYMENTS = "pnRepayments";
 
 //> I18N KEYS
-	private static final String PAYMENTVIEW_LOADED = "paymentview.loaded";
+    private static final String PAYMENTVIEW_LOADED = "paymentview.loaded";
 	
 //> CONSTANTS
-	private static final Logger LOG = Utils.getLogger(PaymentViewThinletTabController.class);
+    private static final Logger LOG = Utils.getLogger(PaymentViewThinletTabController.class);
 	
 //> UI COMPONENTS
-	/** Controller for the PaymentView plug-in */
-	private final PaymentViewPluginController paymentViewController;
-	/** Thinlet UI Controller */
-	private final UiGeneratorController uiController;
-	/** Thinlet tab component whose functionality is handled by this class */
-	private Object paymentViewTab;
+    /** Controller for the PaymentView plug-in */
+    private final PaymentViewPluginController paymentViewController;
+    /** Thinlet UI Controller */
+    private final UiGeneratorController uiController;
+    /** Thinlet tab component whose functionality is handled by this class */
+    private Object paymentViewTab;
 	
-	/** Paging handler for clients */
-	private ComponentPagingHandler clientsPagingHandler;
-	/** Paging handler for dispersals */
-	private ComponentPagingHandler dispersalsPagingHandler;
-	/** Paging handler for repayments*/
-	private ComponentPagingHandler repaymentsPagingHandler;
+    /** Paging handler for clients */
+    private ComponentPagingHandler clientsPagingHandler;
+    /** Paging handler for dispersals */
+    private ComponentPagingHandler dispersalsPagingHandler;
+    /** Paging handler for repayments*/
+    private ComponentPagingHandler repaymentsPagingHandler;
 
 //> DAO OBJECTS	
-	/** DAO for {@link Client}s */
-	private ClientDao clientDao;
-	/** DAO for {@link NetworkOperator}s */
-	private NetworkOperatorDao networkOperatorDao;
-	/** DAO for {@link PaymentService}s */
-	private PaymentServiceDao paymentServiceDao;
-	/** DAO for {@link PaymentServiceTransaction}s */
-	private PaymentServiceTransactionDao transactionDao;
-	/** DAO for contacts */
-	private ContactDao contactDao;
-
+    /** DAO for {@link Client}s */
+    private ClientDao clientDao;
+    /** DAO for {@link NetworkOperator}s */
+    private NetworkOperatorDao networkOperatorDao;
+    /** DAO for {@link PaymentService}s */
+    private PaymentServiceDao paymentServiceDao;
+    /** DAO for {@link PaymentServiceTransaction}s */
+    private PaymentServiceTransactionDao transactionDao;
+    /** DAO for contacts */
+    private ContactDao contactDao;
+    
 //> PROPERTIES
-	/** String used for the live search */
-	private String liveSearchString;
-	/** Keeps track of the currently selected client */
-	private Client selectedClient;
+    /** String used for the live search */
+    private String liveSearchString;
+    /** Keeps track of the currently selected client */
+    private Client selectedClient;
 	
 //> CONSTRUCTORS
-	/**
-	 * 
-	 * @param paymentViewController value for {@link #paymentViewController}
-	 * @param uiController value for {@linkplain #uiController}
-	 */
-	public PaymentViewThinletTabController(PaymentViewPluginController paymentViewController, UiGeneratorController uiController){
-		this.paymentViewController = paymentViewController;
-		this.uiController = uiController;
+    /**
+     * 
+     * @param paymentViewController value for {@link #paymentViewController}
+     * @param uiController value for {@linkplain #uiController}
+     */
+    public PaymentViewThinletTabController(PaymentViewPluginController paymentViewController, UiGeneratorController uiController){
+	    this.paymentViewController = paymentViewController;
+	    this.uiController = uiController;
 	}
 	
-	/**
-	 * Refreshes the tab display
-	 */
+    /**
+     * Refreshes the tab display
+     */
 	public void refresh(){
-		// Set the status message
-		uiController.setStatus(InternationalisationUtils.getI18NString(PAYMENTVIEW_LOADED));
+	    // Set the status message
+	    uiController.setStatus(InternationalisationUtils.getI18NString(PAYMENTVIEW_LOADED));
 		
-		// Check messages that have not been processed and push them through
-		processPendingTransactions();
+	    // Check messages that have not been processed and push them through
+	    processPendingTransactions();
 		
-		// Populate the clients list and add the paging controls just below the list of clients
-		Object clientList = getClientList();		
-		clientsPagingHandler = new ComponentPagingHandler(this.uiController, this, clientList);		
-		Object pnClients = uiController.find(this.paymentViewTab, COMPONENT_PN_CLIENTS);
-		Object clientPageControls = clientsPagingHandler.getPanel();
-		
-		uiController.setHAlign(clientPageControls, Thinlet.RIGHT);
-		uiController.add(pnClients, clientPageControls, 2);
-		clientsPagingHandler.refresh();	
+	    // Populate the clients list and add the paging controls just below the list of clients
+	    Object clientList = getClientList();		
+	    clientsPagingHandler = new ComponentPagingHandler(this.uiController, this, clientList);		
+	    Object pnClients = uiController.find(this.paymentViewTab, COMPONENT_PN_CLIENTS);
+	    Object clientPageControls = clientsPagingHandler.getPanel();
+	    
+	    uiController.setHAlign(clientPageControls, Thinlet.RIGHT);
+	    uiController.add(pnClients, clientPageControls, 2);
+	    clientsPagingHandler.refresh();	
 
-		// Populate the repayments table and add the paging controls just below the list of repayments
-		Object repaymentsTable = getRepaymentsTable();		
-		repaymentsPagingHandler = new ComponentPagingHandler(this.uiController, this, repaymentsTable);		
-		Object pnRepayments = uiController.find(this.paymentViewTab, COMPONENT_PN_REPAYMENTS);
-		uiController.add(pnRepayments, repaymentsPagingHandler.getPanel(), 1);
-		repaymentsPagingHandler.refresh();
+	    // Populate the repayments table and add the paging controls just below the list of repayments
+	    Object repaymentsTable = getRepaymentsTable();		
+	    repaymentsPagingHandler = new ComponentPagingHandler(this.uiController, this, repaymentsTable);		
+	    Object pnRepayments = uiController.find(this.paymentViewTab, COMPONENT_PN_REPAYMENTS);
+	    uiController.add(pnRepayments, repaymentsPagingHandler.getPanel(), 1);
+	    repaymentsPagingHandler.refresh();
 		
-		// Populate the dispersals table and add the paging controls just below the list of dispersals 
-		Object dispersalsTable = getDispersalsTable();		
-		dispersalsPagingHandler = new ComponentPagingHandler(this.uiController, this, dispersalsTable);
-		Object pnDispersals = uiController.find(this.paymentViewTab, COMPONENT_PN_DISPERSALS);
-		uiController.add(pnDispersals, dispersalsPagingHandler.getPanel(), 1);
-		dispersalsPagingHandler.refresh();
+	    // Populate the dispersals table and add the paging controls just below the list of dispersals 
+	    Object dispersalsTable = getDispersalsTable();		
+	    dispersalsPagingHandler = new ComponentPagingHandler(this.uiController, this, dispersalsTable);
+	    Object pnDispersals = uiController.find(this.paymentViewTab, COMPONENT_PN_DISPERSALS);
+	    uiController.add(pnDispersals, dispersalsPagingHandler.getPanel(), 1);
+	    dispersalsPagingHandler.refresh();
 	}
 	
 	/**
 	 * Internal helper method to process transaction-related messages
 	 */
-	private void processPendingTransactions(){
-		List<Message> pendingTransactions = transactionDao.getPendingTransactions();
+    private void processPendingTransactions(){
+	    List<Message> pendingTransactions = transactionDao.getPendingTransactions();
 		for(Message message: pendingTransactions)
 			processIncomingMessage(message);
 	}
@@ -192,7 +194,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 	 * @param paymentViewTab value for {@link #paymentViewTab}
 	 */
 	public void setTabComponent(Object paymentViewTab){
-		this.paymentViewTab = paymentViewTab;
+	    this.paymentViewTab = paymentViewTab;
 	}
 	
 	/**
@@ -200,7 +202,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 	 * @param clientDao
 	 */
 	public void setClientDao(ClientDao clientDao){
-		this.clientDao = clientDao;
+	    this.clientDao = clientDao;
 	}
 	
 	/**
@@ -208,7 +210,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 	 * @param contactDao
 	 */
 	public void setContactDao(ContactDao contactDao){
-		this.contactDao = contactDao;
+	    this.contactDao = contactDao;
 	}
 	
 	/**
@@ -216,7 +218,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 	 * @param networkOperatorDao
 	 */
 	public void setNetworkOperatorDao(NetworkOperatorDao networkOperatorDao){
-		this.networkOperatorDao = networkOperatorDao;
+	    this.networkOperatorDao = networkOperatorDao;
 	}
 	
 	/**
@@ -224,7 +226,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 	 * @param paymentServiceDao
 	 */
 	public void setPaymentServiceDao(PaymentServiceDao paymentServiceDao){
-		this.paymentServiceDao = paymentServiceDao;
+	    this.paymentServiceDao = paymentServiceDao;
 	}
 	
 	/**
@@ -232,19 +234,19 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 	 * @param transactionDao
 	 */
 	public void setPaymentServiceTranscationDao(PaymentServiceTransactionDao transactionDao){
-		this.transactionDao = transactionDao;
+	    this.transactionDao = transactionDao;
 	}
 	
 // LIST PAGING METHODS
 	/** @see PagedComponentItemProvider#getListDetails(Object, int, int) */
 	public PagedListDetails getListDetails(Object list, int startIndex,	int limit) {
-		if(list.equals(clientsPagingHandler.getList())){
-			return getClientListPagingDetails(startIndex, limit);
-		} else if(list.equals(repaymentsPagingHandler.getList())){
-			return getRepaymentListPagingDetails(startIndex, limit);
-		} else if(list.equals(dispersalsPagingHandler.getList())){
-			return getDispersalListPagingDetails(startIndex, limit);
-		} else throw new IllegalStateException();
+	    if(list.equals(clientsPagingHandler.getList())){
+	        return getClientListPagingDetails(startIndex, limit);
+	    } else if(list.equals(repaymentsPagingHandler.getList())){
+	        return getRepaymentListPagingDetails(startIndex, limit);
+	    } else if(list.equals(dispersalsPagingHandler.getList())){
+	        return getDispersalListPagingDetails(startIndex, limit);
+	    } else throw new IllegalStateException();
 	}
 	
 	private PagedListDetails getClientListPagingDetails(int startIndex, int limit){
@@ -353,9 +355,9 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 			return;
 		
 		//Begin pattern matching and extraction of information from the text message
-		if(content.matches("("+confirm1+")")){
+		if(containsKeyword(content, confirm1)){
 			transaction.setTransactionType(PaymentServiceTransaction.TYPE_DEPOSIT);
-		}else if(content.matches("("+confirm2+")")){
+		}else if(containsKeyword(content, confirm2)){
 			transaction.setTransactionType(PaymentServiceTransaction.TYPE_WITHDRAWAL);
 		}else{
 			return;
@@ -373,7 +375,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 		try{
 			transactionDao.savePaymentServiceTransaction(transaction);
 		}catch(DuplicateKeyException e){
-			LOG.debug("Fatal error: A transaction with the specified code already exists", e);
+			LOG.debug("Error: A transaction with the specified code already exists", e);
 		}
 	}
 	
@@ -1100,15 +1102,14 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 	 * @return
 	 */
 	private boolean containsKeyword(String responseText, String keyword){
-		if(responseText == null && keyword == null) {
+		if(responseText.length() == 0 && keyword.length() == 0) {
 			return true;
-		} else if(responseText == null || keyword == null) {
+		} else if(responseText.length() == 0 || keyword.length() ==0) {
 			return false;
-		} else if (responseText != null && keyword != null){
-			if(responseText.matches("("+keyword+")"))
-				return true;
-			else
-				return false;
+		} else if (responseText.length() > 0 && keyword.length() > 0){
+			Pattern pattern = Pattern.compile(keyword);
+			Matcher matcher = pattern.matcher(responseText);
+			return matcher.find();
 		}
 		return false;
 	}
