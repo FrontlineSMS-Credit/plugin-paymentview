@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog name="paymentViewErrorDialog" columns="1" text="i18n.paymentview.error.dialog" icon="/icons/fatal_error.png" closable="true" close="removeDialog(this)" modal="true" gap="9" top="9" left="9" bottom="9" right="9">
+	<panel border="true" text="i18n.paymentview.error.message" weighty="1" columns="1" gap="5" top="5" right="5" bottom="5" left="5">
+		<label name="lbErrorMessage" text=""/>
+	</panel>
+	<panel halign="right" gap="5" top="5" right="5" bottom="5" left="5">
+		<button text="i18n.action.ok" action="removeDialog(paymentViewErrorDialog)" icon="/icons/tick.png" />
+	</panel>
+</dialog>

@@ -54,9 +54,10 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     private static final String UI_FILE_NETWORK_OPERATOR_TABLE = "/ui/plugins/paymentview/tbNetworkOperators.xml";
     private static final String UI_FILE_NETWORK_OPERATOR_DIALOG = "/ui/plugins/paymentview/dgEditNetworkOperator.xml";
     private static final String UI_FILE_RESPONSE_TEXTS_DIALOG = "/ui/plugins/paymentview/dgPaymentServiceResponseTexts.xml";
+    private static final String UI_FILE_ERROR_DIALOG = "/ui/plugins/paymentview/dgPaymentViewError.xml";
 	
 //> COMPONENT NAME CONSTANTS
-    private static final String COMPONENT_BT_NEW_CLIENT = "btNewClient";
+    private static final String COMPONENT_BT_SAVE_CLIENT = "btSaveClient";
     private static final String COMPONENT_BT_DELETE_CLIENT = "btDeleteClient";
     private static final String COMPONENT_BT_EDIT_CLIENT = "btEditClient";
     private static final String COMPONENT_LS_CLIENTS = "lsClients";
@@ -90,9 +91,11 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     private static final String COMPONENT_PN_CLIENTS = "pnClients";
     private static final String COMPONENT_PN_DISPERSALS = "pnDispersals";
     private static final String COMPONENT_PN_REPAYMENTS = "pnRepayments";
+    private static final String COMPONENT_LB_ERROR_MESSAGE = "lbErrorMessage";
 
 //> I18N KEYS
     private static final String PAYMENTVIEW_LOADED = "paymentview.loaded";
+    private static final String PAYMENT_VIEW_SAME_KEYWORD_ERROR = "paymentview.error.same.keyword";
 	
 //> CONSTANTS
     private static final Logger LOG = Utils.getLogger(PaymentViewThinletTabController.class);
@@ -330,8 +333,10 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	
     	// Get the payment service from which the text message has been sent
     	PaymentService paymentService = paymentServiceDao.getPaymentServiceByShortCode(sender);
-    	if(paymentService == null)
-    		return;
+    	if(paymentService == null){
+    		LOG.debug("Message not from a registered payment service");
+    	    return;
+    	}
     
     	//Instantiate a transaction
     	PaymentServiceTransaction transaction = new PaymentServiceTransaction();
@@ -365,6 +370,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     		transaction.setTransactionType(PaymentServiceTransaction.TYPE_WITHDRAWAL);
     		smsTemplate = paymentService.getDispersalConfirmationText();
     	}else{
+    	    LOG.debug("Error: Keyword match failed");
     		return;
     	}
     	
@@ -375,6 +381,8 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	
     	//Set the transaction date to the date when the message was received
     	transaction.setTransactionDate(new Date(message.getDate()));
+    	
+    	//TODO: Final transaction validation before writing to the database
     	
     	//Information has been extracted, therefore save
     	try{
@@ -588,7 +596,18 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * Performs input validation for the required client properties 
      */
     public void validateRequiredFields(){
-    	//TODO: Implement validation checks
+    	Object dialog = getClientDialog();
+    	String clientName = uiController.getText(uiController.find(dialog, COMPONENT_FLD_CLIENT_NAME)).trim();
+    	String phoneNumber = uiController.getText(uiController.find(dialog, COMPONENT_FLD_PHONE_NUMBER)).trim();
+    	
+    	// Check if the client name and phone number have been provided 
+    	if(clientName.length() > 0 && phoneNumber.length() > 0){
+    	  uiController.setEnabled(uiController.find(dialog, COMPONENT_BT_SAVE_CLIENT), true);  
+    	}else{
+    	    uiController.setEnabled(uiController.find(dialog, COMPONENT_BT_SAVE_CLIENT), false);
+    	}
+    	
+    	uiController.repaint();
     }
     
     /**
@@ -687,6 +706,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	uiController.setText(uiController.find(dialog, COMPONENT_FLD_PHONE_NUMBER), client.getPhoneNumber());
     	uiController.setText(uiController.find(dialog, COMPONENT_FLD_OTHER_PHONE_NUMBER), client.getOtherPhoneNumber());
     	uiController.setText(uiController.find(dialog, COMPONENT_FLD_EMAIL_ADDRESS), client.getEmailAddress());
+    	uiController.setEnabled(uiController.find(dialog, COMPONENT_BT_SAVE_CLIENT), true);
     	
     	if(client.getContact() == null)
     		uiController.setSelected(uiController.find(dialog, "chkAddToContact"), false);
@@ -886,6 +906,17 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     }
     
     /**
+     * Helper method to display an error dialog with the specified error message
+     * @param messasge
+     */
+    private void showErrorDialog(String errorMessage){
+        Object dialog = uiController.loadComponentFromFile(UI_FILE_ERROR_DIALOG, this);
+        
+        uiController.setText(uiController.find(dialog, COMPONENT_LB_ERROR_MESSAGE), errorMessage);
+        uiController.add(dialog);
+    }
+    
+    /**
      * Saves a network operator record into the database
      */
     public void saveNetworkOperator(){
@@ -1053,6 +1084,10 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	// Cache the response texts before proceeding to the previous dialog
     	fetchPaymentServiceResponseTexts(currentDialog, service);
     	
+    	if(service.getRepaymentConfirmationKeyword().equalsIgnoreCase(service.getDispersalConfirmationKeyword())){
+    	    showErrorDialog(InternationalisationUtils.getI18NString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
+    	    return;
+    	}
     	removeDialog(currentDialog);
     	Object previousDialog = getPaymentServiceDialog(service);
     	
@@ -1068,23 +1103,11 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     private void fetchPaymentServiceResponseTexts(Object dialog, PaymentService service){
         String repaymentText = uiController.getText(uiController.find(dialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT)).trim();
     	String repaymentKeyword = uiController.getText(uiController.find(dialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT_KEYWORD)).trim();
-    	String dispersalText = uiController.getText(uiController.find(dialog, COMPONENT_FLD_DISPERSAL_CONFIRM_TEXT_KEYWORD)).trim();
-    	String dispersalKeyword = uiController.getText(uiController.find(dialog, COMPONENT_FLD_DISPESRAL_CONFIRM_TEXT)).trim();
+    	String dispersalText = uiController.getText(uiController.find(dialog, COMPONENT_FLD_DISPESRAL_CONFIRM_TEXT)).trim();
+    	String dispersalKeyword = uiController.getText(uiController.find(dialog, COMPONENT_FLD_DISPERSAL_CONFIRM_TEXT_KEYWORD)).trim();
     	String enquiryText = uiController.getText(uiController.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT)).trim();
     	String enquiryKeyword = uiController.getText(uiController.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT_KEYWORD)).trim();
-    	
-    	// If the response texts and their keywords have been specified, perform validation checks
-    	if(repaymentKeyword.length() > 0 && dispersalKeyword.length() > 0  && dispersalText.length() >0 
-    			&& repaymentText.length() > 0){
-    		
-    	    // Prevent the keywords for dispersals and repayments from being the same
-    	    if(repaymentKeyword.equalsIgnoreCase(dispersalKeyword)){
-    		    //TODO: Show dialog with appropriate error message
-    		    return;
-    		}
-    	
-    	}
-    
+    	    
     	// Set the confirmation texts and their keywords
     	if(containsKeyword(repaymentText, repaymentKeyword)) {
     	    service.setRepaymentConfirmationText(repaymentText);
@@ -1092,8 +1115,8 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	}
     	
     	if(containsKeyword(dispersalText, dispersalKeyword)){
-    	    service.setDispersalConfirmationKeyword(dispersalText);
-    		service.setDispersalConfirmationText(dispersalKeyword);
+    	    service.setDispersalConfirmationKeyword(dispersalKeyword);
+    		service.setDispersalConfirmationText(dispersalText);
     	}
     	
     	if(containsKeyword(enquiryText, enquiryKeyword)){
@@ -1144,7 +1167,13 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
         fetchPaymentServiceResponseTexts(dialog, service);
         		
         // Flag to check existence of the payment service in the DB
-        boolean serviceExists = (service.getId() >= 1) ? true:false;
+        boolean serviceExists = (service.getId() >= 1) ? true:false;        
+        
+        // Prevent same keyword for both dispersals and repayments
+        if(service.getRepaymentConfirmationKeyword().equalsIgnoreCase(service.getDispersalConfirmationKeyword())){
+            showErrorDialog(InternationalisationUtils.getI18NString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
+            return;
+        }
         
         // Save/update the payment service
         try{
