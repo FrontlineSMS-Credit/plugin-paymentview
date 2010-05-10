@@ -4,9 +4,6 @@ import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.creditsms.plugins.paymentview.data.domain.PaymentService;
-import org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction;
-
 public class PaymentServiceSmsProcessor {
 //> CONSTANTS
     /** Tag for extracting/inserting the amount transacted */
@@ -33,16 +30,12 @@ public class PaymentServiceSmsProcessor {
     private Hashtable<String, String> tagPositions = new Hashtable<String, String>();
     
 //> CONSTRUCTOR
-    public PaymentServiceSmsProcessor(String message, PaymentServiceTransaction transaction){
+    public PaymentServiceSmsProcessor(String message, String confirmTextTemplate){
         //Assumption is that the source message is delimited using a _ (space)
         sourceMessage = message.split(" ");
-		
-        //Get the payment service for the transaction
-        PaymentService service = transaction.getPaymentService();
-		
+				
         //Set the template message to be used
-        String confirmText = (transaction.getTransactionType() == PaymentServiceTransaction.TYPE_DEPOSIT)?
-                service.getRepaymentConfirmationText():service.getDispersalConfirmationText();
+        String confirmText = confirmTextTemplate;
 		
         templateSMS = confirmText.split(" ");
 		
@@ -58,71 +51,73 @@ public class PaymentServiceSmsProcessor {
                 tagPositions.put(PaymentServiceSmsProcessor.TG_LASTNAME, Integer.toString(i));
             else if(templateSMS[i].equals(PaymentServiceSmsProcessor.TG_PHONENUMBER))
                 tagPositions.put(PaymentServiceSmsProcessor.TG_PHONENUMBER, Integer.toString(i));
+            else if(templateSMS[i].equals(PaymentServiceSmsProcessor.TG_TRANSACTION_CODE))
+                tagPositions.put(PaymentServiceSmsProcessor.TG_TRANSACTION_CODE, Integer.toString(i));
         }		
     }
 	
     /**
-	 * Gets the amount transacted from the confirmation text
-	 * @return
-	 */
+     *  Gets the amount transacted from the confirmation text
+     *   @return
+     */
     public double getAmount(){
         return getNumber(PaymentServiceSmsProcessor.TG_AMOUNT);
     }
 	
     /**
-	 * Retrives the balance from the confirmation text
-	 * @return
-	 */
+     * Retrives the balance from the confirmation tex
+     *  @return
+     */
     public double getBalance(){
         return getNumber(PaymentServiceSmsProcessor.TG_BALANCE);
     }
 	
     /**
-	 * Gets the {@link Client}'s phone number from the confirmation text
-	 * @return
-	 */
+     *  Gets the {@link Client}'s phone number from the confirmation text
+     *  @return
+     */
     public String getPhoneNumber(){
         return getText(PaymentServiceSmsProcessor.TG_PHONENUMBER);
     }
 	
     /**
-	 * Gets the {@link Client}'s first name from the confirmation text
-	 * @return
-	 */
+     * Gets the {@link Client}'s first name from the confirmation text
+     * @return
+     */
     public String getFirstName(){
         return getText(PaymentServiceSmsProcessor.TG_FIRSTNAME);
     }
 	
     /**
-	 * Gets the {@link Client}'s last name from the confirmation text
-	 * @return
-	 */
+     * Gets the {@link Client}'s last name from the confirmation text
+     * @return
+     */
     public String getLastName(){
         return getText(PaymentServiceSmsProcessor.TG_LASTNAME);
     }
 	
     /**
-	 * Gets the {@link Client}'s full name by concatenating the first name and last name
-	 * from the confirmation text
-	 * @return
-	 */
+     * Gets the {@link Client}'s full name by concatenating the first name and last name
+     * from the confirmation text
+     * @return
+     */
     public String getFullName(){
         return (getFirstName() + " " + getLastName());
     }
 	
     /**
-	 * Extracts the transaction code from the confirmation text
-	 * @return
-	 */
+     * Extracts the transaction code from the confirmation text
+     * @return
+     */
     public String getTransactionCode(){
         return getText(PaymentServiceSmsProcessor.TG_TRANSACTION_CODE);
     }
 	
     /**
-	 * Extracts the numerical value from the sourceMessage using the specified tag
-	 * @param tag
-	 * @return
-	 */
+     * Extracts the numerical value from the sourceMessage using the specified tag
+     * @param tag
+     * @return
+     */
     private double getNumber(String tag){
         // Retrieve the position referenced by the tag
         String strValue = tagPositions.get(tag);
@@ -150,10 +145,10 @@ public class PaymentServiceSmsProcessor {
 	}
 	
     /**
-	 * Extracts the text value from the source message using the specified tag
-	 * @param tag
-	 * @return
-	 */
+     * Extracts the text value from the source message using the specified tag
+     * @param tag
+     * @return
+     */
     private String getText(String tag){
         String strIndex = tagPositions.get(tag);
         return sourceMessage[Integer.parseInt(strIndex)];
