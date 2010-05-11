@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <panel name="pnPaymentServiceList" columns="1" weightx="1" weighty="1" gap="9" top="9" left="9" bottom="9" right="9">
-    <table name="tblPaymentServices" weightx="1" weighty="1" perform="showPaymentService(this)">
+    <table name="tblPaymentServices" weightx="1" weighty="1" action="selectPaymentService(this)" perform="showPaymentService">
         <header>
             <column text="i18n.common.name" width="350"/>
             <column text="i18n.paymentview.settings.sms.shortcode" />
         </header>
     </table>
     <panel gap="5" weightx="1">
-        <button name="btnAddPaymentService" text="i18n.action.add" action="showPaymentServiceDialog"/>
+        <button name="btAddPaymentService" text="i18n.action.add" action="showPaymentServiceDialog"/>
+        <button name="btEditPaymentService" text="i18n.action.edit" enabled="false" action="showPaymentService"/>
+        <button name="btDeletePaymentService" text="i18n.action.delete" enabled="false" action="deletePaymentService"/>
     </panel>
 </panel>
