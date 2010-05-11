@@ -60,6 +60,8 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     private static final String COMPONENT_BT_DELETE_CLIENT = "btDeleteClient";
     private static final String COMPONENT_BT_EDIT_CLIENT = "btEditClient";
     private static final String COMPONENT_BT_SEND_MONEY = "btSendMoney";
+    private static final String COMPONENT_BT_EDIT_PAYMENT_SERVICE = "btEditPaymentService";
+    private static final String COMPONENT_BT_DELETE_PAYMENT_SERVICE = "btDeletePaymentService";
     private static final String COMPONENT_LS_CLIENTS = "lsClients";
     private static final String COMPONENT_LS_ALL_NETWORK_OPERATORS = "lstAllOperators";
     private static final String COMPONENT_LS_SELECTED_OPERATORS = "lstSelectedOperators";
@@ -93,6 +95,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     private static final String COMPONENT_PN_CLIENTS = "pnClients";
     private static final String COMPONENT_PN_DISPERSALS = "pnDispersals";
     private static final String COMPONENT_PN_REPAYMENTS = "pnRepayments";
+    private static final String COMPONENT_PN_PAYMENT_SERVICES = "pnPaymentServiceList";
     private static final String COMPONENT_LB_CLIENT_NAME = "lbClientName";
     private static final String COMPONENT_CB_PAYMENT_SERVICE = "cbPaymentService";
 
@@ -137,6 +140,8 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     private String liveSearchString;
     /** Keeps track of the currently selected client */
     private Client selectedClient;
+    /** Currently selected payment service*/
+    private PaymentService selectedPaymentService;
 	
 //> CONSTRUCTORS
     /**
@@ -155,7 +160,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     public void refresh(){
         // Set the status message
         uiController.setStatus(InternationalisationUtils.getI18NString(PAYMENTVIEW_LOADED));
-    	
+        
         // Check messages that have not been processed and push them through
         processPendingTransactions();
     	
@@ -914,9 +919,41 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	uiController.add(getPaymentServiceDialog());
     }
     
-    public void showPaymentService(Object component){
+    /**
+     * Event helper for handling selection of a payment service from the list of payment services
+     * @param component
+     */
+    public void selectPaymentService(Object component){
         Object selectedItem = uiController.getSelectedItem(component);
-    	uiController.add(getPaymentServiceDialog(getPaymentService(selectedItem)));
+        
+        selectedPaymentService = getPaymentService(selectedItem);
+        
+        Object panel = uiController.find(getSettingsRightPane(), COMPONENT_PN_PAYMENT_SERVICES);
+        Object btnEdit =  uiController.find(panel, COMPONENT_BT_EDIT_PAYMENT_SERVICE);
+        Object btnDelete = uiController.find(panel, COMPONENT_BT_DELETE_PAYMENT_SERVICE);
+        
+        boolean editEnabled = uiController.getBoolean(btnEdit, Thinlet.ENABLED);
+        boolean deleteEnabled = uiController.getBoolean(btnDelete, Thinlet.ENABLED);
+        
+        if(editEnabled == false){
+            uiController.setEnabled(btnEdit, true);
+        }
+        
+        if(deleteEnabled == false){
+            uiController.setEnabled(btnDelete, true);
+        }
+        
+        uiController.repaint(paymentViewTab);
+        
+        LOG.trace("EXIT");
+        
+    }
+    
+    /**
+     * Event helper method to display the create/edit {@link PaymentService} dialog
+     */
+    public void showPaymentService(){
+    	uiController.add(getPaymentServiceDialog(selectedPaymentService));
     }
     
     /**
@@ -1216,6 +1253,25 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
         
         // Close the dialog
         removeDialog(dialog);    	
+    }
+    
+    /**
+     * Event helper method for deleting a {@link PaymentService} record
+     */
+    public void deletePaymentService(){
+        // Delete the payment service
+        paymentServiceDao.deletePaymentService(selectedPaymentService, true);
+        
+        // Get the selected item
+        Object item = uiController.getSelectedItem(getPaymentServicesTable(false));
+        
+        // Delete the row from the table
+        uiController.remove(item);
+        
+        // Set the current payment service to null
+        selectedPaymentService = null;
+        
+        uiController.repaint(paymentViewTab);
     }
     
     /**
