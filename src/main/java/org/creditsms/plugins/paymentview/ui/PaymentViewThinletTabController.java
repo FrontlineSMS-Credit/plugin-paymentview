@@ -1107,10 +1107,13 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	// Cache the response texts before proceeding to the previous dialog
     	fetchPaymentServiceResponseTexts(currentDialog, service);
     	
-    	if(service.getRepaymentConfirmationKeyword().equalsIgnoreCase(service.getDispersalConfirmationKeyword())){
-    	    showErrorDialog(InternationalisationUtils.getI18NString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
-    	    return;
+    	if(service.getRepaymentConfirmationKeyword().length() > 0 && service.getDispersalConfirmationKeyword().length() > 0){
+        	if(service.getRepaymentConfirmationKeyword().equalsIgnoreCase(service.getDispersalConfirmationKeyword())){
+        	    showErrorDialog(InternationalisationUtils.getI18NString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
+        	    return;
+        	}
     	}
+    	
     	removeDialog(currentDialog);
     	Object previousDialog = getPaymentServiceDialog(service);
     	
@@ -1193,9 +1196,11 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
         boolean serviceExists = (service.getId() >= 1) ? true:false;        
         
         // Prevent same keyword for both dispersals and repayments
-        if(service.getRepaymentConfirmationKeyword().equalsIgnoreCase(service.getDispersalConfirmationKeyword())){
-            showErrorDialog(InternationalisationUtils.getI18NString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
-            return;
+        if(service.getRepaymentConfirmationKeyword().length() > 0 && service.getDispersalConfirmationKeyword().length() > 0){
+            if(service.getRepaymentConfirmationKeyword().equalsIgnoreCase(service.getDispersalConfirmationKeyword())){
+                showErrorDialog(InternationalisationUtils.getI18NString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
+                return;
+            }
         }
         
         // Save/update the payment service
