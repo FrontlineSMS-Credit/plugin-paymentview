@@ -18,7 +18,15 @@ public class HibernatePaymentServiceDao extends BaseHibernateDao<PaymentService>
 	}
 
 	/** @see PaymentServiceDao#deletePaymentService(PaymentService) */
-	public void deletePaymentService(PaymentService service) {
+	public void deletePaymentService(PaymentService service, boolean destroyTransactions) {
+	    
+	    if(destroyTransactions){
+    	    // Delete transactions associated with this payment service
+    	    String query = "DELETE FROM PaymentServiceTransaction WHERE paymentService = ?";
+    	    
+    	    super.getHibernateTemplate().bulkUpdate(query, service);
+	    }
+	    
 		super.delete(service);
 	}
 

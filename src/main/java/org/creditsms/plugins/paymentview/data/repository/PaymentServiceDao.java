@@ -59,6 +59,7 @@ public interface PaymentServiceDao {
 	/**
 	 * Deletes a payment service from the system
 	 * @param service payment service to be deleted
+	 * @param destroyTransactions where the associated transactions are also to be deleted
 	 */
-	public void deletePaymentService(PaymentService service);
+	public void deletePaymentService(PaymentService service, boolean destroyTransactions);
 }
