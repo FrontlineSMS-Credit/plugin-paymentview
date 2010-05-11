@@ -7,7 +7,6 @@ package org.creditsms.plugins.paymentview.ui;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -55,11 +54,13 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     private static final String UI_FILE_NETWORK_OPERATOR_DIALOG = "/ui/plugins/paymentview/dgEditNetworkOperator.xml";
     private static final String UI_FILE_RESPONSE_TEXTS_DIALOG = "/ui/plugins/paymentview/dgPaymentServiceResponseTexts.xml";
     private static final String UI_FILE_ERROR_DIALOG = "/ui/plugins/paymentview/dgPaymentViewError.xml";
+    private static final String UI_FILE_SEND_MONEY_DIALOG = "/ui/plugins/paymentview/dgSendMoneyForm.xml";
 	
 //> COMPONENT NAME CONSTANTS
     private static final String COMPONENT_BT_SAVE_CLIENT = "btSaveClient";
     private static final String COMPONENT_BT_DELETE_CLIENT = "btDeleteClient";
     private static final String COMPONENT_BT_EDIT_CLIENT = "btEditClient";
+    private static final String COMPONENT_BT_SEND_MONEY = "btSendMoney";
     private static final String COMPONENT_LS_CLIENTS = "lsClients";
     private static final String COMPONENT_LS_ALL_NETWORK_OPERATORS = "lstAllOperators";
     private static final String COMPONENT_LS_SELECTED_OPERATORS = "lstSelectedOperators";
@@ -84,18 +85,24 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     private static final String COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT_KEYWORD = "fldRepaymentConfirmKeyword";
     private static final String COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT = "fldBalanceEnquiryConfirmText";
     private static final String COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT_KEYWORD = "fldBalanceEnquiryConfirmKeyword";
+    private static final String COMPONENT_FLD_TRANSFER_AMOUNT = "fldAmount";
     private static final String COMPONENT_DLG_CLIENT_DETAILS = "clientDetailsDialog";
     private static final String COMPONENT_DLG_NETWORK_OPERATOR = "networkOperatorDialog";
     private static final String COMPONENT_DLG_PAYMENT_SERVICE = "paymentServiceDialog";
+    private static final String COMPONENT_DLG_SEND_MONEY  = "sendMoneyDialog";
     private static final String COMPONENT_PN_SETTINGS_RIGHT_PANE = "pnSettingsRightPane";
     private static final String COMPONENT_PN_CLIENTS = "pnClients";
     private static final String COMPONENT_PN_DISPERSALS = "pnDispersals";
     private static final String COMPONENT_PN_REPAYMENTS = "pnRepayments";
     private static final String COMPONENT_LB_ERROR_MESSAGE = "lbErrorMessage";
+    private static final String COMPONENT_LB_CLIENT_NAME = "lbClientName";
+    private static final String COMPONENT_CB_PAYMENT_SERVICE = "cbPaymentService";
 
 //> I18N KEYS
     private static final String PAYMENTVIEW_LOADED = "paymentview.loaded";
     private static final String PAYMENT_VIEW_SAME_KEYWORD_ERROR = "paymentview.error.same.keyword";
+    private static final String PAYMENTVIEW_NO_TRANSFER_AMOUNT = "paymentview.error.empty.amount";
+    private static final String PAYMENTVIEW_INVALID_TRANSFER_AMOUNT = "paymentview.error.invalid.amount";
 	
 //> CONSTANTS
     private static final Logger LOG = Utils.getLogger(PaymentViewThinletTabController.class);
@@ -328,7 +335,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @param message
      */
     public void processIncomingMessage(Message message){
-    	String sender = message.getSenderMsisdn();
+        String sender = message.getSenderMsisdn();
     	String content = message.getTextContent();
     	
     	// Get the payment service from which the text message has been sent
@@ -475,6 +482,16 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     }
     
     /**
+     * Returns a {@link Thinlet} UI combobox choice containing the name of a {@link PaymentService}
+     * @param service
+     * @return
+     */
+    private Object getChoice(PaymentService service){
+        Object choice = uiController.createComboboxChoice(service.getServiceName(), service);
+        return choice;
+    }
+    
+    /**
      * Gets the {@link Client} instance attached to the supplied component 
      * @param component
      * @return the attached {@link Client} instance
@@ -542,10 +559,12 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	// Get references to the edit and delete buttons
     	Object btnEditClient = uiController.find(paymentViewTab, COMPONENT_BT_EDIT_CLIENT);
     	Object btnDeleteClient = uiController.find(paymentViewTab, COMPONENT_BT_DELETE_CLIENT);
+    	Object btnSendMoney = uiController.find(paymentViewTab, COMPONENT_BT_SEND_MONEY);
     	
     	// Get "the enabled" property of the buttons
-    	boolean editEnabled = uiController.getBoolean(btnEditClient, "enabled");
-    	boolean deleteEnabled = uiController.getBoolean(btnDeleteClient, "enabled");
+    	boolean editEnabled = uiController.getBoolean(btnEditClient, Thinlet.ENABLED);
+    	boolean deleteEnabled = uiController.getBoolean(btnDeleteClient, Thinlet.ENABLED);
+    	boolean sendMoneyEnabled = uiController.getBoolean(btnSendMoney, Thinlet.ENABLED);
     	
     	// Enable the buttons if disabled
     	if(editEnabled == false){
@@ -554,6 +573,10 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	
     	if(deleteEnabled == false){
     		uiController.setEnabled(btnDeleteClient, true);
+    	}
+    	
+    	if(sendMoneyEnabled == false){
+    	    uiController.setEnabled(btnSendMoney, true);
     	}
     	
     	// Get the client instance attached to the list item
@@ -1200,6 +1223,114 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
         
         // Close the dialog
         removeDialog(dialog);    	
+    }
+    
+    /**
+     * Gets the {@link Thinlet} UI dialog for sending money to client
+     * @return
+     */
+    public Object getSendMoneyDialog(){
+        Object dialog = uiController.find(COMPONENT_DLG_SEND_MONEY);
+        
+        if(dialog == null){
+            dialog = uiController.loadComponentFromFile(UI_FILE_SEND_MONEY_DIALOG, this);
+            Object cbPaymentService = uiController.find(dialog, COMPONENT_CB_PAYMENT_SERVICE);
+            for(PaymentService service: paymentServiceDao.getAllPaymentServices()){
+                uiController.add(cbPaymentService, getChoice(service));
+            }
+        }
+        
+        return dialog;
+    }
+    
+    /**
+     * {@link Thinlet} UI event helper method for displaying the send money dialog
+     */
+    public void showSendMoneyDialog(){
+        Object dialog = getSendMoneyDialog();
+        
+        uiController.setAttachedObject(dialog, selectedClient);
+        uiController.setText(uiController.find(dialog, COMPONENT_LB_CLIENT_NAME), selectedClient.getName());
+        
+        uiController.add(dialog);
+    }
+    /**
+     * Event helper for initiating the send money transaction
+     */
+    public void sendMoney(){
+        Object dialog = getSendMoneyDialog();
+        
+        // Get the selected payment service from the combobox
+        Object comboChoice = uiController.getSelectedItem(uiController.find(dialog, COMPONENT_CB_PAYMENT_SERVICE));
+        PaymentService service = getPaymentService(comboChoice);
+        
+        // Check if an amount has been specified
+        String amount = uiController.getText(uiController.find(dialog, COMPONENT_FLD_TRANSFER_AMOUNT)).trim();
+        if(amount.length() == 0){
+            showErrorDialog(InternationalisationUtils.getI18NString(PAYMENTVIEW_NO_TRANSFER_AMOUNT));
+            return;
+        }
+        
+        // Validate the specified amount
+        if(!validateAmount(amount)){
+            showErrorDialog(InternationalisationUtils.getI18NString(PAYMENTVIEW_INVALID_TRANSFER_AMOUNT));
+            return;
+        }
+        
+        // Get the client attached to the dialog
+        Client client = getClient(dialog);
+        
+        // Get the text message to be sent to the payment service
+        String textMessage = getDispersalTextMessage(service, client.getPhoneNumber(), amount);
+        
+        // Null check
+        if(textMessage != null){
+            uiController.getFrontlineController().sendTextMessage(service.getSmsShortCode(), textMessage);
+            removeDialog(dialog);
+        }
+    }
+    
+    /**
+     * Helper method for constructing the message for triggering dispersal of funds
+     * @param service
+     * @param recipient
+     * @param amount
+     * @return
+     */
+    private String getDispersalTextMessage(PaymentService service, String recipient, String amount){
+        // Get the template message
+        String template = service.getSendMoneyTextMessage();
+        
+        if(template == null){
+            return null;
+        }
+        
+        //TODO We may need an agnostic way to do this
+        
+        // Replace the tags for the template with the actual values
+        String message = template.replace(PaymentServiceSmsProcessor.TG_PIN_NUMBER, service.getPinNumber());
+        message = message.replace(PaymentServiceSmsProcessor.TG_PHONENUMBER, recipient);
+        message = message.replace(PaymentServiceSmsProcessor.TG_AMOUNT, amount);
+        
+        return message;
+    }
+    
+    /**
+     * Helper method for performing number validation
+     * @param amount
+     * @return
+     */
+    private boolean validateAmount(String amount){
+        double numericalValue;
+        
+        try{
+           numericalValue = Double.parseDouble(amount); 
+        }catch(NumberFormatException ne){
+            LOG.debug("Invalid number", ne);
+            return false;
+        }       
+        
+        return (numericalValue <=0 )? false: true;
     }
 	
 }
