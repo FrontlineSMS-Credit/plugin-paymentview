@@ -53,7 +53,6 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     private static final String UI_FILE_NETWORK_OPERATOR_TABLE = "/ui/plugins/paymentview/tbNetworkOperators.xml";
     private static final String UI_FILE_NETWORK_OPERATOR_DIALOG = "/ui/plugins/paymentview/dgEditNetworkOperator.xml";
     private static final String UI_FILE_RESPONSE_TEXTS_DIALOG = "/ui/plugins/paymentview/dgPaymentServiceResponseTexts.xml";
-    private static final String UI_FILE_ERROR_DIALOG = "/ui/plugins/paymentview/dgPaymentViewError.xml";
     private static final String UI_FILE_SEND_MONEY_DIALOG = "/ui/plugins/paymentview/dgSendMoneyForm.xml";
 	
 //> COMPONENT NAME CONSTANTS
@@ -94,7 +93,6 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     private static final String COMPONENT_PN_CLIENTS = "pnClients";
     private static final String COMPONENT_PN_DISPERSALS = "pnDispersals";
     private static final String COMPONENT_PN_REPAYMENTS = "pnRepayments";
-    private static final String COMPONENT_LB_ERROR_MESSAGE = "lbErrorMessage";
     private static final String COMPONENT_LB_CLIENT_NAME = "lbClientName";
     private static final String COMPONENT_CB_PAYMENT_SERVICE = "cbPaymentService";
 
@@ -928,16 +926,6 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
         uiController.add(getNetworkOperatorDialog());
     }
     
-    /**
-     * Helper method to display an error dialog with the specified error message
-     * @param messasge
-     */
-    private void showErrorDialog(String errorMessage){
-        Object dialog = uiController.loadComponentFromFile(UI_FILE_ERROR_DIALOG, this);
-        
-        uiController.setText(uiController.find(dialog, COMPONENT_LB_ERROR_MESSAGE), errorMessage);
-        uiController.add(dialog);
-    }
     
     /**
      * Saves a network operator record into the database
@@ -1109,7 +1097,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	
     	if(service.getRepaymentConfirmationKeyword().length() > 0 && service.getDispersalConfirmationKeyword().length() > 0){
         	if(service.getRepaymentConfirmationKeyword().equalsIgnoreCase(service.getDispersalConfirmationKeyword())){
-        	    showErrorDialog(InternationalisationUtils.getI18NString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
+        	    uiController.alert(InternationalisationUtils.getI18NString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
         	    return;
         	}
     	}
@@ -1198,7 +1186,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
         // Prevent same keyword for both dispersals and repayments
         if(service.getRepaymentConfirmationKeyword().length() > 0 && service.getDispersalConfirmationKeyword().length() > 0){
             if(service.getRepaymentConfirmationKeyword().equalsIgnoreCase(service.getDispersalConfirmationKeyword())){
-                showErrorDialog(InternationalisationUtils.getI18NString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
+                uiController.alert(InternationalisationUtils.getI18NString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
                 return;
             }
         }
@@ -1272,13 +1260,13 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
         // Check if an amount has been specified
         String amount = uiController.getText(uiController.find(dialog, COMPONENT_FLD_TRANSFER_AMOUNT)).trim();
         if(amount.length() == 0){
-            showErrorDialog(InternationalisationUtils.getI18NString(PAYMENTVIEW_NO_TRANSFER_AMOUNT));
+            uiController.alert(InternationalisationUtils.getI18NString(PAYMENTVIEW_NO_TRANSFER_AMOUNT));
             return;
         }
         
         // Validate the specified amount
         if(!validateAmount(amount)){
-            showErrorDialog(InternationalisationUtils.getI18NString(PAYMENTVIEW_INVALID_TRANSFER_AMOUNT));
+            uiController.alert(InternationalisationUtils.getI18NString(PAYMENTVIEW_INVALID_TRANSFER_AMOUNT));
             return;
         }
         
