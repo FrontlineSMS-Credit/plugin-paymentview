@@ -14,6 +14,7 @@
 					<button name="btNewClient" text="i18n.action.add" action="showNewClientForm"/>
 					<button name="btEditClient" text="i18n.action.edit" action="showClientDetails" enabled="false" />
 					<button name="btDeleteClient" text="i18n.action.delete" action="deleteClient" enabled="false"/>
+					<button name="btSendMoney" text="i18n.paymentview.action.send.money" action="showSendMoneyDialog" enabled="false" />
 				</panel>
 			</panel>
 			<button tooltip="i18n.tooltip.click.for.help" valign="bottom" icon="/icons/big_help.png" type="link"/>
