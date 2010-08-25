@@ -19,6 +19,7 @@ import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.Message;
 import net.frontlinesms.data.repository.ContactDao;
+import net.frontlinesms.plugins.BasePluginThinletTabController;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
@@ -45,7 +46,7 @@ import thinlet.Thinlet;
  * @author Emmanuel Kala
  *
  */
-public class PaymentViewThinletTabController implements ThinletUiEventHandler, PagedComponentItemProvider {
+public class PaymentViewThinletTabController extends BasePluginThinletTabController<PaymentViewPluginController> implements ThinletUiEventHandler, PagedComponentItemProvider {
 //> UI FILES
     private static final String UI_FILE_CLIENT_DIALOG = "/ui/plugins/paymentview/dgEditClient.xml";
     private static final String UI_FILE_PAYMENT_SERVICE_DIALOG = "/ui/plugins/paymentview/dgEditPaymentService.xml";
@@ -109,10 +110,6 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     private static final Logger LOG = Utils.getLogger(PaymentViewThinletTabController.class);
 	
 //> UI COMPONENTS
-    /** Controller for the PaymentView plug-in */
-    private final PaymentViewPluginController paymentViewController;
-    /** Thinlet UI Controller */
-    private final UiGeneratorController uiController;
     /** Thinlet tab component whose functionality is handled by this class */
     private Object paymentViewTab;
 	
@@ -146,12 +143,11 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
 //> CONSTRUCTORS
     /**
      * 
-     * @param paymentViewController value for {@link #paymentViewController}
-     * @param uiController value for {@linkplain #uiController}
+     * @param paymentViewController value for {@link #controller}
+     * @param uiController value for {@linkplain #ui}
      */
-    public PaymentViewThinletTabController(PaymentViewPluginController paymentViewController, UiGeneratorController uiController){
-        this.paymentViewController = paymentViewController;
-        this.uiController = uiController;
+    public PaymentViewThinletTabController(PaymentViewPluginController controller, UiGeneratorController ui){
+        super(controller, ui);
     }
 	
     /**
@@ -159,33 +155,33 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      */
     public void refresh(){
         // Set the status message
-        uiController.setStatus(InternationalisationUtils.getI18NString(PAYMENTVIEW_LOADED));
+        ui.setStatus(InternationalisationUtils.getI18NString(PAYMENTVIEW_LOADED));
         
         // Check messages that have not been processed and push them through
         processPendingTransactions();
     	
         // Populate the clients list and add the paging controls just below the list of clients
         Object clientList = getClientList();		
-        clientsPagingHandler = new ComponentPagingHandler(this.uiController, this, clientList);		
-        Object pnClients = uiController.find(this.paymentViewTab, COMPONENT_PN_CLIENTS);
+        clientsPagingHandler = new ComponentPagingHandler(this.ui, this, clientList);		
+        Object pnClients = ui.find(this.paymentViewTab, COMPONENT_PN_CLIENTS);
         Object clientPageControls = clientsPagingHandler.getPanel();
         
-        uiController.setHAlign(clientPageControls, Thinlet.RIGHT);
-        uiController.add(pnClients, clientPageControls, 2);
+        ui.setHAlign(clientPageControls, Thinlet.RIGHT);
+        ui.add(pnClients, clientPageControls, 2);
         clientsPagingHandler.refresh();	
     
         // Populate the repayments table and add the paging controls just below the list of repayments
         Object repaymentsTable = getRepaymentsTable();		
-        repaymentsPagingHandler = new ComponentPagingHandler(this.uiController, this, repaymentsTable);		
-        Object pnRepayments = uiController.find(this.paymentViewTab, COMPONENT_PN_REPAYMENTS);
-        uiController.add(pnRepayments, repaymentsPagingHandler.getPanel(), 1);
+        repaymentsPagingHandler = new ComponentPagingHandler(this.ui, this, repaymentsTable);		
+        Object pnRepayments = ui.find(this.paymentViewTab, COMPONENT_PN_REPAYMENTS);
+        ui.add(pnRepayments, repaymentsPagingHandler.getPanel(), 1);
         repaymentsPagingHandler.refresh();
     	
         // Populate the dispersals table and add the paging controls just below the list of dispersals 
         Object dispersalsTable = getDispersalsTable();		
-        dispersalsPagingHandler = new ComponentPagingHandler(this.uiController, this, dispersalsTable);
-        Object pnDispersals = uiController.find(this.paymentViewTab, COMPONENT_PN_DISPERSALS);
-        uiController.add(pnDispersals, dispersalsPagingHandler.getPanel(), 1);
+        dispersalsPagingHandler = new ComponentPagingHandler(this.ui, this, dispersalsTable);
+        Object pnDispersals = ui.find(this.paymentViewTab, COMPONENT_PN_DISPERSALS);
+        ui.add(pnDispersals, dispersalsPagingHandler.getPanel(), 1);
         dispersalsPagingHandler.refresh();
     }
     
@@ -408,19 +404,19 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @return The client list component
      */
     private Object getClientList(){
-    	Object clientList = uiController.find(paymentViewTab, COMPONENT_LS_CLIENTS);
+    	Object clientList = ui.find(paymentViewTab, COMPONENT_LS_CLIENTS);
     	return clientList;
     }
     
     /** @return the dispersals table component */
     private Object getDispersalsTable(){
-    	Object dispersalsTable = uiController.find(paymentViewTab, COMPONENT_TBL_DISPERSALS);
+    	Object dispersalsTable = ui.find(paymentViewTab, COMPONENT_TBL_DISPERSALS);
     	return dispersalsTable;
     }
     
     /** @return the repayments table component */
     private Object getRepaymentsTable(){
-    	Object repaymentsTable = uiController.find(paymentViewTab, COMPONENT_TBL_REPAYMENTS);
+    	Object repaymentsTable = ui.find(paymentViewTab, COMPONENT_TBL_REPAYMENTS);
     	return repaymentsTable;
     }
     
@@ -430,7 +426,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @return list item to insert to the thinlet list
      */
     private Object getListItem(Client client){	
-    	Object node = uiController.createListItem(client.getName(), client);
+    	Object node = ui.createListItem(client.getName(), client);
     	return node;
     }
     
@@ -440,7 +436,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @return list item
      */
     private Object getListItem(NetworkOperator operator){
-    	return uiController.createListItem(operator.getOperatorName(), operator);
+    	return ui.createListItem(operator.getOperatorName(), operator);
     }
     
     /**
@@ -449,11 +445,11 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @return
      */
     private Object getRow(PaymentServiceTransaction transaction){
-    	Object row = uiController.createTableRow(transaction);
-    	uiController.add(row, uiController.createTableCell(transaction.getClient().getContact().getDisplayName()));
-    	uiController.add(row, uiController.createTableCell(transaction.getPaymentService().getServiceName()));
-    	uiController.add(row, uiController.createTableCell(Double.toString(transaction.getAmount())));
-    	uiController.add(row, uiController.createTableCell(InternationalisationUtils.getDatetimeFormat().format(transaction.getDate())));
+    	Object row = ui.createTableRow(transaction);
+    	ui.add(row, ui.createTableCell(transaction.getClient().getContact().getDisplayName()));
+    	ui.add(row, ui.createTableCell(transaction.getPaymentService().getServiceName()));
+    	ui.add(row, ui.createTableCell(Double.toString(transaction.getAmount())));
+    	ui.add(row, ui.createTableCell(InternationalisationUtils.getDatetimeFormat().format(transaction.getDate())));
     	return row;
     }
     
@@ -463,10 +459,10 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @return
      */
     private Object getRow(PaymentService service){
-    	Object row = uiController.createTableRow(service);
+    	Object row = ui.createTableRow(service);
     	
-    	uiController.add(row, uiController.createTableCell(service.getServiceName()));
-    	uiController.add(row, uiController.createTableCell(service.getSmsShortCode()));
+    	ui.add(row, ui.createTableCell(service.getServiceName()));
+    	ui.add(row, ui.createTableCell(service.getSmsShortCode()));
     	
     	return row;
     }
@@ -477,9 +473,9 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @return
      */
     private Object getRow(NetworkOperator operator){
-    	Object row = uiController.createTableRow(operator);
+    	Object row = ui.createTableRow(operator);
     	
-    	uiController.add(row, uiController.createTableCell(operator.getOperatorName()));
+    	ui.add(row, ui.createTableCell(operator.getOperatorName()));
     	
     	return row;
     }
@@ -490,7 +486,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @return
      */
     private Object getChoice(PaymentService service){
-        Object choice = uiController.createComboboxChoice(service.getServiceName(), service);
+        Object choice = ui.createComboboxChoice(service.getServiceName(), service);
         return choice;
     }
     
@@ -500,7 +496,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @return the attached {@link Client} instance
      */
     public Client getClient(Object component){
-    	return(Client)uiController.getAttachedObject(component);
+    	return(Client)ui.getAttachedObject(component);
     }
     
     /**
@@ -509,7 +505,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @return the attached {@link PaymentServiceTransaction} instance
      */
     public PaymentServiceTransaction getPaymentServiceTransaction(Object component){
-    	return (PaymentServiceTransaction)uiController.getAttachedObject(component);
+    	return (PaymentServiceTransaction)ui.getAttachedObject(component);
     }
     
     /**
@@ -518,7 +514,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @return the attached {@link PaymentService} instance
      */
     public PaymentService getPaymentService(Object component){
-    	return (PaymentService)uiController.getAttachedObject(component);
+    	return (PaymentService)ui.getAttachedObject(component);
     }
     
     /**
@@ -527,7 +523,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @return the attached {@link NetworkOperator} instance
      */
     public NetworkOperator getNetworkOperator(Object component){
-    	return (NetworkOperator)uiController.getAttachedObject(component);
+    	return (NetworkOperator)ui.getAttachedObject(component);
     }
     
     /**
@@ -538,7 +534,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	LOG.info("Initiating live search");
     	
     	// Grab the typed text
-    	String searchText = uiController.getText(textField);
+    	String searchText = ui.getText(textField);
     
     	// Determine the search criteria to use
     	if(searchText.trim().length() > 0){
@@ -551,7 +547,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	repaymentsPagingHandler.refresh();
     			
     	// Repaint the UI to reflect changes
-    	uiController.repaint(paymentViewTab);
+    	ui.repaint(paymentViewTab);
     }
     
     /**
@@ -560,30 +556,30 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      */
     public void selectClient(Object component){
     	// Get references to the edit and delete buttons
-    	Object btnEditClient = uiController.find(paymentViewTab, COMPONENT_BT_EDIT_CLIENT);
-    	Object btnDeleteClient = uiController.find(paymentViewTab, COMPONENT_BT_DELETE_CLIENT);
-    	Object btnSendMoney = uiController.find(paymentViewTab, COMPONENT_BT_SEND_MONEY);
+    	Object btnEditClient = ui.find(paymentViewTab, COMPONENT_BT_EDIT_CLIENT);
+    	Object btnDeleteClient = ui.find(paymentViewTab, COMPONENT_BT_DELETE_CLIENT);
+    	Object btnSendMoney = ui.find(paymentViewTab, COMPONENT_BT_SEND_MONEY);
     	
     	// Get "the enabled" property of the buttons
-    	boolean editEnabled = uiController.getBoolean(btnEditClient, Thinlet.ENABLED);
-    	boolean deleteEnabled = uiController.getBoolean(btnDeleteClient, Thinlet.ENABLED);
-    	boolean sendMoneyEnabled = uiController.getBoolean(btnSendMoney, Thinlet.ENABLED);
+    	boolean editEnabled = ui.getBoolean(btnEditClient, Thinlet.ENABLED);
+    	boolean deleteEnabled = ui.getBoolean(btnDeleteClient, Thinlet.ENABLED);
+    	boolean sendMoneyEnabled = ui.getBoolean(btnSendMoney, Thinlet.ENABLED);
     	
     	// Enable the buttons if disabled
     	if(editEnabled == false){
-    		uiController.setEnabled(btnEditClient,  true);
+    		ui.setEnabled(btnEditClient,  true);
     	}
     	
     	if(deleteEnabled == false){
-    		uiController.setEnabled(btnDeleteClient, true);
+    		ui.setEnabled(btnDeleteClient, true);
     	}
     	
     	if(sendMoneyEnabled == false){
-    	    uiController.setEnabled(btnSendMoney, true);
+    	    ui.setEnabled(btnSendMoney, true);
     	}
     	
     	// Get the client instance attached to the list item
-    	Client client = getClient(uiController.getSelectedItem(component));
+    	Client client = getClient(ui.getSelectedItem(component));
     	
     	// Set the selected client
     	selectedClient = client;
@@ -593,7 +589,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	dispersalsPagingHandler.refresh();
     	repaymentsPagingHandler.refresh();
     
-    	uiController.repaint(paymentViewTab);
+    	ui.repaint(paymentViewTab);
     }
     
     /**
@@ -603,7 +599,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     public void showClientDetails(){		
     	// Load the client details dialog
     	Object dialog = getClientDialog(selectedClient);
-    	uiController.add(dialog);
+    	ui.add(dialog);
     }
     
     public void deleteClient(){
@@ -615,7 +611,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @param dialog {@link Thinlet} UI dialog to be removed from the display 
      */
     public void removeDialog(Object dialog){
-    	uiController.remove(dialog);
+    	ui.remove(dialog);
     }
     
     /**
@@ -623,17 +619,17 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      */
     public void validateRequiredFields(){
     	Object dialog = getClientDialog();
-    	String clientName = uiController.getText(uiController.find(dialog, COMPONENT_FLD_CLIENT_NAME)).trim();
-    	String phoneNumber = uiController.getText(uiController.find(dialog, COMPONENT_FLD_PHONE_NUMBER)).trim();
+    	String clientName = ui.getText(ui.find(dialog, COMPONENT_FLD_CLIENT_NAME)).trim();
+    	String phoneNumber = ui.getText(ui.find(dialog, COMPONENT_FLD_PHONE_NUMBER)).trim();
     	
     	// Check if the client name and phone number have been provided 
     	if(clientName.length() > 0 && phoneNumber.length() > 0){
-    	  uiController.setEnabled(uiController.find(dialog, COMPONENT_BT_SAVE_CLIENT), true);  
+    	  ui.setEnabled(ui.find(dialog, COMPONENT_BT_SAVE_CLIENT), true);  
     	}else{
-    	    uiController.setEnabled(uiController.find(dialog, COMPONENT_BT_SAVE_CLIENT), false);
+    	    ui.setEnabled(ui.find(dialog, COMPONENT_BT_SAVE_CLIENT), false);
     	}
     	
-    	uiController.repaint();
+    	ui.repaint();
     }
     
     /**
@@ -649,13 +645,13 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	Client client = (clientExists == true)? getClient(dialog):new Client();
     	
     	// Fetch the client info from the dialog
-    	client.setName(uiController.getText(uiController.find(dialog, COMPONENT_FLD_CLIENT_NAME)));
-    	client.setPhoneNumber(uiController.getText(uiController.find(dialog, COMPONENT_FLD_PHONE_NUMBER)));
-    	client.setOtherPhoneNumber(uiController.getText(uiController.find(dialog, COMPONENT_FLD_OTHER_PHONE_NUMBER)));
-    	client.setEmailAddress(uiController.getText(uiController.find(dialog, COMPONENT_FLD_EMAIL_ADDRESS)));
+    	client.setName(ui.getText(ui.find(dialog, COMPONENT_FLD_CLIENT_NAME)));
+    	client.setPhoneNumber(ui.getText(ui.find(dialog, COMPONENT_FLD_PHONE_NUMBER)));
+    	client.setOtherPhoneNumber(ui.getText(ui.find(dialog, COMPONENT_FLD_OTHER_PHONE_NUMBER)));
+    	client.setEmailAddress(ui.getText(ui.find(dialog, COMPONENT_FLD_EMAIL_ADDRESS)));
     	
     	// Check if a contact record is to be created for this client
-    	boolean createContact = uiController.getBoolean(uiController.find(dialog, "chkAddToContact"), "selected"); 
+    	boolean createContact = ui.getBoolean(ui.find(dialog, "chkAddToContact"), "selected"); 
     	if (createContact){
     		Contact contact = new Contact(client.getName(), client.getPhoneNumber(), client.getOtherPhoneNumber(), 
     				client.getEmailAddress(), null, true);
@@ -689,16 +685,16 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	
     	// Remove the item being updated from the client list
     	if(clientExists){
-    		Object selectedItem = uiController.getSelectedItem(getClientList());
-    		uiController.remove(selectedItem);
+    		Object selectedItem = ui.getSelectedItem(getClientList());
+    		ui.remove(selectedItem);
     	}
     	
     	//Update the UI
     	Object item = getListItem(client);
-    	uiController.add(getClientList(), item);		
+    	ui.add(getClientList(), item);		
     	
     	removeDialog(dialog);
-    	uiController.repaint(paymentViewTab);
+    	ui.repaint(paymentViewTab);
     	
     }
     
@@ -706,15 +702,15 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * Shows the client dialog
      */
     public void showNewClientForm(){
-    	uiController.add(getClientDialog());
+    	ui.add(getClientDialog());
     }
     
     /** @return a reference to the client dialog */
     private Object getClientDialog(){
-    	Object dialog = uiController.find(COMPONENT_DLG_CLIENT_DETAILS);
+    	Object dialog = ui.find(COMPONENT_DLG_CLIENT_DETAILS);
     	
     	if(dialog == null)
-    		return uiController.loadComponentFromFile(UI_FILE_CLIENT_DIALOG, this);
+    		return ui.loadComponentFromFile(UI_FILE_CLIENT_DIALOG, this);
     	else
     		return dialog;
     }
@@ -726,16 +722,16 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      */
     private Object getClientDialog(Client client){
     	Object dialog = getClientDialog();
-    	uiController.setAttachedObject(dialog, client);
+    	ui.setAttachedObject(dialog, client);
     	
-    	uiController.setText(uiController.find(dialog, COMPONENT_FLD_CLIENT_NAME), client.getName());
-    	uiController.setText(uiController.find(dialog, COMPONENT_FLD_PHONE_NUMBER), client.getPhoneNumber());
-    	uiController.setText(uiController.find(dialog, COMPONENT_FLD_OTHER_PHONE_NUMBER), client.getOtherPhoneNumber());
-    	uiController.setText(uiController.find(dialog, COMPONENT_FLD_EMAIL_ADDRESS), client.getEmailAddress());
-    	uiController.setEnabled(uiController.find(dialog, COMPONENT_BT_SAVE_CLIENT), true);
+    	ui.setText(ui.find(dialog, COMPONENT_FLD_CLIENT_NAME), client.getName());
+    	ui.setText(ui.find(dialog, COMPONENT_FLD_PHONE_NUMBER), client.getPhoneNumber());
+    	ui.setText(ui.find(dialog, COMPONENT_FLD_OTHER_PHONE_NUMBER), client.getOtherPhoneNumber());
+    	ui.setText(ui.find(dialog, COMPONENT_FLD_EMAIL_ADDRESS), client.getEmailAddress());
+    	ui.setEnabled(ui.find(dialog, COMPONENT_BT_SAVE_CLIENT), true);
     	
     	if(client.getContact() == null)
-    		uiController.setSelected(uiController.find(dialog, "chkAddToContact"), false);
+    		ui.setSelected(ui.find(dialog, "chkAddToContact"), false);
     	
     	return dialog;
     }
@@ -780,18 +776,18 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @return
      */
     private Object getPaymentServiceDialog(){
-        Object dialog = uiController.find(COMPONENT_DLG_PAYMENT_SERVICE);
+        Object dialog = ui.find(COMPONENT_DLG_PAYMENT_SERVICE);
     	
     	if(dialog == null)
-    	    dialog =  uiController.loadComponentFromFile(UI_FILE_PAYMENT_SERVICE_DIALOG, this);
+    	    dialog =  ui.loadComponentFromFile(UI_FILE_PAYMENT_SERVICE_DIALOG, this);
     	
     	// Obtain reference to the "All Operators" list component
-    	Object allOperators = uiController.find(dialog, COMPONENT_LS_ALL_NETWORK_OPERATORS);
+    	Object allOperators = ui.find(dialog, COMPONENT_LS_ALL_NETWORK_OPERATORS);
     
     	// Populate the "All Operators" list
     	for(NetworkOperator operator: networkOperatorDao.getAllNetworkOperators()){
     	    Object item = getListItem(operator);
-    		uiController.add(allOperators, item);
+    		ui.add(allOperators, item);
     	}
     	
     	return dialog;
@@ -804,21 +800,21 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      */
     private Object getPaymentServiceDialog(PaymentService service){
         Object dialog = getPaymentServiceDialog();
-        uiController.setAttachedObject(dialog, service);
+        ui.setAttachedObject(dialog, service);
     
-    	uiController.setText(uiController.find(dialog, COMPONENT_FLD_SERVICE_NAME), service.getServiceName());
-    	uiController.setText(uiController.find(dialog, COMPONENT_FLD_SMS_SHORT_CODE), service.getSmsShortCode());
-    	uiController.setText(uiController.find(dialog, COMPONENT_FLD_PIN_NUMBER), service.getPinNumber());
-    	uiController.setText(uiController.find(dialog, COMPONENT_FLD_SEND_MONEY_TEXT), service.getSendMoneyTextMessage());
-    	uiController.setText(uiController.find(dialog, COMPONENT_FLD_WITHDRAW_MONEY_TEXT), service.getWithdrawMoneyTextMessage());
-    	uiController.setText(uiController.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_TEXT), service.getBalanceEnquiryTextMessage());
+    	ui.setText(ui.find(dialog, COMPONENT_FLD_SERVICE_NAME), service.getServiceName());
+    	ui.setText(ui.find(dialog, COMPONENT_FLD_SMS_SHORT_CODE), service.getSmsShortCode());
+    	ui.setText(ui.find(dialog, COMPONENT_FLD_PIN_NUMBER), service.getPinNumber());
+    	ui.setText(ui.find(dialog, COMPONENT_FLD_SEND_MONEY_TEXT), service.getSendMoneyTextMessage());
+    	ui.setText(ui.find(dialog, COMPONENT_FLD_WITHDRAW_MONEY_TEXT), service.getWithdrawMoneyTextMessage());
+    	ui.setText(ui.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_TEXT), service.getBalanceEnquiryTextMessage());
     	
-    	Object selectedOperators = uiController.find(dialog, COMPONENT_LS_SELECTED_OPERATORS);		
+    	Object selectedOperators = ui.find(dialog, COMPONENT_LS_SELECTED_OPERATORS);		
     	
     	// Populate the network operators list for the selected payment service
     	for(NetworkOperator operator: service.getNetworkOperators()){
     	    Object item = getListItem(operator);
-    		uiController.add(selectedOperators, item);
+    		ui.add(selectedOperators, item);
     	}
     	
     	return dialog;
@@ -830,10 +826,10 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @return
      */
     private Object getNetworkOperatorDialog(){
-    	Object dialog = uiController.find(COMPONENT_DLG_NETWORK_OPERATOR);
+    	Object dialog = ui.find(COMPONENT_DLG_NETWORK_OPERATOR);
     	
     	if(dialog == null)
-    	    dialog = uiController.loadComponentFromFile(UI_FILE_NETWORK_OPERATOR_DIALOG, this);
+    	    dialog = ui.loadComponentFromFile(UI_FILE_NETWORK_OPERATOR_DIALOG, this);
     	
     	return dialog;
     }
@@ -844,27 +840,27 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @param treeView
      */
     public void showSettingsItem(Object parentTab, Object treeView){
-        Object selectedNode = uiController.getSelectedItem(treeView);
-    	uiController.removeAll(uiController.find(parentTab, COMPONENT_PN_SETTINGS_RIGHT_PANE));
+        Object selectedNode = ui.getSelectedItem(treeView);
+    	ui.removeAll(ui.find(parentTab, COMPONENT_PN_SETTINGS_RIGHT_PANE));
     			
     	// No node has been selected
-    	if(uiController.getName(selectedNode) == null)
+    	if(ui.getName(selectedNode) == null)
     		return;
     	
     	// Change the contents of the right-most panel depending on the selected tree node 
-    	if(uiController.getName(selectedNode).equals("ndPaymentSystems")){
+    	if(ui.getName(selectedNode).equals("ndPaymentSystems")){
     	    Object table = getPaymentServicesTable(true);
-    		uiController.add(uiController.find(parentTab, COMPONENT_PN_SETTINGS_RIGHT_PANE), uiController.getParent(table));
-    		uiController.repaint();
-    	}else if(uiController.getName(selectedNode).equals("ndNetworkOperators")){
+    		ui.add(ui.find(parentTab, COMPONENT_PN_SETTINGS_RIGHT_PANE), ui.getParent(table));
+    		ui.repaint();
+    	}else if(ui.getName(selectedNode).equals("ndNetworkOperators")){
     	    Object table = getNetworkOperatorsTable(true);
-    		uiController.add(uiController.find(parentTab, COMPONENT_PN_SETTINGS_RIGHT_PANE), uiController.getParent(table));
-    		uiController.repaint();
+    		ui.add(ui.find(parentTab, COMPONENT_PN_SETTINGS_RIGHT_PANE), ui.getParent(table));
+    		ui.repaint();
     	}
     }
     
     private Object getSettingsRightPane(){
-        return uiController.find(paymentViewTab, COMPONENT_PN_SETTINGS_RIGHT_PANE);
+        return ui.find(paymentViewTab, COMPONENT_PN_SETTINGS_RIGHT_PANE);
     }
     
     /**
@@ -873,17 +869,17 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @return
      */
     private Object getPaymentServicesTable(boolean load){		
-        Object table = uiController.find(getSettingsRightPane(), COMPONENT_TBL_PAYMENT_SERVICES); 
+        Object table = ui.find(getSettingsRightPane(), COMPONENT_TBL_PAYMENT_SERVICES); 
     	
         if(table == null){
-    	    Object container = uiController.loadComponentFromFile(UI_FILE_PAYMENT_SERVICE_TABLE, this);
-    		table = uiController.find(container, COMPONENT_TBL_PAYMENT_SERVICES);
+    	    Object container = ui.loadComponentFromFile(UI_FILE_PAYMENT_SERVICE_TABLE, this);
+    		table = ui.find(container, COMPONENT_TBL_PAYMENT_SERVICES);
         }		
     	
         if(load){
             for(PaymentService service: paymentServiceDao.getAllPaymentServices()){
     	        Object row = getRow(service);
-    		    uiController.add(table, row);
+    		    ui.add(table, row);
     	    }
         }
     	return table;
@@ -895,17 +891,17 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @return
      */
     private Object getNetworkOperatorsTable(boolean reload){
-        Object table = uiController.find(getSettingsRightPane(), COMPONENT_TBL_NETWORK_OPERATORS);
+        Object table = ui.find(getSettingsRightPane(), COMPONENT_TBL_NETWORK_OPERATORS);
     	
     	if(table == null){
-    	    Object container = uiController.loadComponentFromFile(UI_FILE_NETWORK_OPERATOR_TABLE, this);
-    		table = uiController.find(container, COMPONENT_TBL_NETWORK_OPERATORS);
+    	    Object container = ui.loadComponentFromFile(UI_FILE_NETWORK_OPERATOR_TABLE, this);
+    		table = ui.find(container, COMPONENT_TBL_NETWORK_OPERATORS);
     	}
     	
     	if(reload){
     	    for(NetworkOperator operator: networkOperatorDao.getAllNetworkOperators()){
     		    Object row = getRow(operator);
-    			uiController.add(table, row);
+    			ui.add(table, row);
     		}
     	}
     	
@@ -916,7 +912,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * Displays the payment service dialog
      */
     public void showPaymentServiceDialog(){
-    	uiController.add(getPaymentServiceDialog());
+    	ui.add(getPaymentServiceDialog());
     }
     
     /**
@@ -924,26 +920,26 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @param component
      */
     public void selectPaymentService(Object component){
-        Object selectedItem = uiController.getSelectedItem(component);
+        Object selectedItem = ui.getSelectedItem(component);
         
         selectedPaymentService = getPaymentService(selectedItem);
         
-        Object panel = uiController.find(getSettingsRightPane(), COMPONENT_PN_PAYMENT_SERVICES);
-        Object btnEdit =  uiController.find(panel, COMPONENT_BT_EDIT_PAYMENT_SERVICE);
-        Object btnDelete = uiController.find(panel, COMPONENT_BT_DELETE_PAYMENT_SERVICE);
+        Object panel = ui.find(getSettingsRightPane(), COMPONENT_PN_PAYMENT_SERVICES);
+        Object btnEdit =  ui.find(panel, COMPONENT_BT_EDIT_PAYMENT_SERVICE);
+        Object btnDelete = ui.find(panel, COMPONENT_BT_DELETE_PAYMENT_SERVICE);
         
-        boolean editEnabled = uiController.getBoolean(btnEdit, Thinlet.ENABLED);
-        boolean deleteEnabled = uiController.getBoolean(btnDelete, Thinlet.ENABLED);
+        boolean editEnabled = ui.getBoolean(btnEdit, Thinlet.ENABLED);
+        boolean deleteEnabled = ui.getBoolean(btnDelete, Thinlet.ENABLED);
         
         if(editEnabled == false){
-            uiController.setEnabled(btnEdit, true);
+            ui.setEnabled(btnEdit, true);
         }
         
         if(deleteEnabled == false){
-            uiController.setEnabled(btnDelete, true);
+            ui.setEnabled(btnDelete, true);
         }
         
-        uiController.repaint(paymentViewTab);
+        ui.repaint(paymentViewTab);
         
         LOG.trace("EXIT");
         
@@ -953,14 +949,14 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * Event helper method to display the create/edit {@link PaymentService} dialog
      */
     public void showPaymentService(){
-    	uiController.add(getPaymentServiceDialog(selectedPaymentService));
+    	ui.add(getPaymentServiceDialog(selectedPaymentService));
     }
     
     /**
      * Displays the network operator dialog
      */
     public void showNetworkOperatorDialog(){
-        uiController.add(getNetworkOperatorDialog());
+        ui.add(getNetworkOperatorDialog());
     }
     
     
@@ -978,7 +974,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	NetworkOperator operator = (operatorExists == true)?getNetworkOperator(dialog) : new NetworkOperator();
     
     	// Fetch the name of the network operator
-    	String name = uiController.getText(uiController.find(dialog, COMPONENT_FLD_OPERATOR_NAME));
+    	String name = ui.getText(ui.find(dialog, COMPONENT_FLD_OPERATOR_NAME));
     			
     	// Prevent saving of zero-length names
     	if(name.trim().length() == 0)
@@ -998,9 +994,9 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	
     	// If update operation, remove the selected row from the table
     	if(operatorExists){
-    	    Object row = uiController.getSelectedItem(getNetworkOperatorsTable(false));
+    	    Object row = ui.getSelectedItem(getNetworkOperatorsTable(false));
     		if(row != null){
-    		    uiController.remove(row);
+    		    ui.remove(row);
     		}
     	}
     	
@@ -1009,13 +1005,13 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	
     	// If update, remove it from the list and add it again
     	if(operatorExists){
-    	    Object row = uiController.getSelectedItem(getNetworkOperatorsTable(false));
-    		uiController.remove(row);
+    	    Object row = ui.getSelectedItem(getNetworkOperatorsTable(false));
+    		ui.remove(row);
     	}
     	
     	// Add new/updated record to the display list
-    	uiController.add(getNetworkOperatorsTable(false), getRow(operator));
-    	uiController.repaint();
+    	ui.add(getNetworkOperatorsTable(false), getRow(operator));
+    	ui.repaint();
     }
     
     /**
@@ -1025,10 +1021,10 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @param button
      */
     public void toggleMoveOperatorButton(Object list, Object button){
-    	if(uiController.getSelectedIndex(list) != -1)
-    	    uiController.setEnabled(button, true);
+    	if(ui.getSelectedIndex(list) != -1)
+    	    ui.setEnabled(button, true);
     	else
-    	    uiController.setEnabled(button, false);
+    	    ui.setEnabled(button, false);
     }
     
     
@@ -1038,16 +1034,16 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @param targetList {@link Thinlet} UI list to which the item is being moved
      */
     public void moveNetworkOperator(Object sourceList, Object targetList){
-    	Object selectedItem = uiController.getSelectedItem(sourceList);
+    	Object selectedItem = ui.getSelectedItem(sourceList);
     	
     	if(selectedItem != null){
     	    if(operatorExists(sourceList, selectedItem) && !operatorExists(targetList, selectedItem)){
-    		    uiController.remove(selectedItem);
-    			uiController.add(targetList, selectedItem);
+    		    ui.remove(selectedItem);
+    			ui.add(targetList, selectedItem);
     		}
     		
     		if(operatorExists(sourceList, selectedItem) && operatorExists(targetList, selectedItem)){
-    		    uiController.remove(selectedItem);
+    		    ui.remove(selectedItem);
     		}
     			
     	}
@@ -1060,7 +1056,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @return
      */
     private boolean operatorExists(Object targetList, Object listItem){
-        Object[] items = uiController.getItems(targetList);
+        Object[] items = ui.getItems(targetList);
     	
     	NetworkOperator operator = getNetworkOperator(listItem);
     	
@@ -1089,14 +1085,14 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	}
     	
     	// Set the properties for the payment service
-    	service.setServiceName(uiController.getText(uiController.find(dialog, COMPONENT_FLD_SERVICE_NAME)));
-    	service.setSmsShortCode(uiController.getText(uiController.find(dialog, COMPONENT_FLD_SMS_SHORT_CODE)));
-    	service.setPinNumber(uiController.getText(uiController.find(dialog, COMPONENT_FLD_PIN_NUMBER)));
-    	service.setSendMoneyTextMessage(uiController.getText(uiController.find(dialog, COMPONENT_FLD_SEND_MONEY_TEXT)));
-    	service.setWithdrawMoneyTextMessage(uiController.getText(uiController.find(dialog, COMPONENT_FLD_WITHDRAW_MONEY_TEXT)));
-    	service.setBalanceEnquiryTextMessage(uiController.getText(uiController.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_TEXT)));
+    	service.setServiceName(ui.getText(ui.find(dialog, COMPONENT_FLD_SERVICE_NAME)));
+    	service.setSmsShortCode(ui.getText(ui.find(dialog, COMPONENT_FLD_SMS_SHORT_CODE)));
+    	service.setPinNumber(ui.getText(ui.find(dialog, COMPONENT_FLD_PIN_NUMBER)));
+    	service.setSendMoneyTextMessage(ui.getText(ui.find(dialog, COMPONENT_FLD_SEND_MONEY_TEXT)));
+    	service.setWithdrawMoneyTextMessage(ui.getText(ui.find(dialog, COMPONENT_FLD_WITHDRAW_MONEY_TEXT)));
+    	service.setBalanceEnquiryTextMessage(ui.getText(ui.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_TEXT)));
     	
-    	Object[] operatorList = uiController.getItems(uiController.find(dialog, COMPONENT_LS_SELECTED_OPERATORS));
+    	Object[] operatorList = ui.getItems(ui.find(dialog, COMPONENT_LS_SELECTED_OPERATORS));
     	
     	// Set to hold the list of selected operators
     	Set<NetworkOperator> operators = new HashSet<NetworkOperator>();
@@ -1111,15 +1107,15 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	removeDialog(dialog);
     	
     	// Load the response text dialog
-    	Object responseTextDialog = uiController.loadComponentFromFile(UI_FILE_RESPONSE_TEXTS_DIALOG, this);
+    	Object responseTextDialog = ui.loadComponentFromFile(UI_FILE_RESPONSE_TEXTS_DIALOG, this);
     	
     	// Set the values for the text fields
     	setPaymentServiceResponseTexts(responseTextDialog, service);
     	
     	// Attach the payment service to the response text dialog, add it to the UI and reload
-    	uiController.setAttachedObject(responseTextDialog, service);		
-    	uiController.add(responseTextDialog);
-    	uiController.repaint();
+    	ui.setAttachedObject(responseTextDialog, service);		
+    	ui.add(responseTextDialog);
+    	ui.repaint();
     }
     
     public void showPreviousPaymentServiceDialog(Object currentDialog){
@@ -1134,7 +1130,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	
     	if(service.getRepaymentConfirmationKeyword().length() > 0 && service.getDispersalConfirmationKeyword().length() > 0){
         	if(service.getRepaymentConfirmationKeyword().equalsIgnoreCase(service.getDispersalConfirmationKeyword())){
-        	    uiController.alert(InternationalisationUtils.getI18NString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
+        	    ui.alert(InternationalisationUtils.getI18NString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
         	    return;
         	}
     	}
@@ -1142,7 +1138,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     	removeDialog(currentDialog);
     	Object previousDialog = getPaymentServiceDialog(service);
     	
-    	uiController.add(previousDialog);
+    	ui.add(previousDialog);
     }
     
     
@@ -1152,12 +1148,12 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @param service
      */
     private void fetchPaymentServiceResponseTexts(Object dialog, PaymentService service){
-        String repaymentText = uiController.getText(uiController.find(dialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT)).trim();
-    	String repaymentKeyword = uiController.getText(uiController.find(dialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT_KEYWORD)).trim();
-    	String dispersalText = uiController.getText(uiController.find(dialog, COMPONENT_FLD_DISPESRAL_CONFIRM_TEXT)).trim();
-    	String dispersalKeyword = uiController.getText(uiController.find(dialog, COMPONENT_FLD_DISPERSAL_CONFIRM_TEXT_KEYWORD)).trim();
-    	String enquiryText = uiController.getText(uiController.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT)).trim();
-    	String enquiryKeyword = uiController.getText(uiController.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT_KEYWORD)).trim();
+        String repaymentText = ui.getText(ui.find(dialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT)).trim();
+    	String repaymentKeyword = ui.getText(ui.find(dialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT_KEYWORD)).trim();
+    	String dispersalText = ui.getText(ui.find(dialog, COMPONENT_FLD_DISPESRAL_CONFIRM_TEXT)).trim();
+    	String dispersalKeyword = ui.getText(ui.find(dialog, COMPONENT_FLD_DISPERSAL_CONFIRM_TEXT_KEYWORD)).trim();
+    	String enquiryText = ui.getText(ui.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT)).trim();
+    	String enquiryKeyword = ui.getText(ui.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT_KEYWORD)).trim();
     	    
     	// Set the confirmation texts and their keywords
     	if(containsKeyword(repaymentText, repaymentKeyword)) {
@@ -1200,11 +1196,11 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @param dialog
      */
     private void setPaymentServiceResponseTexts(Object dialog, PaymentService service){
-        uiController.setText(uiController.find(dialog, COMPONENT_FLD_DISPERSAL_CONFIRM_TEXT_KEYWORD), service.getDispersalConfirmationKeyword());
-        uiController.setText(uiController.find(dialog, COMPONENT_FLD_DISPESRAL_CONFIRM_TEXT), service.getDispersalConfirmationText());
-        uiController.setText(uiController.find(dialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT), service.getRepaymentConfirmationText());
-        uiController.setText(uiController.find(dialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT_KEYWORD), service.getRepaymentConfirmationKeyword());
-        uiController.setText(uiController.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT), service.getBalanceEnquiryTextMessage());
+        ui.setText(ui.find(dialog, COMPONENT_FLD_DISPERSAL_CONFIRM_TEXT_KEYWORD), service.getDispersalConfirmationKeyword());
+        ui.setText(ui.find(dialog, COMPONENT_FLD_DISPESRAL_CONFIRM_TEXT), service.getDispersalConfirmationText());
+        ui.setText(ui.find(dialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT), service.getRepaymentConfirmationText());
+        ui.setText(ui.find(dialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT_KEYWORD), service.getRepaymentConfirmationKeyword());
+        ui.setText(ui.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT), service.getBalanceEnquiryTextMessage());
     }
     
     /**
@@ -1223,7 +1219,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
         // Prevent same keyword for both dispersals and repayments
         if(service.getRepaymentConfirmationKeyword().length() > 0 && service.getDispersalConfirmationKeyword().length() > 0){
             if(service.getRepaymentConfirmationKeyword().equalsIgnoreCase(service.getDispersalConfirmationKeyword())){
-                uiController.alert(InternationalisationUtils.getI18NString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
+                ui.alert(InternationalisationUtils.getI18NString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
                 return;
             }
         }
@@ -1243,13 +1239,13 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
         
         // If update, remove the payment service being updated from the list of payment services 
         if(serviceExists){
-            Object row = uiController.getSelectedItem(getPaymentServicesTable(false));
-            uiController.remove(row);
+            Object row = ui.getSelectedItem(getPaymentServicesTable(false));
+            ui.remove(row);
         }
         
         // Update the list of payment services
-        uiController.add(getPaymentServicesTable(false), getRow(service));
-        uiController.repaint();
+        ui.add(getPaymentServicesTable(false), getRow(service));
+        ui.repaint();
         
         // Close the dialog
         removeDialog(dialog);    	
@@ -1263,15 +1259,15 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
         paymentServiceDao.deletePaymentService(selectedPaymentService, true);
         
         // Get the selected item
-        Object item = uiController.getSelectedItem(getPaymentServicesTable(false));
+        Object item = ui.getSelectedItem(getPaymentServicesTable(false));
         
         // Delete the row from the table
-        uiController.remove(item);
+        ui.remove(item);
         
         // Set the current payment service to null
         selectedPaymentService = null;
         
-        uiController.repaint(paymentViewTab);
+        ui.repaint(paymentViewTab);
     }
     
     /**
@@ -1279,13 +1275,13 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
      * @return
      */
     public Object getSendMoneyDialog(){
-        Object dialog = uiController.find(COMPONENT_DLG_SEND_MONEY);
+        Object dialog = ui.find(COMPONENT_DLG_SEND_MONEY);
         
         if(dialog == null){
-            dialog = uiController.loadComponentFromFile(UI_FILE_SEND_MONEY_DIALOG, this);
-            Object cbPaymentService = uiController.find(dialog, COMPONENT_CB_PAYMENT_SERVICE);
+            dialog = ui.loadComponentFromFile(UI_FILE_SEND_MONEY_DIALOG, this);
+            Object cbPaymentService = ui.find(dialog, COMPONENT_CB_PAYMENT_SERVICE);
             for(PaymentService service: paymentServiceDao.getAllPaymentServices()){
-                uiController.add(cbPaymentService, getChoice(service));
+                ui.add(cbPaymentService, getChoice(service));
             }
         }
         
@@ -1298,10 +1294,10 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
     public void showSendMoneyDialog(){
         Object dialog = getSendMoneyDialog();
         
-        uiController.setAttachedObject(dialog, selectedClient);
-        uiController.setText(uiController.find(dialog, COMPONENT_LB_CLIENT_NAME), selectedClient.getName());
+        ui.setAttachedObject(dialog, selectedClient);
+        ui.setText(ui.find(dialog, COMPONENT_LB_CLIENT_NAME), selectedClient.getName());
         
-        uiController.add(dialog);
+        ui.add(dialog);
     }
     /**
      * Event helper for initiating the send money transaction
@@ -1310,19 +1306,19 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
         Object dialog = getSendMoneyDialog();
         
         // Get the selected payment service from the combobox
-        Object comboChoice = uiController.getSelectedItem(uiController.find(dialog, COMPONENT_CB_PAYMENT_SERVICE));
+        Object comboChoice = ui.getSelectedItem(ui.find(dialog, COMPONENT_CB_PAYMENT_SERVICE));
         PaymentService service = getPaymentService(comboChoice);
         
         // Check if an amount has been specified
-        String amount = uiController.getText(uiController.find(dialog, COMPONENT_FLD_TRANSFER_AMOUNT)).trim();
+        String amount = ui.getText(ui.find(dialog, COMPONENT_FLD_TRANSFER_AMOUNT)).trim();
         if(amount.length() == 0){
-            uiController.alert(InternationalisationUtils.getI18NString(PAYMENTVIEW_NO_TRANSFER_AMOUNT));
+            ui.alert(InternationalisationUtils.getI18NString(PAYMENTVIEW_NO_TRANSFER_AMOUNT));
             return;
         }
         
         // Validate the specified amount
         if(!validateAmount(amount)){
-            uiController.alert(InternationalisationUtils.getI18NString(PAYMENTVIEW_INVALID_TRANSFER_AMOUNT));
+            ui.alert(InternationalisationUtils.getI18NString(PAYMENTVIEW_INVALID_TRANSFER_AMOUNT));
             return;
         }
         
@@ -1334,7 +1330,7 @@ public class PaymentViewThinletTabController implements ThinletUiEventHandler, P
         
         // Null check
         if(textMessage != null){
-            uiController.getFrontlineController().sendTextMessage(service.getSmsShortCode(), textMessage);
+            ui.getFrontlineController().sendTextMessage(service.getSmsShortCode(), textMessage);
             removeDialog(dialog);
         }
     }
