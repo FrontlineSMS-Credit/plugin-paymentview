@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.creditsms.plugins</groupId>
 	<artifactId>frontlinesms-plugin-credit</artifactId>
-	<name>FrontlineSMS HTTP Trigger plugin</name>
+	<name>FrontlineSMS CreditSMS Plugin</name>
 	<version>0.01.01-SNAPSHOT</version>
 	<description>CreditSMS plugin for FrontlineSMS</description>
 	<licenses>
@@ -87,7 +87,8 @@
 		<dependency>
 			<groupId>net.frontlinesms.core</groupId>
 			<artifactId>frontlinesms</artifactId>
-			<version>1.6.08-RC9</version>
+			<version>1.6.08-RC10-SNAPSHOT</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>
