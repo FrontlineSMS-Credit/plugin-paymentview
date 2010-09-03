@@ -1,28 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name=":paymentView" text="i18n.paymentview.manager" icon="/icons/big_creditsms.png">
-	<splitpane divider="430" rowspan="2" weightx="1" weighty="1">				
+	<splitpane divider="400" rowspan="2" weightx="1" weighty="1">
+	
+		<!-- left side -->
 		<panel gap="9" top="9" left="9" bottom="9" right="9" columns="2" weightx="1" weighty="1">
 			<label icon="/icons/header/paymentView.png" weighty="1" valign="top"/>
-			<panel name="pnClients" text="Clients" icon="/icons/user.png" rowspan="2" columns="1" gap="5" top="5" left="5" bottom="5" right="5" weightx="1" weighty="1" border="true">
-				<panel name="pnSearchClients" weightx="1" gap="5">
-				    <label icon="/icons/search.png" text="i18n.common.search"/>
-				    <textfield name="fldLiveSearch" weightx="1" action="liveClientSearch(fldLiveSearch)"/>
-				</panel>
-				<list name="lsClients" weightx="1" weighty="1" action="selectClient(lsClients)" perform="showClientDetails">
-				</list>
-				<panel name="buttonsPanel" gap="5" weightx="1">
-					<button name="btNewClient" text="i18n.action.add" action="showNewClientForm"/>
-					<button name="btEditClient" text="i18n.action.edit" action="showClientDetails" enabled="false" />
-					<button name="btDeleteClient" text="i18n.action.delete" action="deleteClient" enabled="false"/>
-					<button name="btSendMoney" text="i18n.paymentview.action.send.money" action="showSendMoneyDialog" enabled="false" />
-				</panel>
+			
+			<panel name="pnLeftPaneContainer" text="Clients" icon="/icons/user.png" rowspan="2" columns="1" gap="5" top="3" left="3" bottom="3" right="3" weightx="1" weighty="1" border="true">
+			    <splitpane divider="380" weightx="1" weighty="1" orientation="vertical">
+			        <!-- listing section -->
+				    <panel weightx="1" weighty="1" columns="1" gap="3">
+						<!-- client live search box -->
+						<panel name="pnSearchClients" weightx="1" gap="3">
+						    <label icon="/icons/search.png" text="i18n.common.search"/>
+						    <textfield name="fldLiveSearch" weightx="1" action="liveClientSearch(fldLiveSearch)"/>
+						</panel>
+						<!-- /client live search box -->
+						
+						<panel name="pnClients" columns="1" border="true" weightx="1" weighty="1" gap="3" top="3" right="3" bottom="3" left="3">
+							<list name="lsClients" weightx="1" weighty="1" action="selectClient(lsClients)" perform="showClientDetails">
+							</list>
+							<panel name="buttonsPanel" gap="5" weightx="1">
+								<button name="btNewClient" text="i18n.action.add" action="showNewClientForm"/>
+								<button name="btnImportClients" text="i18n.action.import"/>
+								<button name="btEditClient" text="i18n.action.edit" action="showClientDetails" enabled="false" />
+								<button name="btDeleteClient" text="i18n.action.delete" action="deleteClient" enabled="false"/>
+								<!-- 
+								<button name="btSendMoney" text="i18n.paymentview.action.send.money" action="showSendMoneyDialog" enabled="false" />
+								-->
+							</panel>
+						</panel>
+					</panel>
+		            <!-- /listing section -->
+		            
+		            <!-- detail section -->
+		            <panel border="true" weightx="1" weighty="1" columns="1" gap="3" top="5" left="5" bottom="5" right="5">
+		            </panel>
+		            <!-- /detail section -->
+		            
+                </splitpane>
 			</panel>
+			
 			<button tooltip="i18n.tooltip.click.for.help" valign="bottom" icon="/icons/big_help.png" type="link"/>
 		</panel>
+		<!-- /left side -->
+		
 		<panel columns="1" gap="9" top="9" right="9" bottom="9" left="9" weightx="1" weighty="1">
 			<panel columns="1" gap="5" top="5" right="5" bottom="5" left="5" weightx="1" weighty="1" border="true">
 				<tabbedpane weightx="1" weighty="1">
-					<tab name="tbRepayments" text="i18n.paymentview.common.repayments">
+					<tab name="tbRepayments" text="i18n.paymentview.tab.repayments">
 						<panel name="pnRepayments" columns="1" gap="5" top="5" right="5" bottom="5" left="5">
 							<table name="tblRepayments" weightx="1" weighty="1">
 								<header>
@@ -34,7 +60,7 @@
 							</table>
 						</panel>
 					</tab>
-					<tab name="tbDispersals" text="i18n.paymentview.common.dispersals">
+					<tab name="tbDispersals" text="i18n.paymentview.tab.dispersals">
 						<panel name="pnDispersals" columns="1" gap="5" top="5" right="5" bottom="5" left="5">
 							<table name="tblDispersals" weightx="1" weighty="1">
 								<header>
@@ -46,6 +72,18 @@
 							</table>
 						</panel>
 					</tab>
+					<tab name="tbReceipts" text="i18n.paymentview.tab.receipts">
+						<panel name="pnReceipts" columns="1" gap="5" top="5" right="5" bottom="5" left="5">
+						    <table name="tblReceipts" weightx="1" weighty="1">
+						        <header>
+						            <column text="i18n.paymentview.common.receipt.date"/>
+						            <column text="i18n.paymentview.common.receipt.number"/>
+						            <column text="i18n.paymentview.common.receipt.amount"/>
+						        </header>    
+						    </table>
+						</panel>
+				    </tab>
+					<tab name="tbErrors" text="i18n.paymentview.tab.errors"></tab>
 					<tab name="tbSettings" text="i18n.paymentview.tab.settings">
 						<splitpane divider="220" weightx="1" weighty="1">
 							<panel gap="5" top="5" left="5" bottom="5" right="5" weightx="1" weighty="1">
