@@ -15,3 +15,5 @@ temp/
 /izpack-build.xml
 /izpack-build.xml
 /.classpath
+/.settings
+/target
