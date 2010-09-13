@@ -3,7 +3,7 @@ package org.creditsms.plugins.paymentview.data.repository.hibernate;
 import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
-import net.frontlinesms.data.domain.Message;
+import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
@@ -69,11 +69,11 @@ public class HibernatePaymentServiceTransactionDao extends BaseHibernateDao<Paym
 	
     /** @see PaymentServiceTransactionDao#getPendingTransactions() */
     @SuppressWarnings("unchecked")
-    public List<Message> getPendingTransactions() {		
-        DetachedCriteria criteria = DetachedCriteria.forClass(Message.class);
+    public List<FrontlineMessage> getPendingTransactions() {		
+        DetachedCriteria criteria = DetachedCriteria.forClass(FrontlineMessage.class);
 
-        criteria.add(Restrictions.eq(Message.Field.STATUS.getFieldName(), Message.Status.RECEIVED));
-        criteria.add(Restrictions.eq(Message.Field.TYPE.getFieldName(), Message.Type.RECEIVED));
+        criteria.add(Restrictions.eq(FrontlineMessage.Field.STATUS.getFieldName(), FrontlineMessage.Status.RECEIVED));
+        criteria.add(Restrictions.eq(FrontlineMessage.Field.TYPE.getFieldName(), FrontlineMessage.Type.RECEIVED));
         criteria.add(Restrictions.sqlRestriction("senderMsisdn IN (SELECT smsShortCode FROM PaymentService)"));
         criteria.add(Restrictions.sqlRestriction("id NOT IN (SELECT message_id FROM PaymentServiceTransaction)"));
 		
