@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 import net.frontlinesms.data.EntityField;
-import net.frontlinesms.data.domain.Message;
+import net.frontlinesms.data.domain.FrontlineMessage;
 
 /**
  * Data object representing a payment service transaction. A transaction may either be a deposit or
@@ -61,8 +61,8 @@ public class PaymentServiceTransaction {
     private PaymentService paymentService;
     
     /** Reference to the SMS that was used to create this transaction */
-    @OneToOne(targetEntity=Message.class, optional=false)
-    private Message message;
+    @OneToOne(targetEntity=FrontlineMessage.class, optional=false)
+    private FrontlineMessage message;
     
     /** Type of transaction; can be DISPERSAL or REPAYMENT */
     @Column(name=FIELD_TRANSACTION_TYPE, nullable=false)
@@ -112,10 +112,10 @@ public class PaymentServiceTransaction {
     }
     
     /**
-     * Getst the {@link Message} from which this transaction was created
+     * Getst the {@link FrontlineMessage} from which this transaction was created
      * @return
      */
-    public Message getMessasge(){
+    public FrontlineMessage getMessasge(){
     	return message;
     }
     
@@ -185,9 +185,9 @@ public class PaymentServiceTransaction {
     
     /**
      * Sets the message used to create this transaction
-     * @param message a {@link Message} reference
+     * @param message a {@link FrontlineMessage} reference
      */
-    public void setMessage(Message message){
+    public void setMessage(FrontlineMessage message){
     	this.message = message;
     }
     
