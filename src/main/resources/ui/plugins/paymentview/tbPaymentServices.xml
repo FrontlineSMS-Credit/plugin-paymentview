@@ -3,7 +3,7 @@
     <table name="tblPaymentServices" weightx="1" weighty="1" action="selectPaymentService(this)" perform="showPaymentService">
         <header>
             <column text="i18n.common.name" width="350"/>
-            <column text="i18n.paymentview.settings.sms.shortcode" />
+            <column text="i18n.plugins.paymentview.settings.sms.shortcode" />
         </header>
     </table>
     <panel gap="5" weightx="1">

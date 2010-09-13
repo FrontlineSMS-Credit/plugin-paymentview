@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dialog name="responseTextDialog" text="i18n.paymentview.common.paymentservice" modal="true" closable="true" columns="1" weightx="1" weighty="1" gap="5" top="5" left="5" bottom="5" right="5">
-    <panel border="true" text="i18n.paymentview.common.dispersals" columns="2" gap="5" top="5" right="5" bottom="5" left="5">
-        <label text="i18n.paymentview.common.confirm.dispersal.text" />
+<dialog name="responseTextDialog" text="i18n.plugins.paymentview.common.paymentservice" modal="true" closable="true" columns="1" weightx="1" weighty="1" gap="5" top="5" left="5" bottom="5" right="5">
+    <panel border="true" text="i18n.plugins.paymentview.common.dispersals" columns="2" gap="5" top="5" right="5" bottom="5" left="5">
+        <label text="i18n.plugins.paymentview.common.confirm.dispersal.text" />
         <textarea name="fldDispersalConfirmText" columns="50" rows="3"/>
-        <label text="i18n.paymentview.common.confirm.keyword"/>
+        <label text="i18n.plugins.paymentview.common.confirm.keyword"/>
         <textfield name="fldDispersalConfirmKeyword" weightx="1"/>
     </panel>
-    <panel border="true" text="i18n.paymentview.common.repayments" columns="2" gap="5" top="5" right="5" bottom="5" left="5">
-        <label text="i18n.paymentview.common.confirm.repayment.text" />
+    <panel border="true" text="i18n.plugins.paymentview.common.repayments" columns="2" gap="5" top="5" right="5" bottom="5" left="5">
+        <label text="i18n.plugins.paymentview.common.confirm.repayment.text" />
         <textarea name="fldRepaymentConfirmText" columns="50" rows="3" />
-        <label text="i18n.paymentview.common.confirm.keyword" />
+        <label text="i18n.plugins.paymentview.common.confirm.keyword" />
         <textfield name="fldRepaymentConfirmKeyword" weightx="1"/>
     </panel>
-    <panel border="true" text="i18n.paymentview.common.balance.enquiry" columns="2" gap="5" top="5" right="5" bottom="5" left="5">
-        <label text="i18n.paymentview.common.confirm.balance.enquiry.text" />
+    <panel border="true" text="i18n.plugins.paymentview.common.balance.enquiry" columns="2" gap="5" top="5" right="5" bottom="5" left="5">
+        <label text="i18n.plugins.paymentview.common.confirm.balance.enquiry.text" />
         <textarea name="fldBalanceEnquiryConfirmText" columns="50" rows="3" />
-        <label text="i18n.paymentview.common.confirm.keyword" />
+        <label text="i18n.plugins.paymentview.common.confirm.keyword" />
         <textfield name="fldBalanceEnquiryConfirmKeyword" weightx="1"/>
        </panel>
     <panel colspan="2" halign="right" gap="5" top="5" right="5" bottom="5" left="5" weightx="1">

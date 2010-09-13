@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dialog name="paymentServiceDialog" text="i18n.paymentview.common.paymentservice" modal="true" closable="true" close="removeDialog(this)" columns="1" weightx="1" gap="9" top="9" left="9" bottom="9" right="9">
+<dialog name="paymentServiceDialog" text="i18n.plugins.paymentview.common.paymentservice" modal="true" closable="true" close="removeDialog(this)" columns="1" weightx="1" gap="9" top="9" left="9" bottom="9" right="9">
     <panel border="true" columns="2" weightx="1" gap="5" top="5" right="5" bottom="5" left="5">
 	    <label text="i18n.common.name" />
 	    <textfield name="fldServiceName" columns="50"/>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dialog closable="true" close="removeDialog(this)" modal="true" text="i18n.paymentview.dialog.client" gap="15" columns="1" top="9" left="9" bottom="9" right="9" name="clientDetailsDialog" resizable="true">
+<dialog closable="true" close="removeDialog(this)" modal="true" text="i18n.plugins.paymentview.dialog.client" gap="15" columns="1" top="9" left="9" bottom="9" right="9" name="clientDetailsDialog" resizable="true">
     <panel columns="2" border="true" gap="5" top="5" right="5" bottom="5" left="5">
         <label icon="/icons/user.png" text="i18n.paymentview.client.name"/>
         <textfield name="fldClientName" columns="50" action="validateRequiredFields"/>
@@ -9,7 +9,7 @@
         <textfield name="fldOtherPhoneNumber" />
         <label icon="/icons/email.png" text="i18n.common.email.address"/>
         <textfield name="fldEmailAddress" />
-        <checkbox name="chkAddToContact" selected="true" text="i18n.paymentview.common.client.contact.add"/>   
+        <checkbox name="chkAddToContact" selected="true" text="i18n.plugins.paymentview.common.client.contact.add"/>   
     </panel>
     <panel gap="5" weightx="1">
         <button icon="/icons/tick.png" text="i18n.action.save" name="btSaveClient" enabled="false" action="saveClient"/>

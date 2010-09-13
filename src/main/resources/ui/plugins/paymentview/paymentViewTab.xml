@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tab name=":paymentView" text="i18n.paymentview.manager" icon="/icons/big_creditsms.png">
+<tab name=":paymentView" text="i18n.plugins.paymentview.manager" icon="/icons/big_creditsms.png">
 	<splitpane divider="400" rowspan="2" weightx="1" weighty="1">
 	
 		<!-- left side -->
@@ -26,7 +26,7 @@
 								<button name="btEditClient" text="i18n.action.edit" action="showClientDetails" enabled="false" />
 								<button name="btDeleteClient" text="i18n.action.delete" action="deleteClient" enabled="false"/>
 								<!-- 
-								<button name="btSendMoney" text="i18n.paymentview.action.send.money" action="showSendMoneyDialog" enabled="false" />
+								<button name="btSendMoney" text="i18n.plugins.paymentview.action.send.money" action="showSendMoneyDialog" enabled="false" />
 								-->
 							</panel>
 						</panel>
@@ -48,48 +48,48 @@
 		<panel columns="1" gap="9" top="9" right="9" bottom="9" left="9" weightx="1" weighty="1">
 			<panel columns="1" gap="5" top="5" right="5" bottom="5" left="5" weightx="1" weighty="1" border="true">
 				<tabbedpane weightx="1" weighty="1">
-					<tab name="tbRepayments" text="i18n.paymentview.tab.repayments">
+					<tab name="tbRepayments" text="i18n.plugins.paymentview.tab.received">
 						<panel name="pnRepayments" columns="1" gap="5" top="5" right="5" bottom="5" left="5">
 							<table name="tblRepayments" weightx="1" weighty="1">
 								<header>
 									<column text="i18n.common.sender" width="350"/>
-									<column text="i18n.paymentview.transaction.paymentsystem" width="150"/>
-									<column text="i18n.paymentview.transaction.amount" width="100"/>
-									<column text="i18n.paymentview.transaction.date" />
+									<column text="i18n.plugins.paymentview.transaction.paymentsystem" width="150"/>
+									<column text="i18n.plugins.paymentview.transaction.amount" width="100"/>
+									<column text="i18n.plugins.paymentview.transaction.date" />
 								</header>
 							</table>
 						</panel>
 					</tab>
-					<tab name="tbDispersals" text="i18n.paymentview.tab.dispersals">
+					<tab name="tbDispersals" text="i18n.plugins.paymentview.tab.sent">
 						<panel name="pnDispersals" columns="1" gap="5" top="5" right="5" bottom="5" left="5">
 							<table name="tblDispersals" weightx="1" weighty="1">
 								<header>
 									<column text="i18n.common.recipient" width="350" />
-									<column text="i18n.paymentview.transaction.paymentsystem" width="150" />
-									<column text="i18n.paymentview.transaction.amount" width="100" />
-									<column text="i18n.paymentview.transaction.date" />
+									<column text="i18n.plugins.paymentview.transaction.paymentsystem" width="150" />
+									<column text="i18n.plugins.paymentview.transaction.amount" width="100" />
+									<column text="i18n.plugins.paymentview.transaction.date" />
 								</header>
 							</table>
 						</panel>
 					</tab>
-					<tab name="tbReceipts" text="i18n.paymentview.tab.receipts">
+					<tab name="tbReceipts" text="i18n.plugins.paymentview.tab.receipts">
 						<panel name="pnReceipts" columns="1" gap="5" top="5" right="5" bottom="5" left="5">
 						    <table name="tblReceipts" weightx="1" weighty="1">
 						        <header>
-						            <column text="i18n.paymentview.common.receipt.date"/>
-						            <column text="i18n.paymentview.common.receipt.number"/>
-						            <column text="i18n.paymentview.common.receipt.amount"/>
+						            <column text="i18n.plugins.paymentview.common.receipt.date"/>
+						            <column text="i18n.plugins.paymentview.common.receipt.number"/>
+						            <column text="i18n.plugins.paymentview.common.receipt.amount"/>
 						        </header>    
 						    </table>
 						</panel>
 				    </tab>
-					<tab name="tbErrors" text="i18n.paymentview.tab.errors"></tab>
-					<tab name="tbSettings" text="i18n.paymentview.tab.settings">
+					<tab name="tbErrors" text="i18n.plugins.paymentview.tab.errors"></tab>
+					<tab name="tbSettings" text="i18n.plugins.paymentview.tab.settings">
 						<splitpane divider="220" weightx="1" weighty="1">
 							<panel gap="5" top="5" left="5" bottom="5" right="5" weightx="1" weighty="1">
 								<tree angle="true" line="false" weightx="1" weighty="1" action="showSettingsItem(tbSettings, this)">
-									<node name="ndPaymentSystems" text="i18n.paymentview.settings.payment.systems" />
-									<node name="ndNetworkOperators" text="i18n.paymentview.settings.network.operators"></node>
+									<node name="ndPaymentSystems" text="i18n.plugins.paymentview.settings.payment.systems" />
+									<node name="ndNetworkOperators" text="i18n.plugins.paymentview.settings.network.operators"></node>
 								</tree>
 							</panel>
 							<panel gap="5" top="5" left="5" bottom="5" right="5" weightx="1" weighty="1">

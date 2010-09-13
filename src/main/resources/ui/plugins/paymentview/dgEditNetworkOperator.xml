@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dialog text="i18n.paymentview.common.network.operator" name="networkOperatorDialog" closable="true" close="removeDialog(this)" columns="1" modal="true" gap="5" top="5" right="5" bottom="5" left="5">
+<dialog text="i18n.plugins.paymentview.common.network.operator" name="networkOperatorDialog" closable="true" close="removeDialog(this)" columns="1" modal="true" gap="5" top="5" right="5" bottom="5" left="5">
     <panel columns="2" gap="2">
         <label text="i18n.common.name" />
         <textfield name="fldOperatorName" columns="30"/>
