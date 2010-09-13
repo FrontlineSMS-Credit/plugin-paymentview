@@ -14,10 +14,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.frontlinesms.Utils;
+import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.Contact;
-import net.frontlinesms.data.domain.Message;
+import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.plugins.BasePluginThinletTabController;
 import net.frontlinesms.ui.ThinletUiEventHandler;
@@ -107,7 +107,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
     private static final String PAYMENTVIEW_INVALID_TRANSFER_AMOUNT = "paymentview.error.invalid.amount";
 	
 //> CONSTANTS
-    private static final Logger LOG = Utils.getLogger(PaymentViewThinletTabController.class);
+    private static final Logger LOG = FrontlineUtils.getLogger(PaymentViewThinletTabController.class);
 	
 //> UI COMPONENTS
     /** Thinlet tab component whose functionality is handled by this class */
@@ -189,8 +189,8 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * Internal helper method to process transaction-related messages
      */
     private void processPendingTransactions(){
-        List<Message> pendingTransactions = transactionDao.getPendingTransactions();
-    	for(Message message: pendingTransactions)
+        List<FrontlineMessage> pendingTransactions = transactionDao.getPendingTransactions();
+    	for(FrontlineMessage message: pendingTransactions)
     		processIncomingMessage(message);
     }
 
@@ -333,14 +333,14 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * 
      * @param message
      */
-    public void processIncomingMessage(Message message){
+    public void processIncomingMessage(FrontlineMessage message){
         String sender = message.getSenderMsisdn();
     	String content = message.getTextContent();
     	
     	// Get the payment service from which the text message has been sent
     	PaymentService paymentService = paymentServiceDao.getPaymentServiceByShortCode(sender);
     	if(paymentService == null){
-    		LOG.debug("Message not from a registered payment service");
+    		LOG.debug("FrontlineMessage not from a registered payment service");
     	    return;
     	}
     

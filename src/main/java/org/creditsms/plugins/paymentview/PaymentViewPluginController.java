@@ -15,7 +15,7 @@ import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.FrontlineSMS;
-import net.frontlinesms.data.domain.Message;
+import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.listener.IncomingMessageListener;
 import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
@@ -32,9 +32,9 @@ import net.frontlinesms.ui.UiGeneratorController;
  * @author Emmanuel Kala
  *
  */
-@PluginControllerProperties(name="Payment View", iconPath="/icons/creditsms.png",
+@PluginControllerProperties(name="Payment View", iconPath="/icons/creditsms.png", i18nKey="plugins.paymentview",
 		springConfigLocation="classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml",
-		hibernateConfigPath="classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml"
+		hibernateConfigPath="classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml"		
 		)
 public class PaymentViewPluginController extends BasePluginController implements IncomingMessageListener {
 	
@@ -53,7 +53,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 	private PaymentServiceDao paymentServiceDao;
 	/** DAO for payment service transactions */
 	private PaymentServiceTransactionDao transactionDao;
-	/** Tab controller for this plugin*/
+	/** Tab controller for this plugin */
 	private PaymentViewThinletTabController tabController;
 
 //> CONFIG METHODS
@@ -64,10 +64,10 @@ public class PaymentViewPluginController extends BasePluginController implements
 		
 		//Initialize the DAO for the domain objects
 		try{
-			this.clientDao = (ClientDao)applicationContext.getBean("clientDao");
-			this.networkOperatorDao = (NetworkOperatorDao)applicationContext.getBean("networkOperatorDao");
-			this.paymentServiceDao = (PaymentServiceDao)applicationContext.getBean("paymentServiceDao");
-			this.transactionDao = (PaymentServiceTransactionDao)applicationContext.getBean("paymentServiceTransactionDao");
+			clientDao = (ClientDao)applicationContext.getBean("clientDao");
+			networkOperatorDao = (NetworkOperatorDao)applicationContext.getBean("networkOperatorDao");
+			paymentServiceDao = (PaymentServiceDao)applicationContext.getBean("paymentServiceDao");
+			transactionDao = (PaymentServiceTransactionDao)applicationContext.getBean("paymentServiceTransactionDao");
 		}catch(Throwable t){
 			log.warn("Unable to load DAO objects for the Payment View plugin", t);
 			throw new PluginInitialisationException(t);
@@ -103,9 +103,9 @@ public class PaymentViewPluginController extends BasePluginController implements
 	 * is extracted i.e. transaction type, amount, sender and transaction code (if any)
 	 * The above parameters may vary amongst service providers
 	 */
-	public void incomingMessageEvent(Message message) {
-	    // Only handle received messsages
-	    if(message.getType().equals(Message.Type.RECEIVED))
+	public void incomingMessageEvent(FrontlineMessage message) {
+	    // Only handle received messages
+	    if(message.getType().equals(FrontlineMessage.Type.RECEIVED))
 	        tabController.processIncomingMessage(message);
 	}
 
