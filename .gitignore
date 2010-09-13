@@ -12,3 +12,6 @@ bin/
 
 # Temporary working directory
 temp/
+/izpack-build.xml
+/izpack-build.xml
+/.classpath
