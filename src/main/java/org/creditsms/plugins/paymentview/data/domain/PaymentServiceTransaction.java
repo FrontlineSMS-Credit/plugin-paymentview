@@ -18,14 +18,7 @@ import net.frontlinesms.data.domain.FrontlineMessage;
 @Entity
 @Table(uniqueConstraints={@UniqueConstraint(columnNames={"payment_service_id", "transaction_code"})})
 public class PaymentServiceTransaction {
-//>	CONSTANTS
-    /** Flags the transaction as a deposit */
-    public static final int TYPE_DEPOSIT = 0;
-    /** Flags the transaction as a withdrawal */
-    public static final int TYPE_WITHDRAWAL = 1;
-    /** Flags the transaction as a balance enquiry */
-    public static final int TYPE_BALANCE_ENQUIRY = 2;
-	
+//>	CONSTANTS	
     /** Field name for {@link #transactionType} */
     private static final String FIELD_TRANSACTION_TYPE = "transaction_type";
     /** Field name for {@link #paymentService} */
@@ -33,13 +26,24 @@ public class PaymentServiceTransaction {
     /** Field name for {@link #transactionCode} */
     private static final String FIELD_TRANSACTION_CODE = "transaction_code";
 	
+    public enum TransactionType {
+        /** Transaction is a deposit of funds */
+        DEPOSIT,
+        /** Transaction is a withdrawal of funds */
+        WITHDRAWAL,
+        /** Transaction is a receipt of funds from a third party*/
+        RECEIPT,
+        /** Transaction is a transfer of funds to a third party*/
+        TRANSFER
+    }
+    
     public enum Field implements EntityField<PaymentServiceTransaction>{
     	/** Field mapping for {@link PaymentServiceTransaction#client }*/
     CLIENT_ID("id"),
     /** Field mapping for {@link PaymentServiceTransaction#paymentService}*/
     PAYMENT_SERVICE_ID("paymentService"),
     /** Field mapping for {@link PaymentServiceTransaction#transactionType} */
-    TRANSACTION_TYPE("transactionType");
+    TYPE("transactionType");
     	
     	private final String fieldName;
     	
@@ -66,7 +70,7 @@ public class PaymentServiceTransaction {
     
     /** Type of transaction; can be DISPERSAL or REPAYMENT */
     @Column(name=FIELD_TRANSACTION_TYPE, nullable=false)
-    private int transactionType;
+    private TransactionType transactionType;
     
     /** Amount transacted*/
     @Column(nullable=false)
@@ -123,7 +127,7 @@ public class PaymentServiceTransaction {
      * Gets the type of this transaction
      * @return
      */
-    public int getTransactionType(){
+    public TransactionType getTransactionType(){
     	return transactionType;
     }
     
@@ -195,7 +199,7 @@ public class PaymentServiceTransaction {
      * Sets the type of this transaction
      * @param type
      */
-    public void setTransactionType(int type){
+    public void setTransactionType(TransactionType type){
     	transactionType = type;
     }
     

@@ -9,7 +9,10 @@ import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.NetworkOperator;
 import org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction;
+import org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction.Field;
+import org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction.TransactionType;
 import org.creditsms.plugins.paymentview.data.repository.PaymentServiceTransactionDao;
+
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
@@ -41,29 +44,37 @@ public class HibernatePaymentServiceTransactionDao extends BaseHibernateDao<Paym
     /** @see PaymentServiceTransactionDao#getTransactionsByClient(Client) */
     public List<PaymentServiceTransaction> getTransactionsByClient(Client client) {
         DetachedCriteria criteria = super.getCriterion();
+        
         criteria.add(Restrictions.eq(PaymentServiceTransaction.Field.CLIENT_ID.getFieldName(), new Long(client.getId())));
+        
         return super.getList(criteria);
     }
 
     /** @see PaymentServiceTransactionDao#getTransactionsByClient(Client, int) */
-    public List<PaymentServiceTransaction> getTransactionsByClient(Client client, int transactionType) {
+    public List<PaymentServiceTransaction> getTransactionsByClient(Client client, TransactionType transactionType) {
         DetachedCriteria criteria = super.getCriterion();
-        criteria.add(Restrictions.eq(PaymentServiceTransaction.Field.CLIENT_ID.getFieldName(), new Long(client.getId())));
-        criteria.add(Restrictions.eq(PaymentServiceTransaction.Field.TRANSACTION_TYPE.getFieldName(), transactionType));
+        
+        criteria.add(Restrictions.eq(Field.CLIENT_ID.getFieldName(), new Long(client.getId())));
+        criteria.add(Restrictions.eq(Field.TYPE.getFieldName(), transactionType));
+        
         return super.getList(criteria);
     }
 
     /** @see PaymentServiceTransactionDao#getTransactionsByNetworkOperator(NetworkOperator) */
     public List<PaymentServiceTransaction> getTransactionsByNetworkOperator(NetworkOperator operator) {
         DetachedCriteria criteria = super.getCriterion();
+        
         criteria.add(Restrictions.eq(NetworkOperator.Field.ID.getFieldName(), new Long(operator.getId())));
+        
         return super.getList(criteria);
     }
 
     /** @see PaymentServiceTransactionDao#getTransactionsByType(int) */
-    public List<PaymentServiceTransaction> getTransactionsByType(int transactionType) {
+    public List<PaymentServiceTransaction> getTransactionsByType(TransactionType transactionType) {
         DetachedCriteria criteria = super.getCriterion();
-        criteria.add(Restrictions.eq(PaymentServiceTransaction.Field.TRANSACTION_TYPE.getFieldName(), new Integer(transactionType)));
+        
+        criteria.add(Restrictions.eq(PaymentServiceTransaction.Field.TYPE.getFieldName(), transactionType));
+        
         return super.getList(criteria);
     }
 	
@@ -75,7 +86,7 @@ public class HibernatePaymentServiceTransactionDao extends BaseHibernateDao<Paym
         criteria.add(Restrictions.eq(FrontlineMessage.Field.STATUS.getFieldName(), FrontlineMessage.Status.RECEIVED));
         criteria.add(Restrictions.eq(FrontlineMessage.Field.TYPE.getFieldName(), FrontlineMessage.Type.RECEIVED));
         criteria.add(Restrictions.sqlRestriction("senderMsisdn IN (SELECT smsShortCode FROM PaymentService)"));
-        criteria.add(Restrictions.sqlRestriction("id NOT IN (SELECT message_id FROM PaymentServiceTransaction)"));
+        criteria.add(Restrictions.sqlRestriction("this_.id NOT IN (SELECT message_id FROM PaymentServiceTransaction)"));
 		
         return super.getHibernateTemplate().findByCriteria(criteria);
     }

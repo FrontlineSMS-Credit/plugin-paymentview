@@ -8,6 +8,7 @@ import net.frontlinesms.data.domain.FrontlineMessage;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.NetworkOperator;
 import org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction;
+import org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction.TransactionType;
 
 public interface PaymentServiceTransactionDao {
 	/**
@@ -37,7 +38,7 @@ public interface PaymentServiceTransactionDao {
 	 * @param transactionType type of transactions to be fetched
 	 * @return
 	 */
-	public List <PaymentServiceTransaction> getTransactionsByClient(Client client, int transactionType);
+	public List <PaymentServiceTransaction> getTransactionsByClient(Client client, TransactionType transactionType);
 	
 	/**
 	 * Gets all the transactions for a specific network operator. This applies where a payment service works
@@ -52,7 +53,7 @@ public interface PaymentServiceTransactionDao {
 	 * @param transactionType type of the transactions to be fetched
 	 * @return
 	 */
-	public List<PaymentServiceTransaction> getTransactionsByType(int transactionType);
+	public List<PaymentServiceTransaction> getTransactionsByType(TransactionType transactionType);
 	
 	/**
 	 * Returns a list of all the messages that were sent from a registered payment service
