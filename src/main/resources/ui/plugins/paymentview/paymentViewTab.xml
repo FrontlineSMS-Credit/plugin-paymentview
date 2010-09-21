@@ -72,6 +72,10 @@
 							</table>
 						</panel>
 					</tab>
+					
+					<!-- Commented out by Emmanuel Kala -->
+					<!-- Specifications for the receipts tab is yet to be defined; also duplicated by the received tab -->
+					<!--
 					<tab name="tbReceipts" text="i18n.plugins.paymentview.tab.receipts">
 						<panel name="pnReceipts" columns="1" gap="5" top="5" right="5" bottom="5" left="5">
 						    <table name="tblReceipts" weightx="1" weighty="1">
@@ -83,7 +87,21 @@
 						    </table>
 						</panel>
 				    </tab>
-					<tab name="tbErrors" text="i18n.plugins.paymentview.tab.errors"></tab>
+				    -->
+				    
+					<tab name="tbExceptions" text="i18n.plugins.paymentview.tab.exceptions">
+					    <panel name="pnExceptions" columns="1" gap="5" top="5" right="5" bottom="5" left="5">
+					        <table name="tblExceptions" weightx="1" weighty="1">
+					            <header>
+					                <!-- column reserved for error icon -->
+					                <column width="20"></column>
+					                <column text="i18n.plugins.paymentview.tab.exceptions.type" width="150"/>
+					                <column text="i18n.plugins.paymentview.tab.exceptions.date" width="150"/>
+					                <column text="i18n.plugins.paymentview.tab.exceptions.description"/>
+					            </header>
+					        </table>
+					    </panel>
+					</tab>
 					<tab name="tbSettings" text="i18n.plugins.paymentview.tab.settings">
 						<splitpane divider="220" weightx="1" weighty="1">
 							<panel gap="5" top="5" left="5" bottom="5" right="5" weightx="1" weighty="1">
