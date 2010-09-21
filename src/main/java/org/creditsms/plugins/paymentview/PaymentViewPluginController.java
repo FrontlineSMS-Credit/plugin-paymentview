@@ -11,7 +11,11 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.NetworkOperatorDao;
 import org.creditsms.plugins.paymentview.data.repository.PaymentServiceDao;
 import org.creditsms.plugins.paymentview.data.repository.PaymentServiceTransactionDao;
+import org.creditsms.plugins.paymentview.data.repository.PaymentViewErrorDao;
+import org.creditsms.plugins.paymentview.data.repository.QuickDialCodeDao;
+
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
+
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.FrontlineSMS;
@@ -33,7 +37,7 @@ import net.frontlinesms.ui.UiGeneratorController;
  *
  */
 @PluginControllerProperties(name="Payment View", iconPath="/icons/creditsms.png", i18nKey="plugins.paymentview",
-		springConfigLocation="classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml",
+        springConfigLocation="classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml",
 		hibernateConfigPath="classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml"		
 		)
 public class PaymentViewPluginController extends BasePluginController implements IncomingMessageListener {
@@ -53,6 +57,10 @@ public class PaymentViewPluginController extends BasePluginController implements
 	private PaymentServiceDao paymentServiceDao;
 	/** DAO for payment service transactions */
 	private PaymentServiceTransactionDao transactionDao;
+	/** DAO for quick dial codes (USSD requests)*/
+	private QuickDialCodeDao quickDialCodeDao;
+	/** DAO for payment view errors */
+	private PaymentViewErrorDao paymentViewErrorDao;
 	/** Tab controller for this plugin */
 	private PaymentViewThinletTabController tabController;
 
@@ -68,6 +76,8 @@ public class PaymentViewPluginController extends BasePluginController implements
 			networkOperatorDao = (NetworkOperatorDao)applicationContext.getBean("networkOperatorDao");
 			paymentServiceDao = (PaymentServiceDao)applicationContext.getBean("paymentServiceDao");
 			transactionDao = (PaymentServiceTransactionDao)applicationContext.getBean("paymentServiceTransactionDao");
+			quickDialCodeDao = (QuickDialCodeDao)applicationContext.getBean("quickDialCodeDao");
+			paymentViewErrorDao = (PaymentViewErrorDao)applicationContext.getBean("paymentViewErrorDao");
 		}catch(Throwable t){
 			log.warn("Unable to load DAO objects for the Payment View plugin", t);
 			throw new PluginInitialisationException(t);
@@ -82,6 +92,8 @@ public class PaymentViewPluginController extends BasePluginController implements
 		tabController.setNetworkOperatorDao(networkOperatorDao);
 		tabController.setPaymentServiceDao(paymentServiceDao);
 		tabController.setPaymentServiceTranscationDao(transactionDao);
+		tabController.setQuickDialCodeDao(quickDialCodeDao);
+		tabController.setPaymentViewErrorDao(paymentViewErrorDao);
 		
 		Object paymentViewTab = uiController.loadComponentFromFile(XML_PAYMENT_VIEW_TAB, tabController);
 		tabController.setTabComponent(paymentViewTab);
