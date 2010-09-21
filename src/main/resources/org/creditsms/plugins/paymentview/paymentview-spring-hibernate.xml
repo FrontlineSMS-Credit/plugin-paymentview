@@ -26,4 +26,10 @@
 	<bean id="paymentServiceTransactionDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernatePaymentServiceTransactionDao">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
+	<bean id="quickDialCodeDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateQuickDialCodeDao">
+	    <property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+    <bean id="paymentViewErrorDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernatePaymentViewErrorDao">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
 </beans>

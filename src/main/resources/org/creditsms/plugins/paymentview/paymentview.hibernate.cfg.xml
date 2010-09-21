@@ -6,5 +6,7 @@
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.NetworkOperator" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.PaymentService" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction" />
+    	<mapping class="org.creditsms.plugins.paymentview.data.domain.QuickDialCode" />
+    	<mapping class="org.creditsms.plugins.paymentview.data.domain.PaymentViewError" />
     </session-factory>
 </hibernate-configuration>
