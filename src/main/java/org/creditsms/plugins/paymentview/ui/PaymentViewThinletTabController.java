@@ -28,16 +28,25 @@ import net.frontlinesms.ui.handler.PagedListDetails;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.apache.log4j.Logger;
+
 import org.creditsms.plugins.paymentview.PaymentServiceSmsProcessor;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.NetworkOperator;
 import org.creditsms.plugins.paymentview.data.domain.PaymentService;
 import org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction;
+import org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction.TransactionType;
+import org.creditsms.plugins.paymentview.data.domain.PaymentViewError;
+import org.creditsms.plugins.paymentview.data.domain.QuickDialCode;
+
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.NetworkOperatorDao;
 import org.creditsms.plugins.paymentview.data.repository.PaymentServiceDao;
 import org.creditsms.plugins.paymentview.data.repository.PaymentServiceTransactionDao;
+import org.creditsms.plugins.paymentview.data.repository.PaymentViewErrorDao;
+import org.creditsms.plugins.paymentview.data.repository.QuickDialCodeDao;
+import org.creditsms.plugins.paymentview.ui.handler.SettingsTabHandler;
 
 import thinlet.Thinlet;
 
@@ -48,61 +57,38 @@ import thinlet.Thinlet;
  */
 public class PaymentViewThinletTabController extends BasePluginThinletTabController<PaymentViewPluginController> implements ThinletUiEventHandler, PagedComponentItemProvider {
 //> UI FILES
-    private static final String UI_FILE_CLIENT_DIALOG = "/ui/plugins/paymentview/dgEditClient.xml";
-    private static final String UI_FILE_PAYMENT_SERVICE_DIALOG = "/ui/plugins/paymentview/dgEditPaymentService.xml";
-    private static final String UI_FILE_PAYMENT_SERVICE_TABLE = "/ui/plugins/paymentview/tbPaymentServices.xml";
-    private static final String UI_FILE_NETWORK_OPERATOR_TABLE = "/ui/plugins/paymentview/tbNetworkOperators.xml";
-    private static final String UI_FILE_NETWORK_OPERATOR_DIALOG = "/ui/plugins/paymentview/dgEditNetworkOperator.xml";
-    private static final String UI_FILE_RESPONSE_TEXTS_DIALOG = "/ui/plugins/paymentview/dgPaymentServiceResponseTexts.xml";
-    private static final String UI_FILE_SEND_MONEY_DIALOG = "/ui/plugins/paymentview/dgSendMoneyForm.xml";
+    private static final String UI_FILE_CLIENT_DIALOG = "/ui/plugins/paymentview/dgEditClient.xml";    
+    private static final String UI_FILE_SEND_MONEY_DIALOG = "/ui/plugins/paymentview/dgSendMoneyForm.xml";    
+    
+//> ICON FILES    
+    private static final String ICON_STATUS_ATTENTION = "/icons/status_attention.png";
 	
 //> COMPONENT NAME CONSTANTS
     private static final String COMPONENT_BT_SAVE_CLIENT = "btSaveClient";
     private static final String COMPONENT_BT_DELETE_CLIENT = "btDeleteClient";
     private static final String COMPONENT_BT_EDIT_CLIENT = "btEditClient";
-    private static final String COMPONENT_BT_SEND_MONEY = "btSendMoney";
-    private static final String COMPONENT_BT_EDIT_PAYMENT_SERVICE = "btEditPaymentService";
-    private static final String COMPONENT_BT_DELETE_PAYMENT_SERVICE = "btDeletePaymentService";
     private static final String COMPONENT_LS_CLIENTS = "lsClients";
-    private static final String COMPONENT_LS_ALL_NETWORK_OPERATORS = "lstAllOperators";
-    private static final String COMPONENT_LS_SELECTED_OPERATORS = "lstSelectedOperators";
     private static final String COMPONENT_TBL_DISPERSALS = "tblDispersals";
     private static final String COMPONENT_TBL_REPAYMENTS = "tblRepayments";
-    private static final String COMPONENT_TBL_NETWORK_OPERATORS = "tblNetworkOperators";
-    private static final String COMPONENT_TBL_PAYMENT_SERVICES = "tblPaymentServices";
+    private static final String COMPONENT_BT_SEND_MONEY = "btSendMoney";
+    private static final String COMPONENT_TBL_EXCEPTIONS = "tblExceptions";    
     private static final String COMPONENT_FLD_CLIENT_NAME = "fldClientName";
     private static final String COMPONENT_FLD_PHONE_NUMBER = "fldPhoneNumber";
     private static final String COMPONENT_FLD_OTHER_PHONE_NUMBER = "fldOtherPhoneNumber";
     private static final String COMPONENT_FLD_EMAIL_ADDRESS = "fldEmailAddress";
-    private static final String COMPONENT_FLD_SERVICE_NAME = "fldServiceName";
-    private static final String COMPONENT_FLD_SMS_SHORT_CODE = "fldSmsShortCode";
-    private static final String COMPONENT_FLD_PIN_NUMBER = "fldPinNumber";
-    private static final String COMPONENT_FLD_SEND_MONEY_TEXT = "fldSendMoneyText";
-    private static final String COMPONENT_FLD_WITHDRAW_MONEY_TEXT = "fldWithdrawMoneyText";
-    private static final String COMPONENT_FLD_BALANCE_ENQUIRY_TEXT = "fldBalanceEnquiryText";
-    private static final String COMPONENT_FLD_OPERATOR_NAME = "fldOperatorName";
-    private static final String COMPONENT_FLD_DISPESRAL_CONFIRM_TEXT = "fldDispersalConfirmText";
-    private static final String COMPONENT_FLD_DISPERSAL_CONFIRM_TEXT_KEYWORD = "fldDispersalConfirmKeyword";
-    private static final String COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT = "fldRepaymentConfirmText";
-    private static final String COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT_KEYWORD = "fldRepaymentConfirmKeyword";
-    private static final String COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT = "fldBalanceEnquiryConfirmText";
-    private static final String COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT_KEYWORD = "fldBalanceEnquiryConfirmKeyword";
     private static final String COMPONENT_FLD_TRANSFER_AMOUNT = "fldAmount";
     private static final String COMPONENT_DLG_CLIENT_DETAILS = "clientDetailsDialog";
-    private static final String COMPONENT_DLG_NETWORK_OPERATOR = "networkOperatorDialog";
-    private static final String COMPONENT_DLG_PAYMENT_SERVICE = "paymentServiceDialog";
     private static final String COMPONENT_DLG_SEND_MONEY  = "sendMoneyDialog";
-    private static final String COMPONENT_PN_SETTINGS_RIGHT_PANE = "pnSettingsRightPane";
     private static final String COMPONENT_PN_CLIENTS = "pnClients";
     private static final String COMPONENT_PN_DISPERSALS = "pnDispersals";
-    private static final String COMPONENT_PN_REPAYMENTS = "pnRepayments";
-    private static final String COMPONENT_PN_PAYMENT_SERVICES = "pnPaymentServiceList";
+    private static final String COMPONENT_PN_REPAYMENTS = "pnRepayments";    
+    private static final String COMPONENT_PN_EXCEPTIONS = "pnExceptions";
     private static final String COMPONENT_LB_CLIENT_NAME = "lbClientName";
     private static final String COMPONENT_CB_PAYMENT_SERVICE = "cbPaymentService";
+    private static final String COMPONENT_TB_PAYMENT_VIEW = "paymentViewTabbedPane";
 
 //> I18N KEYS
-    private static final String PAYMENTVIEW_LOADED = "paymentview.loaded";
-    private static final String PAYMENT_VIEW_SAME_KEYWORD_ERROR = "paymentview.error.same.keyword";
+    private static final String PAYMENTVIEW_LOADED = "paymentview.loaded";    
     private static final String PAYMENTVIEW_NO_TRANSFER_AMOUNT = "paymentview.error.empty.amount";
     private static final String PAYMENTVIEW_INVALID_TRANSFER_AMOUNT = "paymentview.error.invalid.amount";
 	
@@ -119,6 +105,8 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
     private ComponentPagingHandler dispersalsPagingHandler;
     /** Paging handler for repayments*/
     private ComponentPagingHandler repaymentsPagingHandler;
+    /** Paging handler for exceptions */
+    private ComponentPagingHandler exceptionsPagingHandler;
 
 //> DAO OBJECTS	
     /** DAO for {@link Client}s */
@@ -131,14 +119,17 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
     private PaymentServiceTransactionDao transactionDao;
     /** DAO for contacts */
     private ContactDao contactDao;
+    /** DAO for quick dial codes */
+    private QuickDialCodeDao quickDialCodeDao;
+    /** DAO for paymentview errors */
+    private PaymentViewErrorDao paymentViewErrorDao;
     
+    private PaymentViewPluginController controller;
 //> PROPERTIES
     /** String used for the live search */
     private String liveSearchString;
     /** Keeps track of the currently selected client */
     private Client selectedClient;
-    /** Currently selected payment service*/
-    private PaymentService selectedPaymentService;
 	
 //> CONSTRUCTORS
     /**
@@ -146,14 +137,16 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * @param paymentViewController value for {@link #controller}
      * @param uiController value for {@linkplain #ui}
      */
-    public PaymentViewThinletTabController(PaymentViewPluginController controller, UiGeneratorController ui){
+    public PaymentViewThinletTabController(PaymentViewPluginController controller, UiGeneratorController ui) {
         super(controller, ui);
+        
+        this.controller = controller;
     }
 	
     /**
      * Refreshes the tab display
      */
-    public void refresh(){
+    public void refresh() {
         // Set the status message
         ui.setStatus(InternationalisationUtils.getI18NString(PAYMENTVIEW_LOADED));
         
@@ -183,6 +176,20 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
         Object pnDispersals = ui.find(this.paymentViewTab, COMPONENT_PN_DISPERSALS);
         ui.add(pnDispersals, dispersalsPagingHandler.getPanel(), 1);
         dispersalsPagingHandler.refresh();
+        
+        // Populate the exceptions table and add a paging handler for the exceptions
+        Object exceptionsTable = getExceptionsTable();
+        exceptionsPagingHandler = new ComponentPagingHandler(ui, this, exceptionsTable);
+        
+        Object pnExceptions = ui.find(this.paymentViewTab, COMPONENT_PN_EXCEPTIONS);
+        ui.add(pnExceptions, exceptionsPagingHandler.getPanel(), 1);
+        exceptionsPagingHandler.refresh();
+        
+        Object paymentViewTabbedPane = ui.find(this.paymentViewTab, COMPONENT_TB_PAYMENT_VIEW);
+        SettingsTabHandler settingsTab = new SettingsTabHandler(controller, ui);        
+        settingsTab.init();
+        
+        ui.add(paymentViewTabbedPane, settingsTab.getTab());
     }
     
     /**
@@ -210,7 +217,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * Sets the client DAO
      * @param clientDao
      */
-    public void setClientDao(ClientDao clientDao){
+    public void setClientDao(ClientDao clientDao) {
         this.clientDao = clientDao;
     }
     
@@ -218,7 +225,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * Sets the contacts DAO
      * @param contactDao
      */
-    public void setContactDao(ContactDao contactDao){
+    public void setContactDao(ContactDao contactDao) {
         this.contactDao = contactDao;
     }
     
@@ -226,7 +233,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * Sets the network operator DAO
      * @param networkOperatorDao
      */
-    public void setNetworkOperatorDao(NetworkOperatorDao networkOperatorDao){
+    public void setNetworkOperatorDao(NetworkOperatorDao networkOperatorDao) {
         this.networkOperatorDao = networkOperatorDao;
     }
     
@@ -234,7 +241,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * Sets the payment service DAO
      * @param paymentServiceDao
      */
-    public void setPaymentServiceDao(PaymentServiceDao paymentServiceDao){
+    public void setPaymentServiceDao(PaymentServiceDao paymentServiceDao) {
         this.paymentServiceDao = paymentServiceDao;
     }
     
@@ -242,23 +249,42 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * Sets the payment service transaction DAO
      * @param transactionDao
      */
-    public void setPaymentServiceTranscationDao(PaymentServiceTransactionDao transactionDao){
+    public void setPaymentServiceTranscationDao(PaymentServiceTransactionDao transactionDao) {
         this.transactionDao = transactionDao;
+    }
+    
+    /**
+     * Sets the quick dial code DAO
+     * @param quickDialCodeDao
+     */
+    public void setQuickDialCodeDao(QuickDialCodeDao quickDialCodeDao) {
+        this.quickDialCodeDao = quickDialCodeDao;
+    }
+    
+    /**
+     * Sets the payment view error DAO
+     * @param paymentViewErrorDao
+     */
+    public void setPaymentViewErrorDao(PaymentViewErrorDao paymentViewErrorDao) {
+        this.paymentViewErrorDao = paymentViewErrorDao;
     }
 	
 // LIST PAGING METHODS
     /** @see PagedComponentItemProvider#getListDetails(Object, int, int) */
     public PagedListDetails getListDetails(Object list, int startIndex,	int limit) {
-        if(list.equals(clientsPagingHandler.getList())){
+        if(list.equals(clientsPagingHandler.getList())) {
             return getClientListPagingDetails(startIndex, limit);
-        } else if(list.equals(repaymentsPagingHandler.getList())){
+        } else if(list.equals(repaymentsPagingHandler.getList())) {
             return getRepaymentListPagingDetails(startIndex, limit);
-        } else if(list.equals(dispersalsPagingHandler.getList())){
+        } else if(list.equals(dispersalsPagingHandler.getList())) {
             return getDispersalListPagingDetails(startIndex, limit);
-        } else throw new IllegalStateException();
+        } else if (list.equals(exceptionsPagingHandler.getList())) {
+            return getExceptionsListPagingDetails(startIndex, limit);
+        }
+        else throw new IllegalStateException();
     }
     
-    private PagedListDetails getClientListPagingDetails(int startIndex, int limit){
+    private PagedListDetails getClientListPagingDetails(int startIndex, int limit) {
     	List<Client> clients = null;
     	int totalClientCount = 0;
     	
@@ -287,9 +313,9 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
     	
     	// Check for selected client
     	if(selectedClient != null){
-    		transactions = transactionDao.getTransactionsByClient(selectedClient, PaymentServiceTransaction.TYPE_DEPOSIT);
+    		transactions = transactionDao.getTransactionsByClient(selectedClient, TransactionType.RECEIPT);
     	} else {
-    		transactions = transactionDao.getTransactionsByType(PaymentServiceTransaction.TYPE_DEPOSIT);
+    		transactions = transactionDao.getTransactionsByType(TransactionType.RECEIPT);
     	}
     	
     	// Get the number of items returned
@@ -308,22 +334,36 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
     	List<PaymentServiceTransaction> transactions;
     	
     	// Check for selected client
-    	if(selectedClient != null) {
-    		transactions = transactionDao.getTransactionsByClient(selectedClient, PaymentServiceTransaction.TYPE_WITHDRAWAL);
+    	if (selectedClient != null) {
+    		transactions = transactionDao.getTransactionsByClient(selectedClient, TransactionType.TRANSFER);
     	} else {
-    		transactions = transactionDao.getTransactionsByType(PaymentServiceTransaction.TYPE_WITHDRAWAL);
+    		transactions = transactionDao.getTransactionsByType(TransactionType.TRANSFER);
     	}
     	
     	// Get the number of items returned
     	int totalItems = transactions.size();
     	
     	Object[] transactionRows = new Object[totalItems];
-    	for(int i=0; i<totalItems; ++i){
+    	
+    	for(int i=0; i<totalItems; ++i) {
     		PaymentServiceTransaction t = transactions.get(i);
     		transactionRows[i] = getRow(t);
     	}
     	
     	return new PagedListDetails(totalItems, transactionRows);
+    }
+    
+    private PagedListDetails getExceptionsListPagingDetails(int startIndex, int limit) {
+        List<PaymentViewError> paymentViewErrors = paymentViewErrorDao.getAllErrors(startIndex, limit);
+        int itemCount = paymentViewErrors.size();
+        
+        Object[] rows = new Object[itemCount];
+        
+        for(int i=0; i<itemCount; i++) {
+            rows[i]  = getRow(paymentViewErrors.get(i));
+        }
+        
+        return new PagedListDetails(itemCount, rows);
     }
     
     /**
@@ -339,7 +379,8 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
     	
     	// Get the payment service from which the text message has been sent
     	PaymentService paymentService = paymentServiceDao.getPaymentServiceByShortCode(sender);
-    	if(paymentService == null){
+    	
+    	if(paymentService == null) {
     		LOG.debug("FrontlineMessage not from a registered payment service");
     	    return;
     	}
@@ -365,17 +406,17 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
     	String smsTemplate = null;
     	
     	//Extra validation check just in case...
-    	if(confirm1.trim().equalsIgnoreCase(confirm2.trim()))
+    	if (confirm1.trim().equalsIgnoreCase(confirm2.trim()))
     		return;
     	
     	//Begin pattern matching and extraction of information from the text message
-    	if(containsKeyword(content, confirm1)){
-    		transaction.setTransactionType(PaymentServiceTransaction.TYPE_DEPOSIT);
+    	if (containsKeyword(content, confirm1)) {
+    		transaction.setTransactionType(TransactionType.RECEIPT);
     		smsTemplate = paymentService.getRepaymentConfirmationText();
-    	}else if(containsKeyword(content, confirm2)){
-    		transaction.setTransactionType(PaymentServiceTransaction.TYPE_WITHDRAWAL);
+    	} else if(containsKeyword(content, confirm2)) {
+    		transaction.setTransactionType(TransactionType.TRANSFER);
     		smsTemplate = paymentService.getDispersalConfirmationText();
-    	}else{
+    	} else {
     	    LOG.debug("Error: Keyword match failed");
     		return;
     	}
@@ -391,9 +432,9 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
     	//TODO: Final transaction validation before writing to the database
     	
     	//Information has been extracted, therefore save
-    	try{
+    	try {
     		transactionDao.savePaymentServiceTransaction(transaction);
-    	}catch(DuplicateKeyException e){
+    	} catch(DuplicateKeyException e) {
     		LOG.debug("Error: A transaction with the specified code already exists", e);
     	}
     }
@@ -403,21 +444,27 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
     /**
      * @return The client list component
      */
-    private Object getClientList(){
+    private Object getClientList() {
     	Object clientList = ui.find(paymentViewTab, COMPONENT_LS_CLIENTS);
     	return clientList;
     }
     
     /** @return the dispersals table component */
-    private Object getDispersalsTable(){
+    private Object getDispersalsTable() {
     	Object dispersalsTable = ui.find(paymentViewTab, COMPONENT_TBL_DISPERSALS);
     	return dispersalsTable;
     }
     
     /** @return the repayments table component */
-    private Object getRepaymentsTable(){
+    private Object getRepaymentsTable() {
     	Object repaymentsTable = ui.find(paymentViewTab, COMPONENT_TBL_REPAYMENTS);
     	return repaymentsTable;
+    }
+    
+    /** @return the exceptions table UI component */
+    private Object getExceptionsTable() {
+        Object exceptionsTable = ui.find(paymentViewTab, COMPONENT_TBL_EXCEPTIONS);
+        return exceptionsTable;
     }
     
     /**
@@ -435,7 +482,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * @param operator {@link NetworkOperator} instance represented by the list item
      * @return list item
      */
-    private Object getListItem(NetworkOperator operator){
+    public Object getListItem(NetworkOperator operator) {
     	return ui.createListItem(operator.getOperatorName(), operator);
     }
     
@@ -444,7 +491,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * @param transaction {@link PaymentServiceTransaction} to be displayed in the row
      * @return
      */
-    private Object getRow(PaymentServiceTransaction transaction){
+    public Object getRow(PaymentServiceTransaction transaction) {
     	Object row = ui.createTableRow(transaction);
     	ui.add(row, ui.createTableCell(transaction.getClient().getContact().getDisplayName()));
     	ui.add(row, ui.createTableCell(transaction.getPaymentService().getServiceName()));
@@ -458,7 +505,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * @param service {@link PaymentService} to be displayed in the row
      * @return
      */
-    private Object getRow(PaymentService service){
+    public Object getRow(PaymentService service) {
     	Object row = ui.createTableRow(service);
     	
     	ui.add(row, ui.createTableCell(service.getServiceName()));
@@ -472,7 +519,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * @param operator
      * @return
      */
-    private Object getRow(NetworkOperator operator){
+    public Object getRow(NetworkOperator operator) {
     	Object row = ui.createTableRow(operator);
     	
     	ui.add(row, ui.createTableCell(operator.getOperatorName()));
@@ -481,12 +528,52 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
     }
     
     /**
+     * Gets a table row containing an entry for quick dial code
+     * @param quickDialCode
+     * @return
+     */
+    public Object getRow(QuickDialCode quickDialCode) {
+        Object row = ui.createTableRow(quickDialCode);
+        
+        ui.add(row, ui.createTableCell(quickDialCode.getQuickDialString()));
+        ui.add(row, ui.createTableCell(quickDialCode.getQuickDialDescription()));
+        
+        return row;
+    }
+    
+    /**
+     * Gets a table row containing an payment view error message
+     * @param error
+     * @return
+     */
+    public Object getRow(PaymentViewError error) {
+        Object row = ui.createTableRow(error);
+
+        Date errorDate = new Date(error.getErrorDate());
+        
+        Object iconCell = ui.createTableCell("");
+        ui.setIcon(iconCell, ICON_STATUS_ATTENTION);
+        
+        ui.add(row, iconCell);
+        ui.add(row, ui.createTableCell(error.getErrorType().toString()));
+        ui.add(row, ui.createTableCell(InternationalisationUtils.getDatetimeFormat().format(errorDate)));
+        ui.add(row, ui.createTableCell(error.getErrorDescription()));
+        
+        return row;
+    }
+    
+    /**
      * Returns a {@link Thinlet} UI combobox choice containing the name of a {@link PaymentService}
      * @param service
      * @return
      */
-    private Object getChoice(PaymentService service){
+    public Object getChoice(PaymentService service) {
         Object choice = ui.createComboboxChoice(service.getServiceName(), service);
+        return choice;
+    }
+    
+    public Object getChoice(NetworkOperator operator) {
+        Object choice = ui.createComboboxChoice(operator.getOperatorName(), operator);
         return choice;
     }
     
@@ -495,7 +582,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * @param component
      * @return the attached {@link Client} instance
      */
-    public Client getClient(Object component){
+    public Client getClient(Object component) {
     	return(Client)ui.getAttachedObject(component);
     }
     
@@ -504,7 +591,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * @param component
      * @return the attached {@link PaymentServiceTransaction} instance
      */
-    public PaymentServiceTransaction getPaymentServiceTransaction(Object component){
+    public PaymentServiceTransaction getPaymentServiceTransaction(Object component) {
     	return (PaymentServiceTransaction)ui.getAttachedObject(component);
     }
     
@@ -513,7 +600,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * @param component
      * @return the attached {@link PaymentService} instance
      */
-    public PaymentService getPaymentService(Object component){
+    public PaymentService getPaymentService(Object component) {
     	return (PaymentService)ui.getAttachedObject(component);
     }
     
@@ -522,15 +609,32 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * @param component
      * @return the attached {@link NetworkOperator} instance
      */
-    public NetworkOperator getNetworkOperator(Object component){
+    public NetworkOperator getNetworkOperator(Object component) {
     	return (NetworkOperator)ui.getAttachedObject(component);
+    }
+    
+    /**
+     * Gets the {@link QuickDialCode} instance attached to the supplied component
+     * @param component
+     * @return The attached {@link QuickDialCode} instance
+     */
+    public QuickDialCode getQuickDialCode(Object component) {
+        return (QuickDialCode)ui.getAttachedObject(component);
+    }
+    
+    /**
+     * Gets the Thinlet UI tab component for this plugin
+     * @return
+     */
+    public Object getPaymentViewTab() {
+        return paymentViewTab;
     }
     
     /**
      * Performs a live search of client data and updates the display in real-time
      * @param textField 
      */
-    public void liveClientSearch(Object textField){
+    public void liveClientSearch(Object textField) {
     	LOG.info("Initiating live search");
     	
     	// Grab the typed text
@@ -554,7 +658,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * Event handler that is triggered when a client is selected from the list of clients on the UI
      * @param component reference to the client list UI component
      */
-    public void selectClient(Object component){
+    public void selectClient(Object component) {
     	// Get references to the edit and delete buttons
     	Object btnEditClient = ui.find(paymentViewTab, COMPONENT_BT_EDIT_CLIENT);
     	Object btnDeleteClient = ui.find(paymentViewTab, COMPONENT_BT_DELETE_CLIENT);
@@ -596,13 +700,13 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * Event handler that is triggered when a client record on the UI client list is double clicked
      * @param component
      */
-    public void showClientDetails(){		
+    public void showClientDetails() {		
     	// Load the client details dialog
     	Object dialog = getClientDialog(selectedClient);
     	ui.add(dialog);
     }
     
-    public void deleteClient(){
+    public void deleteClient() {
     	clientDao.deleteClient(selectedClient);
     	clientsPagingHandler.refresh();
     }
@@ -610,14 +714,14 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * Removes a dialog from the screen when the close action is initated
      * @param dialog {@link Thinlet} UI dialog to be removed from the display 
      */
-    public void removeDialog(Object dialog){
+    public void removeDialog(Object dialog) {
     	ui.remove(dialog);
     }
     
     /**
      * Performs input validation for the required client properties 
      */
-    public void validateRequiredFields(){
+    public void validateRequiredFields() {
     	Object dialog = getClientDialog();
     	String clientName = ui.getText(ui.find(dialog, COMPONENT_FLD_CLIENT_NAME)).trim();
     	String phoneNumber = ui.getText(ui.find(dialog, COMPONENT_FLD_PHONE_NUMBER)).trim();
@@ -635,7 +739,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
     /**
      * Saves the client
      */
-    public void saveClient(){
+    public void saveClient() {
     	Object dialog = getClientDialog();
     	
     	// Check if a client object is attached to the client dialog
@@ -651,40 +755,42 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
     	client.setEmailAddress(ui.getText(ui.find(dialog, COMPONENT_FLD_EMAIL_ADDRESS)));
     	
     	// Check if a contact record is to be created for this client
-    	boolean createContact = ui.getBoolean(ui.find(dialog, "chkAddToContact"), "selected"); 
-    	if (createContact){
+    	boolean createContact = ui.getBoolean(ui.find(dialog, "chkAddToContact"), "selected");
+    	
+    	if (createContact) {
     		Contact contact = new Contact(client.getName(), client.getPhoneNumber(), client.getOtherPhoneNumber(), 
     				client.getEmailAddress(), null, true);
     		
     		// Check if a contact with the specified info already exists
     		boolean contactExists = (contactDao.getContactByName(client.getName()) == null);
-    		try{
+    		
+    		try {
     			if(contactExists)
     				contactDao.updateContact(contact);
     			else
     				contactDao.saveContact(contact);
-    		}catch(DuplicateKeyException e){
+    		} catch(DuplicateKeyException e) {
     			LOG.warn("A contact with the specified details already exists!" + e);
     		}
     			
     		// Link the client with the newly saved contact record
     		client.setContact(contact);
-    	}else{
+    	} else {
     		client.setContact(null);
     	}
     	
     	//Save the client info
-    	try{
+    	try {
     		if (clientExists ==  true) 
     			clientDao.updateClient(client);
     		else 
     			clientDao.saveClient(client);
-    	}catch(DuplicateKeyException e){
+    	} catch(DuplicateKeyException e) {
     		LOG.warn("A client with the phone number ["+client.getPhoneNumber()+"] already exists");
     	}
     	
     	// Remove the item being updated from the client list
-    	if(clientExists){
+    	if(clientExists) {
     		Object selectedItem = ui.getSelectedItem(getClientList());
     		ui.remove(selectedItem);
     	}
@@ -701,12 +807,12 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
     /**
      * Shows the client dialog
      */
-    public void showNewClientForm(){
+    public void showNewClientForm() {
     	ui.add(getClientDialog());
     }
     
     /** @return a reference to the client dialog */
-    private Object getClientDialog(){
+    private Object getClientDialog() {
     	Object dialog = ui.find(COMPONENT_DLG_CLIENT_DETAILS);
     	
     	if(dialog == null)
@@ -720,7 +826,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * @param client {@link Client} whose details shall be shown on the dialog
      * @return
      */
-    private Object getClientDialog(Client client){
+    private Object getClientDialog(Client client) {
     	Object dialog = getClientDialog();
     	ui.setAttachedObject(dialog, client);
     	
@@ -741,7 +847,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      * @param code value whose SHA-1 hash is to be computed
      * @return
      */
-    private String getHashString(String code){
+    public String getHashString(String code) {
         if(code == null || code.trim().length() == 0)
             return null;
     	
@@ -770,414 +876,16 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
     	return hashString;
     }
     
-    /**
-     * Gets an instance of the payment services panel
-     * @param load specified whether the network operator lists are to be loaded
-     * @return
-     */
-    private Object getPaymentServiceDialog(){
-        Object dialog = ui.find(COMPONENT_DLG_PAYMENT_SERVICE);
-    	
-    	if(dialog == null)
-    	    dialog =  ui.loadComponentFromFile(UI_FILE_PAYMENT_SERVICE_DIALOG, this);
-    	
-    	// Obtain reference to the "All Operators" list component
-    	Object allOperators = ui.find(dialog, COMPONENT_LS_ALL_NETWORK_OPERATORS);
     
-    	// Populate the "All Operators" list
-    	for(NetworkOperator operator: networkOperatorDao.getAllNetworkOperators()){
-    	    Object item = getListItem(operator);
-    		ui.add(allOperators, item);
-    	}
-    	
-    	return dialog;
-    }
-    
-    /**
-     * Gets an instance of the payment services panel showing the details of the specified payment service
-     * @param service {@link PaymentService} whose details are to be displayed on the panel
-     * @return
-     */
-    private Object getPaymentServiceDialog(PaymentService service){
-        Object dialog = getPaymentServiceDialog();
-        ui.setAttachedObject(dialog, service);
-    
-    	ui.setText(ui.find(dialog, COMPONENT_FLD_SERVICE_NAME), service.getServiceName());
-    	ui.setText(ui.find(dialog, COMPONENT_FLD_SMS_SHORT_CODE), service.getSmsShortCode());
-    	ui.setText(ui.find(dialog, COMPONENT_FLD_PIN_NUMBER), service.getPinNumber());
-    	ui.setText(ui.find(dialog, COMPONENT_FLD_SEND_MONEY_TEXT), service.getSendMoneyTextMessage());
-    	ui.setText(ui.find(dialog, COMPONENT_FLD_WITHDRAW_MONEY_TEXT), service.getWithdrawMoneyTextMessage());
-    	ui.setText(ui.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_TEXT), service.getBalanceEnquiryTextMessage());
-    	
-    	Object selectedOperators = ui.find(dialog, COMPONENT_LS_SELECTED_OPERATORS);		
-    	
-    	// Populate the network operators list for the selected payment service
-    	for(NetworkOperator operator: service.getNetworkOperators()){
-    	    Object item = getListItem(operator);
-    		ui.add(selectedOperators, item);
-    	}
-    	
-    	return dialog;
-    }
-    
-    
-    /**
-     * Gets an instance of the network operator dialog
-     * @return
-     */
-    private Object getNetworkOperatorDialog(){
-    	Object dialog = ui.find(COMPONENT_DLG_NETWORK_OPERATOR);
-    	
-    	if(dialog == null)
-    	    dialog = ui.loadComponentFromFile(UI_FILE_NETWORK_OPERATOR_DIALOG, this);
-    	
-    	return dialog;
-    }
-    
-    /**
-     * Event handler for the settings tree menu
-     * @param parentTab
-     * @param treeView
-     */
-    public void showSettingsItem(Object parentTab, Object treeView){
-        Object selectedNode = ui.getSelectedItem(treeView);
-    	ui.removeAll(ui.find(parentTab, COMPONENT_PN_SETTINGS_RIGHT_PANE));
-    			
-    	// No node has been selected
-    	if(ui.getName(selectedNode) == null)
-    		return;
-    	
-    	// Change the contents of the right-most panel depending on the selected tree node 
-    	if(ui.getName(selectedNode).equals("ndPaymentSystems")){
-    	    Object table = getPaymentServicesTable(true);
-    		ui.add(ui.find(parentTab, COMPONENT_PN_SETTINGS_RIGHT_PANE), ui.getParent(table));
-    		ui.repaint();
-    	}else if(ui.getName(selectedNode).equals("ndNetworkOperators")){
-    	    Object table = getNetworkOperatorsTable(true);
-    		ui.add(ui.find(parentTab, COMPONENT_PN_SETTINGS_RIGHT_PANE), ui.getParent(table));
-    		ui.repaint();
-    	}
-    }
-    
-    private Object getSettingsRightPane(){
-        return ui.find(paymentViewTab, COMPONENT_PN_SETTINGS_RIGHT_PANE);
-    }
-    
-    /**
-     * Returns a {@link Thinlet} UI table object containing the list of payment services in the system
-     * @param load Specifes whether to pupulate the table with the list of payment services
-     * @return
-     */
-    private Object getPaymentServicesTable(boolean load){		
-        Object table = ui.find(getSettingsRightPane(), COMPONENT_TBL_PAYMENT_SERVICES); 
-    	
-        if(table == null){
-    	    Object container = ui.loadComponentFromFile(UI_FILE_PAYMENT_SERVICE_TABLE, this);
-    		table = ui.find(container, COMPONENT_TBL_PAYMENT_SERVICES);
-        }		
-    	
-        if(load){
-            for(PaymentService service: paymentServiceDao.getAllPaymentServices()){
-    	        Object row = getRow(service);
-    		    ui.add(table, row);
-    	    }
-        }
-    	return table;
-    }
-    
-    /**
-     * Returns a {@link Thinlet} UI table object containing the list of network operators in the system
-     * @param reload designates whether the table is to be reloaded with the list of operators
-     * @return
-     */
-    private Object getNetworkOperatorsTable(boolean reload){
-        Object table = ui.find(getSettingsRightPane(), COMPONENT_TBL_NETWORK_OPERATORS);
-    	
-    	if(table == null){
-    	    Object container = ui.loadComponentFromFile(UI_FILE_NETWORK_OPERATOR_TABLE, this);
-    		table = ui.find(container, COMPONENT_TBL_NETWORK_OPERATORS);
-    	}
-    	
-    	if(reload){
-    	    for(NetworkOperator operator: networkOperatorDao.getAllNetworkOperators()){
-    		    Object row = getRow(operator);
-    			ui.add(table, row);
-    		}
-    	}
-    	
-    	return table;
-    }
-    
-    /**
-     * Displays the payment service dialog
-     */
-    public void showPaymentServiceDialog(){
-    	ui.add(getPaymentServiceDialog());
-    }
-    
-    /**
-     * Event helper for handling selection of a payment service from the list of payment services
-     * @param component
-     */
-    public void selectPaymentService(Object component){
-        Object selectedItem = ui.getSelectedItem(component);
         
-        selectedPaymentService = getPaymentService(selectedItem);
         
-        Object panel = ui.find(getSettingsRightPane(), COMPONENT_PN_PAYMENT_SERVICES);
-        Object btnEdit =  ui.find(panel, COMPONENT_BT_EDIT_PAYMENT_SERVICE);
-        Object btnDelete = ui.find(panel, COMPONENT_BT_DELETE_PAYMENT_SERVICE);
-        
-        boolean editEnabled = ui.getBoolean(btnEdit, Thinlet.ENABLED);
-        boolean deleteEnabled = ui.getBoolean(btnDelete, Thinlet.ENABLED);
-        
-        if(editEnabled == false){
-            ui.setEnabled(btnEdit, true);
-        }
-        
-        if(deleteEnabled == false){
-            ui.setEnabled(btnDelete, true);
-        }
-        
-        ui.repaint(paymentViewTab);
-        
-        LOG.trace("EXIT");
-        
-    }
-    
-    /**
-     * Event helper method to display the create/edit {@link PaymentService} dialog
-     */
-    public void showPaymentService(){
-    	ui.add(getPaymentServiceDialog(selectedPaymentService));
-    }
-    
-    /**
-     * Displays the network operator dialog
-     */
-    public void showNetworkOperatorDialog(){
-        ui.add(getNetworkOperatorDialog());
-    }
-    
-    
-    /**
-     * Saves a network operator record into the database
-     */
-    public void saveNetworkOperator(){
-        // Fetch the dialog
-        Object dialog = getNetworkOperatorDialog();
-    	
-        // Check if an existing record is being updated
-    	boolean operatorExists = (getNetworkOperator(dialog) == null)?false:true;
-    
-    	// Fetch/Create a network operator instance as appropriate
-    	NetworkOperator operator = (operatorExists == true)?getNetworkOperator(dialog) : new NetworkOperator();
-    
-    	// Fetch the name of the network operator
-    	String name = ui.getText(ui.find(dialog, COMPONENT_FLD_OPERATOR_NAME));
-    			
-    	// Prevent saving of zero-length names
-    	if(name.trim().length() == 0)
-    	    return;
-    	
-    	operator.setOperatorName(name);
-    	
-    	// Begin update/create
-    	try{
-    	    if(operatorExists)
-    		    networkOperatorDao.updateNetworkOperator(operator);
-    	    else
-    		    networkOperatorDao.saveNetworkOperator(operator);
-    	}catch(DuplicateKeyException e){
-    	    LOG.debug("A network operator with the specified name already exists" + e);
-    	}
-    	
-    	// If update operation, remove the selected row from the table
-    	if(operatorExists){
-    	    Object row = ui.getSelectedItem(getNetworkOperatorsTable(false));
-    		if(row != null){
-    		    ui.remove(row);
-    		}
-    	}
-    	
-    	// Close the dialog
-    	removeDialog(dialog);
-    	
-    	// If update, remove it from the list and add it again
-    	if(operatorExists){
-    	    Object row = ui.getSelectedItem(getNetworkOperatorsTable(false));
-    		ui.remove(row);
-    	}
-    	
-    	// Add new/updated record to the display list
-    	ui.add(getNetworkOperatorsTable(false), getRow(operator));
-    	ui.repaint();
-    }
-    
-    /**
-     * Toggles the enabled property of the buttons that move network operators between the lists
-     * of available and selected operators
-     * @param list
-     * @param button
-     */
-    public void toggleMoveOperatorButton(Object list, Object button){
-    	if(ui.getSelectedIndex(list) != -1)
-    	    ui.setEnabled(button, true);
-    	else
-    	    ui.setEnabled(button, false);
-    }
-    
-    
-    /**
-     * Moves a network operator from one list to another
-     * @param sourceList {@link Thinlet} UI list from which the item is to be moved
-     * @param targetList {@link Thinlet} UI list to which the item is being moved
-     */
-    public void moveNetworkOperator(Object sourceList, Object targetList){
-    	Object selectedItem = ui.getSelectedItem(sourceList);
-    	
-    	if(selectedItem != null){
-    	    if(operatorExists(sourceList, selectedItem) && !operatorExists(targetList, selectedItem)){
-    		    ui.remove(selectedItem);
-    			ui.add(targetList, selectedItem);
-    		}
-    		
-    		if(operatorExists(sourceList, selectedItem) && operatorExists(targetList, selectedItem)){
-    		    ui.remove(selectedItem);
-    		}
-    			
-    	}
-    }
-    
-    /**
-     * Helper method to check if a network operator exists in the target list
-     * @param targetList List to which the network operator is to be added
-     * @param listItem {@link Thinlet} UI list item to be added to the target list
-     * @return
-     */
-    private boolean operatorExists(Object targetList, Object listItem){
-        Object[] items = ui.getItems(targetList);
-    	
-    	NetworkOperator operator = getNetworkOperator(listItem);
-    	
-    	for(int i=0; i<items.length; i++){
-    	    NetworkOperator n = getNetworkOperator(items[i]);
-    	    if(n.getId() == operator.getId())
-    	        return true;
-    	}
-    	
-    	return false;
-    }
-    
-    /**
-     * Shows the dialog for defining the response text messages for a payment service
-     * @param serviceDialog
-     */
-    public void showNextPaymentServiceDialog(){
-        Object dialog = getPaymentServiceDialog();
-    	
-    	// Fetch the attached PaymentService object
-    	PaymentService service = getPaymentService(dialog);
-    	
-    	// No payment service found therefore create one
-    	if(service == null){
-    	    service = new PaymentService();
-    	}
-    	
-    	// Set the properties for the payment service
-    	service.setServiceName(ui.getText(ui.find(dialog, COMPONENT_FLD_SERVICE_NAME)));
-    	service.setSmsShortCode(ui.getText(ui.find(dialog, COMPONENT_FLD_SMS_SHORT_CODE)));
-    	service.setPinNumber(ui.getText(ui.find(dialog, COMPONENT_FLD_PIN_NUMBER)));
-    	service.setSendMoneyTextMessage(ui.getText(ui.find(dialog, COMPONENT_FLD_SEND_MONEY_TEXT)));
-    	service.setWithdrawMoneyTextMessage(ui.getText(ui.find(dialog, COMPONENT_FLD_WITHDRAW_MONEY_TEXT)));
-    	service.setBalanceEnquiryTextMessage(ui.getText(ui.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_TEXT)));
-    	
-    	Object[] operatorList = ui.getItems(ui.find(dialog, COMPONENT_LS_SELECTED_OPERATORS));
-    	
-    	// Set to hold the list of selected operators
-    	Set<NetworkOperator> operators = new HashSet<NetworkOperator>();
-    	
-    	for(int i=0; i<operatorList.length; i++){
-    	    operators.add(getNetworkOperator(operatorList[i]));
-    	}
-    	
-    	service.setNetworkOperators(operators);
-    	
-    	// Remove the initial dialog
-    	removeDialog(dialog);
-    	
-    	// Load the response text dialog
-    	Object responseTextDialog = ui.loadComponentFromFile(UI_FILE_RESPONSE_TEXTS_DIALOG, this);
-    	
-    	// Set the values for the text fields
-    	setPaymentServiceResponseTexts(responseTextDialog, service);
-    	
-    	// Attach the payment service to the response text dialog, add it to the UI and reload
-    	ui.setAttachedObject(responseTextDialog, service);		
-    	ui.add(responseTextDialog);
-    	ui.repaint();
-    }
-    
-    public void showPreviousPaymentServiceDialog(Object currentDialog){
-        // Get the attached payment service
-        PaymentService service = getPaymentService(currentDialog);
-    	
-    	// Null check
-    	if(service == null) return;
-    	
-    	// Cache the response texts before proceeding to the previous dialog
-    	fetchPaymentServiceResponseTexts(currentDialog, service);
-    	
-    	if(service.getRepaymentConfirmationKeyword().length() > 0 && service.getDispersalConfirmationKeyword().length() > 0){
-        	if(service.getRepaymentConfirmationKeyword().equalsIgnoreCase(service.getDispersalConfirmationKeyword())){
-        	    ui.alert(InternationalisationUtils.getI18NString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
-        	    return;
-        	}
-    	}
-    	
-    	removeDialog(currentDialog);
-    	Object previousDialog = getPaymentServiceDialog(service);
-    	
-    	ui.add(previousDialog);
-    }
-    
-    
-    /**
-     * Helper method for fetching the values of the response texts from the UI fields
-     * and updating the specified PaymentService instance
-     * @param service
-     */
-    private void fetchPaymentServiceResponseTexts(Object dialog, PaymentService service){
-        String repaymentText = ui.getText(ui.find(dialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT)).trim();
-    	String repaymentKeyword = ui.getText(ui.find(dialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT_KEYWORD)).trim();
-    	String dispersalText = ui.getText(ui.find(dialog, COMPONENT_FLD_DISPESRAL_CONFIRM_TEXT)).trim();
-    	String dispersalKeyword = ui.getText(ui.find(dialog, COMPONENT_FLD_DISPERSAL_CONFIRM_TEXT_KEYWORD)).trim();
-    	String enquiryText = ui.getText(ui.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT)).trim();
-    	String enquiryKeyword = ui.getText(ui.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT_KEYWORD)).trim();
-    	    
-    	// Set the confirmation texts and their keywords
-    	if(containsKeyword(repaymentText, repaymentKeyword)) {
-    	    service.setRepaymentConfirmationText(repaymentText);
-    		service.setRepaymentConfirmationKeyword(repaymentKeyword);
-    	}
-    	
-    	if(containsKeyword(dispersalText, dispersalKeyword)){
-    	    service.setDispersalConfirmationKeyword(dispersalKeyword);
-    		service.setDispersalConfirmationText(dispersalText);
-    	}
-    	
-    	if(containsKeyword(enquiryText, enquiryKeyword)){
-    	    service.setBalanceEnquiryTextMessage(enquiryText);
-    	}
-    }
-    
     /**
      * Helper method to check existence of a keyword in a reponse text
      * @param responseText
      * @param keyword
      * @return
      */
-    private boolean containsKeyword(String responseText, String keyword){
+    public boolean containsKeyword(String responseText, String keyword){
     	if(responseText.length() == 0 && keyword.length() == 0) {
     	    return true;
     	} else if(responseText.length() == 0 || keyword.length() ==0) {
@@ -1189,87 +897,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
     	}
     	return false;
     }
-    
-    /**
-     * Helper method for setting values for the response text fields in the specified dialog
-     * @param dialog
-     * @param dialog
-     */
-    private void setPaymentServiceResponseTexts(Object dialog, PaymentService service){
-        ui.setText(ui.find(dialog, COMPONENT_FLD_DISPERSAL_CONFIRM_TEXT_KEYWORD), service.getDispersalConfirmationKeyword());
-        ui.setText(ui.find(dialog, COMPONENT_FLD_DISPESRAL_CONFIRM_TEXT), service.getDispersalConfirmationText());
-        ui.setText(ui.find(dialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT), service.getRepaymentConfirmationText());
-        ui.setText(ui.find(dialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT_KEYWORD), service.getRepaymentConfirmationKeyword());
-        ui.setText(ui.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT), service.getBalanceEnquiryTextMessage());
-    }
-    
-    /**
-     * Saves a payment service
-     */
-    public void savePaymentService(Object dialog){
-        // Fetch the payment service
-        PaymentService service = getPaymentService(dialog);
         
-        // Fetch the response text values
-        fetchPaymentServiceResponseTexts(dialog, service);
-        		
-        // Flag to check existence of the payment service in the DB
-        boolean serviceExists = (service.getId() >= 1) ? true:false;        
-        
-        // Prevent same keyword for both dispersals and repayments
-        if(service.getRepaymentConfirmationKeyword().length() > 0 && service.getDispersalConfirmationKeyword().length() > 0){
-            if(service.getRepaymentConfirmationKeyword().equalsIgnoreCase(service.getDispersalConfirmationKeyword())){
-                ui.alert(InternationalisationUtils.getI18NString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
-                return;
-            }
-        }
-        
-        // Save/update the payment service
-        try{
-            if(serviceExists) {
-                paymentServiceDao.updatePaymentService(service);
-        	}else {
-        	    paymentServiceDao.savePaymentService(service);
-        	}
-        	
-        }catch(DuplicateKeyException e){
-            LOG.debug("The payment service could not be saved", e);
-        }
-        
-        
-        // If update, remove the payment service being updated from the list of payment services 
-        if(serviceExists){
-            Object row = ui.getSelectedItem(getPaymentServicesTable(false));
-            ui.remove(row);
-        }
-        
-        // Update the list of payment services
-        ui.add(getPaymentServicesTable(false), getRow(service));
-        ui.repaint();
-        
-        // Close the dialog
-        removeDialog(dialog);    	
-    }
-    
-    /**
-     * Event helper method for deleting a {@link PaymentService} record
-     */
-    public void deletePaymentService(){
-        // Delete the payment service
-        paymentServiceDao.deletePaymentService(selectedPaymentService, true);
-        
-        // Get the selected item
-        Object item = ui.getSelectedItem(getPaymentServicesTable(false));
-        
-        // Delete the row from the table
-        ui.remove(item);
-        
-        // Set the current payment service to null
-        selectedPaymentService = null;
-        
-        ui.repaint(paymentViewTab);
-    }
-    
     /**
      * Gets the {@link Thinlet} UI dialog for sending money to client
      * @return
@@ -1299,6 +927,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
         
         ui.add(dialog);
     }
+    
     /**
      * Event helper for initiating the send money transaction
      */
@@ -1334,7 +963,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
             removeDialog(dialog);
         }
     }
-    
+        
     /**
      * Helper method for constructing the message for triggering dispersal of funds
      * @param service
@@ -1377,5 +1006,5 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
         
         return (numericalValue <=0 )? false: true;
     }
-	
+    	
 }

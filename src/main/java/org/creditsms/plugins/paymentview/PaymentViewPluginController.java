@@ -63,6 +63,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 	private PaymentViewErrorDao paymentViewErrorDao;
 	/** Tab controller for this plugin */
 	private PaymentViewThinletTabController tabController;
+	Object paymentViewTab;
 
 //> CONFIG METHODS
 	/** @see net.frontlinesms.plugins.PluginController#init(FrontlineSMS, ApplicationContext) */
@@ -120,5 +121,50 @@ public class PaymentViewPluginController extends BasePluginController implements
 	    if(message.getType().equals(FrontlineMessage.Type.RECEIVED))
 	        tabController.processIncomingMessage(message);
 	}
+	
+//> ACCESSORS
+	/**
+	 * Gets the {@link org.creditsms.plugins.paymentview.data.domain.Client} DAO
+	 * @return
+	 */
+	public ClientDao getClientDao() {
+	    return clientDao;
+	}
+	
+	/**
+	 * Gets the {@link org.creditsms.plugins.paymentview.data.domain.NetworkOperator} DAO
+	 * @return
+	 */
+	public NetworkOperatorDao getNetworkOperatorDao() {
+	    return networkOperatorDao;
+	}
 
+	/**
+	 * Gets the {@link org.creditsms.plugins.paymentview.data.domain.PaymentService} DAO
+	 * @return
+	 */
+	public PaymentServiceDao getPaymentServiceDao() {
+	    return paymentServiceDao;
+	}
+	
+	/**
+	 * Gets the {@link org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction} DAO
+	 * @return
+	 */
+	public PaymentServiceTransactionDao getPaymentServiceTransactionDao() {
+	    return transactionDao;
+	}
+	
+	/**
+	 * Gets the {@link org.creditsms.plugins.paymentview.data.domain.QuickDialCode} DAO
+	 * @return
+	 */
+	public QuickDialCodeDao getQuickDialCodeDao() {
+	    return quickDialCodeDao;
+	}
+	
+	public PaymentViewThinletTabController getTabController() {
+	    return tabController;
+	}
+	
 }

@@ -57,8 +57,8 @@ public class HibernateQuickDialCodeDao extends BaseHibernateDao<QuickDialCode> i
      */
     public List<QuickDialCode> getQuickDialCodesByNetworkOperator(NetworkOperator operator) {
         DetachedCriteria criteria = super.getCriterion();
-        //criteria.add(Restrictions.eq(, value))
-        return null;
+        criteria.add(Restrictions.eq(QuickDialCode.FIELD_NETWORK_OPERATOR_ID, new Long(operator.getId())));
+        return super.getList(criteria);
     }
 
     /**

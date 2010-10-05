@@ -47,7 +47,7 @@
 		
 		<panel columns="1" gap="9" top="9" right="9" bottom="9" left="9" weightx="1" weighty="1">
 			<panel columns="1" gap="5" top="5" right="5" bottom="5" left="5" weightx="1" weighty="1" border="true">
-				<tabbedpane weightx="1" weighty="1">
+				<tabbedpane weightx="1" weighty="1" name="paymentViewTabbedPane">
 					<tab name="tbRepayments" text="i18n.plugins.paymentview.tab.received">
 						<panel name="pnRepayments" columns="1" gap="5" top="5" right="5" bottom="5" left="5">
 							<table name="tblRepayments" weightx="1" weighty="1">
@@ -97,24 +97,10 @@
 					                <column width="20"></column>
 					                <column text="i18n.plugins.paymentview.tab.exceptions.type" width="150"/>
 					                <column text="i18n.plugins.paymentview.tab.exceptions.date" width="150"/>
-					                <column text="i18n.plugins.paymentview.tab.exceptions.description"/>
+					                <column text="i18n.plugins.paymentview.common.description"/>
 					            </header>
 					        </table>
 					    </panel>
-					</tab>
-					<tab name="tbSettings" text="i18n.plugins.paymentview.tab.settings">
-						<splitpane divider="220" weightx="1" weighty="1">
-							<panel gap="5" top="5" left="5" bottom="5" right="5" weightx="1" weighty="1">
-								<tree angle="true" line="false" weightx="1" weighty="1" action="showSettingsItem(tbSettings, this)">
-									<node name="ndPaymentSystems" text="i18n.plugins.paymentview.settings.payment.systems" />
-									<node name="ndNetworkOperators" text="i18n.plugins.paymentview.settings.network.operators"></node>
-								</tree>
-							</panel>
-							<panel gap="5" top="5" left="5" bottom="5" right="5" weightx="1" weighty="1">
-								<panel name="pnSettingsRightPane" weightx="1" weighty="1" border="true" gap="5" top="5" right="5" bottom="5" left="5">
-								</panel>
-							</panel>
-						</splitpane>
 					</tab>
 				</tabbedpane>
 			</panel>

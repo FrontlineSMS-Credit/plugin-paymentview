@@ -7,6 +7,12 @@ import net.frontlinesms.data.DuplicateKeyException;
 import org.creditsms.plugins.paymentview.data.domain.QuickDialCode;
 import org.creditsms.plugins.paymentview.data.domain.NetworkOperator;
 
+/**
+ * Data access interface for {@link org.creditsms.plugins.oaymerntview.data.domain.QuickDialCode}
+ * @author Emmanuel Kala
+ * <li>emkala(at)gmail(dot)com
+ *
+ */
 public interface QuickDialCodeDao {
     
     /** Gets all the quick dial codes in the database */
