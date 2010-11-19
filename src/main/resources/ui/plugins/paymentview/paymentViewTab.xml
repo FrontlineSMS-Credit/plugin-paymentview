@@ -22,7 +22,6 @@
 							</list>
 							<panel name="buttonsPanel" gap="5" weightx="1">
 								<button name="btNewClient" text="i18n.action.add" action="showNewClientForm"/>
-								<button name="btnImportClients" text="i18n.action.import"/>
 								<button name="btEditClient" text="i18n.action.edit" action="showClientDetails" enabled="false" />
 								<button name="btDeleteClient" text="i18n.action.delete" action="deleteClient" enabled="false"/>
 								<!-- 

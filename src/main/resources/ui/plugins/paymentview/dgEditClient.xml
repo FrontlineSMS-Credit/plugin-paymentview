@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dialog closable="true" close="removeDialog(this)" modal="true" text="i18n.plugins.paymentview.dialog.client" gap="15" columns="1" top="9" left="9" bottom="9" right="9" name="clientDetailsDialog" resizable="true">
     <panel columns="2" border="true" gap="5" top="5" right="5" bottom="5" left="5">
-        <label icon="/icons/user.png" text="i18n.paymentview.client.name"/>
+        <label icon="/icons/user.png" text="i18n.plugins.paymentview.client.name"/>
         <textfield name="fldClientName" columns="50" action="validateRequiredFields"/>
         <label icon="/icons/phone_number.png" text="i18n.common.phone.number"/>
         <textfield name="fldPhoneNumber" action="validateRequiredFields"/>
