@@ -5,7 +5,6 @@
           <tree angle="true" line="false" weightx="1" weighty="1" action="showSettingsItem(tbSettings, this)">
               <node name="ndNetworkOperators" text="i18n.plugins.paymentview.settings.network.operators"></node>
               <node name="ndPaymentSystems" text="i18n.plugins.paymentview.settings.payment.systems" />                                   
-              <node name="ndQuickDialCodes" text="i18n.plugins.paymentview.settings.ussd"></node>
               <node name="ndAutoTopUp" text="i18n.plugins.paymentview.settings.autotopup"></node>
           </tree>
       </panel>

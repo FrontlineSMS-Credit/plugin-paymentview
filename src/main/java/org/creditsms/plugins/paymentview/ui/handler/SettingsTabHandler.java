@@ -667,7 +667,8 @@ public class SettingsTabHandler extends BaseTabHandler {
         String description = ui.getText(ui.find(dialog, "txtUSSD_Description"));
         
         Object cboNetworkOperator = ui.find(dialog, "cboNetworkOperator");
-        NetworkOperator operator = tabController.getNetworkOperator(ui.getChoice(cboNetworkOperator, Thinlet.SELECTED));
+        Object selectedNetworkOperator = ui.getChoice(cboNetworkOperator, Thinlet.SELECTED);
+        NetworkOperator operator = tabController.getNetworkOperator(selectedNetworkOperator);
        
         // Set the properties
         quickDialCode.setQuickDialString(dialString);
