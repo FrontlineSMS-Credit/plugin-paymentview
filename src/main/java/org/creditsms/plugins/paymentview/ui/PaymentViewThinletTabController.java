@@ -662,13 +662,11 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
     	// Get references to the edit and delete buttons
     	Object btnEditClient = ui.find(paymentViewTab, COMPONENT_BT_EDIT_CLIENT);
     	Object btnDeleteClient = ui.find(paymentViewTab, COMPONENT_BT_DELETE_CLIENT);
-    	Object btnSendMoney = ui.find(paymentViewTab, COMPONENT_BT_SEND_MONEY);
-    	
+
     	// Get "the enabled" property of the buttons
     	boolean editEnabled = ui.getBoolean(btnEditClient, Thinlet.ENABLED);
     	boolean deleteEnabled = ui.getBoolean(btnDeleteClient, Thinlet.ENABLED);
-    	boolean sendMoneyEnabled = ui.getBoolean(btnSendMoney, Thinlet.ENABLED);
-    	
+ 
     	// Enable the buttons if disabled
     	if(editEnabled == false){
     		ui.setEnabled(btnEditClient,  true);
@@ -676,10 +674,6 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
     	
     	if(deleteEnabled == false){
     		ui.setEnabled(btnDeleteClient, true);
-    	}
-    	
-    	if(sendMoneyEnabled == false){
-    	    ui.setEnabled(btnSendMoney, true);
     	}
     	
     	// Get the client instance attached to the list item
@@ -762,10 +756,11 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
     				client.getEmailAddress(), null, true);
     		
     		// Check if a contact with the specified info already exists
-    		boolean contactExists = (contactDao.getContactByName(client.getName()) == null);
+    		Contact databaseContact = contactDao.getContactByName(client.getName());
+
     		
     		try {
-    			if(contactExists)
+    			if(databaseContact != null)
     				contactDao.updateContact(contact);
     			else
     				contactDao.saveContact(contact);
