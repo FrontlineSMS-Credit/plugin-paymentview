@@ -349,11 +349,9 @@ public class SettingsTabHandler extends BaseTabHandler {
         ui.setAttachedObject(dialog, service);
     
         ui.setText(ui.find(dialog, COMPONENT_FLD_SERVICE_NAME), service.getServiceName());
-        ui.setText(ui.find(dialog, COMPONENT_FLD_SMS_SHORT_CODE), service.getSmsShortCode());
+        
         ui.setText(ui.find(dialog, COMPONENT_FLD_PIN_NUMBER), service.getPinNumber());
-        ui.setText(ui.find(dialog, COMPONENT_FLD_SEND_MONEY_TEXT), service.getSendMoneyTextMessage());
-        ui.setText(ui.find(dialog, COMPONENT_FLD_WITHDRAW_MONEY_TEXT), service.getWithdrawMoneyTextMessage());
-        ui.setText(ui.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_TEXT), service.getBalanceEnquiryTextMessage());
+       
         
         Object selectedOperators = ui.find(dialog, COMPONENT_LS_SELECTED_OPERATORS);        
         
@@ -439,9 +437,7 @@ public class SettingsTabHandler extends BaseTabHandler {
         // Fetch the payment service
         PaymentService service = tabController.getPaymentService(dialog);
         
-        // Fetch the response text values
-        fetchPaymentServiceResponseTexts(dialog, service);
-                
+      
         // Flag to check existence of the payment service in the DB
         boolean serviceExists = (service.getId() >= 1) ? true:false;        
         
@@ -497,12 +493,8 @@ public class SettingsTabHandler extends BaseTabHandler {
         
         // Set the properties for the payment service
         service.setServiceName(ui.getText(ui.find(dialog, COMPONENT_FLD_SERVICE_NAME)));
-        service.setSmsShortCode(ui.getText(ui.find(dialog, COMPONENT_FLD_SMS_SHORT_CODE)));
         service.setPinNumber(ui.getText(ui.find(dialog, COMPONENT_FLD_PIN_NUMBER)));
-        service.setSendMoneyTextMessage(ui.getText(ui.find(dialog, COMPONENT_FLD_SEND_MONEY_TEXT)));
-        service.setWithdrawMoneyTextMessage(ui.getText(ui.find(dialog, COMPONENT_FLD_WITHDRAW_MONEY_TEXT)));
-        service.setBalanceEnquiryTextMessage(ui.getText(ui.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_TEXT)));
-        
+
         Object[] operatorList = ui.getItems(ui.find(dialog, COMPONENT_LS_SELECTED_OPERATORS));
         
         // Set to hold the list of selected operators
@@ -541,35 +533,7 @@ public class SettingsTabHandler extends BaseTabHandler {
         ui.setText(ui.find(dialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT_KEYWORD), service.getRepaymentConfirmationKeyword());
         ui.setText(ui.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT), service.getBalanceEnquiryTextMessage());
     }
-    
-    /**
-     * Helper method for fetching the values of the response texts from the UI fields
-     * and updating the specified PaymentService instance
-     * @param service
-     */
-    private void fetchPaymentServiceResponseTexts(Object dialog, PaymentService service){
-        String repaymentText = ui.getText(ui.find(dialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT)).trim();
-        String repaymentKeyword = ui.getText(ui.find(dialog, COMPONENT_FLD_REPAYMENT_CONFIRM_TEXT_KEYWORD)).trim();
-        String dispersalText = ui.getText(ui.find(dialog, COMPONENT_FLD_DISPESRAL_CONFIRM_TEXT)).trim();
-        String dispersalKeyword = ui.getText(ui.find(dialog, COMPONENT_FLD_DISPERSAL_CONFIRM_TEXT_KEYWORD)).trim();
-        String enquiryText = ui.getText(ui.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT)).trim();
-        String enquiryKeyword = ui.getText(ui.find(dialog, COMPONENT_FLD_BALANCE_ENQUIRY_CONFIRM_TEXT_KEYWORD)).trim();
-            
-        // Set the confirmation texts and their keywords
-        if(tabController.containsKeyword(repaymentText, repaymentKeyword)) {
-            service.setRepaymentConfirmationText(repaymentText);
-            service.setRepaymentConfirmationKeyword(repaymentKeyword);
-        }
-        
-        if(tabController.containsKeyword(dispersalText, dispersalKeyword)){
-            service.setDispersalConfirmationKeyword(dispersalKeyword);
-            service.setDispersalConfirmationText(dispersalText);
-        }
-        
-        if(tabController.containsKeyword(enquiryText, enquiryKeyword)){
-            service.setBalanceEnquiryTextMessage(enquiryText);
-        }
-    }
+
 
     public void showPreviousPaymentServiceDialog(Object currentDialog){
         // Get the attached payment service
@@ -578,15 +542,6 @@ public class SettingsTabHandler extends BaseTabHandler {
         // Null check
         if(service == null) return;
         
-        // Cache the response texts before proceeding to the previous dialog
-        fetchPaymentServiceResponseTexts(currentDialog, service);
-        
-        if(service.getRepaymentConfirmationKeyword().length() > 0 && service.getDispersalConfirmationKeyword().length() > 0){
-            if(service.getRepaymentConfirmationKeyword().equalsIgnoreCase(service.getDispersalConfirmationKeyword())){
-                ui.alert(InternationalisationUtils.getI18NString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
-                return;
-            }
-        }
         
         removeDialog(currentDialog);
         Object previousDialog = getPaymentServiceDialog(service);

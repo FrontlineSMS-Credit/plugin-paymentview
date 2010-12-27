@@ -59,7 +59,7 @@
 							</table>
 						</panel>
 					</tab>
-					<tab name="tbDispersals" text="i18n.plugins.paymentview.tab.sent">
+					<tab name="tbDispersals" text="i18n.plugins.paymentview.tab.sent" enabled="false">
 						<panel name="pnDispersals" columns="1" gap="5" top="5" right="5" bottom="5" left="5">
 							<table name="tblDispersals" weightx="1" weighty="1">
 								<header>
@@ -71,11 +71,8 @@
 							</table>
 						</panel>
 					</tab>
-					
-					<!-- Commented out by Emmanuel Kala -->
-					<!-- Specifications for the receipts tab is yet to be defined; also duplicated by the received tab -->
-					<!--
-					<tab name="tbReceipts" text="i18n.plugins.paymentview.tab.receipts">
+
+					<tab name="tbReceipts" text="i18n.plugins.paymentview.tab.receipts" enabled="false">
 						<panel name="pnReceipts" columns="1" gap="5" top="5" right="5" bottom="5" left="5">
 						    <table name="tblReceipts" weightx="1" weighty="1">
 						        <header>
@@ -86,7 +83,7 @@
 						    </table>
 						</panel>
 				    </tab>
-				    -->
+				    
 				    
 					<tab name="tbExceptions" text="i18n.plugins.paymentview.tab.exceptions">
 					    <panel name="pnExceptions" columns="1" gap="5" top="5" right="5" bottom="5" left="5">

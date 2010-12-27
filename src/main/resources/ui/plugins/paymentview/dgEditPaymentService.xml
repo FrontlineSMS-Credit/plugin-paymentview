@@ -20,12 +20,8 @@
 	        <list name="lstSelectedOperators" line="false" width="230" height="100" action="toggleMoveOperatorButton(this, btRemoveNetworkOperator)">
 	        </list>
 	    </panel>
-	    <label text="Send Money Text" />
-	    <textarea name="fldSendMoneyText" columns="50" rows="3" />
-	    <label text="Withdraw Money Text" />
-	    <textarea name="fldWithdrawMoneyText" columns="50" rows="3" />
-	    <label text="Balance Enquiry Text" />
-	    <textarea name="fldBalanceEnquiryText" columns="50" rows="2" />
+	    
+	
     </panel>
 	<panel colspan="2" halign="right" gap="5" top="5" right="5" bottom="5" left="5" >
 		<!-- 

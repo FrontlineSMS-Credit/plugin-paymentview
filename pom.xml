@@ -3,7 +3,7 @@
 	<groupId>org.creditsms.plugins</groupId>
 	<artifactId>frontlinesms-plugin-credit</artifactId>
 	<name>FrontlineSMS CreditSMS Plugin</name>
-	<version>0.01.03</version>
+	<version>0.01.04</version>
 	<description>CreditSMS plugin for FrontlineSMS</description>
 	<licenses>
 		<license>
