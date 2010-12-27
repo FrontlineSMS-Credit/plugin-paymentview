@@ -3,8 +3,10 @@
     <panel border="true" columns="2" weightx="1" gap="5" top="5" right="5" bottom="5" left="5">
 	    <label text="i18n.common.name" />
 	    <textfield name="fldServiceName" columns="50"/>
+        <!-- Temporarily Removed until sending payments
         <label text="SMS Short Code" />
         <textfield name="fldSmsShortCode" />
+        -->
 	    <label text="Pin Number"/>
 	    <passwordfield name="fldPinNumber"/>
 	    <label colspan="2" text="Network Operators"/>
