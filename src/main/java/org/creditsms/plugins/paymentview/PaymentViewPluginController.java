@@ -71,6 +71,8 @@ public class PaymentViewPluginController extends BasePluginController implements
 		this.frontlineController = frontlineController;
 		this.frontlineController.addIncomingMessageListener(this);
 		
+		System.out.println("Ian Nes Mukewa");
+		
 		//Initialize the DAO for the domain objects
 		try{
 			clientDao = (ClientDao)applicationContext.getBean("clientDao");
