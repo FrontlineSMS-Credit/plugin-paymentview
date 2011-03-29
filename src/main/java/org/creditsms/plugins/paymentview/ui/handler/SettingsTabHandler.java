@@ -444,7 +444,7 @@ public class SettingsTabHandler extends BaseTabHandler {
         // Prevent same keyword for both dispersals and repayments
         if(service.getRepaymentConfirmationKeyword().length() > 0 && service.getDispersalConfirmationKeyword().length() > 0){
             if(service.getRepaymentConfirmationKeyword().equalsIgnoreCase(service.getDispersalConfirmationKeyword())){
-                ui.alert(InternationalisationUtils.getI18NString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
+                ui.alert(InternationalisationUtils.getI18nString(PAYMENT_VIEW_SAME_KEYWORD_ERROR));
                 return;
             }
         }

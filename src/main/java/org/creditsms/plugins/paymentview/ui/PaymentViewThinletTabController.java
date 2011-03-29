@@ -148,7 +148,7 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
      */
     public void refresh() {
         // Set the status message
-        ui.setStatus(InternationalisationUtils.getI18NString(PAYMENTVIEW_LOADED));
+        ui.setStatus(InternationalisationUtils.getI18nString(PAYMENTVIEW_LOADED));
         
         // Check messages that have not been processed and push them through
         processPendingTransactions();
@@ -936,13 +936,13 @@ public class PaymentViewThinletTabController extends BasePluginThinletTabControl
         // Check if an amount has been specified
         String amount = ui.getText(ui.find(dialog, COMPONENT_FLD_TRANSFER_AMOUNT)).trim();
         if(amount.length() == 0){
-            ui.alert(InternationalisationUtils.getI18NString(PAYMENTVIEW_NO_TRANSFER_AMOUNT));
+            ui.alert(InternationalisationUtils.getI18nString(PAYMENTVIEW_NO_TRANSFER_AMOUNT));
             return;
         }
         
         // Validate the specified amount
         if(!validateAmount(amount)){
-            ui.alert(InternationalisationUtils.getI18NString(PAYMENTVIEW_INVALID_TRANSFER_AMOUNT));
+            ui.alert(InternationalisationUtils.getI18nString(PAYMENTVIEW_INVALID_TRANSFER_AMOUNT));
             return;
         }
         
