@@ -52,50 +52,145 @@ import thinlet.Thinlet;
 /**
  * 
  * @author Emmanuel Kala
- * 
+ * @author Ian Mukewa
  */
 public class PaymentViewThinletTabController extends
 		BasePluginThinletTabController<PaymentViewPluginController> implements
 		ThinletUiEventHandler, PagedComponentItemProvider {
 	// > UI FILES
-	private static final String UI_FILE_CLIENT_DIALOG = "/ui/plugins/paymentview/dgEditClient.xml";
 	private static final String UI_FILE_SEND_MONEY_DIALOG = "/ui/plugins/paymentview/dgSendMoneyForm.xml";
 
 	// > ICON FILES
 	private static final String ICON_STATUS_ATTENTION = "/icons/status_attention.png";
-
 	// > COMPONENT NAME CONSTANTS
-	private static final String COMPONENT_BT_SAVE_CLIENT = "btSaveClient";
-	private static final String COMPONENT_BT_DELETE_CLIENT = "btDeleteClient";
-	private static final String COMPONENT_BT_EDIT_CLIENT = "btEditClient";
-	private static final String COMPONENT_LS_CLIENTS = "lsClients";
-	private static final String COMPONENT_TBL_DISPERSALS = "tblDispersals";
-	private static final String COMPONENT_TBL_REPAYMENTS = "tblRepayments";
-	private static final String COMPONENT_BT_SEND_MONEY = "btSendMoney";
-	private static final String COMPONENT_TBL_EXCEPTIONS = "tblExceptions";
-	private static final String COMPONENT_FLD_CLIENT_NAME = "fldClientName";
-	private static final String COMPONENT_FLD_PHONE_NUMBER = "fldPhoneNumber";
-	private static final String COMPONENT_FLD_OTHER_PHONE_NUMBER = "fldOtherPhoneNumber";
-	private static final String COMPONENT_FLD_EMAIL_ADDRESS = "fldEmailAddress";
-	private static final String COMPONENT_FLD_TRANSFER_AMOUNT = "fldAmount";
-	private static final String COMPONENT_DLG_CLIENT_DETAILS = "clientDetailsDialog";
-	private static final String COMPONENT_DLG_SEND_MONEY = "sendMoneyDialog";
-	private static final String COMPONENT_PN_CLIENTS = "pnClients";
-	private static final String COMPONENT_PN_DISPERSALS = "pnDispersals";
-	private static final String COMPONENT_PN_REPAYMENTS = "pnRepayments";
-	private static final String COMPONENT_PN_EXCEPTIONS = "pnExceptions";
-	private static final String COMPONENT_LB_CLIENT_NAME = "lbClientName";
-	private static final String COMPONENT_CB_PAYMENT_SERVICE = "cbPaymentService";
-	private static final String COMPONENT_TB_PAYMENT_VIEW = "paymentViewTabbedPane";
+	/*
+	 * Tabs
+	 */
+	private static final String TAB_TAB_EXPORT_PAYMENTS = "tab_tab_export_payments";
+	private static final String TAB_EXPORT = "tab_export";
+	private static final String TAB_TAB_OUTGOINGPAYMENTS_SELECTFROMCLIENTS = "tab_tab_outgoingPayments_selectFromClients";
+	private static final String TAB_EXCEPTIONS = "tab_exceptions";
+	private static final String TAB_TAB_EXPORT_CLIENTS = "tab_tab_export_clients";
+	private static final String TAB_CLIENTLIST = "tab_clientList";
+	private static final String TAB_TAB_OUTGOINGPAYMENTS_IMPORTNEWPAYMENTS = "tab_tab_outgoingPayments_importNewPayments";
+	private static final String TAB_TAB_EXPORT_CLIENTHISTORY = "tab_tab_export_clientHistory";
+	private static final String TAB_INCOMINGPAYMENTS = "tab_incomingPayments";
+	private static final String TAB_OUTGOINGPAYMENTS = "tab_outgoingPayments";
+	private static final String TABP_TAB_OUTGOINGPAYMENTS_TABS = "tabP_tab_outgoingPayments_tabs";
+	private static final String TABP_TAB_OUTGOINGPAYMENTS_SENTPAYMENTS = "tabP_tab_outgoingPayments_sentPayments";
+	private static final String TAB_TAB_OUTGOINGPAYMENTS_SENDNEWPAYMENTS = "tab_tab_outgoingPayments_sendNewPayments";
 
-	// > I18N KEYS
+	/*
+	 * Panels
+	 */
+	private static final String PNL_TBL_CLIENTLIST = "pnl_tbl_clientList";
+	private static final String PNL_TBL_TAB_OUTGOINGPAYMENTS_SENTPAYMENTS_CLIENTS = "pnl_tbl_tab_outgoingPayments_sentPayments_clients";
+	private static final String PNL_TBL_TAB_INCOMINGPAYMENTS_CLIENTS = "pnl_tbl_tab_incomingPayments_clients";
+	private static final String PNL_TAB_INCOMINGPAYMENTS_BUTTONS = "pnl_tab_incomingPayments_buttons";
+
+	/*
+	 * Combo boxes
+	 */
+	private static final String CMB_TAB_EXPORT_EXPORTALLRECORDSFROMGROUP = "cmb_tab_export_exportAllRecordsFromGroup";
+	private static final String CMB_TAB_OUTGOINGPAYMENTS_SENTPAYMENTS_MOBILEPAYMENTACCOUNT = "cmb_tab_outgoingPayments_sentPayments_mobilePaymentAccount";
+	private static final String CMB_TAB_INCOMINGPAYMENTS_MOBILEPAYMENTACCOUNT = "cmb_tab_incomingPayments_mobilePaymentAccount";
+	private static final String CMB_TAB_TAB_OUTGOINGPAYMENTS_SENDNEWPAYMENTS_MOBILEPAYMENTSYSTEM = "cmb_tab_tab_outgoingPayments_sendNewPayments_mobilePaymentSystem";
+
+	/*
+	 * Buttons
+	 */
+	private static final String BTN_TAB_INCOMINGPAYMENTS_ANALYSE = "btn_tab_incomingPayments_analyse";
+	private static final String BTN_TAB_INCOMINGPAYMENTS_EXPORT = "btn_tab_incomingPayments_export";
+	private static final String BTN_CUSTOMIZE_CLIENT_DB = "btn_tab_clientList_customizeClientDB";
+	private static final String BTN_TAB_CLIENTLIST_ADD = "btn_tab_clientList_add";
+	private static final String BTN_TAB_CLIENTLIST_IMPORT = "btn_tab_clientList_import";
+	private static final String BTN_TAB_CLIENTLIST_EXPORT = "btn_tab_clientList_export";
+	private static final String BTN_TAB_TAB_EXPORT_PAYMENTS_EXPORT_EXPORT = "btn_tab_tab_export_payments_export_export";
+	private static final String BTN_TAB_OUTGOINGPAYMENTS_SELECTFROMCLIENTS_SENDPAYMENTTOSELECTION = "btn_tab_outgoingPayments_selectFromClients_sendPaymentToSelection";
+	private static final String BTN_TAB_OUTGOINGPAYMENTS_SELECTFROMCLIENTS_SCHEDULEPAYMENTTOSELECTION = "btn_tab_outgoingPayments_selectFromClients_schedulePaymentToSelection";
+	private static final String BTN_TAB_OUTGOINGPAYMENTS_SENTPAYMENTS_EXPORT = "btn_tab_outgoingPayments_sentPayments_export";
+	private static final String BTN_TAB_TAB_OUTGOINGPAYMENTS_SENDNEWPAYMENTS_SENDPAYMENTNOW = "btn_tab_tab_outgoingPayments_sendNewPayments_sendPaymentNow";
+	private static final String BTN_TAB_TAB_OUTGOINGPAYMENTS_SENDNEWPAYMENTS_SCHEDULEPAYMENT = "btn_tab_tab_outgoingPayments_sendNewPayments_schedulePayment";
+	private static final String BROWSE_TAB_TAB_OUTGOINGPAYMENTS_IMPORTNEWPAYMENTS_FILE = "browse_tab_tab_outgoingPayments_importNewPayments_file";
+	private static final String BTN_TAB_TAB_OUTGOINGPAYMENTS_IMPORTNEWPAYMENTS_SCHEDULEPAYMENT = "btn_tab_tab_outgoingPayments_importNewPayments_schedulePayment";
+	private static final String BTN_TAB_TAB_OUTGOINGPAYMENTS_IMPORTNEWPAYMENTS_IMPORT = "btn_tab_tab_outgoingPayments_importNewPayments_import";
+	private static final String BTN_TAB_TAB_OUTGOINGPAYMENTS_IMPORTNEWPAYMENTS_SENDPAYMENTNOW = "btn_tab_tab_outgoingPayments_importNewPayments_sendPaymentNow";
+	private static final String BTN_TAB_TAB_EXPORT_CLIENTS_EXPORTSELECTEDCLIENTS = "btn_tab_tab_export_clients_exportSelectedClients";
+	private static final String BTN_TAB_TAB_EXPORT_CLIENTS_SELECTALL = "btn_tab_tab_export_clients_selectAll";
+	private static final String BTN_TAB_TAB_EXPORT_CLIENTS_EXPORTALLRECORDSFROMGROUP = "btn_tab_tab_export_clients_exportAllRecordsFromGroup";
+	private static final String BTN_TAB_TAB_EXPORT_PAYMENTS_BANNER = "btn_tab_tab_export_payments_banner";
+
+	/*
+	 * Group Buttons
+	 */
+	private static final String GRP_TAB_EXPORT_PAYMENTS_OUTGOINGPAYMENTS = "grp_tab_export_payments_outgoingPayments";
+	private static final String GRP_TAB_EXPORT_PAYMENTS_INCOMINGPAYMENTS = "grp_tab_export_payments_incomingPayments";
+
+
+	/*
+	 * Tables
+	 */
+	private static final String TBL_TAB_INCOMINGPAYMENTS_CLIENTS = "tbl_tab_incomingPayments_clients";
+	private static final String TBL_CLIENTLIST = "tbl_clientList";
+	private static final String TBL_TAB_TAB_OUTGOINGPAYMENTS_IMPORTNEWPAYMENTS_CLIENTS = "tbl_tab_tab_outgoingPayments_importNewPayments_clients";
+	private static final String TBL_TAB_TAB_EXPORT_PAYMENTS_CLIENTS = "tbl_tab_tab_export_payments_clients";
+	private static final String TBL_TAB_OUTGOINGPAYMENTS_SENTPAYMENTS_CLIENTS = "tbl_tab_outgoingPayments_sentPayments_clients";
+	private static final String TBL_TAB_OUTGOINGPAYMENTS_SELECTFROMCLIENTS_CLIENTS = "tbl_tab_outgoingPayments_selectFromClients_clients";
+	private static final String TBL_TAB_TAB_EXPORT_CLIENTS_CLIENTSLIST = "tbl_tab_tab_export_clients_clientsList";
+	
+	//Form
+	private static final String FRM_TAB_TAB_OUTGOINGPAYMENTS_SENDNEWPAYMENTS_CUSTOMERDETAILS = "frm_tab_tab_outgoingPayments_sendNewPayments_customerDetails";
+	
+	/*
+	 * Textfields
+	 */
+	private static final String TXT_TAB_EXPORT_PAYMENTS_FROMDATE = "txt_tab_export_payments_fromDate";
+	private static final String TXT_TAB_EXPORT_PAYMENTS_TODATE = "txt_tab_export_payments_toDate";
+	private static final String TXT_TAB_TAB_OUTGOINGPAYMENTS_SENDNEWPAYMENTS_PHONE = "txt_tab_tab_outgoingPayments_sendNewPayments_phone";
+	private static final String TXT_TAB_TAB_OUTGOINGPAYMENTS_SENDNEWPAYMENTS_NAME = "txt_tab_tab_outgoingPayments_sendNewPayments_name";
+	private static final String TXT_TAB_TAB_OUTGOINGPAYMENTS_SENDNEWPAYMENTS_VERIFYPHONENUMBER = "txt_tab_tab_outgoingPayments_sendNewPayments_verifyPhoneNumber";
+	private static final String TXT_TAB_TAB_OUTGOINGPAYMENTS_SENDNEWPAYMENTS_AMOUNT = "txt_tab_tab_outgoingPayments_sendNewPayments_amount";
+	private static final String TXT_TAB_TAB_OUTGOINGPAYMENTS_SENDNEWPAYMENTS_PAYMENTID = "txt_tab_tab_outgoingPayments_sendNewPayments_paymentID";
+	private static final String TXT_TAB_TAB_OUTGOINGPAYMENTS_SENDNEWPAYMENTS_NOTES = "txt_tab_tab_outgoingPayments_sendNewPayments_notes";
+	private static final String TXT_TAB_TAB_EXPORT_CLIENTHISTORY_PHONENUMBER = "txt_tab_tab_export_clientHistory_phoneNumber";
+	private static final String TXT_TAB_TAB_EXPORT_CLIENTHISTORY_ACCOUNTNUMBER = "txt_tab_tab_export_clientHistory_accountNumber";
+
+	/*
+	 * Labels
+	 */
+	private static final String LBL_TAB_TAB_OUTGOINGPAYMENTS_SENDNEWPAYMENTS_AMOUNT = "lbl_tab_tab_outgoingPayments_sendNewPayments_amount";
+	private static final String LBL_TAB_TAB_OUTGOINGPAYMENTS_SENDNEWPAYMENTS_MOBILEPAYMENTSYSTEM = "lbl_tab_tab_outgoingPayments_sendNewPayments_mobilePaymentSystem";
+	private static final String LBL_TAB_TAB_OUTGOINGPAYMENTS_SENDNEWPAYMENTS_NOTES = "lbl_tab_tab_outgoingPayments_sendNewPayments_notes";
+	private static final String LBL_TAB_TAB_OUTGOINGPAYMENTS_SENDNEWPAYMENTS_PAYMENTID = "lbl_tab_tab_outgoingPayments_sendNewPayments_paymentID";
+	private static final String LBL_TAB_OUTGOINGPAYMENTS_SELECTFROMCLIENTS_BANNER = "lbl_tab_outgoingPayments_selectFromClients_banner";
+	private static final String LBL_TAB_EXPORT_HINT = "lbl_tab_export_hint";
+	private static final String LBL_TAB_TAB_EXPORT_CLIENTHISTORY_BANNER = "lbl_tab_tab_export_clientHistory_banner";
+	private static final String LBL_TAB_TAB_OUTGOINGPAYMENTS_SENDNEWPAYMENTS_NAME = "lbl_tab_tab_outgoingPayments_sendNewPayments_Name";
+	private static final String LBL_TAB_EXPORT_PAYMENTS_FROMDATE = "lbl_tab_export_payments_fromDate";
+	private static final String LBL_TAB_EXPORT_PAYMENTS_TODATE = "lbl_tab_export_payments_toDate";
+	private static final String LBL_TAB_TAB_EXPORT_PAYMENTS_TYPEOFPAYMENT = "lbl_tab_tab_export_payments_typeOfPayment";
+	private static final String LBL_TAB_TAB_EXPORT_CLIENTS_EXPORTALLRECORDSFROMGROUP = "lbl_tab_tab_export_clients_exportAllRecordsFromGroup";
+	private static final String LBL_TAB_TAB_OUTGOINGPAYMENTS_SENDNEWPAYMENTS_PHONE = "lbl_tab_tab_outgoingPayments_sendNewPayments_Phone";
+
+	/*
+	 * Checkboxes
+	 */
+	private static final String CHK_TAB_TAB_EXPORT_CLIENTHISTORY_PDF = "chk_tab_tab_export_clientHistory_PDF";
+	private static final String CHK_TAB_TAB_EXPORT_CLIENTHISTORY_INCOMINGPAYMENTS = "chk_tab_tab_export_clientHistory_incomingPayments";
+	private static final String CHK_TAB_TAB_EXPORT_CLIENTHISTORY_OUTGOINGPAYMENTS = "chk_tab_tab_export_clientHistory_outgoingPayments";
+	private static final String CHK_TAB_TAB_EXPORT_CLIENTHISTORY_CSV = "chk_tab_tab_export_clientHistory_CSV";
+	private static final String CHK_TAB_TAB_EXPORT_CLIENTHISTORY_PHONENUMBER = "chk_tab_tab_export_clientHistory_phoneNumber";
+	private static final String CHK_TAB_TAB_EXPORT_CLIENTHISTORY_ACCOUNTNUMBER = "chk_tab_tab_export_clientHistory_accountNumber";
+	private static final String CHK_EXPORTBYSELECTION = "chk_exportBySelection";
+	private static final String CHK_DATERANGE = "chk_dateRange";
+
+	// > I18N KEYS 
 	private static final String PAYMENTVIEW_LOADED = "paymentview.loaded";
 	private static final String PAYMENTVIEW_NO_TRANSFER_AMOUNT = "paymentview.error.empty.amount";
 	private static final String PAYMENTVIEW_INVALID_TRANSFER_AMOUNT = "paymentview.error.invalid.amount";
 
 	// > CONSTANTS
-	private static final Logger LOG = FrontlineUtils
-			.getLogger(PaymentViewThinletTabController.class);
+	private static final Logger LOG = FrontlineUtils.getLogger(PaymentViewThinletTabController.class);
 
 	// > UI COMPONENTS
 	/** Thinlet tab component whose functionality is handled by this class */
@@ -107,24 +202,8 @@ public class PaymentViewThinletTabController extends
 	private ComponentPagingHandler dispersalsPagingHandler;
 	/** Paging handler for repayments */
 	private ComponentPagingHandler repaymentsPagingHandler;
-	/** Paging handler for exceptions */
-	private ComponentPagingHandler exceptionsPagingHandler;
 
-	// > DAO OBJECTS
-	/** DAO for {@link Client}s */
-	private ClientDao clientDao;
-	/** DAO for {@link NetworkOperator}s */
-	private NetworkOperatorDao networkOperatorDao;
-	/** DAO for {@link PaymentService}s */
-	private PaymentServiceDao paymentServiceDao;
-	/** DAO for {@link PaymentServiceTransaction}s */
-	private PaymentServiceTransactionDao transactionDao;
-	/** DAO for contacts */
-	private ContactDao contactDao;
-	/** DAO for quick dial codes */
-	private QuickDialCodeDao quickDialCodeDao;
-	/** DAO for paymentview errors */
-	private PaymentViewErrorDao paymentViewErrorDao;
+	
 
 	private PaymentViewPluginController controller;
 	// > PROPERTIES
@@ -162,62 +241,50 @@ public class PaymentViewThinletTabController extends
 		// Populate the clients list and add the paging controls just below the
 		// list of clients
 		Object clientList = getClientList();
-		clientsPagingHandler = new ComponentPagingHandler(this.ui, this,
-				clientList);
-		Object pnClients = ui.find(this.paymentViewTab, COMPONENT_PN_CLIENTS);
+		//clientsPagingHandler = new ComponentPagingHandler(this.ui, this, clientList);
+		//Object pnClients = ui.find(this.paymentViewTab, COMPONENT_PN_CLIENTS);
 		Object clientPageControls = clientsPagingHandler.getPanel();
 
 		ui.setHAlign(clientPageControls, Thinlet.RIGHT);
-		ui.add(pnClients, clientPageControls, 2);
-		clientsPagingHandler.refresh();
+		//ui.add(pnClients, clientPageControls, 2);
+		//clientsPagingHandler.refresh();
 
 		// Populate the repayments table and add the paging controls just below
 		// the list of repayments
 		Object repaymentsTable = getRepaymentsTable();
-		repaymentsPagingHandler = new ComponentPagingHandler(this.ui, this,
-				repaymentsTable);
-		Object pnRepayments = ui.find(this.paymentViewTab,
-				COMPONENT_PN_REPAYMENTS);
-		ui.add(pnRepayments, repaymentsPagingHandler.getPanel(), 1);
-		repaymentsPagingHandler.refresh();
+		//repaymentsPagingHandler = new ComponentPagingHandler(this.ui, this, repaymentsTable);
+		//Object pnRepayments = ui.find(this.paymentViewTab, COMPONENT_PN_REPAYMENTS);
+		//ui.add(pnRepayments, repaymentsPagingHandler.getPanel(), 1);
+		//repaymentsPagingHandler.refresh();
 
 		// Populate the dispersals table and add the paging controls just below
 		// the list of dispersals
 		Object dispersalsTable = getDispersalsTable();
-		dispersalsPagingHandler = new ComponentPagingHandler(this.ui, this,
-				dispersalsTable);
-		Object pnDispersals = ui.find(this.paymentViewTab,
-				COMPONENT_PN_DISPERSALS);
-		ui.add(pnDispersals, dispersalsPagingHandler.getPanel(), 1);
-		dispersalsPagingHandler.refresh();
+		//dispersalsPagingHandler = new ComponentPagingHandler(this.ui, this, dispersalsTable);
+		//Object pnDispersals = ui.find(this.paymentViewTab, COMPONENT_PN_DISPERSALS);
+		//ui.add(pnDispersals, dispersalsPagingHandler.getPanel(), 1);
+		//dispersalsPagingHandler.refresh();
 
 		// Populate the exceptions table and add a paging handler for the
 		// exceptions
 		Object exceptionsTable = getExceptionsTable();
-		exceptionsPagingHandler = new ComponentPagingHandler(ui, this,
-				exceptionsTable);
+		///exceptionsPagingHandler = new ComponentPagingHandler(ui, this, exceptionsTable);
 
-		Object pnExceptions = ui.find(this.paymentViewTab,
-				COMPONENT_PN_EXCEPTIONS);
-		ui.add(pnExceptions, exceptionsPagingHandler.getPanel(), 1);
-		exceptionsPagingHandler.refresh();
+		//Object pnExceptions = ui.find(this.paymentViewTab, COMPONENT_PN_EXCEPTIONS);
+		//ui.add(pnExceptions, exceptionsPagingHandler.getPanel(), 1);
+		///exceptionsPagingHandler.refresh();
 
-		Object paymentViewTabbedPane = ui.find(this.paymentViewTab,
-				COMPONENT_TB_PAYMENT_VIEW);
+		//Object paymentViewTabbedPane = ui.find(this.paymentViewTab, COMPONENT_TB_PAYMENT_VIEW);
 		SettingsTabHandler settingsTab = new SettingsTabHandler(controller, ui);
 		settingsTab.init();
 
-		ui.add(paymentViewTabbedPane, settingsTab.getTab());
+		//ui.add(paymentViewTabbedPane, settingsTab.getTab());
 	}
 
 	/**
 	 * Internal helper method to process transaction-related messages
 	 */
 	private void processPendingTransactions() {
-		List<FrontlineMessage> pendingTransactions = transactionDao
-				.getPendingTransactions();
-		for (FrontlineMessage message : pendingTransactions)
-			processIncomingMessage(message);
 	}
 
 	// > MUTATORS
@@ -234,70 +301,7 @@ public class PaymentViewThinletTabController extends
 		this.paymentViewTab = paymentViewTab;
 	}
 
-	/**
-	 * Sets the client DAO
-	 * 
-	 * @param clientDao
-	 */
-	public void setClientDao(ClientDao clientDao) {
-		this.clientDao = clientDao;
-	}
-
-	/**
-	 * Sets the contacts DAO
-	 * 
-	 * @param contactDao
-	 */
-	public void setContactDao(ContactDao contactDao) {
-		this.contactDao = contactDao;
-	}
-
-	/**
-	 * Sets the network operator DAO
-	 * 
-	 * @param networkOperatorDao
-	 */
-	public void setNetworkOperatorDao(NetworkOperatorDao networkOperatorDao) {
-		this.networkOperatorDao = networkOperatorDao;
-	}
-
-	/**
-	 * Sets the payment service DAO
-	 * 
-	 * @param paymentServiceDao
-	 */
-	public void setPaymentServiceDao(PaymentServiceDao paymentServiceDao) {
-		this.paymentServiceDao = paymentServiceDao;
-	}
-
-	/**
-	 * Sets the payment service transaction DAO
-	 * 
-	 * @param transactionDao
-	 */
-	public void setPaymentServiceTranscationDao(
-			PaymentServiceTransactionDao transactionDao) {
-		this.transactionDao = transactionDao;
-	}
-
-	/**
-	 * Sets the quick dial code DAO
-	 * 
-	 * @param quickDialCodeDao
-	 */
-	public void setQuickDialCodeDao(QuickDialCodeDao quickDialCodeDao) {
-		this.quickDialCodeDao = quickDialCodeDao;
-	}
-
-	/**
-	 * Sets the payment view error DAO
-	 * 
-	 * @param paymentViewErrorDao
-	 */
-	public void setPaymentViewErrorDao(PaymentViewErrorDao paymentViewErrorDao) {
-		this.paymentViewErrorDao = paymentViewErrorDao;
-	}
-
+		
 	// LIST PAGING METHODS
 	/** @see PagedComponentItemProvider#getListDetails(Object, int, int) */
 	public PagedListDetails getListDetails(Object list, int startIndex,
@@ -308,8 +312,8 @@ public class PaymentViewThinletTabController extends
 			return getRepaymentListPagingDetails(startIndex, limit);
 		} else if (list.equals(dispersalsPagingHandler.getList())) {
 			return getDispersalListPagingDetails(startIndex, limit);
-		} else if (list.equals(exceptionsPagingHandler.getList())) {
-			return getExceptionsListPagingDetails(startIndex, limit);
+		//} else if (list.equals(exceptionsPagingHandler.getList())) {
+		//	return getExceptionsListPagingDetails(startIndex, limit);
 		} else
 			throw new IllegalStateException();
 	}
@@ -319,50 +323,16 @@ public class PaymentViewThinletTabController extends
 		List<Client> clients = null;
 		int totalClientCount = 0;
 
-		// Check if there's a search string
-		if (liveSearchString != null) {
-			clients = clientDao.filterClientsByName(liveSearchString,
-					startIndex, limit);
-			totalClientCount = clientDao
-					.getFilteredClientCount(liveSearchString);
-			liveSearchString = null;
-		} else {
-			clients = clientDao.getAllClients(startIndex, limit);
-			totalClientCount = clientDao.getClientCount();
-		}
-
-		Object[] clientRows = new Object[clients.size()];
-
-		for (int i = 0; i < clients.size(); i++) {
-			Client client = clients.get(i);
-			clientRows[i] = getListItem(client);
-		}
+		Object[] clientRows = new Object[2];
 
 		return new PagedListDetails(totalClientCount, clientRows);
 	}
 
 	private PagedListDetails getRepaymentListPagingDetails(int startIndex,
 			int limit) {
-		List<PaymentServiceTransaction> transactions;
-
-		// Check for selected client
-		if (selectedClient != null) {
-			transactions = transactionDao.getTransactionsByClient(
-					selectedClient, TransactionType.RECEIPT);
-		} else {
-			transactions = transactionDao
-					.getTransactionsByType(TransactionType.RECEIPT);
-		}
-
 		// Get the number of items returned
-		int totalItems = transactions.size();
-
+		int totalItems = 2;
 		Object[] transactionRows = new Object[totalItems];
-		for (int i = 0; i < totalItems; ++i) {
-			PaymentServiceTransaction t = transactions.get(i);
-			transactionRows[i] = getRow(t);
-		}
-
 		return new PagedListDetails(totalItems, transactionRows);
 	}
 
@@ -370,40 +340,18 @@ public class PaymentViewThinletTabController extends
 			int limit) {
 		List<PaymentServiceTransaction> transactions;
 
-		// Check for selected client
-		if (selectedClient != null) {
-			transactions = transactionDao.getTransactionsByClient(
-					selectedClient, TransactionType.TRANSFER);
-		} else {
-			transactions = transactionDao
-					.getTransactionsByType(TransactionType.TRANSFER);
-		}
-
+		
 		// Get the number of items returned
-		int totalItems = transactions.size();
+		int totalItems = 2;
 
 		Object[] transactionRows = new Object[totalItems];
-
-		for (int i = 0; i < totalItems; ++i) {
-			PaymentServiceTransaction t = transactions.get(i);
-			transactionRows[i] = getRow(t);
-		}
-
 		return new PagedListDetails(totalItems, transactionRows);
 	}
 
 	private PagedListDetails getExceptionsListPagingDetails(int startIndex,
 			int limit) {
-		List<PaymentViewError> paymentViewErrors = paymentViewErrorDao
-				.getAllErrors(startIndex, limit);
-		int itemCount = paymentViewErrors.size();
-
+		int itemCount = 2;
 		Object[] rows = new Object[itemCount];
-
-		for (int i = 0; i < itemCount; i++) {
-			rows[i] = getRow(paymentViewErrors.get(i));
-		}
-
 		return new PagedListDetails(itemCount, rows);
 	}
 
@@ -416,77 +364,6 @@ public class PaymentViewThinletTabController extends
 	 * @param message
 	 */
 	public void processIncomingMessage(FrontlineMessage message) {
-		String sender = message.getSenderMsisdn();
-		String content = message.getTextContent();
-
-		// Get the payment service from which the text message has been sent
-		PaymentService paymentService = paymentServiceDao
-				.getPaymentServiceByShortCode(sender);
-
-		if (paymentService == null) {
-			LOG.debug("FrontlineMessage not from a registered payment service");
-			return;
-		}
-
-		// Instantiate a transaction
-		PaymentServiceTransaction transaction = new PaymentServiceTransaction();
-
-		// Set the message used to create the transaction
-		transaction.setMessage(message);
-
-		// Mark the message as not posted to an MIS
-		transaction.setPostedToMIS(false);
-
-		// Set the payment service
-		transaction.setPaymentService(paymentService);
-
-		// Get the keywords to be used to determine the transaction type in the
-		// text message
-		// NOTE: confirm 1 and confirm2 *MUST* not be the same
-		String confirm1 = paymentService.getRepaymentConfirmationKeyword();
-		String confirm2 = paymentService.getDispersalConfirmationKeyword();
-
-		// Store the template message to be used for extracting the transaction
-		// meta data
-		String smsTemplate = null;
-
-		// Extra validation check just in case...
-		if (confirm1.trim().equalsIgnoreCase(confirm2.trim()))
-			return;
-
-		// Begin pattern matching and extraction of information from the text
-		// message
-		if (containsKeyword(content, confirm1)) {
-			transaction.setTransactionType(TransactionType.RECEIPT);
-			smsTemplate = paymentService.getRepaymentConfirmationText();
-		} else if (containsKeyword(content, confirm2)) {
-			transaction.setTransactionType(TransactionType.TRANSFER);
-			smsTemplate = paymentService.getDispersalConfirmationText();
-		} else {
-			LOG.debug("Error: Keyword match failed");
-			return;
-		}
-
-		PaymentServiceSmsProcessor processor = new PaymentServiceSmsProcessor(
-				content, smsTemplate);
-		transaction.setTransactionAmount(processor.getAmount());
-		transaction.setTransactionCode(processor.getTransactionCode());
-		transaction.setClient(clientDao.getClientByPhoneNumber(processor
-				.getPhoneNumber()));
-
-		// Set the transaction date to the date when the message was received
-		transaction.setTransactionDate(new Date(message.getDate()));
-
-		// TODO: Final transaction validation before writing to the database
-
-		// Information has been extracted, therefore save
-		try {
-			transactionDao.savePaymentServiceTransaction(transaction);
-		} catch (DuplicateKeyException e) {
-			LOG.debug(
-					"Error: A transaction with the specified code already exists",
-					e);
-		}
 	}
 
 	// > THINLET UI & EVENT HELPER METHODS
@@ -495,28 +372,25 @@ public class PaymentViewThinletTabController extends
 	 * @return The client list component
 	 */
 	private Object getClientList() {
-		Object clientList = ui.find(paymentViewTab, COMPONENT_LS_CLIENTS);
+		Object clientList = new Object();//ui.find(paymentViewTab, COMPONENT_LS_CLIENTS);
 		return clientList;
 	}
 
 	/** @return the dispersals table component */
 	private Object getDispersalsTable() {
-		Object dispersalsTable = ui.find(paymentViewTab,
-				COMPONENT_TBL_DISPERSALS);
+		Object dispersalsTable = new Object();//ui.find(paymentViewTab, COMPONENT_TBL_DISPERSALS);
 		return dispersalsTable;
 	}
 
 	/** @return the repayments table component */
 	private Object getRepaymentsTable() {
-		Object repaymentsTable = ui.find(paymentViewTab,
-				COMPONENT_TBL_REPAYMENTS);
+		Object repaymentsTable = new Object();//ui.find(paymentViewTab, COMPONENT_TBL_REPAYMENTS);
 		return repaymentsTable;
 	}
 
 	/** @return the exceptions table UI component */
 	private Object getExceptionsTable() {
-		Object exceptionsTable = ui.find(paymentViewTab,
-				COMPONENT_TBL_EXCEPTIONS);
+		Object exceptionsTable = new Object();//ui.find(paymentViewTab, COMPONENT_TBL_EXCEPTIONS);
 		return exceptionsTable;
 	}
 
@@ -753,10 +627,8 @@ public class PaymentViewThinletTabController extends
 	 */
 	public void selectClient(Object component) {
 		// Get references to the edit and delete buttons
-		Object btnEditClient = ui
-				.find(paymentViewTab, COMPONENT_BT_EDIT_CLIENT);
-		Object btnDeleteClient = ui.find(paymentViewTab,
-				COMPONENT_BT_DELETE_CLIENT);
+		Object btnEditClient = new Object();//ui.find(paymentViewTab, COMPONENT_BT_EDIT_CLIENT);
+		Object btnDeleteClient = new Object();//ui.find(paymentViewTab, COMPONENT_BT_DELETE_CLIENT);
 
 		// Get "the enabled" property of the buttons
 		boolean editEnabled = ui.getBoolean(btnEditClient, Thinlet.ENABLED);
@@ -797,11 +669,6 @@ public class PaymentViewThinletTabController extends
 		ui.add(dialog);
 	}
 
-	public void deleteClient() {
-		clientDao.deleteClient(selectedClient);
-		clientsPagingHandler.refresh();
-	}
-
 	/**
 	 * Removes a dialog from the screen when the close action is initated
 	 * 
@@ -815,7 +682,7 @@ public class PaymentViewThinletTabController extends
 	/**
 	 * Performs input validation for the required client properties
 	 */
-	public void validateRequiredFields() {
+	/*public void validateRequiredFields() {
 		Object dialog = getClientDialog();
 		String clientName = ui.getText(
 				ui.find(dialog, COMPONENT_FLD_CLIENT_NAME)).trim();
@@ -831,6 +698,8 @@ public class PaymentViewThinletTabController extends
 
 		ui.repaint();
 	}
+	*/
+	
 
 	/**
 	 * Saves the client
@@ -846,54 +715,15 @@ public class PaymentViewThinletTabController extends
 				: new Client();
 
 		// Fetch the client info from the dialog
-		client.setName(ui.getText(ui.find(dialog, COMPONENT_FLD_CLIENT_NAME)));
-		client.setPhoneNumber(ui.getText(ui.find(dialog,
-				COMPONENT_FLD_PHONE_NUMBER)));
-		client.setOtherPhoneNumber(ui.getText(ui.find(dialog,
-				COMPONENT_FLD_OTHER_PHONE_NUMBER)));
-		client.setEmailAddress(ui.getText(ui.find(dialog,
-				COMPONENT_FLD_EMAIL_ADDRESS)));
+		//client.setName(ui.getText(ui.find(dialog, COMPONENT_FLD_CLIENT_NAME)));
+		//client.setPhoneNumber(ui.getText(ui.find(dialog, COMPONENT_FLD_PHONE_NUMBER)));
+		//client.setOtherPhoneNumber(ui.getText(ui.find(dialog, COMPONENT_FLD_OTHER_PHONE_NUMBER)));
+		//client.setEmailAddress(ui.getText(ui.find(dialog, COMPONENT_FLD_EMAIL_ADDRESS)));
 
 		// Check if a contact record is to be created for this client
-		boolean createContact = ui.getBoolean(
-				ui.find(dialog, "chkAddToContact"), "selected");
+		boolean createContact = ui.getBoolean(ui.find(dialog, "chkAddToContact"), "selected");
 
-		if (createContact) {
-			Contact contact = new Contact(client.getName(),
-					client.getPhoneNumber(), client.getOtherPhoneNumber(),
-					client.getEmailAddress(), null, true);
-
-			// Check if a contact with the specified info already exists
-			Contact databaseContact = contactDao.getContactByName(client
-					.getName());
-
-			try {
-				if (databaseContact != null)
-					contactDao.updateContact(contact);
-				else
-					contactDao.saveContact(contact);
-			} catch (DuplicateKeyException e) {
-				LOG.warn("A contact with the specified details already exists!"
-						+ e);
-			}
-
-			// Link the client with the newly saved contact record
-			client.setContact(contact);
-		} else {
-			client.setContact(null);
-		}
-
-		// Save the client info
-		try {
-			if (clientExists == true)
-				clientDao.updateClient(client);
-			else
-				clientDao.saveClient(client);
-		} catch (DuplicateKeyException e) {
-			LOG.warn("A client with the phone number ["
-					+ client.getPhoneNumber() + "] already exists");
-		}
-
+		
 		// Remove the item being updated from the client list
 		if (clientExists) {
 			Object selectedItem = ui.getSelectedItem(getClientList());
@@ -918,13 +748,8 @@ public class PaymentViewThinletTabController extends
 
 	/** @return a reference to the client dialog */
 	private Object getClientDialog() {
-		Object dialog = ui.find(COMPONENT_DLG_CLIENT_DETAILS);
-
-		if (dialog == null){
-			return ui.loadComponentFromFile(UI_FILE_CLIENT_DIALOG, this);
-		}else{
-			return dialog;
-		}
+		Object dialog = new Object();//ui.find(COMPONENT_DLG_CLIENT_DETAILS);
+		return dialog;
 	}
 
 	/**
@@ -939,7 +764,7 @@ public class PaymentViewThinletTabController extends
 		Object dialog = getClientDialog();
 		ui.setAttachedObject(dialog, client);
 
-		ui.setText(ui.find(dialog, COMPONENT_FLD_CLIENT_NAME), client.getName());
+		/*ui.setText(ui.find(dialog, COMPONENT_FLD_CLIENT_NAME), client.getName());
 		ui.setText(ui.find(dialog, COMPONENT_FLD_PHONE_NUMBER),
 				client.getPhoneNumber());
 		ui.setText(ui.find(dialog, COMPONENT_FLD_OTHER_PHONE_NUMBER),
@@ -947,6 +772,7 @@ public class PaymentViewThinletTabController extends
 		ui.setText(ui.find(dialog, COMPONENT_FLD_EMAIL_ADDRESS),
 				client.getEmailAddress());
 		ui.setEnabled(ui.find(dialog, COMPONENT_BT_SAVE_CLIENT), true);
+		*/
 
 		if (client.getContact() == null)
 			ui.setSelected(ui.find(dialog, "chkAddToContact"), false);
@@ -1017,18 +843,7 @@ public class PaymentViewThinletTabController extends
 	 * @return
 	 */
 	public Object getSendMoneyDialog() {
-		Object dialog = ui.find(COMPONENT_DLG_SEND_MONEY);
-
-		if (dialog == null) {
-			dialog = ui.loadComponentFromFile(UI_FILE_SEND_MONEY_DIALOG, this);
-			Object cbPaymentService = ui.find(dialog,
-					COMPONENT_CB_PAYMENT_SERVICE);
-			for (PaymentService service : paymentServiceDao
-					.getAllPaymentServices()) {
-				ui.add(cbPaymentService, getChoice(service));
-			}
-		}
-
+		Object dialog = new Object();//ui.find(COMPONENT_DLG_SEND_MONEY);
 		return dialog;
 	}
 
@@ -1040,8 +855,7 @@ public class PaymentViewThinletTabController extends
 		Object dialog = getSendMoneyDialog();
 
 		ui.setAttachedObject(dialog, selectedClient);
-		ui.setText(ui.find(dialog, COMPONENT_LB_CLIENT_NAME),
-				selectedClient.getName());
+		//ui.setText(ui.find(dialog, COMPONENT_LB_CLIENT_NAME), selectedClient.getName());
 
 		ui.add(dialog);
 	}
@@ -1053,37 +867,34 @@ public class PaymentViewThinletTabController extends
 		Object dialog = getSendMoneyDialog();
 
 		// Get the selected payment service from the combobox
-		Object comboChoice = ui.getSelectedItem(ui.find(dialog,
-				COMPONENT_CB_PAYMENT_SERVICE));
-		PaymentService service = getPaymentService(comboChoice);
+		//Object comboChoice = ui.getSelectedItem(ui.find(dialog, COMPONENT_CB_PAYMENT_SERVICE));
+		//PaymentService service = getPaymentService(comboChoice);
 
 		// Check if an amount has been specified
-		String amount = ui.getText(
-				ui.find(dialog, COMPONENT_FLD_TRANSFER_AMOUNT)).trim();
-		if (amount.length() == 0) {
+		//String amount = ui.getText(ui.find(dialog, COMPONENT_FLD_TRANSFER_AMOUNT)).trim();
+		/*if (amount.length() == 0) {
 			ui.alert(InternationalisationUtils
 					.getI18nString(PAYMENTVIEW_NO_TRANSFER_AMOUNT));
 			return;
 		}
+		*/
 
 		// Validate the specified amount
-		if (!validateAmount(amount)) {
+		/*if (!validateAmount(amount)) {
 			ui.alert(InternationalisationUtils
 					.getI18nString(PAYMENTVIEW_INVALID_TRANSFER_AMOUNT));
 			return;
-		}
+		}*/
 
 		// Get the client attached to the dialog
 		Client client = getClient(dialog);
 
 		// Get the text message to be sent to the payment service
-		String textMessage = getDispersalTextMessage(service,
-				client.getPhoneNumber(), amount);
+		String textMessage = "";//getDispersalTextMessage(service,client.getPhoneNumber(), amount);
 
 		// Null check
 		if (textMessage != null) {
-			ui.getFrontlineController().sendTextMessage(
-					service.getSmsShortCode(), textMessage);
+			//ui.getFrontlineController().sendTextMessage(service.getSmsShortCode(), textMessage);
 			removeDialog(dialog);
 		}
 	}
@@ -1097,8 +908,7 @@ public class PaymentViewThinletTabController extends
 	 * @param amount
 	 * @return
 	 */
-	private String getDispersalTextMessage(PaymentService service,
-			String recipient, String amount) {
+	private String getDispersalTextMessage(PaymentService service, String recipient, String amount) {
 		// Get the template message
 		String template = service.getSendMoneyTextMessage();
 
@@ -1142,33 +952,21 @@ public class PaymentViewThinletTabController extends
 	 * Additions for the Dialogs and UI methods
 	 */
 	public Object customizeClientDB() {
-		Object dialog = ui.find(COMPONENT_DLG_CLIENT_DETAILS);
+		Object dialog = new Object();//ui.find(COMPONENT_DLG_CLIENT_DETAILS);
 
-		if (dialog == null){
-			return ui.loadComponentFromFile(UI_FILE_CLIENT_DIALOG, this);
-		}else{
-			return dialog;
-		}
+		return dialog;
 	}
 	
 	public Object addClient() {
-		Object dialog = ui.find(COMPONENT_DLG_CLIENT_DETAILS);
+		Object dialog = new Object();//ui.find(COMPONENT_DLG_CLIENT_DETAILS);
 
-		if (dialog == null){
-			return ui.loadComponentFromFile(UI_FILE_CLIENT_DIALOG, this);
-		}else{
-			return dialog;
-		}
+		return dialog;
 	}
 	
 	public Object importClient() {
-		Object dialog = ui.find(COMPONENT_DLG_CLIENT_DETAILS);
+		Object dialog = new Object();//ui.find(COMPONENT_DLG_CLIENT_DETAILS);
 
-		if (dialog == null){
-			return ui.loadComponentFromFile(UI_FILE_CLIENT_DIALOG, this);
-		}else{
-			return dialog;
-		}
+		return dialog;
 	}
 
 }

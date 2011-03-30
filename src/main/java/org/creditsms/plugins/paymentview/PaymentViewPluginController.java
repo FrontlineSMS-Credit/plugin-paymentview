@@ -48,7 +48,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 	
 //> INSTANCE PROPERTIES
 	/** The {@link #FrontlineSMS} instance that this plug-in is attached to */
-	private FrontlineSMS frontlineController;
+	private FrontlineSMS frontlineController; 
 	/** DAO for clients*/
 	private ClientDao clientDao;
 	/** DAO for network operators */
@@ -89,14 +89,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
 	public Object initThinletTab(UiGeneratorController uiController) {
-		tabController = new PaymentViewThinletTabController(this, uiController);
-		tabController.setClientDao(clientDao);
-		tabController.setContactDao(this.frontlineController.getContactDao());
-		tabController.setNetworkOperatorDao(networkOperatorDao);
-		tabController.setPaymentServiceDao(paymentServiceDao);
-		tabController.setPaymentServiceTranscationDao(transactionDao);
-		tabController.setQuickDialCodeDao(quickDialCodeDao);
-		tabController.setPaymentViewErrorDao(paymentViewErrorDao);
+		tabController = new PaymentViewThinletTabController(this, uiController);		
 		
 		Object paymentViewTab = uiController.loadComponentFromFile(XML_PAYMENT_VIEW_TAB, tabController);
 		tabController.setTabComponent(paymentViewTab);
