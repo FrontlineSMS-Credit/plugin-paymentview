@@ -275,8 +275,8 @@ public class PaymentViewThinletTabController extends
 		///exceptionsPagingHandler.refresh();
 
 		//Object paymentViewTabbedPane = ui.find(this.paymentViewTab, COMPONENT_TB_PAYMENT_VIEW);
-		SettingsTabHandler settingsTab = new SettingsTabHandler(controller, ui);
-		settingsTab.init();
+		//SettingsTabHandler settingsTab = new SettingsTabHandler(controller, ui);
+		//settingsTab.init();
 
 		//ui.add(paymentViewTabbedPane, settingsTab.getTab());
 	}
