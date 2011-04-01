@@ -16,7 +16,7 @@ import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.ui.UiGeneratorController;
-
+import thinlet.Thinlet;
 /**
  * This is the base class for the FrontlineSMS:Credit PaymentView plugin. The PaymentView
  * plugin is used to process payments transacted via the connected mobile phone. Processing
@@ -56,6 +56,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 		Object paymentViewTab = uiController.loadComponentFromFile(XML_PAYMENT_VIEW_TAB, tabController);
 		tabController.setTabComponent(paymentViewTab);
 		tabController.refresh();
+		uiController.find("pnl_tabPaymentView_mainColumn");
 		return paymentViewTab;
 	}
 
