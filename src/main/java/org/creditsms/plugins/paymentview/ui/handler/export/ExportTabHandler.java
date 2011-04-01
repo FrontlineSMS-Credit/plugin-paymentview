@@ -4,7 +4,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
 public class ExportTabHandler extends BaseTabHandler{
-
+	private static final String XML_EXPORT_TAB = "/ui/plugins/paymentview/export/tabexport.xml";
 	protected ExportTabHandler(UiGeneratorController ui) {
 		super(ui);
 		// TODO Auto-generated constructor stub
