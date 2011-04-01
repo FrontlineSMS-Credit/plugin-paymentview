@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name=":paymentView" text="i18n.plugins.paymentview.manager" icon="/icons/big_creditsms.png">
-	<panel bottom="9" columns="2" gap="9" left="9" right="9" top="9">
-	    <label icon="/icons/header/contactManager.png" valign="top"/>	        
-	    <button tooltip="i18n.tooltip.click.for.help" valign="bottom" action="showHelpPage('contacts.htm')" icon="/icons/big_help.png" type="link"/>
+	<panel weightx="1" weighty="1">
+		<panel bottom="9" columns="2" gap="9" left="9" right="9" top="9">
+	    	<label icon="/icons/header/paymentView.png" valign="top"/>
+	    	<panel gap="9">
+	    	</panel>	        
+	    	<button tooltip="i18n.tooltip.click.for.help" valign="bottom" action="showHelpPage('contacts.htm')" icon="/icons/big_help.png" type="link"/>
+		</panel>
+		<panel name="pnl_tabPaymentView_mainColumn" bottom="9" columns="1" gap="9" left="9" right="9" top="9">
+		</panel>
 	</panel>
 </tab>
