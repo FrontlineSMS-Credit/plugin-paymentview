@@ -72,9 +72,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 	 * The above parameters may vary amongst service providers
 	 */
 	public void incomingMessageEvent(FrontlineMessage message) {
-	    // Only handle received messages
-	    if(message.getType().equals(FrontlineMessage.Type.RECEIVED))
-	        tabController.processIncomingMessage(message);
+	    
 	}	
 	
 }

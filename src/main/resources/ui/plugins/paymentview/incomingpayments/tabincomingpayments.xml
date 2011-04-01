@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tab name="tab_incomingPayments" text="Incoming Payments">
+        <panel columns="1">
+            <panel border="true" bottom="5" columns="2" gap="5" left="5" name="pnl_tbl_tab_incomingPayments_clients" right="5" top="5">
+                <table name="tbl_tab_incomingPayments_clients">
+                    <header>
+                        <column text="Name" width="52"/>
+                        <column text="Phone"/>
+                        <column text="Account"/>
+                        <column text="Amount"/>
+                        <column text="Date"/>
+                        <column text="Time"/>
+                    </header>
+                </table>
+            </panel>
+            <panel gap="5" name="pnl_tab_incomingPayments_buttons" weightx="1">
+                <combobox name="cmb_tab_incomingPayments_mobilePaymentAccount" text="Select Mobile payment account"/>
+                <button icon="/icons/tick.png" name="btn_tab_incomingPayments_analyse" text="Analyse"/>
+                <button icon="/icons/cross.png" name="btn_tab_incomingPayments_export" text="Export"/>
+            </panel>
+        </panel>
+    </tab>

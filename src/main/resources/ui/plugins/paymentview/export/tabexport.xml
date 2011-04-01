@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<tab name="tab_export" text="Export">
+        <tabbedpane name="tab_export" placement="left" selected="1">
+            <tab name="tab_tab_export_clients" text="Clients">
+                <panel columns="1">
+                    <panel bottom="5" columns="1" gap="3">
+                        <label font="18" name="lbl_tab_export_banner" text="Export By Client Characteristic"/>
+                        <label name="lbl_tab_export_hint" text="Sort by a characteristic to identify the client(s) or group you would like to export"/>
+                    </panel>
+                    <panel columns="3" gap="5" weightx="1">
+                        <table colspan="3" name="tbl_tab_tab_export_clients_clientsList">
+                            <header>
+                                <column text="Name"/>
+                                <column text="Phone Number"/>
+                                <column text="Amount"/>
+                                <column text="Date"/>
+                                <column text="Time"/>
+                                <column text="Payment ID"/>
+                                <column text="Notes"/>
+                            </header>
+                        </table>
+                        <button name="btn_tab_tab_export_clients_selectAll" text="Select All"/>
+                        <separator width="1"/>
+                        <button name="btn_tab_tab_export_clients_exportSelectedClients" text="Export Selected Clients"/>
+                        <panel colspan="3" columns="1" gap="4">
+                            <separator colspan="3"/>
+                            <panel colspan="3" columns="3" gap="5">
+                                <label name="lbl_tab_tab_export_clients_exportAllRecordsFromGroup" text="Export all records from:"/>
+                                <combobox name="cmb_tab_export_exportAllRecordsFromGroup"/>
+                                <button name="btn_tab_tab_export_clients_exportAllRecordsFromGroup" text="Export selected client group"/>
+                            </panel>
+                        </panel>
+                    </panel>
+                </panel>
+            </tab>
+            <tab name="tab_tab_export_payments" text="Payments">
+                <panel columns="1">
+                    <panel columns="1">
+                        <label font="18" name="btn_tab_tab_export_payments_banner" text="Export By Client Characteristic"/>
+                    </panel>
+                    <panel columns="1">
+                        <label font="14 italic" name="lbl_tab_tab_export_payments_typeOfPayment" text="Choose the kind of payment to export:"/>
+                        <checkbox group="typeOfPayment" name="grp_tab_export_payments_incomingPayments" text="Incoming Payments (from clients)"/>
+                        <checkbox group="typeOfPayment" name="grp_tab_export_payments_outgoingPayments" selected="true" text="Outgoing Payments (to clients)"/>
+                    </panel>
+                    <panel columns="1">
+                        <label text="Choose the date range for export:"/>
+                        <checkbox selected="true" text="Date Range:"/>
+                        <panel>
+                            <panel>
+                                <label name="lbl_tab_export_payments_fromDate" text="From:"/>
+                                <textfield name="txt_tab_export_payments_fromDate"/>
+                            </panel>
+                            <panel>
+                                <label name="lbl_tab_export_payments_toDate" text="To:"/>
+                                <textfield name="txt_tab_export_payments_toDate"/>
+                            </panel>
+                        </panel>
+                        <checkbox selected="true" text="Export by selection"/>
+                    </panel>
+                    <panel columns="1" gap="5" weightx="1">
+                        <table name="tbl_tab_tab_export_payments_clients">
+                            <header>
+                                <column text="Select"/>
+                                <column text="Name"/>
+                                <column text="Phone Number"/>
+                                <column text="Amount"/>
+                                <column text="Date"/>
+                                <column text="Time"/>
+                                <column text="Payment ID"/>
+                                <column text="Notes"/>
+                            </header>
+                        </table>
+                        <panel columns="1">
+                            <separator/>
+                            <panel columns="3" gap="5" halign="right">
+                                <button halign="right" name="btn_tab_tab_export_payments_export_export" text="Export Payments"/>
+                            </panel>
+                        </panel>
+                    </panel>
+                </panel>
+            </tab>
+            <tab name="tab_tab_export_clientHistory" text="Client History">
+                <panel columns="1">
+                    <panel columns="1">
+                        <label font="18" name="lbl_tab_tab_export_clientHistory_banner" text="Export All Records for a client"/>
+                        <panel columns="1">
+                            <label font="14 italic" text="Identify Client:"/>
+                            <panel columns="1" gap="5">
+                                <panel gap="5">
+                                    <checkbox group="identity" name="chk_tab_tab_export_clientHistory_phoneNumber" text="Phone Number:"/>
+                                    <textfield name="txt_tab_tab_export_clientHistory_phoneNumber"/>
+                                </panel>
+                                <panel colspan="2" columns="2" gap="5">
+                                    <checkbox group="identity" name="chk_tab_tab_export_clientHistory_accountNumber" text="Account Number:"/>
+                                    <textfield name="txt_tab_tab_export_clientHistory_accountNumber"/>
+                                    <checkbox colspan="2" halign="center" selected="true" text="Include payments credited to this account from other accounts"/>
+                                </panel>
+                            </panel>
+                            <panel columns="1" gap="5">
+                                <label text="Select types of payments too include:"/>
+                                <checkbox group="paymentType" name="chk_tab_tab_export_clientHistory_incomingPayments" text="Incoming Payments (from clients)"/>
+                                <checkbox group="paymentType" name="chk_tab_tab_export_clientHistory_outgoingPayments" selected="true" text="Outgoing Payments (to clients)"/>
+                            </panel>
+                            <panel columns="1" gap="5">
+                                <label text="Select the file format you wish to export to:"/>
+                                <checkbox group="fileType" name="chk_tab_tab_export_clientHistory_PDF" text="PDF"/>
+                                <checkbox group="fileType" name="chk_tab_tab_export_clientHistory_CSV" selected="true" text="CSV"/>
+                            </panel>
+                        </panel>
+                    </panel>
+                </panel>
+            </tab>
+        </tabbedpane>
+    </tab>

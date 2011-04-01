@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tab name="tab_clientList" text="Clients">
+        <panel columns="1">
+            <panel border="true" bottom="5" columns="1" gap="5" left="5" name="pnl_tbl_clientList" right="5" top="5" width="100">
+                <table colspan="10" name="tbl_clientList" width="1000">
+                    <header>
+                        <column text="Name" width="100"/>
+                        <column text="Phone" width="100"/>
+                        <column text="Account" width="100"/>
+                    </header>
+                </table>
+            </panel>
+            <panel columns="3" gap="5" name="pnl_buttons" weightx="1">
+                <panel>
+                    <button icon="/icons/tick.png" action="customizeClientDB" name="btn_tab_clientList_customizeClientDB" text="Customize Client Database"/>
+                </panel>
+                <panel colspan="2" columns="2" gap="2" halign="center">
+                    <button icon="/icons/cross.png" action="addClient" name="btn_tab_clientList_add" text="Add Client" weightx="1" weighty="1"/>
+                    <button icon="/icons/cross.png" action="importClient" name="btn_tab_clientList_import" text="Import Client"/>
+                </panel>
+                <panel halign="right">
+                    <button action="addClient" icon="/icons/cross.png" name="btn_tab_clientList_export" text="Export"/>
+                </panel>
+            </panel>
+        </panel>
+    </tab>
