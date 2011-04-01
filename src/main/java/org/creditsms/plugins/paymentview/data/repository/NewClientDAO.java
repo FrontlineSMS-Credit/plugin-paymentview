@@ -19,7 +19,7 @@ public interface NewClientDAO {
 	
 	/**
 	 * Returns a list of clients whose name is similar to the specified string
-	 * @param name string to be used to match the names
+	 * @param clientname string to be used to match the names
 	 * @return
 	 */
 	public List<ClientNew> getClientByName(String clientName);
@@ -27,7 +27,7 @@ public interface NewClientDAO {
 	/**
 	 * Returns a list of clients whose name is similar to the specified string from a particular
 	 * start index with a maximum number of returned clients set
-	 * @param name 
+	 * @param clientname 
 	 * @param startIndex 
 	 * @param limit
 	 * @return
@@ -53,7 +53,6 @@ public interface NewClientDAO {
 	/**
 	 * Saves a client to the system
 	 * @param client
-	 * @throws DuplicateKeyException
 	 */
 	public void saveUpdateClient(ClientNew client);
 	
