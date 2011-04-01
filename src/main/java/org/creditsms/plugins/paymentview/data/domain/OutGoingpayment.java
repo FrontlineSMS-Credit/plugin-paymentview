@@ -18,9 +18,9 @@ import javax.persistence.Table;
  * */
 
 @Entity
-@Table(name = OutGoingpayment.TABLE_NAME)
+@Table(name = OutGoingPayment.TABLE_NAME)
 
-public class OutGoingpayment {
+public class OutGoingPayment {
 	public static final String TABLE_NAME = "OutGoingpayment";
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
