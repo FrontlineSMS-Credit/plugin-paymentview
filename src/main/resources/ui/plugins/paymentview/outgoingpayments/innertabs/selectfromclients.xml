@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+		<tab name="tab_tab_outgoingPayments_selectFromClients" text="Select From Client List">
+                <panel columns="1" gap="5" weighty="1" width="1">
+                    <panel border="true" bottom="5" columns="1" gap="5" left="5" right="5" top="5">
+                        <panel columns="1">
+                            <panel>
+                                <label colspan="2" name="lbl_tab_outgoingPayments_selectFromClients_banner" text="Select a client to initiate a payment"/>
+                            </panel>
+                            <table name="tbl_tab_outgoingPayments_selectFromClients_clients">
+                                <header>
+                                    <column text="Select"/>
+                                    <column text="Name"/>
+                                    <column text="Phone Number"/>
+                                    <column text="Amount"/>
+                                    <column text="Date"/>
+                                    <column text="Time"/>
+                                    <column text="Payment ID"/>
+                                    <column text="Notes"/>
+                                </header>
+                            </table>
+                        </panel>
+                    </panel>
+                    <panel columns="1" gap="5" halign="right" weightx="1">
+                        <button icon="/icons/cross.png" name="btn_tab_outgoingPayments_selectFromClients_sendPaymentToSelection" text="Send Payment to Selected Clients"/>
+                        <button name="btn_tab_outgoingPayments_selectFromClients_schedulePaymentToSelection" text="Schedule Payment to Selected Clients"/>
+                    </panel>
+                </panel>
+            </tab>

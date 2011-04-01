@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+		<tab name="tab_sentPayments" text="Sent Payments">
+                <panel columns="1" gap="5">
+                    <panel border="true" bottom="5" columns="2" gap="5" left="5" right="5" top="5">
+                        <table name="tbl_clients">
+                            <header>
+                                <column text="Name"/>
+                                <column text="Phone Number"/>
+                                <column text="Amount"/>
+                                <column text="Date"/>
+                                <column text="Time"/>
+                                <column text="Payment ID"/>
+                                <column text="Notes"/>
+                            </header>
+                        </table>
+                    </panel>
+                    <panel gap="5" weightx="1">
+                        <combobox name="cmb_mobilePaymentAccount" text="Select mobile payment account"/>
+                        <button icon="/icons/cross.png" name="btn_export" text="Export"/>
+                    </panel>
+                </panel>
+            </tab>

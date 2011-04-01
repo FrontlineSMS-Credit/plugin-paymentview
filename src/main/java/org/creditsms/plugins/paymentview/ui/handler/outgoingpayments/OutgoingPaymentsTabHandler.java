@@ -5,21 +5,31 @@ import net.frontlinesms.ui.handler.BaseTabHandler;
 
 public class OutgoingPaymentsTabHandler extends BaseTabHandler{
 
-	protected OutgoingPaymentsTabHandler(UiGeneratorController ui) {
-		super(ui);
-		// TODO Auto-generated constructor stub
+	private static final String XML_OUTGOINGPAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/taboutgoingpayments.xml";
+	private Object outgoingPaymentsTab; 
+	
+	public OutgoingPaymentsTabHandler(UiGeneratorController ui) {
+		super(ui);		
+		init();
 	}
 
 	@Override
 	public void refresh() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	protected Object initialiseTab() {
-		// TODO Auto-generated method stub
-		return null;
+		outgoingPaymentsTab = ui.loadComponentFromFile(XML_OUTGOINGPAYMENTS_TAB, this);
+		return outgoingPaymentsTab;
 	}
 
+	//> EVENTS...
+	public void customizeClientDB(){		
+	}
+	
+	public void addClient(){			
+	}
+	
+	public void importClient(){		
+	}	
 }
