@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name="tab_outgoingPayments" text="Outgoing Payments">
-	<tabbedpane name="tabP_tab_outgoingPayments_tabs" placement="left"/>
+	<tabbedpane name="tabbedPaneMain" placement="left"/>
 </tab>

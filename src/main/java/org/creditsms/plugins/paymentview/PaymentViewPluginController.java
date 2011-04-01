@@ -20,7 +20,6 @@ import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.ui.UiGeneratorController;
-import thinlet.Thinlet;
 /**
  * This is the base class for the FrontlineSMS:Credit PaymentView plugin. The PaymentView
  * plugin is used to process payments transacted via the connected mobile phone. Processing
@@ -40,6 +39,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 //>	CONSTANTS
 	/** Filename and path of the XML for the PaymentView tab */
 	private static final String XML_PAYMENT_VIEW_TAB = "/ui/plugins/paymentview/paymentViewTab.xml";
+	private static final String TABP_MAIN_PANE = "tabP_mainPane";
 	
 	private FrontlineSMS frontlineController;	
 	private PaymentViewThinletTabController tabController;
@@ -64,6 +64,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 	}
 
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
+	@Override
 	public Object initThinletTab(UiGeneratorController uiController) {
 		tabController = new PaymentViewThinletTabController(this, uiController);//Pass the Handler The 
 		//Base Plugin Controller, and the UIController for it to sort itself out!!!		
@@ -71,7 +72,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 		paymentViewTab = uiController.loadComponentFromFile(XML_PAYMENT_VIEW_TAB, tabController);
 		tabController.setTabComponent(paymentViewTab);
 		tabController.refresh();
-		mainPane = uiController.find(paymentViewTab, "tabP_mainPane");
+		mainPane = uiController.find(paymentViewTab, TABP_MAIN_PANE);
 		
 		clientsTab = new ClientsTabHandler(uiController);		
 		uiController.add(mainPane, clientsTab.getTab());

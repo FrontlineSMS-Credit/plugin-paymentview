@@ -2,8 +2,6 @@ package org.creditsms.plugins.paymentview.data.domain;
 
 import javax.persistence.*;
 
-import org.apache.commons.collections.functors.FalsePredicate;
-
 import net.frontlinesms.data.EntityField;
 
 /**

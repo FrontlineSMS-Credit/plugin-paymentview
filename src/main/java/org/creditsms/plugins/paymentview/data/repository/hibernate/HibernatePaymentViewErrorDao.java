@@ -24,7 +24,8 @@ public class HibernatePaymentViewErrorDao extends BaseHibernateDao<PaymentViewEr
     }
     
     /** @see PaymentViewErrorDao#delete(PaymentViewError) */
-    public void delete(PaymentViewError error) {
+    @Override
+	public void delete(PaymentViewError error) {
         super.delete(error);
     }
 
@@ -74,12 +75,14 @@ public class HibernatePaymentViewErrorDao extends BaseHibernateDao<PaymentViewEr
     }
 
     /** @see PaymentViewErrorDao#save(PaymentViewError) */
-    public void save(PaymentViewError error) {
+    @Override
+	public void save(PaymentViewError error) {
         super.saveWithoutDuplicateHandling(error);
     }
 
     /** @see PaymentViewErrorDao#update(PaymentViewError) */
-    public void update(PaymentViewError error) {
+    @Override
+	public void update(PaymentViewError error) {
         super.saveWithoutDuplicateHandling(error);
     }
 

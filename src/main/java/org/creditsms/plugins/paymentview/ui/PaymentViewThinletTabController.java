@@ -4,50 +4,16 @@
  */
 package org.creditsms.plugins.paymentview.ui;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import net.frontlinesms.FrontlineUtils;
-import net.frontlinesms.data.DuplicateKeyException;
-import net.frontlinesms.data.domain.Contact;
-import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.plugins.BasePluginThinletTabController;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
-import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.apache.log4j.Logger;
-
-import org.creditsms.plugins.paymentview.PaymentServiceSmsProcessor;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-
-import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.domain.NetworkOperator;
-import org.creditsms.plugins.paymentview.data.domain.PaymentService;
-import org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction;
-import org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction.TransactionType;
-import org.creditsms.plugins.paymentview.data.domain.PaymentViewError;
-import org.creditsms.plugins.paymentview.data.domain.QuickDialCode;
-
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.NetworkOperatorDao;
-import org.creditsms.plugins.paymentview.data.repository.PaymentServiceDao;
-import org.creditsms.plugins.paymentview.data.repository.PaymentServiceTransactionDao;
-import org.creditsms.plugins.paymentview.data.repository.PaymentViewErrorDao;
-import org.creditsms.plugins.paymentview.data.repository.QuickDialCodeDao;
-import org.creditsms.plugins.paymentview.ui.handler.SettingsTabHandler;
-
-import thinlet.Thinlet;
 
 /**
  * 
