@@ -5,22 +5,24 @@ import net.frontlinesms.ui.handler.BaseTabHandler;
 
 public class ClientsTabHandler extends BaseTabHandler{
 	private static final String XML_CLIENTS_TAB = "/ui/plugins/paymentview/clients/clients.xml";
+	private Object clientsTab;
 	
-	protected ClientsTabHandler(UiGeneratorController ui) {
-		super(ui);
-		// TODO Auto-generated constructor stub
+	public Object getClientsTab(){
+		return clientsTab;
+	}
+	
+	public ClientsTabHandler(UiGeneratorController ui) {
+		super(ui);		
 	}
 
 	@Override
-	public void refresh() {
-		// TODO Auto-generated method stub 
-		
+	public void refresh() {		
 	}
 
 	@Override
 	protected Object initialiseTab() {
-		// TODO Auto-generated method stub
-		return null;
+		clientsTab = ui.loadComponentFromFile(XML_CLIENTS_TAB, this);
+		return clientsTab;
 	}
 
 }

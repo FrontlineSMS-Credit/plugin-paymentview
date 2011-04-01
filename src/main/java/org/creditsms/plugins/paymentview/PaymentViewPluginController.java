@@ -8,6 +8,7 @@
 package org.creditsms.plugins.paymentview;
 
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
+import org.creditsms.plugins.paymentview.ui.handler.client.ClientsTabHandler;
 import org.springframework.context.ApplicationContext;
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.domain.FrontlineMessage;
@@ -41,6 +42,10 @@ public class PaymentViewPluginController extends BasePluginController implements
 	private PaymentViewThinletTabController tabController;
 	Object paymentViewTab;
 
+	private Object mainPane;
+
+	private ClientsTabHandler clientsTab; 
+
 //> CONFIG METHODS
 	/** @see net.frontlinesms.plugins.PluginController#init(FrontlineSMS, ApplicationContext) */
 	public void init(FrontlineSMS frontlineController,	ApplicationContext applicationContext) throws PluginInitialisationException {
@@ -51,12 +56,16 @@ public class PaymentViewPluginController extends BasePluginController implements
 
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
 	public Object initThinletTab(UiGeneratorController uiController) {
-		tabController = new PaymentViewThinletTabController(this, uiController);
+		tabController = new PaymentViewThinletTabController(this, uiController);//Pass the Handler The 
+		//Base Plugin Controller, and the UIController for it to sort itself out!!!		
 		
-		Object paymentViewTab = uiController.loadComponentFromFile(XML_PAYMENT_VIEW_TAB, tabController);
+		paymentViewTab = uiController.loadComponentFromFile(XML_PAYMENT_VIEW_TAB, tabController);
 		tabController.setTabComponent(paymentViewTab);
 		tabController.refresh();
-		uiController.find("pnl_tabPaymentView_mainColumn");
+		mainPane = uiController.find("tabP_mainPane");
+		clientsTab = new ClientsTabHandler(uiController);
+		uiController.add(mainPane, clientsTab);
+		
 		return paymentViewTab;
 	}
 
