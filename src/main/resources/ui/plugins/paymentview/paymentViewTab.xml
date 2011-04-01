@@ -7,6 +7,6 @@
 	    	</panel>	        
 	    	<button tooltip="i18n.tooltip.click.for.help" valign="bottom" action="showHelpPage('contacts.htm')" icon="/icons/big_help.png" type="link"/>
 		</panel>
-		<tabbedpane name="tabP_mainPane" bottom="9" columns="1" gap="9" left="9" right="9" top="9"/>
+		<tabbedpane name="tabP_mainPane"/>
 	</panel>
 </tab>

@@ -5,21 +5,31 @@ import net.frontlinesms.ui.handler.BaseTabHandler;
 
 public class ExportTabHandler extends BaseTabHandler{
 	private static final String XML_EXPORT_TAB = "/ui/plugins/paymentview/export/tabexport.xml";
-	protected ExportTabHandler(UiGeneratorController ui) {
-		super(ui);
-		// TODO Auto-generated constructor stub
+	private Object exportTab;
+		
+	public ExportTabHandler(UiGeneratorController ui) {
+		super(ui);		
+		init();
 	}
 
 	@Override
-	public void refresh() {
-		// TODO Auto-generated method stub
-		
+	public void refresh() {		
 	}
 
 	@Override
 	protected Object initialiseTab() {
-		// TODO Auto-generated method stub
-		return null;
+		exportTab = ui.loadComponentFromFile(XML_EXPORT_TAB, this);
+		return exportTab;
 	}
+
+	//> EVENTS...
+	public void customizeClientDB(){		
+	}
+	
+	public void addClient(){			
+	}
+	
+	public void importClient(){		
+	}	
 
 }

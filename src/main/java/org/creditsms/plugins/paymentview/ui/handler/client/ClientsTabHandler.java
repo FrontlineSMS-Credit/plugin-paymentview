@@ -7,12 +7,9 @@ public class ClientsTabHandler extends BaseTabHandler{
 	private static final String XML_CLIENTS_TAB = "/ui/plugins/paymentview/clients/clients.xml";
 	private Object clientsTab;
 	
-	public Object getClientsTab(){
-		return clientsTab;
-	}
-	
 	public ClientsTabHandler(UiGeneratorController ui) {
 		super(ui);		
+		init();
 	}
 
 	@Override
@@ -25,4 +22,13 @@ public class ClientsTabHandler extends BaseTabHandler{
 		return clientsTab;
 	}
 
+	//> EVENTS...
+	public void customizeClientDB(){		
+	}
+	
+	public void addClient(){			
+	}
+	
+	public void importClient(){		
+	}	
 }

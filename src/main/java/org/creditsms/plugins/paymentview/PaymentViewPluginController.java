@@ -8,7 +8,9 @@
 package org.creditsms.plugins.paymentview;
 
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
+import org.creditsms.plugins.paymentview.ui.handler.ExceptionsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.client.ClientsTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.export.ExportTabHandler;
 import org.springframework.context.ApplicationContext;
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.domain.FrontlineMessage;
@@ -44,7 +46,11 @@ public class PaymentViewPluginController extends BasePluginController implements
 
 	private Object mainPane;
 
-	private ClientsTabHandler clientsTab; 
+	private ClientsTabHandler clientsTab;
+
+	private ExceptionsTabHandler exceptionsTab;
+ 
+	private ExportTabHandler exportTab; 
 
 //> CONFIG METHODS
 	/** @see net.frontlinesms.plugins.PluginController#init(FrontlineSMS, ApplicationContext) */
@@ -62,9 +68,16 @@ public class PaymentViewPluginController extends BasePluginController implements
 		paymentViewTab = uiController.loadComponentFromFile(XML_PAYMENT_VIEW_TAB, tabController);
 		tabController.setTabComponent(paymentViewTab);
 		tabController.refresh();
-		mainPane = uiController.find("tabP_mainPane");
-		clientsTab = new ClientsTabHandler(uiController);
-		uiController.add(mainPane, clientsTab);
+		mainPane = uiController.find(paymentViewTab, "tabP_mainPane");
+		
+		clientsTab = new ClientsTabHandler(uiController);		
+		uiController.add(mainPane, clientsTab.getTab());
+		
+		exceptionsTab = new ExceptionsTabHandler(uiController);		 
+		uiController.add(mainPane, exceptionsTab.getTab());
+		
+		exportTab = new ExportTabHandler(uiController);		 
+		uiController.add(mainPane, exportTab.getTab());		
 		
 		return paymentViewTab;
 	}
@@ -73,7 +86,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 	 * @see net.frontlinesms.plugins.PluginController#deinit()
 	 */
 	public void deinit() {
-		this.frontlineController.removeIncomingMessageListener(this);
+		//this.frontlineController.removeIncomingMessageListener(this);
 	}
 
 	/**
