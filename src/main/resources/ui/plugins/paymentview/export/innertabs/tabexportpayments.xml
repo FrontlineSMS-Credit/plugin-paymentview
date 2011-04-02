@@ -2,7 +2,7 @@
 <tab name="tab_payments" text="Payments">
                 <panel columns="1" gap="10" weightx="1" weighty="1">
                     <panel columns="1" weightx="1">
-                        <label font="18" name="lbl_banner" text="Export By Client Characteristic"/>
+                        <label font="20 bold" name="lbl_banner" text="Export By Client Characteristic"/>
                     </panel>
                     <panel columns="1" weightx="1">
                         <label font="14 italic" name="lbl_typeOfPayment" text="Choose the kind of payment to export:"/>

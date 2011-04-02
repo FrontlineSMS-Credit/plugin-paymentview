@@ -2,7 +2,7 @@
 <tab name="tab_clients" text="Clients">
                 <panel columns="1" gap="10" weightx="1" weighty="1">
                     <panel bottom="5" columns="1" gap="5" weightx="1">
-                        <label font="18" name="lbl_banner" text="Export By Client Characteristic"/>
+                        <label font="20 bold" name="lbl_banner" text="Export By Client Characteristic"/>
                         <label name="lbl_hint" text="Sort by a characteristic to identify the client(s) or group you would like to export"/>
                     </panel>
                     <panel columns="1" gap="5" gap="5" weightx="1" weighty="1">

@@ -3,7 +3,7 @@
                 <panel columns="1" gap="10" weightx="1" weighty="1">
                     <panel bottom="5" columns="1" gap="5" left="5" right="5" top="5" weightx="1" weighty="1">
                             <panel weightx="1">
-                                <label name="lbl_tab_outgoingPayments_selectFromClients_banner" text="Select a client to initiate a payment"/>
+                                <label font="20 bold" name="lbl_tab_outgoingPayments_selectFromClients_banner" text="Select a client to initiate a payment"/>
                             </panel>
                             <table name="tbl_tab_outgoingPayments_selectFromClients_clients" weightx="1" weighty="1">
                                 <header>

@@ -3,7 +3,7 @@
                 <panel columns="1" gap="10" weightx="1" weighty="1">
                     <panel bottom="5" columns="1" gap="5" left="5" right="5" top="5" weightx="1" weighty="1">
                         <panel bottom="5" gap="5" weightx="1">
-                            <label font="18" text="Send Outgoing Payment"/>
+                            <label font="20 bold" text="Send Outgoing Payment"/>
                         </panel>
                         <panel columns="3" gap="5" name="frm_customerDetails" weightx="1" weighty="1">
                             <label name="lbl_Name" text="Name:"/>
