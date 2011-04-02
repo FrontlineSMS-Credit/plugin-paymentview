@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tab name="tab_payments" text="Payments">
+                <panel columns="1">
+                    <panel columns="1">
+                        <label font="18" name="lbl_banner" text="Export By Client Characteristic"/>
+                    </panel>
+                    <panel columns="1">
+                        <label font="14 italic" name="lbl_typeOfPayment" text="Choose the kind of payment to export:"/>
+                        <checkbox group="typeOfPayment" name="grp_incomingPayments" text="Incoming Payments (from clients)"/>
+                        <checkbox group="typeOfPayment" name="grp_outgoingPayments" selected="true" text="Outgoing Payments (to clients)"/>
+                    </panel>
+                    <panel columns="1">
+                        <label text="Choose the date range for export:"/>
+                        <checkbox selected="true" text="Date Range:"/>
+                        <panel>
+                            <panel>
+                                <label name="lbl_fromDate" text="From:"/>
+                                <textfield name="txt_fromDate"/>
+                            </panel>
+                            <panel>
+                                <label name="lbl_toDate" text="To:"/>
+                                <textfield name="txt_toDate"/>
+                            </panel>
+                        </panel>
+                        <checkbox selected="true" text="Export by selection"/>
+                    </panel>
+                    <panel columns="1" gap="5" weightx="1">
+                        <table name="tbl_clients">
+                            <header>
+                                <column text="Select"/>
+                                <column text="Name"/>
+                                <column text="Phone Number"/>
+                                <column text="Amount"/>
+                                <column text="Date"/>
+                                <column text="Time"/>
+                                <column text="Payment ID"/>
+                                <column text="Notes"/>
+                            </header>
+                        </table>
+                        <panel columns="1">
+                            <separator/>
+                            <panel columns="3" gap="5" halign="right">
+                                <button halign="right" name="btn_export" text="Export Payments"/>
+                            </panel>
+                        </panel>
+                    </panel>
+                </panel>
+            </tab>

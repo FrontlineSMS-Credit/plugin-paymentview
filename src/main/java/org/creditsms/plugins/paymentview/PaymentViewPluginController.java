@@ -9,6 +9,7 @@ package org.creditsms.plugins.paymentview;
 
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.ExceptionsTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.IncomingPaymentsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.client.ClientsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.export.ExportTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.outgoingpayments.OutgoingPaymentsTabHandler;
@@ -47,13 +48,12 @@ public class PaymentViewPluginController extends BasePluginController implements
 
 	private Object mainPane;
 
+//> THE OFFICIAL TABS FOR PAYMENTVIEW
 	private ClientsTabHandler clientsTab;
-
 	private ExceptionsTabHandler exceptionsTab;
-
 	private ExportTabHandler exportTab;
-
 	private OutgoingPaymentsTabHandler outgoingPayTab;
+	private IncomingPaymentsTabHandler incomingPayTab; 
 
 //> CONFIG METHODS
 	/** @see net.frontlinesms.plugins.PluginController#init(FrontlineSMS, ApplicationContext) */
@@ -74,16 +74,19 @@ public class PaymentViewPluginController extends BasePluginController implements
 		mainPane = uiController.find(paymentViewTab, TABP_MAIN_PANE);
 
 		clientsTab = new ClientsTabHandler(uiController);
-		uiController.add(mainPane, clientsTab.getTab());
+		uiController.add(mainPane, clientsTab.getTab());		
+		
+		incomingPayTab = new IncomingPaymentsTabHandler(uiController);
+		uiController.add(mainPane, incomingPayTab.getTab());
+		
+		outgoingPayTab = new OutgoingPaymentsTabHandler(uiController);
+		uiController.add(mainPane, outgoingPayTab.getTab());
 
 		exceptionsTab = new ExceptionsTabHandler(uiController);
 		uiController.add(mainPane, exceptionsTab.getTab());
 
 		exportTab = new ExportTabHandler(uiController);
-		uiController.add(mainPane, exportTab.getTab());
-
-		outgoingPayTab = new OutgoingPaymentsTabHandler(uiController);
-		uiController.add(mainPane, outgoingPayTab.getTab());
+		uiController.add(mainPane, exportTab.getTab());	
 
 		return paymentViewTab;
 	}
