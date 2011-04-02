@@ -1,30 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>		
 		<tab name="tab_tab_outgoingPayments_sendNewPayments" text="Send New Payments">
-                <panel columns="1">
-                    <panel border="true" bottom="5" columns="1" gap="5" left="5" right="5" top="5">
-                        <panel bottom="5" gap="5">
+                <panel columns="1" gap="10" weightx="1" weighty="1">
+                    <panel bottom="5" columns="1" gap="5" left="5" right="5" top="5" weightx="1" weighty="1">
+                        <panel bottom="5" gap="5" weightx="1">
                             <label font="18" text="Send Outgoing Payment"/>
                         </panel>
-                        <panel columns="2" gap="5" name="frm_tab_tab_outgoingPayments_sendNewPayments_customerDetails">
-                            <label name="lbl_tab_tab_outgoingPayments_sendNewPayments_Name" text="Name:"/>
-                            <textfield name="txt_tab_tab_outgoingPayments_sendNewPayments_name"/>
-                            <label name="lbl_tab_tab_outgoingPayments_sendNewPayments_Phone" text="Phone Number:"/>
-                            <textfield name="txt_tab_tab_outgoingPayments_sendNewPayments_phone"/>
-                            <label name="lbl_tab_tab_outgoingPayments_sendNewPayments_Name" text="Verify Phone Number:"/>
-                            <textfield name="txt_tab_tab_outgoingPayments_sendNewPayments_verifyPhoneNumber"/>
-                            <label name="lbl_tab_tab_outgoingPayments_sendNewPayments_amount" text="Amount:"/>
-                            <textfield name="txt_tab_tab_outgoingPayments_sendNewPayments_amount"/>
-                            <label name="lbl_tab_tab_outgoingPayments_sendNewPayments_mobilePaymentSystem" text="Mobile Payment System:"/>
-                            <combobox name="cmb_tab_tab_outgoingPayments_sendNewPayments_mobilePaymentSystem"/>
-                            <label name="lbl_tab_tab_outgoingPayments_sendNewPayments_paymentID" text="Payment ID:"/>
-                            <textfield name="txt_tab_tab_outgoingPayments_sendNewPayments_paymentID"/>
-                            <label name="lbl_tab_tab_outgoingPayments_sendNewPayments_notes" text="Notes:"/>
-                            <textarea colspan="2" columns="2" name="txt_tab_tab_outgoingPayments_sendNewPayments_notes" rowspan="5"/>
+                        <panel columns="3" gap="5" name="frm_customerDetails" weightx="1" weighty="1">
+                            <label name="lbl_Name" text="Name:"/>
+                            <textfield name="txt_Name" colspan="2"/>
+                            
+                            <label name="lbl_Phone" text="Phone Number:"/>
+                            <textfield name="txt_Phone" colspan="2"/>
+                            
+                            <label name="lbl_Name" text="Verify Phone Number:"/>
+                            <textfield name="txt_verifyPhoneNumber" colspan="2"/>
+                            
+                            <label name="lbl_Amount" text="Amount:"/>
+                            <textfield name="txt_Amount" colspan="2"/>
+                            
+                            <label name="lbl_MobilePaymentSystem" text="Mobile Payment System:"/>
+                            <combobox name="cmb_MobilePaymentSystem" colspan="2"/>
+                            
+                            <label name="lbl_PaymentID" text="Payment ID:"/>
+                            <textfield name="txt_PaymentID" colspan="2"/>
+                            
+                            <label name="lbl_Notes" text="Notes:"/>
+                            <textarea colspan="3" columns="2" name="txt_Notes" rowspan="5"/>
                         </panel>
                     </panel>
-                    <panel gap="5" weightx="1">
-                        <button icon="/icons/tick.png" name="btn_tab_tab_outgoingPayments_sendNewPayments_sendPaymentNow" text="Send Payment Now"/>
-                        <button icon="/icons/cross.png" name="btn_tab_tab_outgoingPayments_sendNewPayments_schedulePayment" text="Schedule Payment"/>
+                    <panel halign="right" gap="5" left="5" right="5" bottom="5" weightx="1">
+                        <button icon="/icons/tick.png" name="btn_SendPaymentNow" text="Send Payment Now"/>
+                        <button icon="/icons/cross.png" name="btn_SchedulePayment" text="Schedule Payment"/>
                     </panel>
                 </panel>
             </tab>

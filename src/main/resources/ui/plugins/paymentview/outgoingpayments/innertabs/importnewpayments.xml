@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name="tab_importNewPayments" text="Import New Payments">
-                <panel columns="1" gap="5">
-                    <panel border="true" bottom="5" columns="1" gap="5" left="5" right="5" top="5">
+                <panel columns="1" gap="10" weightx="1" weighty="1">
+                    <panel bottom="5" columns="1" gap="5" left="5" right="5" top="5" weightx="1" weighty="1">
                         <panel columns="1">
-                            <label font="18" text="Import New Payments to Send"/>
+                            <label font="18" text="Import New Payments to Send"  weightx="1" weighty="1"/>
                             <panel columns="3" gap="5">
                                 <combobox colspan="2" name="browse_file"/>
                                 <button name="btn_import" text="Import"/>
                             </panel>
                         </panel>
-                        <panel columns="1">
+                        <panel columns="1" weightx="1" weighty="1">
                             <panel>
                                 <label colspan="2" text="Preview Payment to send"/>
                             </panel>
-                            <table name="tbl_clients">
+                            <table name="tbl_clients" weightx="1" weighty="1">
                                 <header>
                                     <column text="Name"/>
                                     <column text="Phone Number"/>
@@ -26,7 +26,7 @@
                             </table>
                         </panel>
                     </panel>
-                    <panel gap="5" halign="right" weightx="1">
+                    <panel halign="right" gap="5" left="5" right="5" bottom="5" weightx="1">
                         <button icon="/icons/cross.png" name="btn_sendPaymentNow" text="Send Payment Now"/>
                         <button name="btn_schedulePayment" text="Schedule Payment"/>
                     </panel>

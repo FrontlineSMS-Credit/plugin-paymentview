@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name="tab_clients" text="Clients">
-                <panel columns="1">
-                    <panel bottom="5" columns="1" gap="3">
+                <panel columns="1" gap="10" weightx="1" weighty="1">
+                    <panel bottom="5" columns="1" gap="5" weightx="1">
                         <label font="18" name="lbl_banner" text="Export By Client Characteristic"/>
                         <label name="lbl_hint" text="Sort by a characteristic to identify the client(s) or group you would like to export"/>
                     </panel>
-                    <panel columns="3" gap="5" weightx="1">
-                        <table colspan="3" name="tbl_clientsList">
+                    <panel columns="1" gap="5" gap="5" weightx="1" weighty="1">
+                        <table name="tbl_clientsList" weightx="1" weighty="1">
                             <header>
                                 <column text="Name"/>
                                 <column text="Phone Number"/>
@@ -17,12 +17,14 @@
                                 <column text="Notes"/>
                             </header>
                         </table>
-                        <button name="btn_selectAll" text="Select All"/>
-                        <separator width="1"/>
-                        <button name="btn_exportSelectedClients" text="Export Selected Clients"/>
-                        <panel colspan="3" columns="1" gap="4">
-                            <separator colspan="3"/>
-                            <panel colspan="3" columns="3" gap="5">
+                        <panel weightx="1" left="5" right="5" bottom="5">
+                        	<button name="btn_selectAll" text="Select All"/>
+                        	<panel weightx="1"/>
+                        	<button name="btn_exportSelectedClients" text="Export Selected Clients"/>
+                        </panel>
+                        <panel columns="1" gap="4" weightx="1">
+                            <separator/>
+                            <panel gap="5" left="5" right="5" bottom="5" weightx="1">
                                 <label name="lbl_exportAllRecordsFromGroup" text="Export all records from:"/>
                                 <combobox name="cmb_exportAllRecordsFromGroup"/>
                                 <button name="btn_exportAllRecordsFromGroup" text="Export selected client group"/>

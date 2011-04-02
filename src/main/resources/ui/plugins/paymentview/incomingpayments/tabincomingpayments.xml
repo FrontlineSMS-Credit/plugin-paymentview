@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name="tab_incomingPayments" text="Incoming Payments">
-        <panel columns="1">
-            <panel border="true" bottom="5" columns="2" gap="5" left="5" name="pnl_clients" right="5" top="5">
-                <table name="tbl_clients">
+        <panel weightx="1" weighty="1" columns="1" gap="10">
+            <panel bottom="5" columns="2" gap="5" left="5" name="pnl_clients" right="5" top="5" weightx="1" weighty="1">
+                <table name="tbl_clients" weightx="1" weighty="1" >
                     <header>
                         <column text="Name" width="52"/>
                         <column text="Phone"/>
@@ -13,7 +13,7 @@
                     </header>
                 </table>
             </panel>
-            <panel gap="5" name="pnl_buttons" weightx="1">
+            <panel columns="3" gap="5" left="5" right="5" bottom="5" name="pnl_buttons" weightx="1">
                 <combobox name="cmb_mobilePaymentAccount" text="Select Mobile payment account"/>
                 <button icon="/icons/tick.png" name="btn_analyse" text="Analyse"/>
                 <button icon="/icons/cross.png" name="btn_export" text="Export"/>

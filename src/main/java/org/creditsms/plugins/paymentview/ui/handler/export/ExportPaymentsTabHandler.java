@@ -21,4 +21,8 @@ public class ExportPaymentsTabHandler extends BaseTabHandler{
 		paymentsTab = ui.loadComponentFromFile(XML_EXPORT_PAYMENTS_TAB, this);
 		return paymentsTab;
 	}
+	
+	public void showDateSelecter(Object textField) {
+		this.ui.showDateSelecter(textField);
+	}
 }
