@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<tab name="tab_createdashboard" text="Export">
-	<tabbedpane name="tabP_CreateDashBoard" placement="left" selected="1"/>
-</tab>
