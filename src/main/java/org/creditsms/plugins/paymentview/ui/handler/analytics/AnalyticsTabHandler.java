@@ -4,22 +4,31 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
 public class AnalyticsTabHandler extends BaseTabHandler{
-
-	protected AnalyticsTabHandler(UiGeneratorController ui) {
-		super(ui);
-		// TODO Auto-generated constructor stub
+	private static final String XML_ANALYTICS_TAB = "/ui/plugins/paymentview/analytics/tabanalytics.xml"; 
+	private Object analyticsTab; 
+	
+	public AnalyticsTabHandler(UiGeneratorController ui) {
+		super(ui);		
+		init();
 	}
 
 	@Override
-	public void refresh() {
-		// TODO Auto-generated method stub
-		
+	public void refresh() {		
 	}
 
 	@Override
 	protected Object initialiseTab() {
-		// TODO Auto-generated method stub
-		return null;
+		analyticsTab = ui.loadComponentFromFile(XML_ANALYTICS_TAB, this);
+		return analyticsTab;
 	}
 
+	//> EVENTS...
+	public void customizeClientDB(){		
+	}
+	
+	public void addClient(){			
+	}
+	
+	public void importClient(){		
+	}	
 }

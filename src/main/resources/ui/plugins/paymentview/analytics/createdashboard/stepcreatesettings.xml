@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<tab name="tabStepCreateSettings">
+    <panel border="true" bottom="5" columns="4" gap="5" left="5" right="5" top="5">
+        <label colspan="4" font="18" text="View Client Progress"/>
+        <label text="Select service >"/>
+        <label text="Targeted Savings >"/>
+        <label text="Select Client >"/>
+        <label text="Creating Settings"/>
+        <label colspan="4" text="3. Create the settings for this client or group of clients"/>
+        <panel colspan="4" columns="2" gap="5" right="10">
+            <label text="What is the Savings target / goal"/>
+            <textfield/>
+            <label text="What is the start date?"/>
+            <textfield/>
+            <label text="What is the end date?"/>
+            <textfield/>
+        </panel>
+    </panel>
+    <panel gap="5" halign="right" weightx="1">
+        <button action="saveClient" icon="/icons/tick.png" name="btSaveClient" text="Previous"/>
+        <button action="removeDialog(clientDetailsDialog)" icon="/icons/cross.png" text="Next"/>
+    </panel>
+</tab>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tab name="tab_analytics" text="Export">
+	<tabbedpane name="tabP_ViewDashBoard" placement="left" selected="1"/>
+</tab>

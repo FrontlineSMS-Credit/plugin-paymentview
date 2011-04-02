@@ -10,6 +10,7 @@ package org.creditsms.plugins.paymentview;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.ExceptionsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.IncomingPaymentsTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.analytics.AnalyticsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.client.ClientsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.export.ExportTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.outgoingpayments.OutgoingPaymentsTabHandler;
@@ -53,7 +54,8 @@ public class PaymentViewPluginController extends BasePluginController implements
 	private ExceptionsTabHandler exceptionsTab;
 	private ExportTabHandler exportTab;
 	private OutgoingPaymentsTabHandler outgoingPayTab;
-	private IncomingPaymentsTabHandler incomingPayTab; 
+	private IncomingPaymentsTabHandler incomingPayTab;
+	private AnalyticsTabHandler analyticsTab;  
 
 //> CONFIG METHODS
 	/** @see net.frontlinesms.plugins.PluginController#init(FrontlineSMS, ApplicationContext) */
@@ -86,7 +88,10 @@ public class PaymentViewPluginController extends BasePluginController implements
 		uiController.add(mainPane, exceptionsTab.getTab());
 
 		exportTab = new ExportTabHandler(uiController);
-		uiController.add(mainPane, exportTab.getTab());	
+		uiController.add(mainPane, exportTab.getTab());
+		
+		analyticsTab = new AnalyticsTabHandler(uiController);
+		uiController.add(mainPane, analyticsTab.getTab());
 
 		return paymentViewTab;
 	}

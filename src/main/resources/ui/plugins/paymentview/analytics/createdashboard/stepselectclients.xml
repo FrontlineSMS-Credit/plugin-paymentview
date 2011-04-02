@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<tab name="tabSelectClients">
+    <panel border="true" bottom="5" columns="3" gap="5" left="5" right="5" top="5">
+        <label colspan="3" font="18" text="Create a Client Service"/>
+        <label text="Select service > "/>
+        <label text="Targeted Savings > "/>
+        <label text="Select Client"/>
+        <label colspan="3" text="2. Select which clients you wish to view:"/>
+        <panel colspan="3" columns="1" gap="5" right="10">
+            <table>
+                <header>
+                    <column text="Select"/>
+                    <column text="Name"/>
+                    <column text="Phone"/>
+                    <column text="Account"/>
+                </header>
+            </table>
+        </panel>
+    </panel>
+    <panel gap="5" halign="right" weightx="1">
+        <button action="saveClient" icon="/icons/tick.png" name="btSaveClient" text="Previous"/>
+        <button action="removeDialog(clientDetailsDialog)" icon="/icons/cross.png" text="Next"/>
+    </panel>
+</tab>
