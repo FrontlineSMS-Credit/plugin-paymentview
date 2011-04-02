@@ -32,16 +32,16 @@ import net.frontlinesms.ui.UiGeneratorController;
 	iconPath="/icons/creditsms.png", 
 	i18nKey="plugins.paymentview",
     springConfigLocation="classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml",
-	hibernateConfigPath="classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml"		
+	hibernateConfigPath="classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml"
 )
 public class PaymentViewPluginController extends BasePluginController implements IncomingMessageListener {
-	
+
 //>	CONSTANTS
 	/** Filename and path of the XML for the PaymentView tab */
 	private static final String XML_PAYMENT_VIEW_TAB = "/ui/plugins/paymentview/paymentViewTab.xml";
 	private static final String TABP_MAIN_PANE = "tabP_mainPane";
-	
-	private FrontlineSMS frontlineController;	
+
+	private FrontlineSMS frontlineController;
 	private PaymentViewThinletTabController tabController;
 	Object paymentViewTab;
 
@@ -50,42 +50,41 @@ public class PaymentViewPluginController extends BasePluginController implements
 	private ClientsTabHandler clientsTab;
 
 	private ExceptionsTabHandler exceptionsTab;
- 
+
 	private ExportTabHandler exportTab;
 
-	private OutgoingPaymentsTabHandler outgoingPayTab; 
+	private OutgoingPaymentsTabHandler outgoingPayTab;
 
 //> CONFIG METHODS
 	/** @see net.frontlinesms.plugins.PluginController#init(FrontlineSMS, ApplicationContext) */
 	public void init(FrontlineSMS frontlineController,	ApplicationContext applicationContext) throws PluginInitialisationException {
 		this.frontlineController = frontlineController;
-		this.frontlineController.addIncomingMessageListener(this);				
+		this.frontlineController.addIncomingMessageListener(this);
 		//Initialize the DAO for the domain objects
 	}
 
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
 	@Override
 	public Object initThinletTab(UiGeneratorController uiController) {
-		tabController = new PaymentViewThinletTabController(this, uiController);//Pass the Handler The 
-		//Base Plugin Controller, and the UIController for it to sort itself out!!!		
-		
+		tabController = new PaymentViewThinletTabController(this, uiController);
+
 		paymentViewTab = uiController.loadComponentFromFile(XML_PAYMENT_VIEW_TAB, tabController);
 		tabController.setTabComponent(paymentViewTab);
 		tabController.refresh();
 		mainPane = uiController.find(paymentViewTab, TABP_MAIN_PANE);
-		
-		clientsTab = new ClientsTabHandler(uiController);		
+
+		clientsTab = new ClientsTabHandler(uiController);
 		uiController.add(mainPane, clientsTab.getTab());
-		
-		exceptionsTab = new ExceptionsTabHandler(uiController);		 
+
+		exceptionsTab = new ExceptionsTabHandler(uiController);
 		uiController.add(mainPane, exceptionsTab.getTab());
-		
-		exportTab = new ExportTabHandler(uiController);		 
-		uiController.add(mainPane, exportTab.getTab());		
-		
+
+		exportTab = new ExportTabHandler(uiController);
+		uiController.add(mainPane, exportTab.getTab());
+
 		outgoingPayTab = new OutgoingPaymentsTabHandler(uiController);
 		uiController.add(mainPane, outgoingPayTab.getTab());
-		
+
 		return paymentViewTab;
 	}
 
@@ -101,8 +100,6 @@ public class PaymentViewPluginController extends BasePluginController implements
 	 * is extracted i.e. transaction type, amount, sender and transaction code (if any)
 	 * The above parameters may vary amongst service providers
 	 */
-	public void incomingMessageEvent(FrontlineMessage message) {
-	    
-	}	
-	
+	public void incomingMessageEvent(FrontlineMessage message) { 
+	}
 }
