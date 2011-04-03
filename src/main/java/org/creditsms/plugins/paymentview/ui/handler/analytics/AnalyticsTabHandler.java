@@ -18,13 +18,10 @@ public class AnalyticsTabHandler implements ThinletUiEventHandler{
 		
 	public void refresh() {
 	}
-
 	
 	protected Object init() {
 		analyticsTab = ui.loadComponentFromFile(XML_ANALYTICS_TAB, this);
-		createDashBoardHandler = new CreateDashBoardTabHandler(ui, this.analyticsTab);
-		
-		ui.add(analyticsTab, createDashBoardHandler.getMainPanel());
+		createDashBoardHandler = new CreateDashBoardTabHandler(ui, analyticsTab);		
 		return analyticsTab;
 	}
 

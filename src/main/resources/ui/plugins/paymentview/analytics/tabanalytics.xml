@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name="tab_analytics" text="Analytics">
 	<tabbedpane name="tabP_AnalyticsMainPane" placement="left" selected="1">
-		<tab name="tab_createDashboard" text="Create Dashboard">
-			<panel columns="1" name="pnl_MainCreateDashboard" weightx="1" weighty="1"/>
-		</tab>
-		<tab name="tab_viewDashBoard" text="View Dashboard">
-			<panel columns="1" name="pnl_MainViewDashboard" weightx="1" weighty="1"/>
-		</tab>
+		<tab name="tab_createDashboard" text="Create Dashboard"/>
+		<tab name="tab_viewDashBoard" text="View Dashboard"/>
 	</tabbedpane>
 </tab>
