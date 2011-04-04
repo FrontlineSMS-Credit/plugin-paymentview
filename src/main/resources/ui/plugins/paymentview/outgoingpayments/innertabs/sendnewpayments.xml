@@ -21,16 +21,16 @@
 				<label name="lbl_MobilePaymentSystem" text="Mobile Payment System:" />
 				<combobox name="cmb_MobilePaymentSystem" colspan="2" />
 
-				<label name="lbl_PaymentID" text="Payment ID:" />
+				<label icon="/icons/key.png" name="lbl_PaymentID" text="Payment ID:" />
 				<textfield name="txt_PaymentID" colspan="2" />
 
-				<label icon="/icons/note.png" name="lbl_Notes" text="Notes:" />
+				<label icon="/icons/description.png" name="lbl_Notes" text="Notes:" />
 				<textarea colspan="3" name="txt_Notes" rows="4" />
 			</panel>
 		</panel>
 		<panel halign="right" gap="5" left="5" right="5" bottom="5"	weightx="1">
-			<button icon="/icons/tick.png" name="btn_SendPaymentNow" text="Send Payment Now" />
-			<button icon="/icons/cross.png" name="btn_SchedulePayment" text="Schedule Payment" />
+			<button icon="/icons/recipient_number.png" name="btn_SendPaymentNow" text="Send Payment Now" />
+			<button icon="/icons/time.png" name="btn_SchedulePayment" text="Schedule Payment" />
 		</panel>
 	</panel>
 </tab>

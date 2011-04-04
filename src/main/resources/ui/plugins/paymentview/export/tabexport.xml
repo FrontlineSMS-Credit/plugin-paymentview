@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-	<tab name="tab_export" text="Export">
-        <tabbedpane name="tabP_MainPane" placement="left" weightx="1" weighty="1"/>
-    </tab>
+<tab name="tab_export" text="Export">
+	<tabbedpane name="tabP_MainPane" placement="left" weightx="1" weighty="1" />
+</tab>

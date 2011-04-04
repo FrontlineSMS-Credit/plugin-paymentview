@@ -1,50 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name="tab_payments" text="Payments">
-                <panel columns="1" gap="10" weightx="1" weighty="1">
-                    <panel columns="1" weightx="1">
-                        <label font="20 bold" name="lbl_banner" text="Export By Client Characteristic"/>
-                    </panel>
-                    <panel columns="1" weightx="1">
-                        <label font="14 italic" name="lbl_typeOfPayment" text="Choose the kind of payment to export:"/>
-                        <checkbox group="typeOfPayment" name="grp_incomingPayments" text="Incoming Payments (from clients)"/>
-                        <checkbox group="typeOfPayment" name="grp_outgoingPayments" selected="true" text="Outgoing Payments (to clients)"/>
-                    </panel>
-                    <panel columns="1" weightx="1">
-                        <label text="Choose the date range for export:"/>
-                        <checkbox selected="true" text="Date Range:"/>
-                        <panel weightx="1" gap="10">
-		                	<label icon="/icons/date_start.png" text="i18n.common.from"/>
-		                	<panel>
-		                    	<textfield columns="10" name="txt_FromDate"/>
-		                    	<button action="showDateSelecter(txt_FromDate)" icon="/icons/date.png"/>
-		                	</panel>
-		                	<label icon="/icons/date_end.png" text="i18n.common.until"/>
-		                	<panel>
-		                    	<textfield columns="10" name="txt_ToDate"/>
-		                    	<button action="showDateSelecter(txt_ToDate)" icon="/icons/date.png"/>
-		                	</panel>
-	                	</panel>
-                        <checkbox selected="true" text="Export by selection"/>
-                    </panel>
-                    <panel columns="1" gap="5" weightx="1" weighty="1">
-                        <table name="tbl_clients" weightx="1" weighty="1">
-                            <header>
-                                <column text="Select"/>
-                                <column text="Name"/>
-                                <column text="Phone Number"/>
-                                <column text="Amount"/>
-                                <column text="Date"/>
-                                <column text="Time"/>
-                                <column text="Payment ID"/>
-                                <column text="Notes"/>
-                            </header>
-                        </table>                        
-                    </panel>
-                    <panel columns="1" gap="5" left="5" bottom="5" weightx="1">
-                            <separator weightx="1"/>
-                            <panel halign="right" weightx="1">
-                                <button halign="right" name="btn_export" text="Export Payments"/>
-                            </panel>
-                        </panel>
-                </panel>
-            </tab>
+	<panel columns="1" gap="10" weightx="1" weighty="1">
+		<panel columns="1" weightx="1" left="5" right="5">
+			<label font="20 bold" name="lbl_banner" text="Export By Client Characteristic" />
+		</panel>
+		<panel columns="1" left="5" right="5" weightx="1">
+			<label font="14 italic" name="lbl_typeOfPayment"
+				text="Choose the kind of payment to export:" />
+			<checkbox group="typeOfPayment" name="grp_incomingPayments"
+				text="Incoming Payments (from clients)" />
+			<checkbox group="typeOfPayment" name="grp_outgoingPayments"
+				selected="true" text="Outgoing Payments (to clients)" />
+		</panel>
+		<panel columns="1" left="5" right="5" weightx="1">
+			<label text="Choose the date range for export:" />
+			<checkbox selected="true" text="Date Range:" />
+			<panel weightx="1" gap="10">
+				<label icon="/icons/date_start.png" text="i18n.common.from" />
+				<panel>
+					<textfield columns="10" name="txt_FromDate" />
+					<button action="showDateSelecter(txt_FromDate)" icon="/icons/date.png" />
+				</panel>
+				<label icon="/icons/date_end.png" text="i18n.common.until" />
+				<panel>
+					<textfield columns="10" name="txt_ToDate" />
+					<button action="showDateSelecter(txt_ToDate)" icon="/icons/date.png" />
+				</panel>
+			</panel>
+			<checkbox selected="true" text="Export by selection" />
+		</panel>
+		<panel columns="1" gap="5" left="5" right="5" weightx="1" weighty="1">
+			<table name="tbl_clients" weightx="1" weighty="1">
+				<header>
+					<column text="Select" />
+					<column width="200" icon="/icons/user.png" text="Name" />
+					<column width="150" icon="/icons/phone.png" text="Phone Number" />
+					<column width="120" icon="/icons/money.png" text="Amount" />
+					<column width="120" icon="/icons/date.png" text="Date" />
+					<column width="120" icon="/icons/time.png" text="Time" />
+					<column width="150" icon="/icons/key.png" text="Payment ID." />
+					<column icon="/icons/description.png" text="Notes" />
+				</header>
+			</table>
+		</panel>
+		<panel columns="1" gap="5" left="5" right="5" bottom="5" weightx="1">
+			<separator weightx="1" />
+			<panel halign="right" weightx="1">
+				<button icon="/icons/export.png" halign="right" name="btn_export" text="Export Payments" />
+			</panel>
+		</panel>
+	</panel>
+</tab>

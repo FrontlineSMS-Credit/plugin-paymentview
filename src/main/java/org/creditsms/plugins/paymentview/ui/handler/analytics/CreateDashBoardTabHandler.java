@@ -26,17 +26,20 @@ public class CreateDashBoardTabHandler extends BaseTabHandler{
 	public void deinit(){
 	}
 	
-	private class StepCreateSettingsHandler extends BasePanelHandler{
+	public class StepCreateSettingsHandler extends BasePanelHandler{
 		private static final String XML_STEP_CREATE_SETTINGS = "/ui/plugins/paymentview/analytics/createdashboard/stepcreatesettings.xml";
 		protected StepCreateSettingsHandler(UiGeneratorController ui) {
-			super(ui);
-			
+			super(ui);			
 			this.loadPanel(XML_STEP_CREATE_SETTINGS);
 		}	
 		
 		public Object getPanelComponent() {
 			return super.getPanelComponent();
 		}		
+		
+		public void showDateSelecter(Object textField) {
+			((UiGeneratorController)ui).showDateSelecter(textField);
+		}
 	}
 
 	@Override
