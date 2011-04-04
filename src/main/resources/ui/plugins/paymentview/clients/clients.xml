@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name="tab_clientList" text="Clients">
 	<panel columns="1" weightx="1" weighty="1" gap="10">
-		<panel weightx="1" weighty="1" bottom="5" top="5" columns="1"
+		<panel weightx="1" weighty="1" columns="1"
 			gap="5" left="5" name="pnl_tbl_clientList" right="5" top="5" width="100">
 			<table colspan="10" name="tbl_clientList" width="1000" weightx="1"
 				weighty="1">

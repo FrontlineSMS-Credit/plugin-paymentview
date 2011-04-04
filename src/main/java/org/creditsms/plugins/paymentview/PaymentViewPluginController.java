@@ -74,6 +74,8 @@ public class PaymentViewPluginController extends BasePluginController implements
 		tabController.setTabComponent(paymentViewTab);
 		tabController.refresh();
 		mainPane = uiController.find(paymentViewTab, TABP_MAIN_PANE);
+		
+		
 
 		clientsTab = new ClientsTabHandler(uiController);
 		uiController.add(mainPane, clientsTab.getTab());		
