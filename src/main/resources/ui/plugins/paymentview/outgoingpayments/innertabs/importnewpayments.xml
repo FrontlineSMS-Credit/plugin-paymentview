@@ -7,7 +7,10 @@
 				<label font="20 bold" text="Import New Payments to Send"
 					weightx="1" weighty="1" />
 				<panel columns="3" gap="5">
-					<combobox colspan="2" name="browse_file" />
+					<panel colspan="2">
+						<textfield columns="10" name="txt_StartDate" />
+						<button action="showImportWizard('messages')" icon="/icons/browse.png" />
+					</panel>
 					<button name="btn_import" text="Import" icon="/icons/import.png"/>
 				</panel>
 			</panel>
