@@ -9,9 +9,14 @@ import org.creditsms.plugins.paymentview.data.domain.OtherClientDetails;
 
 public interface OtherClientDetailsDAO {
 	/**
+	 * return all the OtherClientDetails in the system
+	 * **/
+	public List<OtherClientDetails> getAllOtherDetails();
+	
+	/**
 	 * return all the OtherClientDetails belonging to a client
 	 * **/
-	public List<OtherClientDetails> getOtherDetailsByClientId();
+	public List<OtherClientDetails> getOtherDetailsByClientId(long clientId);
 	
 	/**
 	 * returning a specific OtherClientDetails
