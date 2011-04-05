@@ -7,7 +7,7 @@ public interface NewClientDAO {
 	/**
 	 * return all the clients in the system
 	 * **/
-	public List<ClientNew> getAllClient();
+	public List<ClientNew> getAllClients();
 	
 	/**
 	 * Returns all clients from a particular start index with a maximum number of returned clients set.
@@ -15,7 +15,7 @@ public interface NewClientDAO {
 	 * @param limit Maximum number of clients to fetch from the start index
 	 * @return
 	 */
-	public List<ClientNew> getAllClient(int startIndex, int limit);
+	public List<ClientNew> getAllClients(int startIndex, int limit);
 	
 	/**
 	 * Returns a list of clients whose name is similar to the specified string
@@ -32,7 +32,7 @@ public interface NewClientDAO {
 	 * @param limit
 	 * @return
 	 */
-	public List<ClientNew> getClientByName(String clientname, int startIndex, int limit);
+	public List<ClientNew> getClientByName(String clientName, int startIndex, int limit);
 	
 	/**
 	 * Retrieves the client with 
