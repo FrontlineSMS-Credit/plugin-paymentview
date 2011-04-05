@@ -105,4 +105,17 @@ public class NewClientDAOImpl extends HibernateDaoSupport implements NewClientDA
 		this.getHibernateTemplate().refresh(client);
 	}
 
+	public ClientNew getClientById(long clientId) {
+		Session session = getSession();
+		Criteria criteria = session.createCriteria(ClientNew.class)
+		.add(Restrictions.eq("clientId", clientId));
+			
+		List<ClientNew> clientList = criteria.list();
+
+		if (clientList.size() == 0) {
+			return null;
+		}
+		return clientList.get(0);
+	}
+
 }

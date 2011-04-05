@@ -10,6 +10,13 @@ public interface NewClientDAO {
 	public List<ClientNew> getAllClients();
 	
 	/**
+	 * Returns a client with the same id as the passed id
+	 * @param clientId
+	 * @return
+	 */
+	public ClientNew getClientById(long clientId);
+	
+	/**
 	 * Returns all clients from a particular start index with a maximum number of returned clients set.
 	 * @param startIndex index of the first client to fetch
 	 * @param limit Maximum number of clients to fetch from the start index
