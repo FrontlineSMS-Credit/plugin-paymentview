@@ -23,11 +23,11 @@
 		</panel>
 		<panel gap="5" left="5" right="5" bottom="5" halign="right" weightx="1">
 			<button icon="/icons/recipient_number.png"
-				name="btn_tab_outgoingPayments_selectFromClients_sendPaymentToSelection"
-				text="Send Payment to Selected Clients" />
+				name="btn_sendPaymentToSelection"
+				text="Send Payment Now" />
 			<button icon="/icons/time.png"
-				name="btn_tab_outgoingPayments_selectFromClients_schedulePaymentToSelection"
-				text="Schedule Payment to Selected Clients" />
+				name="btn_schedulePaymentToSelection"
+				text="Schedule Payment" />
 		</panel>
 	</panel>
 </tab>

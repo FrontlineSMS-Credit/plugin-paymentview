@@ -1,5 +1,8 @@
 package org.creditsms.plugins.paymentview.ui.handler.client;
 
+import org.creditsms.plugins.paymentview.ui.PaymentsImportHandler;
+import org.creditsms.plugins.paymentview.ui.handler.client.dialogs.CustomizeClientHandler;
+
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
@@ -23,12 +26,14 @@ public class ClientsTabHandler extends BaseTabHandler{
 	}
 
 	//> EVENTS...
-	public void customizeClientDB(){		
+	public void customizeClientDB(){
 	}
 	
-	public void addClient(){			
+	public void addClient(){		
+		ui.add(new CustomizeClientHandler(ui).getDialog());
 	}
 	
-	public void importClient(){		
-	}	
+	public void showImportWizard(String typeName){
+		new PaymentsImportHandler(ui).showWizard();
+	}
 }
