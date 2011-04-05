@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name="tab_incomingPayments" text="Incoming Payments">
 	<panel weightx="1" weighty="1" columns="1" gap="10">
-		<panel bottom="5" columns="2" gap="5" left="5" name="pnl_clients"
-			right="5" top="5" weightx="1" weighty="1">
+		<panel columns="2" gap="5" left="5" name="pnl_clients"
+			right="5" weightx="1" weighty="1">
 			<table name="tbl_clients" weightx="1" weighty="1">
 				<header>
 					<column text="Name" width="100" icon="/icons/user.png" />

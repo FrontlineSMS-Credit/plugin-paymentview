@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name="tab_sentPayments" text="Sent Payments">
 	<panel columns="1" weightx="1" weighty="1" gap="10">
-		<panel bottom="5" gap="5" left="5" right="5" top="5" weightx="1"
+		<panel gap="5" left="5" right="5" top="5" weightx="1"
 			weighty="1">
 			<table name="tbl_clients" weightx="1" weighty="1">
 				<header>
@@ -15,7 +15,7 @@
 				</header>
 			</table>
 		</panel>		
-		<panel halign="right" columns="3" gap="5" left="5" right="5" bottom="5" weightx="1">
+		<panel halign="right" columns="3" gap="5" left="5" bottom="5" weightx="1">
 			<combobox width="300" colspan="2" name="cmb_mobilePaymentAccount" text="Select mobile payment account" />			
 			<button colspan="1" icon="/icons/export.png" name="btn_export" text="Export" />
 		</panel>

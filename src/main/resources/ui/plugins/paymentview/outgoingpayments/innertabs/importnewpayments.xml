@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name="tab_importNewPayments" text="Import New Payments">
 	<panel columns="1" gap="10" weightx="1" weighty="1">
-		<panel bottom="5" columns="1" gap="5" left="5" right="5" top="5"
+		<panel columns="1" gap="5" left="5" right="5" top="5"
 			weightx="1" weighty="1">
 			<panel columns="1">
 				<label font="20 bold" text="Import New Payments to Send"
 					weightx="1" weighty="1" />
 				<panel columns="3" gap="5">
-					<combobox colspan="2" name="browse_file" />
-					<button name="btn_import" text="Import" icon="/icons/import.png"/>
+					<panel colspan="2">
+						<button action="showImportWizard('messages')" icon="/icons/import.png" text="Import Payments"/>
+					</panel>
 				</panel>
 			</panel>
 			<panel columns="1" weightx="1" weighty="1">
