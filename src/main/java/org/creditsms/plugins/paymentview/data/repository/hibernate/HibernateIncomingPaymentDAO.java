@@ -7,12 +7,12 @@ import java.util.List;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
-import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDAO;
+import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
 @SuppressWarnings("unchecked")
-public class HibernateIncomingPaymentDAO extends HibernateDaoSupport implements IncomingPaymentDAO {
+public class HibernateIncomingPaymentDAO extends HibernateDaoSupport implements IncomingPaymentDao {
 
 	public IncomingPayment getIncomingPaymentById(long incomingPaymentId) {
 		// TODO Auto-generated method stub
