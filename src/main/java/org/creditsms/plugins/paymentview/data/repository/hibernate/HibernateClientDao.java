@@ -7,7 +7,7 @@ import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.repository.ClientNewDao;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Projections;
@@ -15,7 +15,7 @@ import org.hibernate.Session;
 import org.hibernate.Criteria;
 
 @SuppressWarnings("unchecked")
-public class HibernateClientDao extends BaseHibernateDao<Client> implements ClientNewDao {
+public class HibernateClientDao extends BaseHibernateDao<Client> implements ClientDao {
 	protected HibernateClientDao() {
 		super(Client.class);
 	}

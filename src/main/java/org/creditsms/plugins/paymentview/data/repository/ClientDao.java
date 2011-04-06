@@ -3,7 +3,7 @@ package org.creditsms.plugins.paymentview.data.repository;
 import java.util.List;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 
-public interface ClientNewDao {
+public interface ClientDao {
 	/**
 	 * return all the clients in the system
 	 * **/

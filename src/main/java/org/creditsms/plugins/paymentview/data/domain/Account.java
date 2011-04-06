@@ -37,7 +37,7 @@ public class Account {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "clientId", 
 			nullable = true)
-	private Client clientNew;
+	private Client client;
 	
 	@OneToMany(mappedBy="account",
 			cascade = CascadeType.ALL,
@@ -60,12 +60,12 @@ public class Account {
 		this.accountNumber = accountNumber;
 	}
 
-	public Client getClientNew() {
-		return clientNew;
+	public Client getClient() {
+		return client;
 	}
 
-	public void setClientNew(Client clientNew) {
-		this.clientNew = clientNew;
+	public void setClient(Client client) {
+		this.client = client;
 	}
 
 	public List<IncomingPayment> getIncomingpayment() {
