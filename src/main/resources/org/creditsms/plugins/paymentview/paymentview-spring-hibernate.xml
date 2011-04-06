@@ -32,4 +32,21 @@
     <bean id="paymentViewErrorDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernatePaymentViewErrorDao">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
+    
+	<bean id="accountDAO" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateAccountDAO">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="clientNewDAO" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateClientNewDAO">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>	
+	<bean id="otherClientDetailsDAO" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateOtherClientDetailsDAO">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="incomingPaymentDAO" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateIncomingPaymentDAO">
+	    <property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+    <bean id="outgoingPaymentDAO" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateOutgoingPaymentDAO">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
 </beans>

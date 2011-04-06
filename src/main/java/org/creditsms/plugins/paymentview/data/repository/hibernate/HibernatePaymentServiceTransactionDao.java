@@ -6,7 +6,7 @@ import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
-import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.ClientNew;
 import org.creditsms.plugins.paymentview.data.domain.NetworkOperator;
 import org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction;
 import org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction.Field;
@@ -42,19 +42,19 @@ public class HibernatePaymentServiceTransactionDao extends BaseHibernateDao<Paym
     }
 
     /** @see PaymentServiceTransactionDao#getTransactionsByClient(Client) */
-    public List<PaymentServiceTransaction> getTransactionsByClient(Client client) {
+    public List<PaymentServiceTransaction> getTransactionsByClient(ClientNew client) {
         DetachedCriteria criteria = super.getCriterion();
         
-        criteria.add(Restrictions.eq(PaymentServiceTransaction.Field.CLIENT_ID.getFieldName(), new Long(client.getId())));
+        criteria.add(Restrictions.eq(PaymentServiceTransaction.Field.CLIENT_ID.getFieldName(), client.getClientId()));
         
         return super.getList(criteria);
     }
 
     /** @see PaymentServiceTransactionDao#getTransactionsByClient(Client, int) */
-    public List<PaymentServiceTransaction> getTransactionsByClient(Client client, TransactionType transactionType) {
+    public List<PaymentServiceTransaction> getTransactionsByClient(ClientNew client, TransactionType transactionType) {
         DetachedCriteria criteria = super.getCriterion();
         
-        criteria.add(Restrictions.eq(Field.CLIENT_ID.getFieldName(), new Long(client.getId())));
+        criteria.add(Restrictions.eq(Field.CLIENT_ID.getFieldName(), client.getClientId()));
         criteria.add(Restrictions.eq(Field.TYPE.getFieldName(), transactionType));
         
         return super.getList(criteria);
@@ -64,7 +64,7 @@ public class HibernatePaymentServiceTransactionDao extends BaseHibernateDao<Paym
     public List<PaymentServiceTransaction> getTransactionsByNetworkOperator(NetworkOperator operator) {
         DetachedCriteria criteria = super.getCriterion();
         
-        criteria.add(Restrictions.eq(NetworkOperator.Field.ID.getFieldName(), new Long(operator.getId())));
+        criteria.add(Restrictions.eq(NetworkOperator.Field.ID.getFieldName(), operator.getId()));
         
         return super.getList(criteria);
     }

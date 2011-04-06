@@ -6,80 +6,80 @@ import java.util.List;
 
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
-import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
-import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDAO;
+import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDAO;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
 @SuppressWarnings("unchecked")
-public class OutgoingPaymentDAOImpl extends HibernateDaoSupport implements OutgoingPaymentDAO {
+public class HibernateIncomingPaymentDAO extends HibernateDaoSupport implements IncomingPaymentDAO {
 
-	public OutgoingPayment getOutgoingPaymentById(long outgoingPaymentId) {
+	public IncomingPayment getIncomingPaymentById(long incomingPaymentId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<OutgoingPayment> getAllOutgoingPayments() {
+	public List<IncomingPayment> getAllIncomingPayments() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentsByDateRange(
+	public List<IncomingPayment> getIncomingPaymentsByDateRange(
 			Calendar startDate, Calendar endDate) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentsByTimeRange(Date startTime,
+	public List<IncomingPayment> getIncomingPaymentsByTimeRange(Date startTime,
 			Date endtime) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentsByClientIdByDateRange(
+	public List<IncomingPayment> getIncomingPaymentsByClientIdByDateRange(
 			long clientId, Calendar startDate, Calendar endDate) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentByClientId(long clientId) {
+	public List<IncomingPayment> getIncomingPaymentByClientId(long clientId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentsByAccountId(long accountId) {
+	public List<IncomingPayment> getIncomingPaymentsByAccountId(long accountId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentsByAccountIdByDateRange(
+	public List<IncomingPayment> getIncomingPaymentsByAccountIdByDateRange(
 			long accountId, Calendar startDate, Calendar endDate) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentsByAccountIdByTimeRange(
+	public List<IncomingPayment> getIncomingPaymentsByAccountIdByTimeRange(
 			long accountId, Date startDate, Date endDate) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentsByPayer(String payer) {
+	public List<IncomingPayment> getIncomingPaymentsByPayer(String payer) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(long phoneNo) {
+	public List<IncomingPayment> getIncomingPaymentsByPhoneNo(long phoneNo) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public void saveOrUpdateOutgoingPayment(OutgoingPayment outgoingPayment) {
+	public void saveOrUpdateIncomingPayment(IncomingPayment incomingPayment) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void deleteOutgoingPayment(OutgoingPayment outgoingPayment) {
+	public void deleteIncomingPayment(IncomingPayment incomingPayment) {
 		// TODO Auto-generated method stub
 		
 	}

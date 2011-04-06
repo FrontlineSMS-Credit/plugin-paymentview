@@ -11,7 +11,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 @SuppressWarnings("unchecked")
-public class OtherClientDetailsDAOImpl extends HibernateDaoSupport implements OtherClientDetailsDAO{
+public class HibernateOtherClientDetailsDAO extends HibernateDaoSupport implements OtherClientDetailsDAO{
 
 	public List<OtherClientDetails> getAllOtherDetails() {
 		return this.getHibernateTemplate().loadAll(OtherClientDetails.class);

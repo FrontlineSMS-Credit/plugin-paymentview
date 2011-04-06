@@ -9,7 +9,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
 @SuppressWarnings("unchecked")
-public class AccountDAOImpl extends HibernateDaoSupport implements AccountDAO{
+public class HibernateAccountDAO extends HibernateDaoSupport implements AccountDAO{
 
 	public List<Account> getAllAcounts() {
 		// TODO Auto-generated method stub

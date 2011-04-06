@@ -2,10 +2,12 @@ package org.creditsms.plugins.paymentview.data.repository.hibernate;
 
 import java.util.List;
 
+import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
+
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import org.creditsms.plugins.paymentview.data.domain.ClientNew;
-import org.creditsms.plugins.paymentview.data.repository.NewClientDAO;
+import org.creditsms.plugins.paymentview.data.repository.ClientNewDao;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Projections;
@@ -13,11 +15,11 @@ import org.hibernate.Session;
 import org.hibernate.Criteria;
 
 @SuppressWarnings("unchecked")
-public class NewClientDAOImpl extends HibernateDaoSupport implements NewClientDAO {
-
-	public NewClientDAOImpl(){
+public class HibernateClientNewDao extends BaseHibernateDao<ClientNew> implements ClientNewDao {
+	protected HibernateClientNewDao() {
+		super(ClientNew.class);
 	}
-	
+
 	public List<ClientNew> getAllClients() {
 		return this.getHibernateTemplate().loadAll(ClientNew.class);
 	}
