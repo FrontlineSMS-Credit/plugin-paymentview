@@ -31,10 +31,8 @@ public class Client {
 			unique=false)
 	private String otherName;
 	
-	@Column(name="phoneNumber",
-			nullable=false,
-			unique=true)
-	private long phoneNumber;
+	@Column(name="phoneNumber", nullable=false, unique=true)
+	private String phoneNumber;
 
 	public long getClientId() {
 		return clientId;
@@ -60,11 +58,11 @@ public class Client {
 		this.otherName = otherName;
 	}
 
-	public long getPhoneNumber() {
+	public String getPhoneNumber() {
 		return phoneNumber;
 	}
 
-	public void setPhoneNumber(long phoneNumber) {
+	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
 }
