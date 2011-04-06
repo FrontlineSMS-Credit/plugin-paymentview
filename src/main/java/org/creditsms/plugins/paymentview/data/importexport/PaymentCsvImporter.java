@@ -12,9 +12,6 @@ import net.frontlinesms.data.repository.GroupDao;
 import net.frontlinesms.data.repository.GroupMembershipDao;
 
 /**
- * @author Carlos Eduardo Genz <kadu@masabi.com>
- * @author Alex Anderson <alex@frontlinesms.com>
- * @author Morgan Belkadi <morgan@frontlinesms.com>
  * @author Ian Onesmus Mukewa <ian@frontlinesms.com> 
  */
 public class PaymentCsvImporter extends CsvImporter {

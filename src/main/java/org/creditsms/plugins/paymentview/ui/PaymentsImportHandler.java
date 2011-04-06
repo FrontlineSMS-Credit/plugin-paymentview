@@ -12,11 +12,11 @@ import net.frontlinesms.csv.CsvParseException;
 import net.frontlinesms.csv.CsvRowFormat;
 import net.frontlinesms.ui.Icon;
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.handler.importexport.ImportDialogHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 import org.creditsms.plugins.paymentview.data.importexport.PaymentCsvImporter;
-import org.creditsms.plugins.paymentview.ui.ImportDialogHandler;
 
-public class PaymentsImportHandler extends net.frontlinesms.ui.handler.importexport.ImportDialogHandler {
+public class PaymentsImportHandler extends ImportDialogHandler {
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_IMPORTING_SELECTED_CONTACTS = "message.importing.contacts.groups";
 	/** i18n Text Key: "Active" */
