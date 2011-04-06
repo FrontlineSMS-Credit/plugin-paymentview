@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dialog closable="true" bottom="9" close="removeDialog" modal="true"
+	columns="3" gap="15" left="9" modal="true" icon="/icons/user.png" name="clientDetailsDialog"
+	resizable="true" right="9" text="i18n.plugins.paymentview.dialog.client"
+	top="9" resizable="true">
+
+	<label icon="/icons/user.png" text="i18n.plugins.paymentview.client.name" />
+	<textfield columns="50" name="fldClientName" colspan="2" />
+
+	<label icon="/icons/phone_number.png" text="i18n.common.phone.number" />
+	<textfield name="fldPhoneNumber" colspan="2" />
+
+	<label icon="/icons/phone_number.png" text="i18n.common.other.phone.number" />
+	<textfield colspan="2" />
+
+	<label icon="/icons/email.png" text="i18n.common.email.address" />
+	<textfield colspan="2" />
+
+	<button text="Add Field" width="5" />
+	<combobox colspan="2" />
+
+	<panel colspan="3" weightx="1">
+		<button action="saveClient" enabled="false" icon="/icons/tick.png"
+			name="btSaveClient" text="i18n.action.save" />
+		<panel weightx="1" />
+		<button icon="/icons/cross.png" text="i18n.action.cancel"
+			action="removeDialog" />
+	</panel>
+</dialog>
