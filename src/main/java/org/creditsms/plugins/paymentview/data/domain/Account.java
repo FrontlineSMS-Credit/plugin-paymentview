@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -38,12 +37,7 @@ public class Account {
 	@JoinColumn(name = "clientId", 
 			nullable = true)
 	private Client client;
-	
-	@OneToMany(mappedBy="account",
-			cascade = CascadeType.ALL,
-			fetch = FetchType.LAZY)
-	private List<IncomingPayment> incomingpayment;
-	
+
 	public long getAccountId() {
 		return accountId;
 	}
@@ -68,12 +62,4 @@ public class Account {
 		this.client = client;
 	}
 
-	public List<IncomingPayment> getIncomingpayment() {
-		return incomingpayment;
-	}
-
-	public void setIncomingpayment(List<IncomingPayment> incomingpayment) {
-		this.incomingpayment = incomingpayment;
-	}
-	
 }

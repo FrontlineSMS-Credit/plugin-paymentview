@@ -7,7 +7,7 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
  * @author Roy
  **/
 
-public interface AccountDAO {
+public interface AccountDao {
 
 	/**
 	 * returns all the client accounts existing in the database

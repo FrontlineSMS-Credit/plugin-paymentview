@@ -1,7 +1,9 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.frontlinesms.data.DuplicateKeyException;
@@ -10,6 +12,7 @@ import net.frontlinesms.junit.HibernateTestCase;
 public class ClientIntegrationTest extends HibernateTestCase {
 	@Autowired
 	ClientDao hibernateClientDao;
+	AccountDao hibernateAccountDao;
 	
 	public void testSetup() {
 		assertNotNull(hibernateClientDao);
@@ -20,6 +23,14 @@ public class ClientIntegrationTest extends HibernateTestCase {
 		Client c = createClientWithPhoneNumber("123");
 		hibernateClientDao.saveUpdateClient(c);
 		assertEquals(1, hibernateClientDao.getClientCount());
+	}
+	
+	public void testAddAccount(){
+		Client cl = new Client();
+		Account cA = new Account();
+		cA.setClient(cl);
+		cA.setAccountNumber(44444);
+		hibernateAccountDao.saveUpdateAccount(cA);
 	}
 	
 	public void testPhoneNumberNotNull() {

@@ -1,16 +1,22 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
 import java.util.List;
 
+import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
+
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
-import org.creditsms.plugins.paymentview.data.repository.AccountDAO;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
 @SuppressWarnings("unchecked")
-public class HibernateAccountDAO extends HibernateDaoSupport implements AccountDAO{
+public class HibernateAccountDao extends BaseHibernateDao<Account>  implements AccountDao{
 
+	protected HibernateAccountDao() {
+		super(Account.class);
+	}
+	
 	public List<Account> getAllAcounts() {
 		// TODO Auto-generated method stub
 		return null;
@@ -32,7 +38,9 @@ public class HibernateAccountDAO extends HibernateDaoSupport implements AccountD
 	}
 
 	public void saveUpdateAccount(Account account) {
-		// TODO Auto-generated method stub
+		this.getHibernateTemplate().saveOrUpdate(account);
+		this.getHibernateTemplate().flush();
+		this.getHibernateTemplate().refresh(account);
 		
 	}
 
