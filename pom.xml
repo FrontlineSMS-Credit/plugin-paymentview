@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.creditsms.plugins</groupId>
 	<artifactId>frontlinesms-plugin-credit</artifactId>
@@ -31,7 +32,7 @@
 			</comments>
 		</license>
 	</licenses>
-	
+
 	<parent>
 		<groupId>net.frontlinesms.core</groupId>
 		<artifactId>frontlinesms-pom-parent</artifactId>
@@ -42,7 +43,7 @@
 	<scm>
 		<developerConnection>scm:git:git@github.com:${github.projectOwner}/${github.projectName}.git</developerConnection>
 	</scm>
-	
+
 	<distributionManagement>
 		<repository>
 			<id>cleone.net.repo</id>
@@ -52,11 +53,11 @@
 	</distributionManagement>
 
 	<properties>
-		<!-- Force Maven to use UTF-8 encoding when copying resources, rather than using the 
-			platform default. -->
+		<!-- Force Maven to use UTF-8 encoding when copying resources, rather than 
+			using the platform default. -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-  
+
 	<build>
 		<plugins>
 			<plugin>
@@ -79,7 +80,7 @@
 			</plugin>
 		</plugins>
 	</build>
-  
+
 	<dependencies>
 		<dependency>
 			<groupId>net.frontlinesms.core</groupId>
