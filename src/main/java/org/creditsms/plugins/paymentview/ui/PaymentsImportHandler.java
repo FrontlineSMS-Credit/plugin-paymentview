@@ -12,12 +12,11 @@ import net.frontlinesms.csv.CsvParseException;
 import net.frontlinesms.csv.CsvRowFormat;
 import net.frontlinesms.ui.Icon;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.handler.importexport.ImportDialogHandler.EntityType;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 import org.creditsms.plugins.paymentview.data.importexport.PaymentCsvImporter;
 import org.creditsms.plugins.paymentview.ui.ImportDialogHandler;
 
-public class PaymentsImportHandler extends ImportDialogHandler{
+public class PaymentsImportHandler extends net.frontlinesms.ui.handler.importexport.ImportDialogHandler {
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_IMPORTING_SELECTED_CONTACTS = "message.importing.contacts.groups";
 	/** i18n Text Key: "Active" */
@@ -32,12 +31,12 @@ public class PaymentsImportHandler extends ImportDialogHandler{
 	}
 	
 	@Override
-	public String getWizardTitleI18nKey() {
+	protected String getWizardTitleI18nKey() {
 		return MESSAGE_IMPORTING_SELECTED_CONTACTS;
 	}
 	
 	@Override
-	public String getOptionsFilePath() {
+	protected String getOptionsFilePath() {
 		return UI_FILE_OPTIONS_PANEL_CONTACT;
 	}
 	
@@ -52,7 +51,7 @@ public class PaymentsImportHandler extends ImportDialogHandler{
 	}
 
 	@Override
-	void doSpecialImport(String dataPath) {
+	protected void doSpecialImport(String dataPath) {
 		CsvRowFormat rowFormat = getRowFormatForContact();
 		this.importer.importPayments(this.contactDao, this.groupMembershipDao, this.groupDao, rowFormat);
 		this.uiController.refreshContactsTab();
