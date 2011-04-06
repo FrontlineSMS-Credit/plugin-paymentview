@@ -6,7 +6,7 @@ import java.util.List;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
 
-import org.creditsms.plugins.paymentview.data.domain.ClientNew;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.NetworkOperator;
 import org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction;
 import org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction.TransactionType;
@@ -31,7 +31,7 @@ public interface PaymentServiceTransactionDao {
 	 * @param client client whose transactions are to be fetched
 	 * @return
 	 */
-	public List<PaymentServiceTransaction> getTransactionsByClient(ClientNew client);
+	public List<PaymentServiceTransaction> getTransactionsByClient(Client client);
 	
 	/**
 	 * Gets all the client transactions of a particular type
@@ -39,7 +39,7 @@ public interface PaymentServiceTransactionDao {
 	 * @param transactionType type of transactions to be fetched
 	 * @return
 	 */
-	public List <PaymentServiceTransaction> getTransactionsByClient(ClientNew client, TransactionType transactionType);
+	public List <PaymentServiceTransaction> getTransactionsByClient(Client client, TransactionType transactionType);
 	
 	/**
 	 * Gets all the transactions for a specific network operator. This applies where a payment service works

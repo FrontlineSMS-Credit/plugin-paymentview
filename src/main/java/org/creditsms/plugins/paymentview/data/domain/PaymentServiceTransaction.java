@@ -57,8 +57,8 @@ public class PaymentServiceTransaction {
     @Column(unique=true,nullable=false,updatable=false)
     private long id;
     
-    @ManyToOne(targetEntity=ClientNew.class, optional=false)
-    private ClientNew client;
+    @ManyToOne(targetEntity=Client.class, optional=false)
+    private Client client;
     
     @ManyToOne(targetEntity=PaymentService.class, optional=false)
     @JoinColumn(name=FIELD_PAYMENT_SERVICE_ID)
@@ -103,7 +103,7 @@ public class PaymentServiceTransaction {
      * Gets the client associated with this transaction
      * @return {@link #client}
      */
-    public ClientNew getClient(){
+    public Client getClient(){
     	return client;
     }
     
@@ -175,7 +175,7 @@ public class PaymentServiceTransaction {
      * Sets the client for this transaction
      * @param client
      */
-    public void setClient(ClientNew client){
+    public void setClient(Client client){
     	this.client = client;
     }
     

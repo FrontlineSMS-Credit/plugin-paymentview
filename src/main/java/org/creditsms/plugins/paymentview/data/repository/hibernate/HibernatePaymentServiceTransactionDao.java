@@ -6,7 +6,7 @@ import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
-import org.creditsms.plugins.paymentview.data.domain.ClientNew;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.NetworkOperator;
 import org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction;
 import org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction.Field;
@@ -42,7 +42,7 @@ public class HibernatePaymentServiceTransactionDao extends BaseHibernateDao<Paym
     }
 
     /** @see PaymentServiceTransactionDao#getTransactionsByClient(Client) */
-    public List<PaymentServiceTransaction> getTransactionsByClient(ClientNew client) {
+    public List<PaymentServiceTransaction> getTransactionsByClient(Client client) {
         DetachedCriteria criteria = super.getCriterion();
         
         criteria.add(Restrictions.eq(PaymentServiceTransaction.Field.CLIENT_ID.getFieldName(), client.getClientId()));
@@ -51,7 +51,7 @@ public class HibernatePaymentServiceTransactionDao extends BaseHibernateDao<Paym
     }
 
     /** @see PaymentServiceTransactionDao#getTransactionsByClient(Client, int) */
-    public List<PaymentServiceTransaction> getTransactionsByClient(ClientNew client, TransactionType transactionType) {
+    public List<PaymentServiceTransaction> getTransactionsByClient(Client client, TransactionType transactionType) {
         DetachedCriteria criteria = super.getCriterion();
         
         criteria.add(Restrictions.eq(Field.CLIENT_ID.getFieldName(), client.getClientId()));

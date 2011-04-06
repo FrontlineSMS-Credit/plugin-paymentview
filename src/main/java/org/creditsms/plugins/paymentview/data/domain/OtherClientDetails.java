@@ -49,7 +49,7 @@ public class OtherClientDetails {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "clientId", 
 			nullable = true)
-	private ClientNew clientNew;
+	private Client clientNew;
 
 	public long getDetailsId() {
 		return detailsId;
@@ -91,11 +91,11 @@ public class OtherClientDetails {
 		this.representatives = representatives;
 	}
 
-	public ClientNew getClientNew() {
+	public Client getClientNew() {
 		return clientNew;
 	}
 
-	public void setClientNew(ClientNew clientNew) {
+	public void setClientNew(Client clientNew) {
 		this.clientNew = clientNew;
 	}
 

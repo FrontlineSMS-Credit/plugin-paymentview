@@ -9,12 +9,10 @@ import javax.persistence.Table;
 
 /**
  * @Author Roy
- * */
-
+ */
 @Entity
-@Table(name = ClientNew.TABLE_NAME)
-
-public class ClientNew {
+@Table(name = Client.TABLE_NAME)
+public class Client {
 	public static final String TABLE_NAME = "ClientNew";
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
