@@ -8,7 +8,7 @@ import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 /**
  * @author Roy
  * */
-public interface IncomingPaymentDAO {
+public interface IncomingPaymentDao {
 	/**
 	 * get and return an IncomingPayment with a specific id 
 	 * */
