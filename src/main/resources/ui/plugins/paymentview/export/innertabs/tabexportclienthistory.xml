@@ -1,34 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name="tab_clientHistory" text="Client History">
 	<panel columns="1" weightx="1">
-		<panel columns="1" weightx="1">
-			<label font="18" name="lbl_banner" text="Export All Records for a client" />
+		<panel columns="1" weightx="1" gap="5">
+			<label font="20 bold" name="lbl_banner" text="Export All Records for a client" />
 			<panel columns="1" weightx="1">
+				<separator/>
 				<label font="14 italic" text="Identify Client:" />
 				<panel columns="1" gap="5" weightx="1">
 					<panel gap="5" colspan="2" columns="2" weightx="1">
 						<checkbox group="identity" name="chk_phoneNumber" text="Phone Number:" />
 						<textfield name="txt_phoneNumber" />
 					</panel>
-					<panel colspan="2" columns="3" gap="5" weightx="1">
-						<checkbox group="identity" name="chk_accountNumber" text="Account Number:" />
-						<textfield name="txt_accountNumber" />
-						<checkbox colspan="2" halign="center" selected="true"
-							text="Include payments credited to this account from other accounts" />
-					</panel>
 				</panel>
+				<separator/>
 				<panel columns="1" gap="5" weightx="1">
-					<label text="Select types of payments too include:" />
+					<label text="Select types of payments to include:" />
 					<checkbox name="chk_incomingPayments" text="Incoming Payments (from clients)" />
 					<checkbox name="chk_outgoingPayments" selected="true"
 						text="Outgoing Payments (to clients)" />
 				</panel>
+				<separator/>
 				<panel columns="1" gap="5" weightx="1">
 					<label text="Select the file format you wish to export to:" />
 					<checkbox group="fileType" name="chk_PDF" text="PDF" />
 					<checkbox group="fileType" name="chk_CSV" selected="true"
 						text="CSV" />
-				</panel>
+				</panel><separator/>
 			</panel>
 		</panel>
 	</panel>

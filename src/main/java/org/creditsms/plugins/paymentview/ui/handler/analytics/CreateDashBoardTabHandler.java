@@ -1,5 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler.analytics;
 
+import org.creditsms.plugins.paymentview.ui.handler.analytics.CreateDashBoardTabHandler.StepSelectClientsHandler;
+
 import net.frontlinesms.ui.FrontlineUI;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -12,7 +14,8 @@ public class CreateDashBoardTabHandler extends BaseTabHandler{
 	
 	private Object createDashboardTab;
 	
-	private StepCreateSettingsHandler stepsCreateSettings; 
+	private StepCreateSettingsHandler stepCreateSettings;
+	private StepSelectClientsHandler stepSelectClients; 
 	
 	public CreateDashBoardTabHandler(UiGeneratorController ui, Object tabAnalytics) {
 		super(ui);
@@ -41,12 +44,28 @@ public class CreateDashBoardTabHandler extends BaseTabHandler{
 			((UiGeneratorController)ui).showDateSelecter(textField);
 		}
 	}
+	
+	public class StepSelectClientsHandler extends BasePanelHandler{
+		private static final String XML_STEP_SELECT_CLIENT = "/ui/plugins/paymentview/analytics/createdashboard/stepselectclients.xml";
+		protected StepSelectClientsHandler(UiGeneratorController ui) {
+			super(ui);			
+			this.loadPanel(XML_STEP_SELECT_CLIENT);
+		}	
+		
+		public Object getPanelComponent() {
+			return super.getPanelComponent();
+		}	
+						
+	}
+
 
 	@Override
-	protected Object initialiseTab() {
-		stepsCreateSettings = new StepCreateSettingsHandler(ui);
+	protected Object initialiseTab() { 
+		stepCreateSettings = new StepCreateSettingsHandler(ui);
+		stepSelectClients = new StepSelectClientsHandler(ui);
 		
-		ui.add(createDashboardTab, stepsCreateSettings.getPanelComponent());		
+		//ui.add(createDashboardTab, stepCreateSettings.getPanelComponent());
+		ui.add(createDashboardTab, stepSelectClients.getPanelComponent());
 		return createDashboardTab;		
 	}
 }

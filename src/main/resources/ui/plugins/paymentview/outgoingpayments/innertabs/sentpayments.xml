@@ -15,8 +15,16 @@
 				</header>
 			</table>
 		</panel>		
-		<panel halign="right" columns="3" gap="5" left="5" bottom="5" weightx="1">
-			<combobox width="300" colspan="2" name="cmb_mobilePaymentAccount" text="Select mobile payment account" />			
+		<panel gap="5" left="5" bottom="5" weightx="1">			
+			<combobox width="300" colspan="2" name="cmb_mobilePaymentAccount" text="Select mobile payment account" weightx="1">
+				<choice text="Display All"/>
+				<choice text="Safaricom Mpesa"/>
+				<choice text="Aitel Zap"/>
+				<choice text="Orange Money"/>
+				<choice text="Yu Cash"/>
+			</combobox>			
+			<panel weightx="1"/>
+			<panel weightx="1"/>
 			<button colspan="1" icon="/icons/export.png" name="btn_export" text="Export" />
 		</panel>
 	</panel>

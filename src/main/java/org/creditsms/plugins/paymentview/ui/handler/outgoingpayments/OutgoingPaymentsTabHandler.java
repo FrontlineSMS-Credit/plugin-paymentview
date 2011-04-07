@@ -39,7 +39,8 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler{
 		importNewPaymentsTab = new ImportNewPaymentsTabHandler(ui); 
 		ui.add(mainTabbedPane, importNewPaymentsTab.getTab());
 		
-		selectFromClientsTab = new SelectFromClientsTabHandler(ui); 
+		selectFromClientsTab = new SelectFromClientsTabHandler(ui);
+		selectFromClientsTab.refresh();
 		ui.add(mainTabbedPane, selectFromClientsTab.getTab()); 
 		
 		return outgoingPaymentsTab;

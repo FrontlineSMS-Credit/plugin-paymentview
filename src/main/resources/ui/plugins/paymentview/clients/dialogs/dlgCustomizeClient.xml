@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<dialog closable="true" bottom="9" close="removeDialog" modal="true"
-	columns="3" gap="15" left="9" modal="true" icon="/icons/user.png" name="clientDetailsDialog"
-	resizable="true" right="9" text="i18n.plugins.paymentview.dialog.client"
-	top="9" resizable="true">
+<dialog bottom="9" close="removeDialog(this)" 
+	columns="3" gap="15" left="9" icon="/icons/user.png" name="clientDetailsDialog"
+	right="9" text="i18n.plugins.paymentview.dialog.client"
+	top="9" resizable="true" modal="true" closable="true">
 
 	<label icon="/icons/user.png" text="i18n.plugins.paymentview.client.name" />
 	<textfield columns="50" name="fldClientName" colspan="2" />

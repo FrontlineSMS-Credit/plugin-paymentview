@@ -137,4 +137,8 @@ public class Client {
 	public void setContact(Contact c){
 		this.contact = c;
 	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
 }

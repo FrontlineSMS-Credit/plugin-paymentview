@@ -3,19 +3,22 @@
 	<panel columns="1" gap="10" weightx="1" weighty="1">
 		<panel columns="1" gap="5" left="5" right="5" top="5"
 			weightx="1" weighty="1">
-			<panel columns="1">
-				<label font="20 bold" text="Import New Payments to Send"
-					weightx="1" weighty="1" />
-				<panel columns="3" gap="5">
-					<panel colspan="2">
-						<button action="showImportWizard('messages')" icon="/icons/import.png" text="Import Payments"/>
-					</panel>
-				</panel>
+			<label font="20 bold" text="Import New Payments to Send"
+					weightx="1"/>
+			<panel gap="5" weightx="1">				
+				<button action="showImportWizard('messages')" icon="/icons/import.png" text="Import Payments" weightx="1"/>
+				<panel weightx="1"/>
+				<panel weightx="1"/>
+				<panel weightx="1"/>
+				<panel weightx="1"/>
+				<panel weightx="1"/>
+				<panel weightx="1"/>
+				<panel weightx="1"/>
+				<panel weightx="1"/>
 			</panel>
-			<panel columns="1" weightx="1" weighty="1">
-				<panel>
-					<label colspan="2" text="Preview Payment to send" />
-				</panel>
+			<separator/>
+			<panel columns="1" weightx="1" weighty="1" gap="5">
+				<label text="Preview Payment to send" />
 				<table name="tbl_clients" weightx="1" weighty="1">
 					<header>
 						<column width="200" icon="/icons/user.png" text="Name" />

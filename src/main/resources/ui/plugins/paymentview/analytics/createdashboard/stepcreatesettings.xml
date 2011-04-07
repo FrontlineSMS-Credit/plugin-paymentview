@@ -31,7 +31,7 @@
 		</panel>
 	</panel>
 	<panel gap="5" halign="right" weightx="1">
-		<button icon="/icons/tick.png" name="btnPrevious" text="Previous" />
-		<button icon="/icons/cross.png" name="btnNext" text="Next" />
+		<button icon="/icons/left.png" name="btnPrevious" text="Previous" />
+		<button icon="/icons/right.png" name="btnNext" text="Next" />
 	</panel>
 </panel>

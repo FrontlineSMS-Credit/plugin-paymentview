@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name="tab_tab_outgoingPayments_selectFromClients" text="Select From Client List">
 	<panel columns="1" gap="10" weightx="1" weighty="1">
-		<panel columns="1" gap="5" left="5" right="5" top="5"
-			weightx="1" weighty="1">
+		<panel columns="1" gap="5" left="5" right="5" top="5" weightx="1"
+			weighty="1">
 			<panel weightx="1">
 				<label font="20 bold"
 					name="lbl_tab_outgoingPayments_selectFromClients_banner" text="Select a client to initiate a payment" />
 			</panel>
-			<table name="tbl_tab_outgoingPayments_selectFromClients_clients"
-				weightx="1" weighty="1">
+			<table name="tbl_clients" weightx="1" weighty="1">
 				<header>
 					<column text="Select" />
 					<column width="200" icon="/icons/user.png" text="Name" />
@@ -21,13 +20,12 @@
 				</header>
 			</table>
 		</panel>
-		<panel gap="5" left="5" right="5" bottom="5" halign="right" weightx="1">
-			<button icon="/icons/recipient_number.png"
-				name="btn_sendPaymentToSelection"
-				text="Send Payment Now" />
-			<button icon="/icons/time.png"
-				name="btn_schedulePaymentToSelection"
-				text="Schedule Payment" />
+		<panel gap="5" left="5" right="5" bottom="5" halign="right"
+			weightx="1">
+			<button icon="/icons/recipient_number.png" action="showSendPaymentAuthDialog"
+				name="btn_sendPaymentToSelection" text="Send Payment Now" />
+			<button icon="/icons/time.png" name="btn_schedulePaymentToSelection"
+				action="showSchedulePaymentAuthDialog" text="Schedule Payment" />
 		</panel>
 	</panel>
 </tab>

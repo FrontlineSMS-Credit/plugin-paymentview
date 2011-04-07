@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<tab name="tabSelectClients">
-    <panel border="true" bottom="5" columns="3" gap="5" left="5" right="5" top="5">
-        <label colspan="3" font="18" text="Create a Client Service"/>
-        <label text="Select service > "/>
-        <label text="Targeted Savings > "/>
-        <label text="Select Client"/>
-        <label colspan="3" text="2. Select which clients you wish to view:"/>
-        <panel colspan="3" columns="1" gap="5" right="10">
-            <table>
-                <header>
-                    <column text="Select"/>
-                    <column text="Name"/>
-                    <column text="Phone"/>
-                    <column text="Account"/>
-                </header>
-            </table>
-        </panel>
-    </panel>
-    <panel gap="5" halign="right" weightx="1">
-        <button action="saveClient" icon="/icons/tick.png" name="btSaveClient" text="Previous"/>
-        <button action="removeDialog(clientDetailsDialog)" icon="/icons/cross.png" text="Next"/>
-    </panel>
-</tab>
+<panel name="pnlStepSelectClients" bottom="5" columns="1" gap="10"
+	left="5" right="5" top="10" weightx="1" weighty="1">
+	<panel bottom="5" columns="1" gap="10" left="5" right="5" top="10"
+		weightx="1" weighty="1">
+		<label font="20 Bold" text="Create a Client Service" weightx="1" />
+		<panel weightx="1" bottom="5" gap="5" left="5" right="5" top="5">
+			<button type="link" text="Select service" />
+			<label text=" &gt; " />
+			<button type="link" text="Targeted Savings" />
+			<label text=" &gt; " />
+			<label text="Select Client" />
+		</panel>
+		<table weightx="1" weighty="1">
+			<header>
+				<column text="Select" />
+				<column text="Name" />
+				<column text="Phone" />
+				<column text="Account" />
+			</header>
+		</table>
+	</panel>
+	<panel gap="5" halign="right" weightx="1">
+		<button icon="/icons/left.png" name="btnPrevious" text="Previous" />
+		<button icon="/icons/right.png" name="btnNext" text="Next" />
+	</panel>
+</panel>

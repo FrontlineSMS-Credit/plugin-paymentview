@@ -20,6 +20,7 @@
 			<combobox name="cmb_mobilePaymentAccount" width="250" weightx="1"
 				text="Select Mobile payment account" />
 			<panel weightx="1"/>
+			<panel weightx="1"/>
 			<button icon="/icons/tick.png" name="btn_analyse" text="Analyse" />
 			<button icon="/icons/export.png" halign="right" name="btn_export"
 				text="Export" />
