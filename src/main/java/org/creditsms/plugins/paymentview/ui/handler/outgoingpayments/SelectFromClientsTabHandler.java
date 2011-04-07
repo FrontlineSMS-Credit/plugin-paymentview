@@ -48,7 +48,7 @@ public class SelectFromClientsTabHandler extends BaseTabHandler{
 
 	private Object createRow(Client c) {
 		Object row = ui.createTableRow();
-		ui.add(row, ui.createTableCell(c.getName()));
+		ui.add(row, ui.createTableCell(c.getFirstName()));
 		ui.add(row, ui.createTableCell(c.getPhoneNumber()));
 		return row;
 	}

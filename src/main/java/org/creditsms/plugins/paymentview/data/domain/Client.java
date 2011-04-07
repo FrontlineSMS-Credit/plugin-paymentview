@@ -66,7 +66,7 @@ public class Client {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	public void clientId(long clientId) { 
+		this.clientId = clientId;
 	}
 }

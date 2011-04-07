@@ -35,7 +35,7 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements Clie
 		return clientList;
 	}
 
-	public List<Client> getClientByName(String clientName) {
+	public Client getClientByName(String clientName) { 
 		Session session = getSession();
 		Criteria criteria = session.createCriteria(Client.class)
 		.add(Restrictions.ilike("firstName", clientName.trim(), MatchMode.ANYWHERE))

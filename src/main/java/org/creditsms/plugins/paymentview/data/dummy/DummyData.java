@@ -32,7 +32,7 @@ public class DummyData {
 
 	private Client createDummyClient(String name, String phoneNumber) {
 		Client c = new Client();
-		c.setName(name);
+		c.setFirstName(name);
 		c.setPhoneNumber(phoneNumber);
 		try {
 			clientDao.saveClient(c);
@@ -49,7 +49,7 @@ public class DummyData {
 	private class DummyClientDao implements ClientDao {
 		private TreeSet<Client> clients = new TreeSet<Client>(new Comparator<Client>() {
 			public int compare(Client c1, Client c2) {
-				return (int) (c1.getId() - c2.getId());
+				return (int) (c1.getClientId() - c2.getClientId());
 			}
 		});
 		/** Counter used for simulating Hibernate database IDs */
@@ -97,7 +97,7 @@ public class DummyData {
 		}
 
 		private void assignDatabaseId(Client client) {
-			client.setId(++clientIdCounter);
+			client.clientId(++clientIdCounter);
 		}
 
 		public void updateClient(Client client) throws DuplicateKeyException {
@@ -106,6 +106,27 @@ public class DummyData {
 
 		public void deleteClient(Client client) {
 			clients.remove(client);
+		}
+
+		public Client getClientById(long clientId) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public List<Client> getClientByName(String clientName, int startIndex,
+				int limit) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public Client getClientByPhoneNumber(long phoneNumber) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public void saveUpdateClient(Client client) {
+			// TODO Auto-generated method stub
+			
 		}
 		
 	}
