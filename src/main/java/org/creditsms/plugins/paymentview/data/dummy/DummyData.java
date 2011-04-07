@@ -32,7 +32,7 @@ public class DummyData {
 
 	private Client createDummyClient(String name, String phoneNumber) {
 		Client c = new Client();
-		c.setName(name);
+		c.setFirstName(name);
 		c.setPhoneNumber(phoneNumber);
 		try {
 			clientDao.saveClient(c);
@@ -69,11 +69,11 @@ public class DummyData {
 		}
 
 		public List<Client> filterClientsByName(String name, int startIndex,
-				int limit) {
+				int limit) { 
 			return null;
 		}
 
-		public Client getClientByName(String name) {
+		public List<Client> getClientByName(String name) {
 			return null;
 		}
 
@@ -106,6 +106,27 @@ public class DummyData {
 
 		public void deleteClient(Client client) {
 			clients.remove(client);
+		}
+
+		public Client getClientById(long clientId) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public List<Client> getClientByName(String clientName, int startIndex,
+				int limit) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public Client getClientByPhoneNumber(long phoneNumber) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public void saveUpdateClient(Client client) {
+			// TODO Auto-generated method stub
+			
 		}
 		
 	}
