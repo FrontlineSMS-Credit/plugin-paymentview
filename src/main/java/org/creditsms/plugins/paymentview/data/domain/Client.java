@@ -6,6 +6,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.OneToMany;
+import javax.persistence.FetchType;
+import javax.persistence.CascadeType;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @Author Roy
@@ -16,10 +24,10 @@ public class Client {
 	public static final String TABLE_NAME = "ClientNew";
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="clientId",
+	@Column(name="id",
             nullable=false,
             unique=true)
-	private long clientId;
+	private long id;
 	
 	@Column(name="firstName",
 			nullable=true,
@@ -33,13 +41,28 @@ public class Client {
 	
 	@Column(name="phoneNumber", nullable=false, unique=true)
 	private String phoneNumber;
+	
+	@OneToMany
+	private Set<Account> accounts = new HashSet<Account>();
 
-	public long getClientId() {
-		return clientId;
+	public Collection<Account> getAccounts() {
+		return accounts;
 	}
 
-	public void setClientId(long clientId) {
-		this.clientId = clientId;
+	void setAccounts(Set<Account> accountLst) {
+		this.accounts = accountLst;
+	}
+	
+	public void addAccount(Account account) {
+		this.accounts.add(account);
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	void setId(long id) {
+		this.id = id;
 	}
 
 	public String getFirstName() {

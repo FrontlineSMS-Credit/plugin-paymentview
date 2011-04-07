@@ -45,7 +45,7 @@ public class HibernatePaymentServiceTransactionDao extends BaseHibernateDao<Paym
     public List<PaymentServiceTransaction> getTransactionsByClient(Client client) {
         DetachedCriteria criteria = super.getCriterion();
         
-        criteria.add(Restrictions.eq(PaymentServiceTransaction.Field.CLIENT_ID.getFieldName(), client.getClientId()));
+        criteria.add(Restrictions.eq(PaymentServiceTransaction.Field.CLIENT_ID.getFieldName(), client.getId()));
         
         return super.getList(criteria);
     }
@@ -54,7 +54,7 @@ public class HibernatePaymentServiceTransactionDao extends BaseHibernateDao<Paym
     public List<PaymentServiceTransaction> getTransactionsByClient(Client client, TransactionType transactionType) {
         DetachedCriteria criteria = super.getCriterion();
         
-        criteria.add(Restrictions.eq(Field.CLIENT_ID.getFieldName(), client.getClientId()));
+        criteria.add(Restrictions.eq(Field.CLIENT_ID.getFieldName(), client.getId()));
         criteria.add(Restrictions.eq(Field.TYPE.getFieldName(), transactionType));
         
         return super.getList(criteria);

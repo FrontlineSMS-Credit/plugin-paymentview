@@ -1,7 +1,5 @@
 package org.creditsms.plugins.paymentview.data.domain;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,14 +21,12 @@ public class Account {
 	public static final String TABLE_NAME = "Account";
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="accountId",
+	@Column(name="id",
             nullable=false,
             unique=true)
-	private long accountId;
+	private long id;
 	
-	@Column(name="accountNumber",
-			nullable=false,
-			unique=true)
+	@Column(name="accountNumber", nullable=false, unique=true)
 	private long accountNumber;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -39,11 +35,11 @@ public class Account {
 	private Client client;
 
 	public long getAccountId() {
-		return accountId;
+		return id;
 	}
 
-	public void setAccountId(long accountId) {
-		this.accountId = accountId;
+	public void setAccountId(long id) {
+		this.id = id;
 	}
 
 	public long getAccountNumber() {

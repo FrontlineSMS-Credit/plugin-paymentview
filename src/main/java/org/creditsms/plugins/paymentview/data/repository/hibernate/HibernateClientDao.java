@@ -103,14 +103,12 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements Clie
 
 	public void saveUpdateClient(Client client) {
 		this.getHibernateTemplate().saveOrUpdate(client);
-		this.getHibernateTemplate().flush();
-		this.getHibernateTemplate().refresh(client);
 	}
 
 	public Client getClientById(long clientId) {
 		Session session = getSession();
 		Criteria criteria = session.createCriteria(Client.class)
-		.add(Restrictions.eq("clientId", clientId));
+		.add(Restrictions.eq("id", clientId));
 			
 		List<Client> clientList = criteria.list();
 
