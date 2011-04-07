@@ -1,30 +1,43 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<tab name="tabStepReview">
-    <panel border="true" bottom="5" columns="5" gap="5" left="5" right="5" top="5">
-        <label colspan="5" font="18" text="View Client Progress"/>
-        <label text="Select service >"/>
-        <label text="Targeted Savings >"/>
-        <label text="Select Client >"/>
-        <label text="Creating Settings >"/>
-        <label text="Review"/>
-        <label colspan="5" text="Review the client Service you are creating:"/>
-        <label colspan="5" text="You have selected the following clients:"/>
-        <panel colspan="5" columns="1" gap="5" right="10">
-            <table>
-                <header>
-                    <column text="Select"/>
-                    <column text="Name"/>
-                    <column text="Phone"/>
-                    <column text="Account"/>
-                </header>
-            </table>
-            <label text="To save:"/>
-            <label text="Starting on: "/>
-            <label text="Ending On:"/>
-        </panel>
-    </panel>
-    <panel gap="5" halign="right" weightx="1">
-        <button action="saveClient" icon="/icons/tick.png" name="btSaveClient" text="Previous"/>
-        <button action="removeDialog(clientDetailsDialog)" icon="/icons/cross.png" text="Create"/>
-    </panel>
-</tab>
+<panel name="pnlStepSelectClients"  columns="1" bottom="5"
+	columns="1" gap="10" left="5" right="5" top="10" weightx="1" weighty="1">
+	
+	<panel columns="1" gap="5" weightx="1" weighty="1">
+		<label font="20 Bold" text="Review The Client Service" />
+		<separator/>
+		
+		<panel weightx="1" bottom="5" gap="5" top="5">
+			<button type="link" text="Select service" />
+			<label text=" &gt; " />
+			<button type="link" text="Targeted Savings" />
+			<label text=" &gt; " />
+			<button type="link" text="Select Client" />
+			<label text=" &gt; " />
+			<button type="link" text="Creating Settings" />
+			<label text=" &gt; " />
+			<label text="Review" />
+		</panel>
+		<label text="You have selected the following clients:" />
+		<panel columns="1" gap="5" right="10" weightx="1" weighty="1">
+			<table weightx="1" weighty="1">
+				<header>
+					<column text="Select" />
+					<column text="Name" />
+					<column text="Phone" />
+					<column text="Account" />
+				</header>
+			</table>
+
+			<label text="To save:" />
+			<label text="Starting on: " />
+			<label text="Ending On:" />
+		</panel>
+	</panel>
+	<panel gap="5" halign="right" weightx="1">
+		<button action="previous" icon="/icons/left.png" name="btnPrevious"
+			text="Previous" />
+		<panel weightx="1" />
+		<button action="create" icon="/icons/add.png" name="btnCreate"
+			text="Create" />
+	</panel>
+</panel>

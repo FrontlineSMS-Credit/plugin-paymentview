@@ -8,64 +8,128 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
-public class CreateDashBoardTabHandler extends BaseTabHandler{
-	private static final String TAB_CREATE_DASHBOARD = "tab_createDashboard"; 
-	private static final String XML_STEP_SELECT_CLIENTS  = "/ui/plugins/paymentview/analytics/createdashboard/stepselectclients.xml";
-	
+public class CreateDashBoardTabHandler extends BaseTabHandler {
+	private static final String TAB_CREATE_DASHBOARD = "tab_createDashboard";
+	private static final String XML_STEP_SELECT_CLIENTS = "/ui/plugins/paymentview/analytics/createdashboard/stepselectclients.xml";
+
 	private Object createDashboardTab;
-	
-	private StepCreateSettingsHandler stepCreateSettings;
-	private StepSelectClientsHandler stepSelectClients; 
-	
-	public CreateDashBoardTabHandler(UiGeneratorController ui, Object tabAnalytics) {
+
+	private Object currentPanel;
+
+	public CreateDashBoardTabHandler(UiGeneratorController ui,
+			Object tabAnalytics) {
 		super(ui);
 		createDashboardTab = ui.find(tabAnalytics, TAB_CREATE_DASHBOARD);
 		this.init();
 	}
-	
-	public void refresh(){		
-	}
-	
-	public void deinit(){
-	}
-	
-	public class StepCreateSettingsHandler extends BasePanelHandler{
-		private static final String XML_STEP_CREATE_SETTINGS = "/ui/plugins/paymentview/analytics/createdashboard/stepcreatesettings.xml";
-		protected StepCreateSettingsHandler(UiGeneratorController ui) {
-			super(ui);			
-			this.loadPanel(XML_STEP_CREATE_SETTINGS);
-		}	
+
+	public void refresh() {
 		
+	}
+
+	public void deinit() {
+	}
+	 
+	public void setCurrentStepPanel(Object panel){
+		if (currentPanel != null)
+			ui.remove(currentPanel);
+		
+		ui.add(createDashboardTab, panel);
+		currentPanel = panel;
+		CreateDashBoardTabHandler.this.refresh();
+	}
+	
+	public class StepSelectTargetSavingsHandler extends BasePanelHandler {
+		private static final String XML_STEP_SELECT_TARGET_SAVING = "/ui/plugins/paymentview/analytics/createdashboard/stepselecttargetsavings.xml";
+
+		protected StepSelectTargetSavingsHandler(UiGeneratorController ui) {
+			super(ui);
+			this.loadPanel(XML_STEP_SELECT_TARGET_SAVING);
+		}
+
 		public Object getPanelComponent() {
 			return super.getPanelComponent();
-		}		
+		} 
+
+		public void next() {
+			setCurrentStepPanel(new StepSelectClientsHandler((UiGeneratorController) ui).getPanelComponent());
+		}
+	}
+
+	public class StepSelectClientsHandler extends BasePanelHandler {
+		private static final String XML_STEP_SELECT_CLIENT = "/ui/plugins/paymentview/analytics/createdashboard/stepselectclients.xml";
+
+		protected StepSelectClientsHandler(UiGeneratorController ui) {
+			super(ui);
+			this.loadPanel(XML_STEP_SELECT_CLIENT);
+		}
+ 
+		public Object getPanelComponent() {
+			return super.getPanelComponent();
+		} 
 		
+		public void previous() {
+			setCurrentStepPanel(new StepSelectTargetSavingsHandler((UiGeneratorController) ui).getPanelComponent());
+		}
+
+		public void next() {
+			setCurrentStepPanel(new StepCreateSettingsHandler((UiGeneratorController) ui).getPanelComponent());
+		}		
+	}
+
+	public class StepCreateSettingsHandler extends BasePanelHandler {
+		private static final String XML_STEP_CREATE_SETTINGS = "/ui/plugins/paymentview/analytics/createdashboard/stepcreatesettings.xml";
+
+		protected StepCreateSettingsHandler(UiGeneratorController ui) {
+			super(ui);
+			this.loadPanel(XML_STEP_CREATE_SETTINGS);
+		}
+
+		public Object getPanelComponent() {
+			return super.getPanelComponent();
+		}
+
 		public void showDateSelecter(Object textField) {
-			((UiGeneratorController)ui).showDateSelecter(textField);
+			((UiGeneratorController) ui).showDateSelecter(textField);
+		}
+
+		public void previous() {
+			setCurrentStepPanel(new StepSelectClientsHandler((UiGeneratorController) ui).getPanelComponent());
+		}
+		
+		public void next() {
+			setCurrentStepPanel(new StepReviewHandler((UiGeneratorController) ui).getPanelComponent());
 		}
 	}
 	
-	public class StepSelectClientsHandler extends BasePanelHandler{
-		private static final String XML_STEP_SELECT_CLIENT = "/ui/plugins/paymentview/analytics/createdashboard/stepselectclients.xml";
-		protected StepSelectClientsHandler(UiGeneratorController ui) {
-			super(ui);			
-			this.loadPanel(XML_STEP_SELECT_CLIENT);
-		}	
-		
+	public class StepReviewHandler extends BasePanelHandler {
+		private static final String XML_STEP_REVIEW = "/ui/plugins/paymentview/analytics/createdashboard/stepreview.xml";
+
+		protected StepReviewHandler(UiGeneratorController ui) {
+			super(ui);
+			this.loadPanel(XML_STEP_REVIEW);
+		}
+
 		public Object getPanelComponent() {
 			return super.getPanelComponent();
-		}	
-						
+		}
+
+		public void showDateSelecter(Object textField) {
+			((UiGeneratorController) ui).showDateSelecter(textField);
+		}
+
+		public void create() {	
+		}
+
+		public void previous() {
+			setCurrentStepPanel(new StepCreateSettingsHandler((UiGeneratorController) ui).getPanelComponent());
+		}
 	}
 
-
 	@Override
-	protected Object initialiseTab() { 
-		stepCreateSettings = new StepCreateSettingsHandler(ui);
-		stepSelectClients = new StepSelectClientsHandler(ui);
-		
-		//ui.add(createDashboardTab, stepCreateSettings.getPanelComponent());
-		ui.add(createDashboardTab, stepSelectClients.getPanelComponent());
-		return createDashboardTab;		
+	protected Object initialiseTab() {
+		// ui.add(createDashboardTab, stepCreateSettings.getPanelComponent());
+		setCurrentStepPanel(new StepSelectTargetSavingsHandler(ui).getPanelComponent());
+		return createDashboardTab;
 	}
 }
