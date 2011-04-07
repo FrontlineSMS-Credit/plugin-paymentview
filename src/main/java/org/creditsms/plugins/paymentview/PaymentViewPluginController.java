@@ -78,6 +78,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 		
 
 		clientsTab = new ClientsTabHandler(uiController);
+		clientsTab.refresh();
 		uiController.add(mainPane, clientsTab.getTab());		
 		
 		incomingPayTab = new IncomingPaymentsTabHandler(uiController);
