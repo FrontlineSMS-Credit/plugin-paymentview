@@ -2,17 +2,14 @@ package org.creditsms.plugins.paymentview.data.repository.hibernate;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.Account;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.junit.HibernateTestCase;
 
 public class ClientIntegrationTest extends HibernateTestCase {
 	@Autowired
-	ClientDao hibernateClientDao;
-	AccountDao hibernateAccountDao;
+	HibernateClientDao hibernateClientDao;
+	HibernateAccountDao hibernateAccountDao;
 	
 	public void testSetup() {
 		assertNotNull(hibernateClientDao);
@@ -25,12 +22,27 @@ public class ClientIntegrationTest extends HibernateTestCase {
 		assertEquals(1, hibernateClientDao.getClientCount());
 	}
 	
-	public void testAddAccount(){
-		Client cl = new Client();
-		Account cA = new Account();
-		cA.setClient(cl);
-		cA.setAccountNumber(44444);
-		hibernateAccountDao.saveUpdateAccount(cA);
+	public void testGetClientById() {
+		assertDatabaseEmpty();
+		Client c = createClientWithPhoneNumber("123");
+		hibernateClientDao.saveUpdateClient(c);
+		Client fetchedClient = hibernateClientDao.getClientById(c.getId());
+		assertNotNull(fetchedClient);
+		assertEquals(c.getId(), fetchedClient.getId());
+	}
+	
+	public void testSaveWithAccount() {
+		assertDatabaseEmpty();
+		Client c = createClientWithPhoneNumber("123");
+		hibernateClientDao.saveUpdateClient(c);
+		
+		assertEquals(0, hibernateClientDao.getClientById(c.getId()).getAccounts().size());
+		
+		Account account = new Account();
+		c.addAccount(account);
+		hibernateClientDao.saveUpdateClient(c);
+		
+		assertEquals(1, hibernateClientDao.getClientById(c.getId()).getAccounts().size());
 	}
 	
 	public void testPhoneNumberNotNull() {

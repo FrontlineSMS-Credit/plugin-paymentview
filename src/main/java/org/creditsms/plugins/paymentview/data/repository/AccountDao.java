@@ -23,7 +23,7 @@ public interface AccountDao {
 	 * Retrieves the Account with
 	 * @param accountId
 	 **/
-	public Account getAccountByAccountId(long accountId);
+	public Account getAccountById(long accountId);
 	
 	/**
 	 * Deletes a Account from the system
