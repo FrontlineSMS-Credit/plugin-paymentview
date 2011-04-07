@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dialog bottom="9" close="removeDialog(this)" resizable="true"
+	modal="true" closable="true" gap="15" left="9"
+	name="sendPaymentAuthDialog" right="9" text="Send Payment Authorization"
+	top="9" columns="1">	
+	<panel columns="1" border="true" bottom="5" gap="5" left="5"
+		right="5" top="5" weightx="1">
+		<label text="Individual Payment Information:" font="17 Bold" weightx="1"/>
+		<panel weightx="1" gap="5">
+			<label text="Send:"/>
+			<panel colspan="3">
+				<textfield columns="10" name="txt_sendDate" />
+				<button action="showDateSelecter(txt_sendDate)" icon="/icons/date.png" />
+			</panel>
+		</panel>
+	</panel>
+	<panel columns="1" weightx="1" gap="10">
+		<label text="Authorize:" colspan="3" weightx="1"/>
+		<panel columns="3" weightx="1" gap="10">
+			<label text="Name:" />
+			<textfield colspan="2" weightx="1"/>
+			<label text="PIN:" />
+			<passwordfield colspan="2" weightx="1"/>
+		</panel>
+	</panel>
+	<panel gap="5" weightx="1">
+		<button action="sendPayment" icon="/icons/recipient_number.png"
+			text="Send Payment" />
+		<panel weightx="1"/>
+		<button action="removeDialog(sendPaymentAuthDialog)" icon="/icons/cross.png"
+			text="Cancel" />
+	</panel>
+</dialog>

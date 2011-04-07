@@ -1,5 +1,10 @@
 package org.creditsms.plugins.paymentview.ui.handler.client;
 
+import java.util.List;
+
+import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.dummy.DummyData;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.ui.PaymentsImportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.client.dialogs.CustomizeClientHandler;
 
@@ -7,8 +12,13 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
 public class ClientsTabHandler extends BaseTabHandler{
+//> STATIC CONSTANTS
 	private static final String XML_CLIENTS_TAB = "/ui/plugins/paymentview/clients/clients.xml";
-	private Object clientsTab;
+	private static final String COMPONENT_CLIENT_TABLE = "tbl_clientList";
+	
+//> INSTANCE PROPERTIES	
+	private ClientDao clientDao = DummyData.INSTANCE.getClientDao();
+	
 	
 	public ClientsTabHandler(UiGeneratorController ui) {
 		super(ui);		
@@ -16,16 +26,17 @@ public class ClientsTabHandler extends BaseTabHandler{
 	}
 
 	@Override
-	public void refresh() {		
+	public void refresh() {
+		populateClientsTable();
 	}
 
 	@Override
 	protected Object initialiseTab() {
-		clientsTab = ui.loadComponentFromFile(XML_CLIENTS_TAB, this);
+		Object clientsTab = ui.loadComponentFromFile(XML_CLIENTS_TAB, this);
 		return clientsTab;
 	}
 
-	//> EVENTS...
+//> EVENTS...
 	public void customizeClientDB(){
 	}
 	
@@ -35,5 +46,21 @@ public class ClientsTabHandler extends BaseTabHandler{
 	
 	public void showImportWizard(String typeName){
 		new PaymentsImportHandler(ui).showWizard();
+	}
+	
+//> PRIVATE HELPER METHODS
+	private void populateClientsTable() {
+		Object table = find(COMPONENT_CLIENT_TABLE);
+		List<Client> clients = clientDao.getAllClients();
+		for(Client c : clients) {
+			ui.add(table, createRow(c));
+		}
+	}
+
+	private Object createRow(Client c) {
+		Object row = ui.createTableRow();
+		ui.add(row, ui.createTableCell(c.getName()));
+		ui.add(row, ui.createTableCell(c.getPhoneNumber()));
+		return row;
 	}
 }

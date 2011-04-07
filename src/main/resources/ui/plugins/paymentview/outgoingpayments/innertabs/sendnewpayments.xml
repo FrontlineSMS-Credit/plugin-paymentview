@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tab name="tab_tab_outgoingPayments_sendNewPayments" text="Send New Payments">
+<tab name="tab_tab_outgoingPayments_sendNewPayments" text="Send New Payment">
 	<panel columns="1" gap="10" weightx="1" weighty="1">
-		<panel bottom="5" columns="1" gap="5" left="5" right="5" top="5" weightx="1" weighty="1">
+		<panel bottom="5" columns="1" gap="5" left="5" right="5" top="5"
+			weightx="1" weighty="1">
 			<panel bottom="5" gap="5" weightx="1">
 				<label font="20 bold" text="Send Outgoing Payment" />
 			</panel>
-			<panel columns="3" gap="5" name="frm_customerDetails" weightx="1" weighty="1">
+			<panel columns="3" gap="5" name="frm_customerDetails" weightx="1"
+				weighty="1">
 				<label icon="/icons/user.png" name="lbl_Name" text="Name:" />
 				<textfield name="txt_Name" colspan="2" />
 
@@ -28,9 +30,12 @@
 				<textarea colspan="3" name="txt_Notes" rows="4" />
 			</panel>
 		</panel>
-		<panel halign="right" gap="5" left="5" right="5" bottom="5"	weightx="1">
-			<button icon="/icons/recipient_number.png" name="btn_SendPaymentNow" text="Send Payment Now" />
-			<button icon="/icons/time.png" name="btn_SchedulePayment" text="Schedule Payment" />
+		<panel halign="right" gap="5" left="5" right="5" bottom="5"
+			weightx="1">
+			<button icon="/icons/recipient_number.png" name="btn_SendPaymentNow"
+				action="showSendNewPaymentsAuthDialog" text="Send Payment Now" />				
+			<button icon="/icons/time.png" name="btn_SchedulePayment"
+				action="showScheduleNewPaymentsAuthDialog" text="Schedule Payment" />
 		</panel>
 	</panel>
 </tab>

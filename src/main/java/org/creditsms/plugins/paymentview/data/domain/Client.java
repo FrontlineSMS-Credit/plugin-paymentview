@@ -65,4 +65,8 @@ public class Client {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
 }
