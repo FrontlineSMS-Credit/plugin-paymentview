@@ -49,7 +49,7 @@ public class DummyData {
 	private class DummyClientDao implements ClientDao {
 		private TreeSet<Client> clients = new TreeSet<Client>(new Comparator<Client>() {
 			public int compare(Client c1, Client c2) {
-				return (int) (c1.getClientId() - c2.getClientId());
+				return (int) (c1.getId() - c2.getId());
 			}
 		});
 		/** Counter used for simulating Hibernate database IDs */
@@ -69,11 +69,11 @@ public class DummyData {
 		}
 
 		public List<Client> filterClientsByName(String name, int startIndex,
-				int limit) {
+				int limit) { 
 			return null;
 		}
 
-		public Client getClientByName(String name) {
+		public List<Client> getClientByName(String name) {
 			return null;
 		}
 
@@ -97,7 +97,7 @@ public class DummyData {
 		}
 
 		private void assignDatabaseId(Client client) {
-			client.clientId(++clientIdCounter);
+			client.setId(++clientIdCounter);
 		}
 
 		public void updateClient(Client client) throws DuplicateKeyException {
