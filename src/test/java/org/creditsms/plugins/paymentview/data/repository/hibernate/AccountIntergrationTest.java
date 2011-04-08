@@ -64,14 +64,14 @@ public class AccountIntergrationTest extends HibernateTestCase {
 		Client c = createClientWithPhoneNumber("+2540720111111");
 		hibernateClientDao.saveUpdateClient(c);
 
-		Account account = createAccountWithAccountNumber(12);
+		Account account = createAccountWithAccountNumber(21);
 		account.setClient(c);
 		hibernateAccountDao.saveUpdateAccount(account);
 
 		long searchbyClientId = hibernateClientDao.getAllClients().get(0).getId();
 
 		assertEquals(1, hibernateClientDao.getAllClients().size());
-		assertEquals(12, hibernateAccountDao.getAccountsByClientId(searchbyClientId).get(0).getAccountNumber());
+		assertEquals(21, hibernateAccountDao.getAccountsByClientId(searchbyClientId).get(0).getAccountNumber());
 	}
 	
 	public void testGetAccountsByUserIdMultiple() {
@@ -125,7 +125,7 @@ public class AccountIntergrationTest extends HibernateTestCase {
 	
 	private Account createAccountWithAccountNumber(long accNumber){
 		Account account = new Account();
-		account.setAccountNumber(12);
+		account.setAccountNumber(accNumber);
 		
 		return account;
 	}

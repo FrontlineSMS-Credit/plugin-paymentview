@@ -4,8 +4,6 @@ import java.util.List;
 
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
-
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.hibernate.criterion.MatchMode;
@@ -35,7 +33,7 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements Clie
 		return clientList;
 	}
 
-	public List<Client> getClientByName(String clientName) {
+	public List<Client> getClientsByName(String clientName) {
 		Session session = getSession();
 		Criteria criteria = session.createCriteria(Client.class)
 		.add(Restrictions.ilike("firstName", clientName.trim(), MatchMode.ANYWHERE))

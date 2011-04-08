@@ -27,22 +27,22 @@ public class OtherClientDetails {
 	private long detailsId;
 
 	@Column(name="location",
-			nullable=false,
+			nullable=true,
 			unique=false)
 	private String location;
 	
 	@Column(name="group",
-			nullable=false,
+			nullable=true,
 			unique=false)
 	private String group;
 	
 	@Column(name="branchOffice",
-			nullable=false,
+			nullable=true,
 			unique=false)
 	private String branchOffice;
 	
 	@Column(name="representatives",
-			nullable=false,
+			nullable=true,
 			unique=false)
 	private String representatives;	
 

@@ -29,7 +29,7 @@ public interface ClientDao {
 	 * @param clientname string to be used to match the names
 	 * @return
 	 */
-	public List<Client> getClientByName(String clientName);
+	public List<Client> getClientsByName(String clientName);
 	
 	/**
 	 * Returns a list of clients whose name is similar to the specified string from a particular

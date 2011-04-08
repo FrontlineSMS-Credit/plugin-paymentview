@@ -1,17 +1,20 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
 import java.util.List;
 
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
-
+import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.OtherClientDetails;
-import org.creditsms.plugins.paymentview.data.repository.OtherClientDetailsDAO;
+import org.creditsms.plugins.paymentview.data.repository.OtherClientDetailsDao;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 @SuppressWarnings("unchecked")
-public class HibernateOtherClientDetailsDAO extends HibernateDaoSupport implements OtherClientDetailsDAO{
+public class HibernateOtherClientDetailsDao extends BaseHibernateDao<OtherClientDetails>  implements OtherClientDetailsDao{
+	
+	protected HibernateOtherClientDetailsDao(){
+		super(OtherClientDetails.class);
+	}
 
 	public List<OtherClientDetails> getAllOtherDetails() {
 		return this.getHibernateTemplate().loadAll(OtherClientDetails.class);
@@ -45,15 +48,13 @@ public class HibernateOtherClientDetailsDAO extends HibernateDaoSupport implemen
 		return otherClientDetailsLst.get(0);
 	}
 
-	public void deleteClient(OtherClientDetails otherClientDetails) {
+	public void deleteOtherClientDetails(OtherClientDetails otherClientDetails) {
 		this.getHibernateTemplate().delete(otherClientDetails);
 		this.getHibernateTemplate().flush();
 	}
 
-	public void saveUpdateClient(OtherClientDetails otherClientDetails) {
+	public void saveUpdateOtherClientDetails(OtherClientDetails otherClientDetails) {
 		this.getHibernateTemplate().saveOrUpdate(otherClientDetails);
-		this.getHibernateTemplate().flush();
-		this.getHibernateTemplate().refresh(otherClientDetails);
 	}
 
 }

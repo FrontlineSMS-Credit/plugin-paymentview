@@ -7,7 +7,7 @@ import org.creditsms.plugins.paymentview.data.domain.OtherClientDetails;
  * @author Roy
  * */
 
-public interface OtherClientDetailsDAO {
+public interface OtherClientDetailsDao {
 	/**
 	 * return all the OtherClientDetails in the system
 	 * **/
@@ -27,11 +27,11 @@ public interface OtherClientDetailsDAO {
 	 * Deletes a OtherClientDetails from the system
 	 * @param OtherClientDetails
 	 */
-	public void deleteClient(OtherClientDetails otherClientDetails);
+	public void deleteOtherClientDetails(OtherClientDetails otherClientDetails);
 
 	/**
 	 * Saves a OtherClientDetails to the system
 	 * @param OtherClientDetails
 	 */
-	public void saveUpdateClient(OtherClientDetails otherClientDetails);
+	public void saveUpdateOtherClientDetails(OtherClientDetails otherClientDetails);
 }

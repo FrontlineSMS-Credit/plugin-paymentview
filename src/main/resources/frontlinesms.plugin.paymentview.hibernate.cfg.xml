@@ -4,6 +4,7 @@
 	<session-factory>
 		<mapping class="org.creditsms.plugins.paymentview.data.domain.Client" />
 		<mapping class="org.creditsms.plugins.paymentview.data.domain.Account" />
+		<mapping class="org.creditsms.plugins.paymentview.data.domain.OtherClientDetails" />
 		
     	<!-- 
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.NetworkOperator" />

@@ -1,7 +1,6 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.frontlinesms.junit.HibernateTestCase;
@@ -9,8 +8,7 @@ import net.frontlinesms.junit.HibernateTestCase;
 public class ClientIntegrationTest extends HibernateTestCase {
 	@Autowired
 	HibernateClientDao hibernateClientDao;
-	HibernateAccountDao hibernateAccountDao;
-	
+
 	public void testSetup() {
 		assertNotNull(hibernateClientDao);
 	}
@@ -29,20 +27,6 @@ public class ClientIntegrationTest extends HibernateTestCase {
 		Client fetchedClient = hibernateClientDao.getClientById(c.getId());
 		assertNotNull(fetchedClient);
 		assertEquals(c.getId(), fetchedClient.getId());
-	}
-	
-	public void testSaveWithAccount() {
-		assertDatabaseEmpty();
-		Client c = createClientWithPhoneNumber("123");
-		hibernateClientDao.saveUpdateClient(c);
-		
-		assertEquals(0, hibernateClientDao.getClientById(c.getId()).getAccounts().size());
-		
-		Account account = new Account();
-		c.addAccount(account);
-		hibernateClientDao.saveUpdateClient(c);
-		
-		assertEquals(1, hibernateClientDao.getClientById(c.getId()).getAccounts().size());
 	}
 	
 	public void testPhoneNumberNotNull() {
