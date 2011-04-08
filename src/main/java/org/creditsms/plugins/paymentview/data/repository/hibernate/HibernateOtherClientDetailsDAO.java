@@ -24,8 +24,8 @@ public class HibernateOtherClientDetailsDao extends BaseHibernateDao<OtherClient
 		Session session = getSession();
 		Criteria criteria = session.createCriteria(OtherClientDetails.class);
 			
-		Criteria clientCriteria = criteria.createCriteria("clientNew");
-		clientCriteria.add( Restrictions.eq("clientId", clientId ));
+		Criteria clientCriteria = criteria.createCriteria("client");
+		clientCriteria.add( Restrictions.eq("id", clientId ));
 				
 		List<OtherClientDetails> otherClientDetailsLst = criteria.list();
 
@@ -35,10 +35,10 @@ public class HibernateOtherClientDetailsDao extends BaseHibernateDao<OtherClient
 		return otherClientDetailsLst;
 	}
 
-	public OtherClientDetails getOtherClientDetails(long otherClientDetailsId) {
+	public OtherClientDetails getOtherClientDetailsById(long id) {
 		Session session = getSession();
 		Criteria criteria = session.createCriteria(OtherClientDetails.class)
-		.add(Restrictions.eq("detailsId", otherClientDetailsId));
+		.add(Restrictions.eq("id", id));
 			
 		List<OtherClientDetails> otherClientDetailsLst = criteria.list();
 

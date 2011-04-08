@@ -21,17 +21,17 @@ public class OtherClientDetails {
 	public static final String TABLE_NAME = "OtherClientDetails";
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="detailsId",
+	@Column(name="id",
             nullable=false,
             unique=true)
-	private long detailsId;
+	private long id;
 
 	@Column(name="location",
 			nullable=true,
 			unique=false)
 	private String location;
 	
-	@Column(name="group",
+	@Column(name="clientGroup",
 			nullable=true,
 			unique=false)
 	private String group;
@@ -49,14 +49,14 @@ public class OtherClientDetails {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "clientId", 
 			nullable = true)
-	private Client clientNew;
+	private Client client;
 
-	public long getDetailsId() {
-		return detailsId;
+	public long getId() {
+		return id;
 	}
 
-	public void setDetailsId(long detailsId) {
-		this.detailsId = detailsId;
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getLocation() {
@@ -91,12 +91,12 @@ public class OtherClientDetails {
 		this.representatives = representatives;
 	}
 
-	public Client getClientNew() {
-		return clientNew;
+	public Client getClient() {
+		return client;
 	}
 
-	public void setClientNew(Client clientNew) {
-		this.clientNew = clientNew;
+	public void setClient(Client client) {
+		this.client = client;
 	}
 
 }

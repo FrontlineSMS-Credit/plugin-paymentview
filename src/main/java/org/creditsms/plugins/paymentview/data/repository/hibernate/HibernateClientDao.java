@@ -33,11 +33,8 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements Clie
 		return clientList;
 	}
 
-<<<<<<< HEAD
 	public List<Client> getClientsByName(String clientName) {
-=======
-	public Client getClientByName(String clientName) { 
->>>>>>> 932b7d588b105781bea5ec8ac734c6330ce70880
+
 		Session session = getSession();
 		Criteria criteria = session.createCriteria(Client.class)
 		.add(Restrictions.ilike("firstName", clientName.trim(), MatchMode.ANYWHERE))
@@ -51,7 +48,7 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements Clie
 		return clientList;
 	}
 
-	public List<Client> getClientByName(String clientName, int startIndex,
+	public List<Client> getClientsByName(String clientName, int startIndex,
 			int limit) {
 		Session session = getSession();
 		Criteria criteria = session.createCriteria(Client.class)

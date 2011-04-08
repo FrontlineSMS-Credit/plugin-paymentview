@@ -25,7 +25,7 @@
 		<property name="configLocations">
 			<list>
 				<value>classpath:frontlinesms.hibernate.cfg.xml</value>
-				<value>classpath:frontlinesms.plugin.paymentview.hibernate.cfg.xml</value>
+				<value>classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml</value>
 			</list>
 		</property>
 		<property name="configurationClass">

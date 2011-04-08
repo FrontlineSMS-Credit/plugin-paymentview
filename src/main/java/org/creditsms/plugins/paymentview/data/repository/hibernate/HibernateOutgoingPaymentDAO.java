@@ -7,12 +7,12 @@ import java.util.List;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
-import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDAO;
+import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
 @SuppressWarnings("unchecked")
-public class HibernateOutgoingPaymentDAO extends HibernateDaoSupport implements OutgoingPaymentDAO {
+public class HibernateOutgoingPaymentDao extends HibernateDaoSupport implements OutgoingPaymentDao {
 
 	public OutgoingPayment getOutgoingPaymentById(long outgoingPaymentId) {
 		// TODO Auto-generated method stub

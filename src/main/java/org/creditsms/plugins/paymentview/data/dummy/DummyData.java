@@ -113,7 +113,7 @@ public class DummyData {
 			return null;
 		}
 
-		public List<Client> getClientByName(String clientName, int startIndex,
+		public List<Client> getClientsByName(String clientName, int startIndex,
 				int limit) {
 			// TODO Auto-generated method stub
 			return null;
@@ -128,6 +128,10 @@ public class DummyData {
 			// TODO Auto-generated method stub
 			
 		}
-		
+
+		public List<Client> getClientsByName(String clientName) {
+			// TODO Auto-generated method stub
+			return null;
+		}		
 	}
 }

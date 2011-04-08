@@ -12,7 +12,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
 @SuppressWarnings("unchecked")
-public class HibernateIncomingPaymentDAO extends HibernateDaoSupport implements IncomingPaymentDao {
+public class HibernateIncomingPaymentDao extends HibernateDaoSupport implements IncomingPaymentDao {
 
 	public IncomingPayment getIncomingPaymentById(long incomingPaymentId) {
 		// TODO Auto-generated method stub

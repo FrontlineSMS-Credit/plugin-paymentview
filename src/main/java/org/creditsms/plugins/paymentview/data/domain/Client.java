@@ -21,7 +21,7 @@ import java.util.Set;
 @Entity
 @Table(name = Client.TABLE_NAME)
 public class Client {
-	public static final String TABLE_NAME = "ClientNew";
+	public static final String TABLE_NAME = "Client";
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id",
@@ -44,6 +44,17 @@ public class Client {
 	
 	@OneToMany
 	private Set<Account> accounts = new HashSet<Account>();
+	
+	@OneToMany
+	private Set<OtherClientDetails> otherClientDetails = new HashSet<OtherClientDetails>();
+
+	public Collection<OtherClientDetails> getOtherClientDetails() {
+		return otherClientDetails;
+	}
+
+	public void setOtherClientDetails(Set<OtherClientDetails> otherClientDetails) {
+		this.otherClientDetails = otherClientDetails;
+	}
 
 	public Collection<Account> getAccounts() {
 		return accounts;
@@ -89,7 +100,4 @@ public class Client {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public void clientId(long clientId) { 
-		this.clientId = clientId;
-	}
 }

@@ -21,7 +21,7 @@ public interface OtherClientDetailsDao {
 	/**
 	 * returning a specific OtherClientDetails
 	 * */
-	public OtherClientDetails getOtherClientDetails(long otherClientDetailsId); 
+	public OtherClientDetails getOtherClientDetailsById(long id); 
 	
 	/**
 	 * Deletes a OtherClientDetails from the system

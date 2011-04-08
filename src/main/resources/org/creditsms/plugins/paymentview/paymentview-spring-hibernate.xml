@@ -33,16 +33,16 @@
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
     
-	<bean id="accountDAO" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateAccountDAO">
+	<bean id="accountDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateAccountDao">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-	<bean id="otherClientDetailsDAO" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateOtherClientDetailsDAO">
+	<bean id="otherClientDetailsDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateOtherClientDetailsDao">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-	<bean id="incomingPaymentDAO" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateIncomingPaymentDAO">
+	<bean id="incomingPaymentDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateIncomingPaymentDao">
 	    <property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-    <bean id="outgoingPaymentDAO" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateOutgoingPaymentDAO">
+    <bean id="outgoingPaymentDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateOutgoingPaymentDao">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
     
