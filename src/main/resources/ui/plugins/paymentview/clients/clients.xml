@@ -12,19 +12,26 @@
 				</header>
 			</table>
 		</panel>
-		<panel columns="3" gap="5" left="5" right="5" bottom="5"
+		<panel gap="5" left="5" right="5" bottom="5"
 			name="pnl_buttons" weightx="1">
 			<panel halign="left">
 				<button icon="/icons/keyword.png" action="customizeClientDB"
 					name="btn_tab_clientList_customizeClientDB" text="Customize Client Database" />
 			</panel>
-			<panel colspan="2" columns="2" gap="2" halign="center" weightx="1">
+			<panel weightx="1"/>
+			<panel columns="2" halign="left" gap="2" weightx="1">
 				<button icon="/icons/user_add.png" action="addClient" name="btn_add"
 					text="Add Client" weightx="1" weighty="1" />
 				<button icon="/icons/importContacts.png" action="showImportWizard('messages')"
 					name="btn_import" text="Import Client" />
 			</panel>
-			<panel halign="right">
+			<panel weightx="1"/>
+			<panel weightx="1"/>
+			<panel weightx="1"/>
+			<panel weightx="1"/>
+			<panel weightx="1"/>
+			<panel weightx="1"/>
+			<panel>
 				<button action="addClient" icon="/icons/export.png" name="btn_tab_clientList_export"
 					text="Export" />
 			</panel>

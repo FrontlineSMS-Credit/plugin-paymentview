@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<panel name="pnlStepCreateSettings" columns="1" weightx="1"
-	weighty="1">
-	<panel bottom="5" columns="1" gap="10" left="5" right="5" top="10"
-		weightx="1" weighty="1">
+<panel name="pnlStepCreateSettings" columns="1" bottom="5"
+	columns="1" gap="10" left="5" right="5" top="10" weightx="1" weighty="1">
+
+	<panel columns="1" gap="5" weightx="1" weighty="1">
 		<label font="20 Bold" text="View Client Progress" weightx="1" />
-		<panel weightx="1" bottom="5" gap="5" left="5" right="5" top="5">
+		<separator />
+		<panel weightx="1" bottom="5" gap="5" top="5">
 			<button type="link" text="Select service" />
 			<label text=" &gt; " />
 			<button type="link" text="Targeted Savings" />
@@ -31,7 +32,10 @@
 		</panel>
 	</panel>
 	<panel gap="5" halign="right" weightx="1">
-		<button icon="/icons/tick.png" name="btnPrevious" text="Previous" />
-		<button icon="/icons/cross.png" name="btnNext" text="Next" />
+		<button icon="/icons/left.png" action="previous" name="btnPrevious"
+			text="Previous" />
+		<panel weightx="1" />
+		<button icon="/icons/right.png" action="next" name="btnNext"
+			text="Next" />
 	</panel>
 </panel>
