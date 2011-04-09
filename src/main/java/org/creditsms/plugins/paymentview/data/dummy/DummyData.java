@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 import net.frontlinesms.data.DuplicateKeyException;
@@ -20,6 +22,8 @@ import org.creditsms.plugins.paymentview.data.repository.NetworkOperatorDao;
 
 public class DummyData {
 	public static final DummyData INSTANCE = new DummyData();
+
+	public static final long NO_ID_SET = 0;
 
 	private final DummyClientDao clientDao = new DummyClientDao();
 	private final DummyAccountDao accountDao = new DummyAccountDao();
@@ -331,17 +335,12 @@ public class DummyData {
 	}
 
 	private class DummyClientDao implements ClientDao {
-		private TreeSet<Client> clients = new TreeSet<Client>(
-				new Comparator<Client>() {
-					public int compare(Client c1, Client c2) {
-						return (int) (c1.getId() - c2.getId());
-					}
-				});
+		private Map<Long, Client> clients = new HashMap<Long, Client>();
 		/** Counter used for simulating Hibernate database IDs */
 		private long clientIdCounter;
 
 		public List<Client> getAllClients() {
-			return new ArrayList<Client>(clients);
+			return new ArrayList<Client>(clients.values());
 		}
 
 		public int getClientCount() {
@@ -353,10 +352,10 @@ public class DummyData {
 		}
 
 		public void saveClient(Client client) throws DuplicateKeyException {
-			boolean isNew = clients.add(client);
-			if (isNew) {
+			if(client.getId() == NO_ID_SET) {
 				assignDatabaseId(client);
 			}
+			clients.put(client.getId(), client);
 		}
 
 		private void assignDatabaseId(Client client) {
@@ -364,7 +363,7 @@ public class DummyData {
 		}
 
 		public void deleteClient(Client client) {
-			clients.remove(client);
+			clients.remove(client.getId());
 		}
 
 		public Client getClientById(long clientId) {

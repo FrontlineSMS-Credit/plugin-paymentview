@@ -105,9 +105,6 @@ public class Client {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((accounts == null) ? 0 : accounts.hashCode());
-		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime * result
 				+ ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
 		return result;
 	}
@@ -121,13 +118,6 @@ public class Client {
 		if (getClass() != obj.getClass())
 			return false;
 		Client other = (Client) obj;
-		if (accounts == null) {
-			if (other.accounts != null)
-				return false;
-		} else if (!accounts.equals(other.accounts))
-			return false;
-		if (id != other.id)
-			return false;
 		if (phoneNumber == null) {
 			if (other.phoneNumber != null)
 				return false;
