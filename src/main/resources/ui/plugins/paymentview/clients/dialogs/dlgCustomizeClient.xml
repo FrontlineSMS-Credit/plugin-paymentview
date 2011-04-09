@@ -16,9 +16,9 @@
 	<panel colspan="3" weightx="1" weighty="1" columns="3" gap="2">
 		<label text="Accounts" colspan="3"/>
 		<list name="fldAccounts" selection="multiple" colspan="3" weightx="1" weighty="1"/>
-		<button text="Add" icon="/icons/cross.png"/>
+		<button text="Add" icon="/icons/helper_add.png"/>
 		<panel weightx="1"/>
-		<button text="Remove" icon="/icons/cross.png"/>
+		<button text="Remove" icon="/icons/delete.png"/>
 	</panel>
 
 	<panel colspan="3" weightx="1">

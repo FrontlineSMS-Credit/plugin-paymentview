@@ -34,8 +34,8 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler{
 		
 		mainTabbedPane = ui.find(outgoingPaymentsTab, TABBED_PANE_MAIN); 
 		
-		sentPaymentsTab = new SentPaymentsTabHandler(ui); 
-		ui.add(mainTabbedPane, sentPaymentsTab.getTab()); 
+		sentPaymentsTab = new SentPaymentsTabHandler(ui);
+		ui.add(mainTabbedPane, sentPaymentsTab.getTab());
 		
 		sendNewPaymentsTab = new SendNewPaymentsTabHandler(ui); 
 		ui.add(mainTabbedPane, sendNewPaymentsTab.getTab());

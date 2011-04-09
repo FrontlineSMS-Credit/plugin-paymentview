@@ -37,18 +37,13 @@ public class IncomingPayment {
 	@Column(name="phoneNumber",
 			nullable=false,
 			unique=false)
-	private long phoneNumber;
+	private String phoneNumber;
 	
 	@Column(name="amountPaid",
 			nullable=false,
 			unique=false)
 	private float amountPaid;
-	
-	@Column(name="datePaid",
-			nullable=false,
-			unique=false)
-	private Calendar datePaid;	
-	
+		
 	@Column(name="timePaid",
 			nullable=false,
 			unique=false)
@@ -75,11 +70,11 @@ public class IncomingPayment {
 		this.paymentBy = paymentBy;
 	}
 
-	public long getPhoneNumber() {
+	public String getPhoneNumber() {
 		return phoneNumber;
 	}
 
-	public void setPhoneNumber(long phoneNumber) {
+	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
 
@@ -89,14 +84,6 @@ public class IncomingPayment {
 
 	public void setAmountPaid(float amountPaid) {
 		this.amountPaid = amountPaid;
-	}
-
-	public Calendar getDatePaid() {
-		return datePaid;
-	}
-
-	public void setDatePaid(Calendar datePaid) {
-		this.datePaid = datePaid;
 	}
 
 	public Date getTimePaid() {

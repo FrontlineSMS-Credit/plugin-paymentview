@@ -3,7 +3,12 @@
 	<panel columns="1" weightx="1" weighty="1" gap="10">
 		<panel weightx="1" weighty="1" columns="1" gap="5" left="5"
 			name="pnl_tbl_clientList" right="5" top="5" width="100">
-			<table  colspan="10" name="tbl_clientList" width="1000" weightx="1"
+			<panel weightx="1" gap="5">
+				<textfield name="contactManager_contactFilter" tooltip="i18n.tooltip.search.here"
+					weightx="1" />
+				<button icon="/icons/search.png" text="i18n.common.search" />
+			</panel>
+			<table colspan="10" name="tbl_clientList" width="1000" weightx="1"
 				weighty="1">
 				<header>
 					<column text="Name" width="200" icon="/icons/user.png" />
@@ -11,30 +16,32 @@
 					<column text="Account" width="100" />
 				</header>
 				<popupmenu name="menu">
-                    <menuitem action="editClient" icon="/icons/edit.png" name="msg_history" text="Edit Client"/>
-                    <menuitem action="deleteClient" icon="/icons/delete.png" name="miExportSelected" text="Delete Client"/>
-                </popupmenu>
+					<menuitem action="editClient" icon="/icons/edit.png" name="msg_history"
+						text="Edit Client" />
+					<menuitem action="deleteClient" icon="/icons/delete.png"
+						name="miExportSelected" text="Delete Client" />
+				</popupmenu>
 			</table>
 		</panel>
-		<panel gap="5" left="5" right="5" bottom="5"
-			name="pnl_buttons" weightx="1">
+		<panel gap="5" left="5" right="5" bottom="5" name="pnl_buttons"
+			weightx="1">
 			<panel halign="left">
 				<button icon="/icons/keyword.png" action="customizeClientDB"
 					name="btn_tab_clientList_customizeClientDB" text="Customize Client Database" />
 			</panel>
-			<panel weightx="1"/>
+			<panel weightx="1" />
 			<panel columns="2" halign="left" gap="2" weightx="1">
 				<button icon="/icons/user_add.png" action="addClient" name="btn_add"
 					text="Add Client" weightx="1" weighty="1" />
 				<button icon="/icons/importContacts.png" action="showImportWizard('messages')"
 					name="btn_import" text="Import Client" />
 			</panel>
-			<panel weightx="1"/>
-			<panel weightx="1"/>
-			<panel weightx="1"/>
-			<panel weightx="1"/>
-			<panel weightx="1"/>
-			<panel weightx="1"/>
+			<panel weightx="1" />
+			<panel weightx="1" />
+			<panel weightx="1" />
+			<panel weightx="1" />
+			<panel weightx="1" />
+			<panel weightx="1" />
 			<panel>
 				<button action="addClient" icon="/icons/export.png" name="btn_tab_clientList_export"
 					text="Export" />
