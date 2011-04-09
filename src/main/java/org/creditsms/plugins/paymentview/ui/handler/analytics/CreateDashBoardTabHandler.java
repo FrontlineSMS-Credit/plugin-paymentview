@@ -1,5 +1,10 @@
 package org.creditsms.plugins.paymentview.ui.handler.analytics;
 
+import java.util.List;
+
+import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.dummy.DummyData;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.ui.handler.analytics.CreateDashBoardTabHandler.StepSelectClientsHandler;
 
 import net.frontlinesms.ui.FrontlineUI;
@@ -58,10 +63,13 @@ public class CreateDashBoardTabHandler extends BaseTabHandler {
 
 	public class StepSelectClientsHandler extends BasePanelHandler {
 		private static final String XML_STEP_SELECT_CLIENT = "/ui/plugins/paymentview/analytics/createdashboard/stepselectclients.xml";
+		private static final String COMPONENT_CLIENT_TABLE = "tbl_clients";
+		private ClientDao clientDao = DummyData.INSTANCE.getClientDao(); 
 
 		protected StepSelectClientsHandler(UiGeneratorController ui) {
 			super(ui);
 			this.loadPanel(XML_STEP_SELECT_CLIENT);
+			populateClientsTable();
 		}
  
 		public Object getPanelComponent() {
@@ -75,6 +83,22 @@ public class CreateDashBoardTabHandler extends BaseTabHandler {
 		public void next() {
 			setCurrentStepPanel(new StepCreateSettingsHandler((UiGeneratorController) ui).getPanelComponent());
 		}		
+		
+		//> PRIVATE HELPER METHODS
+		private void populateClientsTable() {
+			Object table = find(COMPONENT_CLIENT_TABLE);
+			List<Client> clients = clientDao.getAllClients(); 
+			for(Client c : clients) { 
+				ui.add(table, createRow(c));
+			}
+		}
+
+		private Object createRow(Client c) {
+			Object row = ui.createTableRow();
+			ui.add(row, ui.createTableCell(c.getFirstName()));
+			ui.add(row, ui.createTableCell(c.getPhoneNumber()));
+			return row;
+		}
 	}
 
 	public class StepCreateSettingsHandler extends BasePanelHandler {

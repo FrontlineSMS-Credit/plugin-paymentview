@@ -33,6 +33,30 @@ public class Account {
 	@JoinColumn(name = "clientId", 
 			nullable = true)
 	private Client client;
+	
+	public Account(long id, long accountNumber) {
+		super();
+		this.id = id;
+		this.accountNumber = accountNumber;
+	}
+	
+	public Account(long accountNumber) {
+		super();
+		this.accountNumber = accountNumber;
+	}
+	
+	public Account(long id, long accountNumber, Client client) {
+		super();
+		this.id = id;
+		this.accountNumber = accountNumber;
+		this.client = client;
+	}
+	
+	public Account(long accountNumber, Client client) {
+		super();
+		this.accountNumber = accountNumber;
+		this.client = client;
+	}
 
 	public long getAccountId() {
 		return id;

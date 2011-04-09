@@ -22,6 +22,10 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler{
 
 	@Override
 	public void refresh() {
+		sentPaymentsTab.refresh();
+		sendNewPaymentsTab.refresh();
+		importNewPaymentsTab.refresh();
+		selectFromClientsTab.refresh();
 	}
 
 	@Override

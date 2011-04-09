@@ -5,19 +5,21 @@
 	top="9" resizable="true" modal="true" closable="true">
 
 	<label icon="/icons/user.png" text="i18n.plugins.paymentview.client.name" />
-	<textfield columns="50" name="fldClientName" colspan="2" />
+	<textfield columns="50" name="fldFirstName" colspan="2" />
+	
+	<label icon="/icons/user.png" text="i18n.plugins.paymentview.client.name" />
+	<textfield columns="50" name="fldOtherName" colspan="2" />
 
 	<label icon="/icons/phone_number.png" text="i18n.common.phone.number" />
 	<textfield name="fldPhoneNumber" colspan="2" />
 
-	<label icon="/icons/phone_number.png" text="i18n.common.other.phone.number" />
-	<textfield colspan="2" />
-
-	<label icon="/icons/email.png" text="i18n.common.email.address" />
-	<textfield colspan="2" />
-
-	<button text="Add Field" width="5" />
-	<combobox colspan="2" />
+	<panel colspan="3" weightx="1" weighty="1" columns="3" gap="2">
+		<label text="Accounts" colspan="3"/>
+		<list name="fldAccounts" selection="multiple" colspan="3" weightx="1" weighty="1"/>
+		<button text="Add" icon="/icons/cross.png"/>
+		<panel weightx="1"/>
+		<button text="Remove" icon="/icons/cross.png"/>
+	</panel>
 
 	<panel colspan="3" weightx="1">
 		<button action="saveClient" enabled="false" icon="/icons/tick.png"

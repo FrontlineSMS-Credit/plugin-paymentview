@@ -8,6 +8,8 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.ui.PaymentsImportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.client.dialogs.CustomizeClientHandler;
 
+import thinlet.Thinlet;
+
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
@@ -48,6 +50,25 @@ public class ClientsTabHandler extends BaseTabHandler{
 		new PaymentsImportHandler(ui).showWizard();
 	}
 	
+	public void editClient(){
+		Object[] selectedClients = this.ui.getSelectedItems(find(COMPONENT_CLIENT_TABLE));
+		for(Object selectedClient:selectedClients){
+			Client c = (Client) ui.getAttachedObject(selectedClient);
+			ui.add(new CustomizeClientHandler(ui, c, clientDao).getDialog());
+		}
+	}
+	
+	public void deleteClient(){
+		Object[] selectedClients = this.ui.getSelectedItems(find(COMPONENT_CLIENT_TABLE));		
+		for(Object selectedClient:selectedClients){
+			Client c = (Client) ui.getAttachedObject(selectedClient);
+			System.out.println("c>> " + c); 
+			clientDao.deleteClient(c); 
+		}
+		
+		this.refresh();
+	}
+	
 //> PRIVATE HELPER METHODS
 	private void populateClientsTable() {
 		Object table = find(COMPONENT_CLIENT_TABLE);
@@ -59,6 +80,7 @@ public class ClientsTabHandler extends BaseTabHandler{
 
 	private Object createRow(Client c) {
 		Object row = ui.createTableRow();
+		ui.setAttachedObject(row, c);
 		ui.add(row, ui.createTableCell(c.getFirstName()));
 		ui.add(row, ui.createTableCell(c.getPhoneNumber()));
 		return row;

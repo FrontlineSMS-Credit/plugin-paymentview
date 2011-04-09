@@ -3,13 +3,17 @@
 	<panel columns="1" weightx="1" weighty="1" gap="10">
 		<panel weightx="1" weighty="1" columns="1" gap="5" left="5"
 			name="pnl_tbl_clientList" right="5" top="5" width="100">
-			<table colspan="10" name="tbl_clientList" width="1000" weightx="1"
+			<table  colspan="10" name="tbl_clientList" width="1000" weightx="1"
 				weighty="1">
 				<header>
-					<column text="Name" width="100" icon="/icons/user.png" />
-					<column text="Phone" width="100" icon="/icons/phone.png" />
+					<column text="Name" width="200" icon="/icons/user.png" />
+					<column text="Phone" width="150" icon="/icons/phone.png" />
 					<column text="Account" width="100" />
 				</header>
+				<popupmenu name="menu">
+                    <menuitem action="editClient" icon="/icons/edit.png" name="msg_history" text="Edit Client"/>
+                    <menuitem action="deleteClient" icon="/icons/delete.png" name="miExportSelected" text="Delete Client"/>
+                </popupmenu>
 			</table>
 		</panel>
 		<panel gap="5" left="5" right="5" bottom="5"
