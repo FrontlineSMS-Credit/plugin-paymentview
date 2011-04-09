@@ -1,6 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler.client;
 
-import java.awt.Component;
 import java.util.List;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
@@ -10,12 +9,6 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.ui.PaymentsImportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.client.dialogs.CustomizeClientHandler;
 
-import thinlet.Thinlet;
-
-import net.frontlinesms.data.Order;
-import net.frontlinesms.data.domain.Contact;
-import net.frontlinesms.data.domain.Group;
-import net.frontlinesms.ui.Icon;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
@@ -35,10 +28,11 @@ public class ClientsTabHandler extends BaseTabHandler implements
 	// > INSTANCE PROPERTIES
 	private ClientDao clientDao = DummyData.INSTANCE.getClientDao();
 	private Object pnlClientsList;
-	
+	private String clientFilter;
 
 	public ClientsTabHandler(UiGeneratorController ui) {
 		super(ui);
+		setClientFilter("");
 		init();
 	}
 
@@ -47,14 +41,22 @@ public class ClientsTabHandler extends BaseTabHandler implements
 			int limit) {
 		if (list == this.clientsTableComponent) {
 			return getContactListDetails(startIndex, limit);
-		} else
+		} else {
 			throw new IllegalStateException();
+		}
 	}
 
 	private PagedListDetails getContactListDetails(int startIndex, int limit) {
+		List<Client> clients = null;
+		if (this.clientFilter.equals("")) {
+			clients = this.clientDao.getAllClients();
+		} else {
+			clients = this.clientDao.getClientsByName(clientFilter);
+		}
+		
 		int totalItemCount = this.clientDao.getClientCount();
-		List<Client> clients = this.clientDao.getAllClients();
 		Object[] listItems = toThinletComponents(clients);
+
 		return new PagedListDetails(totalItemCount, listItems);
 
 	}
@@ -99,7 +101,7 @@ public class ClientsTabHandler extends BaseTabHandler implements
 		clientsTableComponent = ui.find(clientsTab, COMPONENT_CLIENT_TABLE);
 		clientsTablePager = new ComponentPagingHandler(ui, this,
 				clientsTableComponent);
-		pnlClientsList = ui.find(clientsTab, COMPONENT_PANEL_CLIENT_LIST); 
+		pnlClientsList = ui.find(clientsTab, COMPONENT_PANEL_CLIENT_LIST);
 		this.ui.add(pnlClientsList, this.clientsTablePager.getPanel());
 		return clientsTab;
 	}
@@ -132,7 +134,27 @@ public class ClientsTabHandler extends BaseTabHandler implements
 			Client c = (Client) ui.getAttachedObject(selectedClient);
 			clientDao.deleteClient(c);
 		}
+
+		ui.infoMessage("You have succesfully deleted from the client!");
 		this.refresh();
 	}
 
+	/**
+	 * @param clientFilter
+	 *            the clientFilter to set
+	 */
+	public void setClientFilter(String clientFilter) {
+		this.clientFilter = clientFilter;
+	}
+
+	public void filterClients() {
+		this.updateContactList();
+	}
+
+	/**
+	 * @return the clientFilter
+	 */
+	public String getClientFilter() {
+		return clientFilter;
+	}
 }

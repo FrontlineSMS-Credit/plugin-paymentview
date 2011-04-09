@@ -377,8 +377,13 @@ public class DummyData {
 		}
 
 		public List<Client> getClientsByName(String clientName) {
-			// TODO Auto-generated method stub
-			return null;
+			List<Client> filteredClients = new ArrayList<Client>();
+			for (Client c: clients.values()) {
+				if (clientName.toLowerCase().equals(c.getFirstName().toLowerCase())){
+					filteredClients.add(c);
+				}
+			}
+			return filteredClients;
 		}
 
 		public List<Client> getClientsByName(String clientName, int startIndex,
