@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <panel name="pnInfo" bottom="5" columns="3" gap="5" left="5" right="5" top="5" weightx="1" weighty="1">
-	<checkbox action="columnCheckboxChanged" icon="/icons/key.png" name="cbID" selected="true" text="ID" />
 	<checkbox action="columnCheckboxChanged" icon="/icons/user.png"	name="cbFirstName" selected="true" text="First Name" />
 	<checkbox action="columnCheckboxChanged" icon="/icons/user.png" name="cbOtherName" selected="true" text="Other Name" />
 	<checkbox action="columnCheckboxChanged" icon="/icons/phone.png" name="cbPhone" selected="true" text="i18n.common.phone.number" />

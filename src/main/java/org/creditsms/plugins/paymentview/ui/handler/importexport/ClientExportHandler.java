@@ -19,7 +19,7 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_EXPORTING_SELECTED_CONTACTS = "plugins.paymentview.message.exporting.selected.client";
 	private static final String UI_FILE_OPTIONS_PANEL_CLIENT = "/ui/plugins/paymentview/importexport/pnClientDetails.xml";
-	private static final String COMPONENT_CB_FIRSTNAME = "cbFirstame";
+	private static final String COMPONENT_CB_FIRSTNAME = "cbFirstName";
 	private static final String COMPONENT_CB_OTHERNAME = "cbOtherName";
 	private static final String COMPONENT_ACCOUNTS = "cbAccounts";
 	private static final String COMPONENT_CB_PHONE = "cbPhone";
@@ -78,8 +78,8 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 		CsvRowFormat rowFormat = new CsvRowFormat();
 		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_FIRST_NAME, COMPONENT_CB_FIRSTNAME);
 		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_OTHER_NAME, COMPONENT_CB_OTHERNAME);
-		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_ACCOUNTS, COMPONENT_ACCOUNTS);
-		addMarker(rowFormat, CsvUtils.MARKER_CONTACT_PHONE, COMPONENT_CB_PHONE); 
+		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_PHONE, COMPONENT_CB_PHONE);
+		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_ACCOUNTS, COMPONENT_ACCOUNTS);		
 		return rowFormat;
 	}
 }

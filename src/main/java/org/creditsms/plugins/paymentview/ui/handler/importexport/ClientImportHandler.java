@@ -25,9 +25,8 @@ public class ClientImportHandler extends ImportDialogHandler {
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_IMPORTING_SELECTED_CLIENTS = "plugins.paymentview.message.importing.selected.client"; 
 	/** i18n Text Key: "Active" */
-	private static final String I18N_COMMON_ACTIVE = "common.active";
 	private static final String UI_FILE_OPTIONS_PANEL_CLIENT = "/ui/plugins/paymentview/importexport/pnClientDetails.xml";
-	private static final String COMPONENT_CB_FIRSTNAME = "cbFirstame";
+	private static final String COMPONENT_CB_FIRSTNAME = "cbFirstName";
 	private static final String COMPONENT_CB_OTHERNAME = "cbOtherName";
 	private static final String COMPONENT_ACCOUNTS = "cbAccounts";
 	private static final String COMPONENT_CB_PHONE = "cbPhone";
@@ -87,12 +86,6 @@ public class ClientImportHandler extends ImportDialogHandler {
 		for (Object checkbox : getCheckboxes()) {
 			if (this.uiController.isSelected(checkbox)) {
 				String attributeName = this.uiController.getText(checkbox);
-				if (this.uiController.getName(checkbox).equals(
-						COMPONENT_CB_PHONE)) {
-					attributeName = InternationalisationUtils
-							.getI18nString(I18N_COMMON_ACTIVE);
-				}
-				// TODO: This is what I mean exactly
 				this.uiController.add(header, this.uiController.createColumn(
 						attributeName, attributeName));//
 				++columnCount;
