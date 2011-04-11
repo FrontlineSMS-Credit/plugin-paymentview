@@ -4,13 +4,13 @@
 	right="9" text="i18n.plugins.paymentview.dialog.client"
 	top="9" resizable="true" modal="true" closable="true">
 
-	<label icon="/icons/user.png" text="i18n.plugins.paymentview.client.name" />
+	<label icon="/icons/user.png" text="First name:" />
 	<textfield columns="50" name="fldFirstName" colspan="2" />
 	
-	<label icon="/icons/user.png" text="i18n.plugins.paymentview.client.name" />
+	<label icon="/icons/user.png" text="Second Name:" />
 	<textfield columns="50" name="fldOtherName" colspan="2" />
 
-	<label icon="/icons/phone_number.png" text="i18n.common.phone.number" />
+	<label icon="/icons/phone.png" text="i18n.common.phone.number" />
 	<textfield name="fldPhoneNumber" colspan="2" />
 
 	<panel colspan="3" weightx="1" weighty="1" columns="3" gap="2">

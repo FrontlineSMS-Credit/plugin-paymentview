@@ -29,6 +29,9 @@ public class Account {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "clientId", nullable = true)
 	private Client client;
+	
+	//Some constructors Created to be used by the DummyData Class
+	public Account (){}
 
 	public Account(long id, long accountNumber) {
 		super();

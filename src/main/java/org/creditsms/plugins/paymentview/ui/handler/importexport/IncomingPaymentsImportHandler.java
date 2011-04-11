@@ -17,7 +17,7 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 import org.creditsms.plugins.paymentview.data.importexport.PaymentCsvImporter;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 
-public class PaymentsImportHandler extends ImportDialogHandler {
+public class IncomingPaymentsImportHandler extends ImportDialogHandler {
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_IMPORTING_SELECTED_CLIENTS = "Import Clients";
 	/** i18n Text Key: "Active" */
@@ -29,7 +29,7 @@ public class PaymentsImportHandler extends ImportDialogHandler {
 	private int columnCount;
 	private ClientDao clientDao;
 
-	public PaymentsImportHandler(UiGeneratorController ui) {
+	public IncomingPaymentsImportHandler(UiGeneratorController ui) {
 		super(ui);
 	}
 

@@ -4,6 +4,7 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -74,8 +75,8 @@ public class CustomizeClientHandler implements ThinletUiEventHandler {
 		return dialogComponent;
 	}
 
-	public void saveClient() {
-		this.clientDao.saveUpdateClient(getClientObj());
+	public void saveClient() throws DuplicateKeyException {
+		this.clientDao.saveUpdateClient(getClientObj());  
 	}
 
 	/** Remove the dialog from view. */

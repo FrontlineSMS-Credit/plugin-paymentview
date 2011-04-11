@@ -15,8 +15,9 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 
 public class ClientExportHandler extends ExportDialogHandler<Client> {
 	/** I18n Text Key: TODO document */
-	private static final String MESSAGE_EXPORTING_SELECTED_CONTACTS = "message.exporting.selected.contacts";
-	
+	private static final String MESSAGE_EXPORTING_SELECTED_CONTACTS = "plugins.paymentview.message.exporting.selected.client";
+	private static final String UI_FILE_OPTIONS_PANEL_CLIENT = "/ui/plugins/paymentview/importexport/pnClientDetails.xml";
+	 
 	private ClientDao clientDao;
 	
 	public ClientExportHandler(UiGeneratorController ui) {
@@ -30,7 +31,7 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 	
 	@Override
 	protected String getOptionsFilePath() {
-		return UI_FILE_OPTIONS_PANEL_CONTACT;
+		return UI_FILE_OPTIONS_PANEL_CLIENT;
 	}
 	
 	@Override

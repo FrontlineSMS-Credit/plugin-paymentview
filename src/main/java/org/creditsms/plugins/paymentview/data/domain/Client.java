@@ -48,6 +48,17 @@ public class Client {
 	@OneToMany
 	private Set<OtherClientDetails> otherClientDetails = new HashSet<OtherClientDetails>();
 
+	public Client(String firstName, String otherName, String phoneNumber,
+			Set<Account> accountsFromString) {
+		this.firstName = firstName;
+		this.otherName = otherName;
+		this.phoneNumber = phoneNumber;
+		this.firstName = firstName;
+	}
+	// Created for DummyData
+	public Client() {
+	}
+
 	public Collection<OtherClientDetails> getOtherClientDetails() {
 		return otherClientDetails;
 	}

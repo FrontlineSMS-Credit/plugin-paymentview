@@ -7,7 +7,8 @@ import java.util.Collection;
 import net.frontlinesms.csv.CsvRowFormat;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.domain.Payment;
+import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 
 public class CsvExporter extends net.frontlinesms.csv.CsvExporter {
 	/**
@@ -22,8 +23,14 @@ public class CsvExporter extends net.frontlinesms.csv.CsvExporter {
 
 	}
 
-	public static void exportPayments(File exportFile,
-			Collection<Payment> payments, CsvRowFormat messageFormat)
+	public static void exportIncomingPayments(File exportFile,
+			Collection<IncomingPayment> payments, CsvRowFormat messageFormat)
+			throws IOException {
+
+	}
+	
+	public static void exportOutcomingPayments(File exportFile,
+			Collection<OutgoingPayment> payments, CsvRowFormat messageFormat)
 			throws IOException {
 
 	}

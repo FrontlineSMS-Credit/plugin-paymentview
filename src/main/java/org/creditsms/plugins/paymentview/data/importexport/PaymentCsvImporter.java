@@ -2,23 +2,27 @@ package org.creditsms.plugins.paymentview.data.importexport;
 
 import java.io.File;
 import java.io.IOException;
-
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.frontlinesms.csv.CsvImportReport;
 import net.frontlinesms.csv.CsvImporter;
 import net.frontlinesms.csv.CsvParseException;
 import net.frontlinesms.csv.CsvRowFormat;
-import net.frontlinesms.data.repository.ContactDao;
-import net.frontlinesms.data.repository.GroupDao;
-import net.frontlinesms.data.repository.GroupMembershipDao;
+import net.frontlinesms.data.DuplicateKeyException;
+
+import org.creditsms.plugins.paymentview.csv.CsvUtils;
+import org.creditsms.plugins.paymentview.data.domain.Account;
+import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 
 /**
  * @author Ian Onesmus Mukewa <ian@frontlinesms.com> 
  */
 public class PaymentCsvImporter extends CsvImporter {
 	/** The delimiter to use between group names when they are exported. */
-	protected static final String GROUPS_DELIMITER = "\\\\"; 
+	protected static final String GROUPS_DELIMITER = "\\\\";
+	private ClientDao clientDao; 
 	
 //> INSTANCE PROPERTIES
 	
@@ -38,45 +42,37 @@ public class PaymentCsvImporter extends CsvImporter {
 	 */
 	public CsvImportReport importPayments(ClientDao contactDao, CsvRowFormat rowFormat) {
 		log.trace("ENTER");
-		// TODO: Roy, Should take care of Imports at this stage...
-		/*
+		
 		for(String[] lineValues : this.getRawValues()) {
-			String name = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CONTACT_NAME);
-			String number = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CONTACT_PHONE);
-			String email = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CONTACT_EMAIL);
-			String notes = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CONTACT_NOTES);
-			String otherPhoneNumber = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CONTACT_OTHER_PHONE);
-			String groups = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CONTACT_GROUPS);
-			
-			String statusString = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CONTACT_STATUS).toLowerCase();
-			boolean active = !"false".equals(statusString) && !"dormant".equals(statusString);
-			
-			Contact c = new Contact(name, number, otherPhoneNumber, email, notes, active);						
+			String firstname = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CLIENT_FIRST_NAME);
+			String otherName = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CLIENT_OTHER_NAME);
+			String phonenumber = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CONTACT_PHONE);
+			String accounts = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CLIENT_ACCOUNTS);
+						
+			Client c = new Client(firstname, otherName, phonenumber, getAccountsFromString(accounts));					
 			try {
-				contactDao.saveContact(c);
+				clientDao.saveUpdateClient(c); 
 			} catch (DuplicateKeyException e) {
 				// FIXME should actually pass details of this back to the user.
-				log.debug("Contact already exist with this number [" + number + "]", e);
-				// If the contact already existed, let's reach the existing one to fill the groupMembership
-				c = contactDao.getFromMsisdn(number);
+				log.debug("Client already exist with this number", e);
 			}
 			
-			// We make the contact joins its groups
-			String[] pathList = groups.split(GROUPS_DELIMITER);
-			for (String path : pathList) {
-				if (path.length() == 0) continue;
-				
-				if (!path.startsWith(String.valueOf(Group.PATH_SEPARATOR))) {
-					path = Group.PATH_SEPARATOR + path;
-				}
-				
-				Group group = createGroups(groupDao, path);
-				groupMembershipDao.addMember(group, c);
-			}
 		}
 		
 		log.trace("EXIT");
-		*/
+		
 		return new CsvImportReport();
+	}
+
+	private Set<Account> getAccountsFromString(String strAccounts) {
+		String[] accounts = strAccounts.split(",");		
+		
+		Set<Account> set_accounts = new HashSet<Account>(accounts.length);
+		for (String account : accounts){
+			if (account.length() == 0) continue;
+			set_accounts.add(new Account(Long.parseLong(account)));
+		}
+		
+		return set_accounts;
 	}
 }

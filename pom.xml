@@ -46,9 +46,9 @@
 
 	<distributionManagement>
 		<repository>
-			<id>cleone.net.repo</id>
-			<name>Temporary FrontlineSMS repository on cleone.net</name>
-			<url>ftp://m2repo.cleone.net</url>
+			<id>frontlinesms.repo</id>
+			<name>FrontlineSMS Maven repository</name>
+			<url>ftp://dev.frontlinesms.com</url>
 		</repository>
 	</distributionManagement>
 

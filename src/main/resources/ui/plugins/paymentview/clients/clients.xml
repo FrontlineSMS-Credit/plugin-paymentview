@@ -35,7 +35,7 @@
 			<panel columns="2" halign="left" gap="2" weightx="1">
 				<button icon="/icons/user_add.png" action="addClient" name="btn_add"
 					text="Add Client" weightx="1" weighty="1" />
-				<button icon="/icons/importContacts.png" action="showImportWizard('messages')"
+				<button icon="/icons/importContacts.png" action="importClient"
 					name="btn_import" text="Import Client" />
 			</panel>
 			<panel weightx="1" />
@@ -45,7 +45,7 @@
 			<panel weightx="1" />
 			<panel weightx="1" />
 			<panel>
-				<button action="addClient" icon="/icons/export.png" name="btn_tab_clientList_export"
+				<button action="exportClient" icon="/icons/export.png" name="btn_tab_clientList_export"
 					text="Export" />
 			</panel>
 		</panel>

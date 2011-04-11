@@ -14,28 +14,22 @@ import net.frontlinesms.ui.Icon;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.importexport.ImportDialogHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
-
-import org.creditsms.plugins.paymentview.csv.CsvUtils;
 import org.creditsms.plugins.paymentview.data.importexport.PaymentCsvImporter;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 
-public class ClientImportHandler extends ImportDialogHandler {
+public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
 	/** I18n Text Key: TODO document */
-	private static final String MESSAGE_IMPORTING_SELECTED_CLIENTS = "plugins.paymentview.message.importing.selected.client"; 
+	private static final String MESSAGE_IMPORTING_SELECTED_CLIENTS = "Import Clients";
 	/** i18n Text Key: "Active" */
 	private static final String I18N_COMMON_ACTIVE = "common.active";
-	private static final String UI_FILE_OPTIONS_PANEL_CLIENT = "/ui/plugins/paymentview/importexport/pnClientDetails.xml";
-	private static final String COMPONENT_CB_FIRSTNAME = "cbFirstName";
-	private static final String COMPONENT_CB_OTHERNAME = "cbOtherName";
-	private static final String COMPONENT_ACCOUNTS = "cbAccounts";
-	private static final String COMPONENT_CB_PHONE = "cbPhone";
+	private static final String UI_FILE_OPTIONS_PANEL_CONTACT = "/ui/plugins/paymentview/importexport/pnClientDetails.xml";
 
 	// > INSTANCE PROPERTIES
 	private PaymentCsvImporter importer;
 	private int columnCount;
 	private ClientDao clientDao;
 
-	public ClientImportHandler(UiGeneratorController ui) {
+	public OutgoingPaymentsImportHandler(UiGeneratorController ui) {
 		super(ui);
 	}
 
@@ -46,7 +40,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 
 	@Override
 	protected String getOptionsFilePath() {
-		return UI_FILE_OPTIONS_PANEL_CLIENT;
+		return UI_FILE_OPTIONS_PANEL_CONTACT;
 	}
 
 	@Override
@@ -61,7 +55,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 
 	@Override
 	protected void doSpecialImport(String dataPath) {
-		CsvRowFormat rowFormat = getRowFormatForClient();
+		CsvRowFormat rowFormat = getRowFormatForContact();
 		this.importer.importPayments(this.clientDao, rowFormat);
 		this.uiController.refreshContactsTab();
 		this.uiController.infoMessage(InternationalisationUtils
@@ -70,15 +64,6 @@ public class ClientImportHandler extends ImportDialogHandler {
 
 	// TODO: Roy, look at this to help you solve issue CREDIT-30
 
-	protected CsvRowFormat getRowFormatForClient() { 
-		CsvRowFormat rowFormat = new CsvRowFormat();
-		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_FIRST_NAME, COMPONENT_CB_FIRSTNAME);
-		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_OTHER_NAME, COMPONENT_CB_OTHERNAME);
-		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_ACCOUNTS, COMPONENT_ACCOUNTS);
-		addMarker(rowFormat, CsvUtils.MARKER_CONTACT_PHONE, COMPONENT_CB_PHONE); 
-		return rowFormat;
-	}
-
 	@Override
 	protected void appendPreviewHeaderItems(Object header) {
 		int columnCount = 0;
@@ -86,7 +71,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 			if (this.uiController.isSelected(checkbox)) {
 				String attributeName = this.uiController.getText(checkbox);
 				if (this.uiController.getName(checkbox).equals(
-						COMPONENT_CB_PHONE)) {
+						COMPONENT_CB_STATUS)) {
 					attributeName = InternationalisationUtils
 							.getI18nString(I18N_COMMON_ACTIVE);
 				}
