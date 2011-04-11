@@ -32,7 +32,7 @@ public class OutgoingPayment {
 	@Column(name="phoneNumber",
 			nullable=false,
 			unique=false)
-	private long phoneNumber;
+	private String phoneNumber;
 	
 	@Column(name="amountPaid",
 			nullable=false,
@@ -72,11 +72,11 @@ public class OutgoingPayment {
 		this.outgoingPaymentId = outgoingPaymentId;
 	}
 
-	public long getPhoneNumber() {
+	public String getPhoneNumber() {
 		return phoneNumber;
 	}
 
-	public void setPhoneNumber(long phoneNumber) {
+	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
 

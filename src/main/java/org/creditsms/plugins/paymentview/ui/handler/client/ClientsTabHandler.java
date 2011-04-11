@@ -118,14 +118,12 @@ public class ClientsTabHandler extends BaseTabHandler implements
 	
 	public void importClient() {
 		new ClientImportHandler(ui).showWizard();
+		this.refresh();
 	}
 	
 	public void exportClient() {
 		new ClientExportHandler(ui).showWizard();
-	}
-
-	public void showImportWizard(String typeName) {
-		new OutgoingPaymentsImportHandler(ui).showWizard();
+		this.refresh();
 	}
 
 	public void editClient() {

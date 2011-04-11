@@ -1,21 +1,22 @@
 package org.creditsms.plugins.paymentview.ui.handler;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
-
-import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
-import org.creditsms.plugins.paymentview.data.dummy.DummyData;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
+
+import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.dummy.DummyData;
+import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 
 public class IncomingPaymentsTabHandler extends BaseTabHandler{
 	private static final String XML_INCOMING_PAYMENTS_TAB = "/ui/plugins/paymentview/incomingpayments/tabincomingpayments.xml";
 	private static final String COMPONENT_INCOMING_PAYMENTS_TABLE = "tbl_clients";
 	private Object incomingPaymentsTab;
 	private IncomingPaymentDao incomingPaymentDao = DummyData.INSTANCE.getIncomingPaymentDao();  
+	SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+	SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss");
 	
 	public IncomingPaymentsTabHandler(UiGeneratorController ui) {
 		super(ui);		
@@ -53,11 +54,13 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler{
 	}
 
 	private Object createRow(IncomingPayment i) { 
-		Object row = ui.createTableRow();
+		Object row = ui.createTableRow();		
 		ui.add(row, ui.createTableCell(i.getPaymentBy()));
 		ui.add(row, ui.createTableCell(i.getPhoneNumber()));
 		ui.add(row, ui.createTableCell(Long.toString(i.getAccount().getAccountNumber())));
-		ui.add(row, ui.createTableCell(Float.toString(i.getAmountPaid())));		
+		ui.add(row, ui.createTableCell(Float.toString(i.getAmountPaid())));		 
+		ui.add(row, ui.createTableCell(df.format(i.getTimePaid())));
+		ui.add(row, ui.createTableCell(tf.format(i.getTimePaid())));
 		return row;
 	}
 

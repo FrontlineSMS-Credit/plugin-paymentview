@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
 
+import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 
 public interface ClientDao {
@@ -66,5 +67,11 @@ public interface ClientDao {
 	 * @param client
 	 */
 	public void saveUpdateClient(Client client) throws DuplicateKeyException;
+
+	/**
+	 * @param account
+	 * @return
+	 */
+	public Client getClientByAccount(Account account); 
 	
 }

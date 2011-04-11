@@ -15,10 +15,12 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.NetworkOperator;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.NetworkOperatorDao;
+import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 
 public class DummyData {
 	public static final DummyData INSTANCE = new DummyData();
@@ -29,6 +31,7 @@ public class DummyData {
 	private final DummyAccountDao accountDao = new DummyAccountDao();
 	private final DummyIncomingPaymentDao incomingPaymentDao = new DummyIncomingPaymentDao();
 	private final DummyNetworkOperatorDao networkOperatorDao = new DummyNetworkOperatorDao();
+	private final OutgoingPaymentDao outgoingPaymentDao = new DummyOutgoingPaymentDao();
 
 	private DummyData() {
 		// Create dummy clients
@@ -91,12 +94,91 @@ public class DummyData {
 		createDummyClient("Justus Matanda", "+25472014545", new long[] {
 				42547455, 43493444 });
 
+		createDummyIncomingPayment("Isiah Muchene", "+254723312235", Calendar
+				.getInstance().getTime(), (float) 43513.60, 59536723);
 		createDummyIncomingPayment("Ian Mukewa", "+25472762345", Calendar
-				.getInstance().getTime(), (float) 2434433.23, 23432674);
+				.getInstance().getTime(), (float) 313.60, 23432674);
+		createDummyIncomingPayment("Justin Mwakidedi", "+25475412345", Calendar
+				.getInstance().getTime(), (float) 433.00, 25857623);
 		createDummyIncomingPayment("John Muigai", "+25472012326", Calendar
-				.getInstance().getTime(), (float) 2434433.23, 24343423);
+				.getInstance().getTime(), (float) 44232.24, 24343423);
 		createDummyIncomingPayment("Phanice Nafula", "+25472014545", Calendar
-				.getInstance().getTime(), (float) 2434433.23, 43493444);
+				.getInstance().getTime(), (float) 44343.23, 43493444);
+		createDummyIncomingPayment("Charlene Nyambura", "+25472014545",
+				Calendar.getInstance().getTime(), (float) 345323.63, 23432674);
+		createDummyIncomingPayment("Tangus Koech", "+25472014545", Calendar
+				.getInstance().getTime(), (float) 34243.44, 42400255);
+		createDummyIncomingPayment("Peter Kamau", "+254724555345", Calendar
+				.getInstance().getTime(), (float) 353366.66, 24373423);
+		createDummyIncomingPayment("Isiah Mwiki", "+25472012345", Calendar
+				.getInstance().getTime(), (float) 5456555.66, 108949744);
+		createDummyIncomingPayment("Kimani Karao", "+254720347345", Calendar
+				.getInstance().getTime(), (float) 535635.45, 00425425);
+		createDummyIncomingPayment("Lowuya Lamini", "+254720455345", Calendar
+				.getInstance().getTime(), (float) 636336.33, 232363547);
+
+		createDummyIncomingPayment("Angela Koki", "+254720999345", Calendar
+				.getInstance().getTime(), (float) 636336.33, 232363547);
+		createDummyIncomingPayment("Isiah Mwiki", "+254720785345", Calendar
+				.getInstance().getTime(), (float) 636336.33, 232363547);
+		createDummyIncomingPayment("Roy Owino", "+254720487545", Calendar
+				.getInstance().getTime(), (float) 636336.33, 232363547);
+		createDummyIncomingPayment("Wambui Waweru", "+254720113445", Calendar
+				.getInstance().getTime(), (float) 636336.33, 232363547);
+		createDummyIncomingPayment("Lavendar Akoth", "+254724666645", Calendar
+				.getInstance().getTime(), (float) 636336.33, 232363547);
+		
+		
+		createDummyOutgoingPayment("Isiah Muchene", "+254723312235", Calendar
+				.getInstance().getTime(), (float) 43513.60, 59536723);
+		createDummyOutgoingPayment("Ian Mukewa", "+25472762345", Calendar
+				.getInstance().getTime(), (float) 313.60, 23432674);
+		createDummyOutgoingPayment("Justin Mwakidedi", "+25475412345", Calendar
+				.getInstance().getTime(), (float) 433.00, 25857623);
+		createDummyOutgoingPayment("John Muigai", "+25472012326", Calendar
+				.getInstance().getTime(), (float) 44232.24, 24343423);
+		createDummyOutgoingPayment("Phanice Nafula", "+25472014545", Calendar
+				.getInstance().getTime(), (float) 44343.23, 43493444);
+		createDummyOutgoingPayment("Charlene Nyambura", "+25472014545",
+				Calendar.getInstance().getTime(), (float) 345323.63, 23432674);
+		createDummyOutgoingPayment("Tangus Koech", "+25472014545", Calendar
+				.getInstance().getTime(), (float) 34243.44, 42400255);
+		createDummyOutgoingPayment("Peter Kamau", "+254724555345", Calendar
+				.getInstance().getTime(), (float) 353366.66, 24373423);
+		createDummyOutgoingPayment("Isiah Mwiki", "+25472012345", Calendar
+				.getInstance().getTime(), (float) 5456555.66, 108949744);
+		createDummyOutgoingPayment("Kimani Karao", "+254720347345", Calendar
+				.getInstance().getTime(), (float) 535635.45, 00425425);
+		createDummyOutgoingPayment("Lowuya Lamini", "+254720455345", Calendar
+				.getInstance().getTime(), (float) 636336.33, 232363547);
+
+		createDummyOutgoingPayment("Angela Koki", "+254720999345", Calendar
+				.getInstance().getTime(), (float) 636336.33, 232363547);
+		createDummyOutgoingPayment("Isiah Mwiki", "+254720785345", Calendar
+				.getInstance().getTime(), (float) 636336.33, 232363547);
+		createDummyOutgoingPayment("Roy Owino", "+254720487545", Calendar
+				.getInstance().getTime(), (float) 636336.33, 232363547);
+		createDummyOutgoingPayment("Wambui Waweru", "+254720113445", Calendar
+				.getInstance().getTime(), (float) 636336.33, 232363547);
+		createDummyOutgoingPayment("Lavendar Akoth", "+254724666645", Calendar
+				.getInstance().getTime(), (float) 636336.33, 232363547);
+	}
+
+	private void createDummyOutgoingPayment(String paymentTo, String phoneNumber,
+			Date timePaid, float amountPaid, int accountId) {
+		OutgoingPayment o = new OutgoingPayment();
+		o.setAmountPaid(amountPaid);
+		Account myAcc = accountDao.getAccountByAccountNumber(accountId);
+		o.setAccount(myAcc);
+		o.setAmountPaid(amountPaid);
+		o.setPhoneNumber(phoneNumber);
+		o.setTimePaid(timePaid);
+		try {
+			outgoingPaymentDao.saveOrUpdateOutgoingPayment(o); 
+		} catch (Exception e) {// DuplicateKeyException
+			throw new RuntimeException(e);
+		}
+		
 	}
 
 	private void createDummyIncomingPayment(String paymentBy,
@@ -246,6 +328,94 @@ public class DummyData {
 
 		}
 	}
+	
+	private class DummyOutgoingPaymentDao implements OutgoingPaymentDao {
+		private TreeSet<OutgoingPayment> outgoingPayments = new TreeSet<OutgoingPayment>(
+				new Comparator<OutgoingPayment>() {
+					public int compare(OutgoingPayment i1, OutgoingPayment i2) {
+						return (int) (i1.getOutgoingPaymentId() - i2
+								.getOutgoingPaymentId());
+					}
+				});
+		private int incomingPaymentIdCounter = 0; 
+
+		public OutgoingPayment getOutgoingPaymentById(long incomingPaymentId) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public List<OutgoingPayment> getAllOutgoingPayments() {
+			return new ArrayList<OutgoingPayment>(outgoingPayments);
+		}
+
+		public List<OutgoingPayment> getOutgoingPaymentsByDateRange(
+				Calendar startDate, Calendar endDate) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public List<OutgoingPayment> getOutgoingPaymentsByTimeRange(
+				Date startTime, Date endtime) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public List<OutgoingPayment> getOutgoingPaymentsByClientIdByDateRange(
+				long clientId, Calendar startDate, Calendar endDate) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public List<OutgoingPayment> getOutgoingPaymentByClientId(long clientId) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public List<OutgoingPayment> getOutgoingPaymentsByAccountId(
+				long accountId) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public List<OutgoingPayment> getOutgoingPaymentsByAccountIdByDateRange(
+				long accountId, Calendar startDate, Calendar endDate) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public List<OutgoingPayment> getOutgoingPaymentsByAccountIdByTimeRange(
+				long accountId, Date startDate, Date endDate) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public List<OutgoingPayment> getOutgoingPaymentsByPayer(String payer) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(long phoneNo) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public void saveOrUpdateOutgoingPayment(OutgoingPayment incomingPayment) {
+			boolean isNew = outgoingPayments.add(incomingPayment);
+			if (isNew) {
+				assignDatabaseId(incomingPayment);
+			}
+		}
+
+		private void assignDatabaseId(OutgoingPayment incomingPayment) {
+			incomingPayment.setOutgoingPaymentId(++incomingPaymentIdCounter);
+		}
+
+		public void deleteOutgoingPayment(OutgoingPayment incomingPayment) {
+			// TODO Auto-generated method stub
+
+		}
+	}
+
 
 	private class DummyIncomingPaymentDao implements IncomingPaymentDao {
 		private TreeSet<IncomingPayment> incomingPayments = new TreeSet<IncomingPayment>(
@@ -352,7 +522,7 @@ public class DummyData {
 		}
 
 		public void saveClient(Client client) throws DuplicateKeyException {
-			if(client.getId() == NO_ID_SET) {
+			if (client.getId() == NO_ID_SET) {
 				assignDatabaseId(client);
 			}
 			clients.put(client.getId(), client);
@@ -378,8 +548,9 @@ public class DummyData {
 
 		public List<Client> getClientsByName(String clientName) {
 			List<Client> filteredClients = new ArrayList<Client>();
-			for (Client c: clients.values()) {
-				if (clientName.toLowerCase().equals(c.getFirstName().toLowerCase())){
+			for (Client c : clients.values()) {
+				if (clientName.toLowerCase().equals(
+						c.getFirstName().toLowerCase())) {
 					filteredClients.add(c);
 				}
 			}
@@ -402,9 +573,22 @@ public class DummyData {
 
 		}
 
+		public Client getClientByAccount(Account account) {
+			for(Client client : this.clients.values()){
+				if (client.getAccounts().contains(account)){  
+					return client;
+				}				 
+			}
+			return null; 
+		}
+
 	}
 
 	public IncomingPaymentDao getIncomingPaymentDao() {
 		return this.incomingPaymentDao;
+	}
+
+	public OutgoingPaymentDao getOutgoingPaymentDao() {
+		return this.outgoingPaymentDao;
 	}
 }

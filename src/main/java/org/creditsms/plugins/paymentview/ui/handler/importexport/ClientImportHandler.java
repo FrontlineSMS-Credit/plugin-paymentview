@@ -16,7 +16,7 @@ import net.frontlinesms.ui.handler.importexport.ImportDialogHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.csv.CsvUtils;
-import org.creditsms.plugins.paymentview.data.importexport.PaymentCsvImporter;
+import org.creditsms.plugins.paymentview.data.importexport.ClientCsvImporter;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
 
@@ -32,7 +32,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 	private static final String COMPONENT_CB_PHONE = "cbPhone";
 
 	// > INSTANCE PROPERTIES
-	private PaymentCsvImporter importer;
+	private ClientCsvImporter importer;
 	private int columnCount;
 	private ClientDao clientDao;
 
@@ -57,7 +57,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 
 	@Override
 	protected void setImporter(String filename) throws CsvParseException {
-		this.importer = new PaymentCsvImporter(new File(filename));
+		this.importer = new ClientCsvImporter(new File(filename));
 	}
 
 	@Override
