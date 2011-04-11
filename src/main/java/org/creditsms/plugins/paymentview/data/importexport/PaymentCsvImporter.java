@@ -3,6 +3,8 @@ package org.creditsms.plugins.paymentview.data.importexport;
 import java.io.File;
 import java.io.IOException;
 
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+
 import net.frontlinesms.csv.CsvImportReport;
 import net.frontlinesms.csv.CsvImporter;
 import net.frontlinesms.csv.CsvParseException;
@@ -34,7 +36,7 @@ public class PaymentCsvImporter extends CsvImporter {
 	 * @throws IOException If there was a problem accessing the file
 	 * @throws CsvParseException If there was a problem with the format of the file
 	 */
-	public CsvImportReport importPayments(ContactDao contactDao, GroupMembershipDao groupMembershipDao, GroupDao groupDao, CsvRowFormat rowFormat) {
+	public CsvImportReport importPayments(ClientDao contactDao, CsvRowFormat rowFormat) {
 		log.trace("ENTER");
 		// TODO: Roy, Should take care of Imports at this stage...
 		/*
