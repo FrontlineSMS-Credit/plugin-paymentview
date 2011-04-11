@@ -60,6 +60,19 @@ public class OutgoingPayment {
 			unique=false)
 	private String notes;
 	
+	@Column(name="confirmationCode",
+			nullable=true,
+			unique=false)
+	private String confirmationCode;
+	
+	public String getConfirmationCode() {
+		return confirmationCode;
+	}
+
+	public void setConfirmationCode(String confirmationCode) {
+		this.confirmationCode = confirmationCode;
+	}
+
 	@Column(name="confirmation",
 			nullable=true,
 			unique=false)

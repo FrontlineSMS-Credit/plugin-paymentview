@@ -55,6 +55,19 @@ public class IncomingPayment {
 			unique=false)
 	private Date timePaid;
 
+	@Column(name="confirmationCode",
+			nullable=true,
+			unique=false)
+	private String confirmationCode;
+	
+	public String getConfirmationCode() {
+		return confirmationCode;
+	}
+
+	public void setConfirmationCode(String confirmationCode) {
+		this.confirmationCode = confirmationCode;
+	}
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "accountId", 
 			nullable = true)
