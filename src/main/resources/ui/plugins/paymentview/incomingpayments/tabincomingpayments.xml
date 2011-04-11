@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tab name="tab_incomingPayments" text="Incoming Payments">
+<tab name="tab_incomingPayments" text="Incoming Payments" icon="/icons/user_receiver.png">
 	<panel weightx="1" weighty="1" top="5" right="5" left="5"
 		columns="1" gap="10">
 		<panel columns="2" gap="5" name="pnl_clients" weightx="1"

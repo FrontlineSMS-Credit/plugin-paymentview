@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tab name="tab_clientList" text="Clients">
+<tab name="tab_clientList" text="Clients" icon="/icons/users.png">
 	<panel columns="1" weightx="1" weighty="1" gap="10">
 		<panel weightx="1" weighty="1" columns="1" gap="5" left="5"
 			name="pnl_tbl_clientList" right="5" top="5" width="100">
