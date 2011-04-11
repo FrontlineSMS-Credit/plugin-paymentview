@@ -23,14 +23,12 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 public class ClientCsvImporter extends CsvImporter {
 	/** The delimiter to use between group names when they are exported. */
 	protected static final String GROUPS_DELIMITER = "\\\\";
-	private ClientDao clientDao; 
 	
 //> INSTANCE PROPERTIES
 	
 //> CONSTRUCTORS
 	public ClientCsvImporter(File importFile) throws CsvParseException {
 		super(importFile);
-		clientDao = DummyData.INSTANCE.getClientDao();
 	}
 
 //> IMPORT METHODS
@@ -42,7 +40,7 @@ public class ClientCsvImporter extends CsvImporter {
 	 * @throws IOException If there was a problem accessing the file
 	 * @throws CsvParseException If there was a problem with the format of the file
 	 */
-	public CsvImportReport importPayments(ClientDao contactDao, CsvRowFormat rowFormat) {
+	public CsvImportReport importClients(ClientDao clientDao, CsvRowFormat rowFormat) {
 		log.trace("ENTER");
 		
 		for(String[] lineValues : this.getRawValues()) {

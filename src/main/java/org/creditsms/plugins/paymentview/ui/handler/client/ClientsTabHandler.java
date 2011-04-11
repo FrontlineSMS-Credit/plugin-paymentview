@@ -2,6 +2,12 @@ package org.creditsms.plugins.paymentview.ui.handler.client;
 
 import java.util.List;
 
+import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.handler.BaseTabHandler;
+import net.frontlinesms.ui.handler.ComponentPagingHandler;
+import net.frontlinesms.ui.handler.PagedComponentItemProvider;
+import net.frontlinesms.ui.handler.PagedListDetails;
+
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.dummy.DummyData;
@@ -9,13 +15,6 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.ui.handler.client.dialogs.CustomizeClientHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientImportHandler;
-import org.creditsms.plugins.paymentview.ui.handler.importexport.OutgoingPaymentsImportHandler;
-
-import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.handler.BaseTabHandler;
-import net.frontlinesms.ui.handler.ComponentPagingHandler;
-import net.frontlinesms.ui.handler.PagedComponentItemProvider;
-import net.frontlinesms.ui.handler.PagedListDetails;
 
 public class ClientsTabHandler extends BaseTabHandler implements
 		PagedComponentItemProvider {

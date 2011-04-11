@@ -16,14 +16,14 @@ import net.frontlinesms.ui.handler.importexport.ImportDialogHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.csv.CsvUtils;
+import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.importexport.ClientCsvImporter;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
 
-
 public class ClientImportHandler extends ImportDialogHandler {
 	/** I18n Text Key: TODO document */
-	private static final String MESSAGE_IMPORTING_SELECTED_CLIENTS = "plugins.paymentview.message.importing.selected.client"; 
+	private static final String MESSAGE_IMPORTING_SELECTED_CLIENTS = "plugins.paymentview.message.importing.selected.client";
 	/** i18n Text Key: "Active" */
 	private static final String UI_FILE_OPTIONS_PANEL_CLIENT = "/ui/plugins/paymentview/importexport/pnClientDetails.xml";
 	private static final String COMPONENT_CB_FIRSTNAME = "cbFirstName";
@@ -34,7 +34,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 	// > INSTANCE PROPERTIES
 	private ClientCsvImporter importer;
 	private int columnCount;
-	private ClientDao clientDao;
+	private ClientDao clientDao = DummyData.INSTANCE.getClientDao();
 
 	public ClientImportHandler(UiGeneratorController ui) {
 		super(ui);
@@ -63,7 +63,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 	@Override
 	protected void doSpecialImport(String dataPath) {
 		CsvRowFormat rowFormat = getRowFormatForClient();
-		this.importer.importPayments(this.clientDao, rowFormat);
+		this.importer.importClients(this.clientDao, rowFormat);
 		this.uiController.refreshContactsTab();
 		this.uiController.infoMessage(InternationalisationUtils
 				.getI18nString(I18N_IMPORT_SUCCESSFUL));
@@ -71,12 +71,15 @@ public class ClientImportHandler extends ImportDialogHandler {
 
 	// TODO: Roy, look at this to help you solve issue CREDIT-30
 
-	protected CsvRowFormat getRowFormatForClient() { 
+	protected CsvRowFormat getRowFormatForClient() {
 		CsvRowFormat rowFormat = new CsvRowFormat();
-		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_FIRST_NAME, COMPONENT_CB_FIRSTNAME);
-		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_OTHER_NAME, COMPONENT_CB_OTHERNAME);
+		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_FIRST_NAME,
+				COMPONENT_CB_FIRSTNAME);
+		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_OTHER_NAME,
+				COMPONENT_CB_OTHERNAME);
 		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_PHONE, COMPONENT_ACCOUNTS);
-		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_ACCOUNTS, COMPONENT_CB_PHONE); 
+		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_ACCOUNTS,
+				COMPONENT_CB_PHONE);
 		return rowFormat;
 	}
 
@@ -117,14 +120,15 @@ public class ClientImportHandler extends ImportDialogHandler {
 		for (int i = 0; i < columnCount && i < lineValues.length; ++i) {
 			Object cell = this.uiController.createTableCell(lineValues[i]
 					.replace(CsvExporter.GROUPS_DELIMITER, ", "));
-			
+
 			if (lineValues[i].equals(InternationalisationUtils
-					.getI18nString(PaymentPluginConstants.COMMON_FIRST_NAME)) ||
-					lineValues[i].equals(InternationalisationUtils
-							.getI18nString(PaymentPluginConstants.COMMON_OTHER_NAME))){  
+					.getI18nString(PaymentPluginConstants.COMMON_FIRST_NAME))
+					|| lineValues[i]
+							.equals(InternationalisationUtils
+									.getI18nString(PaymentPluginConstants.COMMON_OTHER_NAME))) {
 				this.uiController.setIcon(cell, Icon.USER_STATUS_ACTIVE);
 			}
-			
+
 			if (lineValues[i].equals(InternationalisationUtils
 					.getI18nString(PaymentPluginConstants.COMMON_PHONE))) {
 				this.uiController.setIcon(cell, Icon.PHONE_NUMBER);

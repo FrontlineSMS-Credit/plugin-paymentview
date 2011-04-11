@@ -20,51 +20,57 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = OutgoingPayment.TABLE_NAME)
-
 public class OutgoingPayment {
 	public static final String TABLE_NAME = "OutGoingpayment";
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="outgoingPaymentId",
-            nullable=false,
-            unique=true)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "outgoingPaymentId", nullable = false, unique = true)
 	private long outgoingPaymentId;
 
-	@Column(name="phoneNumber",
-			nullable=false,
-			unique=false)
+	@Column(name = "phoneNumber", nullable = false, unique = false)
 	private String phoneNumber;
-	
-	@Column(name="amountPaid",
-			nullable=false,
-			unique=false)
+
+	@Column(name = "amountPaid", nullable = false, unique = false)
 	private BigDecimal amountPaid;
-	
-	@Column(name="datePaid",
-			nullable=false,
-			unique=false)
-	private Calendar datePaid;	
-	
-	@Column(name="timePaid",
-			nullable=false,
-			unique=false)
+
+	@Column(name = "timePaid", nullable = false, unique = false)
 	private Date timePaid;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "accountId", 
-			nullable = true)
+	@JoinColumn(name = "accountId", nullable = true)
 	private Account account;
-	
-	@Column(name="notes",
-			nullable=false,
-			unique=false)
+
+	@Column(name = "notes", nullable = false, unique = false)
 	private String notes;
-	
-	@Column(name="confirmation",
-			nullable=false,
-			unique=false)
+
+	@Column(name = "confirmation", nullable = false, unique = false)
 	private boolean confirmation;
-	
+
+	public OutgoingPayment(String phoneNumber, BigDecimal amountPaid,
+			long timePaid, Account account, String notes, boolean confirmation) {
+		this.phoneNumber = phoneNumber;
+		this.amountPaid = amountPaid;
+		this.timePaid = new Date(timePaid);
+		this.account = account;
+		this.notes = notes;
+		this.confirmation = confirmation;
+	}
+
+	public OutgoingPayment(String phoneNumber, BigDecimal amountPaid,
+			Date timePaid, Account account, String notes, boolean confirmation) {
+		super();
+		this.phoneNumber = phoneNumber;
+		this.amountPaid = amountPaid;
+		this.timePaid = timePaid;
+		this.account = account;
+		this.notes = notes;
+		this.confirmation = confirmation;
+	}
+
+	//For Dummy Data... @ian, Remove Later
+	public OutgoingPayment() {
+	}
+
 	public long getOutgoingPaymentId() {
 		return outgoingPaymentId;
 	}
@@ -87,14 +93,6 @@ public class OutgoingPayment {
 
 	public void setAmountPaid(BigDecimal amountPaid) {
 		this.amountPaid = amountPaid;
-	}
-
-	public Calendar getDatePaid() {
-		return datePaid;
-	}
-
-	public void setDatePaid(Calendar datePaid) {
-		this.datePaid = datePaid;
 	}
 
 	public Date getTimePaid() {
@@ -128,5 +126,5 @@ public class OutgoingPayment {
 	public void setConfirmation(boolean confirmation) {
 		this.confirmation = confirmation;
 	}
-	
+
 }

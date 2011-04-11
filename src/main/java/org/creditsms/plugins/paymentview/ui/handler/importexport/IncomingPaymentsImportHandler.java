@@ -14,20 +14,36 @@ import net.frontlinesms.ui.Icon;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.importexport.ImportDialogHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
-import org.creditsms.plugins.paymentview.data.importexport.IncomingPaymentCsvImporter;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 
+import org.creditsms.plugins.paymentview.csv.CsvUtils;
+import org.creditsms.plugins.paymentview.data.importexport.IncomingPaymentCsvImporter;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+
+/**
+ * @author ian <ian@credit.frontlinesms.com>
+ * 
+ */
 public class IncomingPaymentsImportHandler extends ImportDialogHandler {
+	private static final String UI_FILE_OPTIONS_PANEL_CONTACT = "/ui/plugins/paymentview/importexport/pnIncomingPaymentsDetails.xml";
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_IMPORTING_SELECTED_CLIENTS = "Import Clients";
 	/** i18n Text Key: "Active" */
 	private static final String I18N_COMMON_ACTIVE = "common.active";
-	private static final String UI_FILE_OPTIONS_PANEL_CONTACT = "/ui/plugins/paymentview/importexport/pnClientDetails.xml";
+	private static final String COMPONENT_CB_PAYMENT_BY = "cbPaymentBy";
+	private static final String COMPONENT_CB_PHONE_NUMBER = "cbPhoneNumber";
+	private static final String COMPONENT_CB_ACCOUNT = "cbAccount";
+	private static final String COMPONENT_CB_AMOUNT_PAID = "cbAmountPaid";
+	private static final String COMPONENT_CB_TIME_PAID = "cbTimePaid";
+	private static final String COMPONENT_CB_DATE_PAID = "cbDatePaid";
 
 	// > INSTANCE PROPERTIES
 	private IncomingPaymentCsvImporter importer;
 	private int columnCount;
 	private ClientDao clientDao;
+	private IncomingPaymentDao incomingPaymentDao;
+	private AccountDao accountDao;
 
 	public IncomingPaymentsImportHandler(UiGeneratorController ui) {
 		super(ui);
@@ -55,14 +71,30 @@ public class IncomingPaymentsImportHandler extends ImportDialogHandler {
 
 	@Override
 	protected void doSpecialImport(String dataPath) {
-		CsvRowFormat rowFormat = getRowFormatForContact();
-		this.importer.importPayments(this.clientDao, rowFormat);
-		this.uiController.refreshContactsTab();
+		CsvRowFormat rowFormat = getRowFormatForIncomingPayment();
+		this.importer.importIncomingPayments(this.incomingPaymentDao,
+				this.accountDao, rowFormat);
+		// this.uiController.refreshContactsTab();
 		this.uiController.infoMessage(InternationalisationUtils
 				.getI18nString(I18N_IMPORT_SUCCESSFUL));
 	}
 
-	// TODO: Roy, look at this to help you solve issue CREDIT-30
+	private CsvRowFormat getRowFormatForIncomingPayment() {
+		CsvRowFormat rowFormat = new CsvRowFormat();
+		addMarker(rowFormat, CsvUtils.MARKER_INCOMING_PAYMENT_BY,
+				COMPONENT_CB_PAYMENT_BY);
+		addMarker(rowFormat, CsvUtils.MARKER_INCOMING_PHONE_NUMBER,
+				COMPONENT_CB_PHONE_NUMBER);
+		addMarker(rowFormat, CsvUtils.MARKER_INCOMING_ACCOUNT,
+				COMPONENT_CB_ACCOUNT);
+		addMarker(rowFormat, CsvUtils.MARKER_INCOMING_AMOUNT_PAID,
+				COMPONENT_CB_AMOUNT_PAID);
+		addMarker(rowFormat, CsvUtils.MARKER_INCOMING_TIME_PAID,
+				COMPONENT_CB_TIME_PAID);
+		addMarker(rowFormat, CsvUtils.MARKER_INCOMING_DATE_PAID,
+				COMPONENT_CB_DATE_PAID);
+		return rowFormat;
+	}
 
 	@Override
 	protected void appendPreviewHeaderItems(Object header) {
@@ -75,7 +107,6 @@ public class IncomingPaymentsImportHandler extends ImportDialogHandler {
 					attributeName = InternationalisationUtils
 							.getI18nString(I18N_COMMON_ACTIVE);
 				}
-				// TODO: This is what I mean exactly
 				this.uiController.add(header, this.uiController.createColumn(
 						attributeName, attributeName));//
 				++columnCount;
@@ -95,11 +126,11 @@ public class IncomingPaymentsImportHandler extends ImportDialogHandler {
 
 	protected Object getRow(String[] lineValues) {
 		Object row = this.uiController.createTableRow();
-		addClientCells(row, lineValues);
+		addIncomingPaymentCells(row, lineValues);
 		return row;
 	}
 
-	private void addClientCells(Object row, String[] lineValues) {
+	private void addIncomingPaymentCells(Object row, String[] lineValues) {
 		Object iconCell = this.uiController.createTableCell("");
 		this.uiController.setIcon(iconCell, Icon.CONTACT);
 		this.uiController.add(row, iconCell);

@@ -24,7 +24,7 @@ public class CsvExporter extends net.frontlinesms.csv.CsvExporter {
 
 	/**
 	 * @param exportFile
-	 * @param clients
+	 * @param incomingPayments
 	 * @param messageFormat
 	 * @throws IOException
 	 */
@@ -56,17 +56,76 @@ public class CsvExporter extends net.frontlinesms.csv.CsvExporter {
 			LOG.trace("EXIT");
 		}
 
-	}
-
-	public static void exportIncomingPayments(File exportFile,
-			Collection<IncomingPayment> payments, CsvRowFormat messageFormat)
-			throws IOException {
 
 	}
 	
-	public static void exportOutcomingPayments(File exportFile,
-			Collection<OutgoingPayment> payments, CsvRowFormat messageFormat)
+	public static void exportOutgoingPayment(File exportFile,
+			Collection<OutgoingPayment> outgoingPayments, CsvRowFormat outgoingPaymentFormat)
 			throws IOException {
+		LOG.trace("ENTER");
+		LOG.debug("OutgoingPayment format [" + outgoingPaymentFormat + "]");
+		LOG.debug("Filename [" + exportFile.getAbsolutePath() + "]");
+	
+		Utf8FileWriter out = null;
+		
+		try {
+			out = new Utf8FileWriter(exportFile);
+			CsvUtils.writeLine(out, outgoingPaymentFormat,
+					CsvUtils.MARKER_INCOMING_PHONE_NUMBER, InternationalisationUtils.getI18nString(COMMON_FIRST_NAME),
+					CsvUtils.MARKER_INCOMING_AMOUNT_PAID, InternationalisationUtils.getI18nString(COMMON_OTHER_NAME),
+					CsvUtils.MARKER_INCOMING_TIME_PAID, InternationalisationUtils.getI18nString(COMMON_PHONE),
+					CsvUtils.MARKER_INCOMING_ACCOUNT, InternationalisationUtils.getI18nString(COMMON_ACCOUNTS),
+					CsvUtils.MARKER_OUTGOING_NOTES, InternationalisationUtils.getI18nString(COMMON_ACCOUNTS),
+					CsvUtils.MARKER_OUTGOING_CONFIRMATION, InternationalisationUtils.getI18nString(COMMON_ACCOUNTS)
+					);
+			for (OutgoingPayment outgoingPayment : outgoingPayments) {
+				CsvUtils.writeLine(out, outgoingPaymentFormat,						
+					CsvUtils.MARKER_INCOMING_PHONE_NUMBER, outgoingPayment.getPhoneNumber(),
+					CsvUtils.MARKER_INCOMING_AMOUNT_PAID, outgoingPayment.getAmountPaid().toString(),
+					CsvUtils.MARKER_INCOMING_TIME_PAID, Long.toString(outgoingPayment.getTimePaid().getTime()),
+					CsvUtils.MARKER_INCOMING_ACCOUNT, Long.toString(outgoingPayment.getAccount().getAccountNumber()),
+					CsvUtils.MARKER_OUTGOING_NOTES, outgoingPayment.getNotes(),
+					CsvUtils.MARKER_OUTGOING_CONFIRMATION, Boolean.toString(outgoingPayment.isConfirmation())
+				);
+
+			}
+		} finally {
+			if(out!= null) out.close();
+			LOG.trace("EXIT");
+		}
 
 	}
+	
+	public static void exportIncomingPayment(File exportFile,
+			Collection<IncomingPayment> incomingPayments, CsvRowFormat incomingPaymentFormat)
+			throws IOException {
+		LOG.trace("ENTER");
+		LOG.debug("IncomingPayment format [" + incomingPaymentFormat + "]");
+		LOG.debug("Filename [" + exportFile.getAbsolutePath() + "]");
+	
+		Utf8FileWriter out = null;
+		
+		try {
+			out = new Utf8FileWriter(exportFile);
+			CsvUtils.writeLine(out, incomingPaymentFormat,
+					CsvUtils.MARKER_INCOMING_PHONE_NUMBER, InternationalisationUtils.getI18nString(COMMON_FIRST_NAME),
+					CsvUtils.MARKER_INCOMING_AMOUNT_PAID, InternationalisationUtils.getI18nString(COMMON_OTHER_NAME),
+					CsvUtils.MARKER_INCOMING_TIME_PAID, InternationalisationUtils.getI18nString(COMMON_PHONE),
+					CsvUtils.MARKER_INCOMING_ACCOUNT, InternationalisationUtils.getI18nString(COMMON_ACCOUNTS));
+			for (IncomingPayment incomingPayment : incomingPayments) {
+				CsvUtils.writeLine(out, incomingPaymentFormat,						
+					CsvUtils.MARKER_INCOMING_PHONE_NUMBER, incomingPayment.getPhoneNumber(),
+					CsvUtils.MARKER_INCOMING_AMOUNT_PAID, incomingPayment.getAmountPaid().toString(),
+					CsvUtils.MARKER_INCOMING_TIME_PAID, Long.toString(incomingPayment.getTimePaid().getTime()),
+					CsvUtils.MARKER_INCOMING_ACCOUNT, Long.toString(incomingPayment.getAccount().getAccountNumber()) 
+				);
+
+			}
+		} finally {
+			if(out!= null) out.close();
+			LOG.trace("EXIT");
+		}
+
+	}
+	
 }

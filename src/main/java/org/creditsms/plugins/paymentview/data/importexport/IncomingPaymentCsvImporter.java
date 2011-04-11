@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import net.frontlinesms.csv.CsvImportReport;
 import net.frontlinesms.csv.CsvImporter;
@@ -15,19 +13,17 @@ import net.frontlinesms.data.DuplicateKeyException;
 
 import org.creditsms.plugins.paymentview.csv.CsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Account;
-import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 
 /**
- * @author Ian Onesmus Mukewa <ian@frontlinesms.com>
+ * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
  */
 public class IncomingPaymentCsvImporter extends CsvImporter {
 	/** The delimiter to use between group names when they are exported. */
-	private IncomingPaymentDao incomingPaymentDao;
-	private AccountDao accountDao;
 
 	// > INSTANCE PROPERTIES
 
@@ -50,21 +46,21 @@ public class IncomingPaymentCsvImporter extends CsvImporter {
 	 * @throws CsvParseException
 	 *             If there was a problem with the format of the file
 	 */
-	public CsvImportReport importPayments(ClientDao contactDao,
-			CsvRowFormat rowFormat) {
+	public CsvImportReport importIncomingPayments(IncomingPaymentDao incomingPaymentDao,
+			AccountDao accountDao, CsvRowFormat rowFormat) {
 		log.trace("ENTER");
 
 		for (String[] lineValues : this.getRawValues()) {
 			String paymentBy = rowFormat.getOptionalValue(lineValues,
-					CsvUtils.MARKER_CLIENT_FIRST_NAME);
+					CsvUtils.MARKER_INCOMING_PAYMENT_BY);
 			String phoneNumber = rowFormat.getOptionalValue(lineValues,
-					CsvUtils.MARKER_CLIENT_OTHER_NAME);
+					CsvUtils.MARKER_INCOMING_PHONE_NUMBER);
 			String amountPaid = rowFormat.getOptionalValue(lineValues,
-					CsvUtils.MARKER_CLIENT_OTHER_NAME);
+					CsvUtils.MARKER_INCOMING_AMOUNT_PAID);
 			String timePaid = rowFormat.getOptionalValue(lineValues,
-					CsvUtils.MARKER_CONTACT_PHONE);
+					CsvUtils.MARKER_INCOMING_TIME_PAID);
 			String account = rowFormat.getOptionalValue(lineValues,
-					CsvUtils.MARKER_CLIENT_ACCOUNTS);
+					CsvUtils.MARKER_INCOMING_ACCOUNT);
 
 			Account acc;
 
@@ -94,4 +90,6 @@ public class IncomingPaymentCsvImporter extends CsvImporter {
 
 		return new CsvImportReport();
 	}
+ 
+	
 }

@@ -35,13 +35,13 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler{
 	}
 
 //> EVENTS...
-	public void customizeClientDB(){		
+	public void exportPayments(){		
 	}
 	
 	public void addClient(){			
 	}
 	
-	public void importClient(){		
+	public void importPayments(){		
 	}	
 	
 //> PRIVATE HELPER METHODS

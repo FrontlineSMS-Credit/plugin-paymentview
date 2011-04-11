@@ -592,4 +592,8 @@ public class DummyData {
 	public OutgoingPaymentDao getOutgoingPaymentDao() {
 		return this.outgoingPaymentDao;
 	}
+
+	public AccountDao getAccountDao() {
+		return this.accountDao;
+	}
 }
