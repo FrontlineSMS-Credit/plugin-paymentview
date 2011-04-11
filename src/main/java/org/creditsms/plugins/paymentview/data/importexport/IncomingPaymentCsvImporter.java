@@ -2,6 +2,7 @@ package org.creditsms.plugins.paymentview.data.importexport;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,20 +15,21 @@ import net.frontlinesms.data.DuplicateKeyException;
 import org.creditsms.plugins.paymentview.csv.CsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 
 /**
  * @author Ian Onesmus Mukewa <ian@frontlinesms.com> 
  */
-public class PaymentCsvImporter extends CsvImporter {
+public class IncomingPaymentCsvImporter extends CsvImporter {
 	/** The delimiter to use between group names when they are exported. */
-	protected static final String GROUPS_DELIMITER = "\\\\";
-	private ClientDao clientDao; 
+	private IncomingPaymentDao incomingPaymentDao; 
 	
 //> INSTANCE PROPERTIES
 	
 //> CONSTRUCTORS
-	public PaymentCsvImporter(File importFile) throws CsvParseException {
+	public IncomingPaymentCsvImporter(File importFile) throws CsvParseException {
 		super(importFile);
 	}
 
@@ -44,14 +46,14 @@ public class PaymentCsvImporter extends CsvImporter {
 		log.trace("ENTER");
 		
 		for(String[] lineValues : this.getRawValues()) {
-			String firstname = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CLIENT_FIRST_NAME);
-			String otherName = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CLIENT_OTHER_NAME);
-			String phonenumber = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CONTACT_PHONE);
-			String accounts = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CLIENT_ACCOUNTS);
-						
-			Client c = new Client(firstname, otherName, phonenumber, getAccountsFromString(accounts));					
+			String paymentBy = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CLIENT_FIRST_NAME);
+			String phoneNumber = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CLIENT_OTHER_NAME);
+			String timePaid = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CONTACT_PHONE);
+			String account = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CLIENT_ACCOUNTS);
+						 
+			IncomingPayment incomingPayment = new IncomingPayment(paymentBy, phoneNumber, new Date(Long.parseLong(timePaid)),);					
 			try {
-				clientDao.saveUpdateClient(c); 
+				incomingPaymentDao.saveOrUpdateIncomingPayment(incomingPayment);
 			} catch (DuplicateKeyException e) {
 				// FIXME should actually pass details of this back to the user.
 				log.debug("Client already exist with this number", e);

@@ -54,6 +54,29 @@ public class IncomingPayment{
 			nullable = true)
 	private Account account;
 	
+	
+	
+	public IncomingPayment(long incomingPaymentId, String paymentBy,
+			String phoneNumber, float amountPaid, Date timePaid, Account account) {
+		super();
+		this.incomingPaymentId = incomingPaymentId;
+		this.paymentBy = paymentBy;
+		this.phoneNumber = phoneNumber;
+		this.amountPaid = amountPaid;
+		this.timePaid = timePaid;
+		this.account = account;
+	}
+
+	public IncomingPayment(String paymentBy, String phoneNumber,
+			float amountPaid, Date timePaid, Account account) {
+		super();
+		this.paymentBy = paymentBy;
+		this.phoneNumber = phoneNumber;
+		this.amountPaid = amountPaid;
+		this.timePaid = timePaid;
+		this.account = account;
+	}
+
 	public long getIncomingPaymentId() {
 		return incomingPaymentId;
 	}

@@ -14,7 +14,7 @@ import net.frontlinesms.ui.Icon;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.importexport.ImportDialogHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
-import org.creditsms.plugins.paymentview.data.importexport.PaymentCsvImporter;
+import org.creditsms.plugins.paymentview.data.importexport.IncomingPaymentCsvImporter;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 
 public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
@@ -25,7 +25,7 @@ public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
 	private static final String UI_FILE_OPTIONS_PANEL_CONTACT = "/ui/plugins/paymentview/importexport/pnClientDetails.xml";
 
 	// > INSTANCE PROPERTIES
-	private PaymentCsvImporter importer;
+	private IncomingPaymentCsvImporter importer;
 	private int columnCount;
 	private ClientDao clientDao;
 
@@ -50,7 +50,7 @@ public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
 
 	@Override
 	protected void setImporter(String filename) throws CsvParseException {
-		this.importer = new PaymentCsvImporter(new File(filename));
+		this.importer = new IncomingPaymentCsvImporter(new File(filename));
 	}
 
 	@Override
