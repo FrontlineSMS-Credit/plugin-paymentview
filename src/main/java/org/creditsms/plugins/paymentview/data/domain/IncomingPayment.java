@@ -20,7 +20,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = IncomingPayment.TABLE_NAME)
 
-public class IncomingPayment {
+public class IncomingPayment extends Payment{
 	public static final String TABLE_NAME = "IncomingPayment";
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

@@ -1,6 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.outgoingpayments;
 
-import org.creditsms.plugins.paymentview.ui.PaymentsImportHandler;
+import org.creditsms.plugins.paymentview.ui.handler.importexport.PaymentsImportHandler;
 
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;

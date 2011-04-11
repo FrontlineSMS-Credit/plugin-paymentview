@@ -6,8 +6,8 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.ui.PaymentsImportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.client.dialogs.CustomizeClientHandler;
+import org.creditsms.plugins.paymentview.ui.handler.importexport.PaymentsImportHandler;
 
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
@@ -111,6 +111,10 @@ public class ClientsTabHandler extends BaseTabHandler implements
 	}
 
 	public void addClient() {
+		ui.add(new CustomizeClientHandler(ui).getDialog());
+	}
+	
+	public void exportClient() {
 		ui.add(new CustomizeClientHandler(ui).getDialog());
 	}
 

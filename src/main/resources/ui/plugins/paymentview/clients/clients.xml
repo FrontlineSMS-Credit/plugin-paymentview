@@ -16,10 +16,12 @@
 					<column text="Account" width="100" />
 				</header>
 				<popupmenu name="menu">
-					<menuitem action="editClient" icon="/icons/edit.png" name="msg_history"
+					<menuitem action="editClient" icon="/icons/edit.png" name="miEditClient"
 						text="Edit Client" />
 					<menuitem action="showConfirmationDialog('deleteClient')"
-						icon="/icons/delete.png" name="miExportSelected" text="Delete Client" />
+						icon="/icons/delete.png" name="miDeleteClient" text="Delete Client" />
+					<menuitem action="exportClient"
+						icon="/icons/export.png" name="miExportClient" text="Export Client" />
 				</popupmenu>
 			</table>
 		</panel>

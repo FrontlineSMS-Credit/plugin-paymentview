@@ -1,6 +1,7 @@
 package org.creditsms.plugins.paymentview.data.repository;
 
 import java.util.List;
+
 import org.creditsms.plugins.paymentview.data.domain.Client;
 
 public interface ClientDao {
@@ -47,6 +48,7 @@ public interface ClientDao {
 	 * @return
 	 */
 	public Client getClientByPhoneNumber(long phoneNumber);
+	
 	
 	/** @return number of clients in the system */
 	public int getClientCount();
