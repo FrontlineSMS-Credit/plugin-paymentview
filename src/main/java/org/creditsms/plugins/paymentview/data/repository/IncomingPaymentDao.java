@@ -42,17 +42,17 @@ public interface IncomingPaymentDao {
 	/**
 	 * returns IncomingPayment(s) by accountId
 	 * */
-	public List<IncomingPayment> getIncomingPaymentsByAccountId(long accountId);
+	public List<IncomingPayment> getIncomingPaymentsByAccountNumber(long accountId);
 	
 	/**
 	 * returns IncomingPayment(s) by accountId by date ranges
 	 * */
-	public List<IncomingPayment> getIncomingPaymentsByAccountIdByDateRange(long accountId, Calendar startDate, Calendar endDate);
+	public List<IncomingPayment> getIncomingPaymentsByAccountNumberByDateRange(long accountId, Calendar startDate, Calendar endDate);
 	
 	/**
 	 * returns IncomingPayment(s) by accountId by time ranges
 	 * */
-	public List<IncomingPayment> getIncomingPaymentsByAccountIdByTimeRange(long accountId, Date startDate, Date endDate);
+	public List<IncomingPayment> getIncomingPaymentsByAccountNumberByTimeRange(long accountId, Date startDate, Date endDate);
 
 	/**
 	 * returns IncomingPayment(s) by payer 
@@ -62,7 +62,7 @@ public interface IncomingPaymentDao {
 	/**
 	 * returns IncomingPayment(s) by phone number
 	 * */
-	public List<IncomingPayment> getIncomingPaymentsByPhoneNo(long phoneNo);
+	public List<IncomingPayment> getIncomingPaymentsByPhoneNo(String phoneNo);
 
 	/**
 	 * saves or updates an IncomingPayment payment to the system

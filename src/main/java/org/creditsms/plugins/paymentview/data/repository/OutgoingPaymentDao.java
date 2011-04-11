@@ -42,27 +42,22 @@ public interface OutgoingPaymentDao {
 	/**
 	 * returns OutgoingPayment(s) by accountId
 	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByAccountId(long accountId);
+	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumber(long accountId);
 	
 	/**
 	 * returns OutgoingPayment(s) by accountId by date ranges
 	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByAccountIdByDateRange(long accountId, Calendar startDate, Calendar endDate);
+	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumberByDateRange(long accountId, Calendar startDate, Calendar endDate);
 	
 	/**
 	 * returns OutgoingPayment(s) by accountId by time ranges
 	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByAccountIdByTimeRange(long accountId, Date startDate, Date endDate);
-
-	/**
-	 * returns OutgoingPayment(s) by payer 
-	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByPayer(String payer);
+	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumberByTimeRange(long accountId, Date startDate, Date endDate);
 
 	/**
 	 * returns OutgoingPayment(s) by phone number
 	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(long phoneNo);
+	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(String phoneNo);
 
 	/**
 	 * saves or updates an OutgoingPayment payment to the system

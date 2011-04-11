@@ -4,24 +4,36 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
-import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 @SuppressWarnings("unchecked")
-public class HibernateOutgoingPaymentDao extends HibernateDaoSupport implements OutgoingPaymentDao {
+public class HibernateOutgoingPaymentDao extends BaseHibernateDao<OutgoingPayment> implements OutgoingPaymentDao {
+
+	protected HibernateOutgoingPaymentDao(){
+		super(OutgoingPayment.class);
+	}
 
 	public OutgoingPayment getOutgoingPaymentById(long outgoingPaymentId) {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = getSession();
+		Criteria criteria = session.createCriteria(OutgoingPayment.class)
+		.add(Restrictions.eq("id", outgoingPaymentId));
+			
+		List<OutgoingPayment> opLst = criteria.list();
+
+		if (opLst.size() == 0) {
+			return null;
+		}
+		return opLst.get(0);
 	}
 
 	public List<OutgoingPayment> getAllOutgoingPayments() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getHibernateTemplate().loadAll(OutgoingPayment.class);
 	}
 
 	public List<OutgoingPayment> getOutgoingPaymentsByDateRange(
@@ -43,45 +55,67 @@ public class HibernateOutgoingPaymentDao extends HibernateDaoSupport implements 
 	}
 
 	public List<OutgoingPayment> getOutgoingPaymentByClientId(long clientId) {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = getSession();
+		Criteria criteria = session.createCriteria(OutgoingPayment.class);
+			
+		Criteria accountCriteria = criteria.createCriteria("account");
+		Criteria clientCriteria = accountCriteria.createCriteria("client");
+		clientCriteria.add( Restrictions.eq("id", clientId ));
+				
+		List<OutgoingPayment> opLst= criteria.list();
+
+		if (opLst.size() == 0) {
+			return null;
+		}
+		return opLst ;
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentsByAccountId(long accountId) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumber(
+			long accNumber) {
+		Session session = getSession();
+		Criteria criteria = session.createCriteria(OutgoingPayment.class);
+			
+		Criteria accountCriteria = criteria.createCriteria("account");
+		accountCriteria.add( Restrictions.eq("accountNumber", accNumber ));
+				
+		List<OutgoingPayment> opLst= criteria.list();
+
+		if (opLst.size() == 0) {
+			return null;
+		}
+		return opLst ;
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentsByAccountIdByDateRange(
+	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumberByDateRange(
 			long accountId, Calendar startDate, Calendar endDate) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentsByAccountIdByTimeRange(
+	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumberByTimeRange(
 			long accountId, Date startDate, Date endDate) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentsByPayer(String payer) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(String phoneNo) {
+		Session session = getSession();
+		Criteria criteria = session.createCriteria(OutgoingPayment.class)
+		.add(Restrictions.eq("phoneNumber", phoneNo));
+			
+		List<OutgoingPayment> opLst = criteria.list();
 
-	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(long phoneNo) {
-		// TODO Auto-generated method stub
-		return null;
+		if (opLst.size() == 0) {
+			return null;
+		}
+		return opLst;
 	}
 
 	public void saveOrUpdateOutgoingPayment(OutgoingPayment outgoingPayment) {
-		// TODO Auto-generated method stub
-		
+		this.getHibernateTemplate().saveOrUpdate(outgoingPayment);
 	}
 
 	public void deleteOutgoingPayment(OutgoingPayment outgoingPayment) {
-		// TODO Auto-generated method stub
-		
+		this.getHibernateTemplate().delete(outgoingPayment);
 	}
-
 }

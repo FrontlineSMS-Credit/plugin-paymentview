@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.data.domain;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Calendar;
 
@@ -24,28 +25,28 @@ public class OutgoingPayment {
 	public static final String TABLE_NAME = "OutGoingpayment";
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="outgoingPaymentId",
+	@Column(name="id",
             nullable=false,
             unique=true)
-	private long outgoingPaymentId;
+	private long id;
 
 	@Column(name="phoneNumber",
 			nullable=false,
 			unique=false)
-	private long phoneNumber;
+	private String phoneNumber;
 	
 	@Column(name="amountPaid",
 			nullable=false,
 			unique=false)
-	private float amountPaid;
+	private BigDecimal amountPaid;
 	
 	@Column(name="datePaid",
-			nullable=false,
+			nullable=true,
 			unique=false)
 	private Calendar datePaid;	
 	
 	@Column(name="timePaid",
-			nullable=false,
+			nullable=true,
 			unique=false)
 	private Date timePaid;
 
@@ -55,36 +56,36 @@ public class OutgoingPayment {
 	private Account account;
 	
 	@Column(name="notes",
-			nullable=false,
+			nullable=true,
 			unique=false)
 	private String notes;
 	
 	@Column(name="confirmation",
-			nullable=false,
+			nullable=true,
 			unique=false)
 	private boolean confirmation;
 	
-	public long getOutgoingPaymentId() {
-		return outgoingPaymentId;
+	public long getId() {
+		return id;
 	}
 
-	public void setOutgoingPaymentId(long outgoingPaymentId) {
-		this.outgoingPaymentId = outgoingPaymentId;
+	public void setId(long id) {
+		this.id = id;
 	}
 
-	public long getPhoneNumber() {
+	public String getPhoneNumber() {
 		return phoneNumber;
 	}
 
-	public void setPhoneNumber(long phoneNumber) {
+	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public float getAmountPaid() {
+	public BigDecimal getAmountPaid() {
 		return amountPaid;
 	}
 
-	public void setAmountPaid(float amountPaid) {
+	public void setAmountPaid(BigDecimal amountPaid) {
 		this.amountPaid = amountPaid;
 	}
 

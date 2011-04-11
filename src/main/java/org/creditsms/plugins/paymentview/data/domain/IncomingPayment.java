@@ -2,6 +2,7 @@ package org.creditsms.plugins.paymentview.data.domain;
 
 import java.util.Date;
 import java.util.Calendar;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -24,33 +25,33 @@ public class IncomingPayment {
 	public static final String TABLE_NAME = "IncomingPayment";
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="incomingPaymentId",
+	@Column(name="id",
             nullable=false,
             unique=true)
-	private long incomingPaymentId;
+	private long id;
 	
 	@Column(name="paymentBy",
-			nullable=false,
+			nullable=true,
 			unique=false)
 	private String paymentBy;
 	
 	@Column(name="phoneNumber",
 			nullable=false,
 			unique=false)
-	private long phoneNumber;
+	private String phoneNumber;
 	
 	@Column(name="amountPaid",
 			nullable=false,
 			unique=false)
-	private float amountPaid;
+	private BigDecimal amountPaid;
 	
 	@Column(name="datePaid",
-			nullable=false,
+			nullable=true,
 			unique=false)
 	private Calendar datePaid;	
 	
 	@Column(name="timePaid",
-			nullable=false,
+			nullable=true,
 			unique=false)
 	private Date timePaid;
 
@@ -59,12 +60,12 @@ public class IncomingPayment {
 			nullable = true)
 	private Account account;
 	
-	public long getIncomingPaymentId() {
-		return incomingPaymentId;
+	public long getId() {
+		return id;
 	}
 
-	public void setIncomingPaymentId(long incomingPaymentId) {
-		this.incomingPaymentId = incomingPaymentId;
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getPaymentBy() {
@@ -75,19 +76,19 @@ public class IncomingPayment {
 		this.paymentBy = paymentBy;
 	}
 
-	public long getPhoneNumber() {
+	public String getPhoneNumber() {
 		return phoneNumber;
 	}
 
-	public void setPhoneNumber(long phoneNumber) {
+	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public float getAmountPaid() {
+	public BigDecimal getAmountPaid() {
 		return amountPaid;
 	}
 
-	public void setAmountPaid(float amountPaid) {
+	public void setAmountPaid(BigDecimal amountPaid) {
 		this.amountPaid = amountPaid;
 	}
 

@@ -1,0 +1,13 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:p="http://www.springframework.org/schema/p"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- import an in-memory database and related hibernate paraphenalia -->
+	<import resource="classpath:frontlinesms-spring-hibernate-junit.xml" />
+
+	<!-- DAO declarations -->	
+	<bean id="hibernateClientDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateClientDao" parent="baseHibernateDao"/>
+	<bean id="hibernateAccountDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateAccountDao" parent="baseHibernateDao"/>
+	<bean id="hibernateIncomingPaymentDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateIncomingPaymentDao" parent="baseHibernateDao"/>
+</beans>
