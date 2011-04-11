@@ -58,7 +58,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler{
 		ui.add(row, ui.createTableCell(i.getPaymentBy()));
 		ui.add(row, ui.createTableCell(i.getPhoneNumber()));
 		ui.add(row, ui.createTableCell(Long.toString(i.getAccount().getAccountNumber())));
-		ui.add(row, ui.createTableCell(Float.toString(i.getAmountPaid())));		 
+		ui.add(row, ui.createTableCell(i.getAmountPaid().toString()));		 
 		ui.add(row, ui.createTableCell(df.format(i.getTimePaid())));
 		ui.add(row, ui.createTableCell(tf.format(i.getTimePaid())));
 		return row;

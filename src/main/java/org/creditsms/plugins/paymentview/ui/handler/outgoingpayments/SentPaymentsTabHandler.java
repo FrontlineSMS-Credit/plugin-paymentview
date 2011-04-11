@@ -56,7 +56,7 @@ public class SentPaymentsTabHandler extends BaseTabHandler{
 			ui.add(row, ui.createTableCell(clientByAccount.getFirstName() + " " +clientByAccount.getOtherName()));
 			ui.add(row, ui.createTableCell(o.getPhoneNumber()));
 			ui.add(row, ui.createTableCell(Long.toString(o.getAccount().getAccountNumber())));
-			ui.add(row, ui.createTableCell(Float.toString(o.getAmountPaid())));		 
+			ui.add(row, ui.createTableCell(o.getAmountPaid().toString()));		 
 			ui.add(row, ui.createTableCell(df.format(o.getTimePaid())));
 			ui.add(row, ui.createTableCell(tf.format(o.getTimePaid())));
 			return row;

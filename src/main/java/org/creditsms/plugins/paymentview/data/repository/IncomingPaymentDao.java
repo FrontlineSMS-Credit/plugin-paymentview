@@ -1,8 +1,11 @@
 package org.creditsms.plugins.paymentview.data.repository;
 
-import java.util.List;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
+import net.frontlinesms.data.DuplicateKeyException;
+
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 
 /**
@@ -67,7 +70,7 @@ public interface IncomingPaymentDao {
 	/**
 	 * saves or updates an IncomingPayment payment to the system
 	 * */
-	public void saveOrUpdateIncomingPayment(IncomingPayment incomingPayment);
+	public void saveOrUpdateIncomingPayment(IncomingPayment incomingPayment) throws DuplicateKeyException;
 	
 	/**
 	 * removes an IncomingPayment payment to the system

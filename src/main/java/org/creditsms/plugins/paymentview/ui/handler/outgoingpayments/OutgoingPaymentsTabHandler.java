@@ -1,16 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler.outgoingpayments;
 
-import java.text.SimpleDateFormat;
-import java.util.List;
-
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
-
-import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
-import org.creditsms.plugins.paymentview.data.dummy.DummyData;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 
 public class OutgoingPaymentsTabHandler extends BaseTabHandler{
 

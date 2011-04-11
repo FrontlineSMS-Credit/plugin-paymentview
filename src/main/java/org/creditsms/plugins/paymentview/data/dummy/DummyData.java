@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.data.dummy;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -70,13 +71,13 @@ public class DummyData {
 		createDummyClient("Isiah Muchene", "+254723312235", new long[] {
 				463537445, 59536723 });
 		createDummyClient("Onesmus Mukewa", "+25473612345", new long[] {
-				50962323, 25798563 });
+				50962324, 25798563 });
 		createDummyClient("Roy Owino", "+25474512345", new long[] { 88851243,
 				232259896 });
 		createDummyClient("Justin Mwakidedi", "+25475412345", new long[] {
 				232492474, 25857623 });
 		createDummyClient("Mario Mwangi", "+25472542345", new long[] {
-				434322933, 23278523 });
+				434322934, 23278523 });
 		createDummyClient("Peter Kamau", "+254724555345", new long[] {
 				343972222, 24373423 });
 		createDummyClient("Phanice Nafula", "+254724552345", new long[] {
@@ -95,77 +96,77 @@ public class DummyData {
 				42547455, 43493444 });
 
 		createDummyIncomingPayment("Isiah Muchene", "+254723312235", Calendar
-				.getInstance().getTime(), (float) 43513.60, 59536723);
+				.getInstance().getTime(), new BigDecimal("43513.60"), 59536723);
 		createDummyIncomingPayment("Ian Mukewa", "+25472762345", Calendar
-				.getInstance().getTime(), (float) 313.60, 23432674);
+				.getInstance().getTime(), new BigDecimal("313.60"), 23432674);
 		createDummyIncomingPayment("Justin Mwakidedi", "+25475412345", Calendar
-				.getInstance().getTime(), (float) 433.00, 25857623);
+				.getInstance().getTime(), new BigDecimal("433.00"), 25857623);
 		createDummyIncomingPayment("John Muigai", "+25472012326", Calendar
-				.getInstance().getTime(), (float) 44232.24, 24343423);
+				.getInstance().getTime(), new BigDecimal("44232.24"), 24343423);
 		createDummyIncomingPayment("Phanice Nafula", "+25472014545", Calendar
-				.getInstance().getTime(), (float) 44343.23, 43493444);
+				.getInstance().getTime(), new BigDecimal("44343.23"), 43493444);
 		createDummyIncomingPayment("Charlene Nyambura", "+25472014545",
-				Calendar.getInstance().getTime(), (float) 345323.63, 23432674);
+				Calendar.getInstance().getTime(), new BigDecimal("345323.63"), 23432674);
 		createDummyIncomingPayment("Tangus Koech", "+25472014545", Calendar
-				.getInstance().getTime(), (float) 34243.44, 42400255);
+				.getInstance().getTime(), new BigDecimal("34243.44"), 42400255);
 		createDummyIncomingPayment("Peter Kamau", "+254724555345", Calendar
-				.getInstance().getTime(), (float) 353366.66, 24373423);
+				.getInstance().getTime(), new BigDecimal("353366.66"), 24373423);
 		createDummyIncomingPayment("Isiah Mwiki", "+25472012345", Calendar
-				.getInstance().getTime(), (float) 5456555.66, 108949744);
+				.getInstance().getTime(), new BigDecimal("5456555.66"), 108949744);
 		createDummyIncomingPayment("Kimani Karao", "+254720347345", Calendar
-				.getInstance().getTime(), (float) 535635.45, 00425425);
+				.getInstance().getTime(), new BigDecimal("535635.45"), 00425425);
 		createDummyIncomingPayment("Lowuya Lamini", "+254720455345", Calendar
-				.getInstance().getTime(), (float) 636336.33, 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.33"), 232363547);
 
 		createDummyIncomingPayment("Angela Koki", "+254720999345", Calendar
-				.getInstance().getTime(), (float) 636336.33, 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.33"), 232363547);
 		createDummyIncomingPayment("Isiah Mwiki", "+254720785345", Calendar
-				.getInstance().getTime(), (float) 636336.33, 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.33"), 232363547);
 		createDummyIncomingPayment("Roy Owino", "+254720487545", Calendar
-				.getInstance().getTime(), (float) 636336.33, 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.33"), 232363547);
 		createDummyIncomingPayment("Wambui Waweru", "+254720113445", Calendar
-				.getInstance().getTime(), (float) 636336.33, 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.33"), 232363547);
 		createDummyIncomingPayment("Lavendar Akoth", "+254724666645", Calendar
-				.getInstance().getTime(), (float) 636336.33, 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.33"), 232363547);
 		
-		
+
 		createDummyOutgoingPayment("Isiah Muchene", "+254723312235", Calendar
-				.getInstance().getTime(), (float) 43513.60, 59536723);
+				.getInstance().getTime(), new BigDecimal("43513.60"), 59536723);		
 		createDummyOutgoingPayment("Ian Mukewa", "+25472762345", Calendar
-				.getInstance().getTime(), (float) 313.60, 23432674);
+				.getInstance().getTime(), new BigDecimal("313.60"), 23432674);
 		createDummyOutgoingPayment("Justin Mwakidedi", "+25475412345", Calendar
-				.getInstance().getTime(), (float) 433.00, 25857623);
+				.getInstance().getTime(), new BigDecimal("433.00"), 25857623);
 		createDummyOutgoingPayment("John Muigai", "+25472012326", Calendar
-				.getInstance().getTime(), (float) 44232.24, 24343423);
+				.getInstance().getTime(), new BigDecimal("44232.24"), 24343423);
 		createDummyOutgoingPayment("Phanice Nafula", "+25472014545", Calendar
-				.getInstance().getTime(), (float) 44343.23, 43493444);
+				.getInstance().getTime(), new BigDecimal("44343.23"), 43493444);
 		createDummyOutgoingPayment("Charlene Nyambura", "+25472014545",
-				Calendar.getInstance().getTime(), (float) 345323.63, 23432674);
+				Calendar.getInstance().getTime(), new BigDecimal("345323.64"), 23432674);
 		createDummyOutgoingPayment("Tangus Koech", "+25472014545", Calendar
-				.getInstance().getTime(), (float) 34243.44, 42400255);
+				.getInstance().getTime(), new BigDecimal("34243.46"), 42400255);
 		createDummyOutgoingPayment("Peter Kamau", "+254724555345", Calendar
-				.getInstance().getTime(), (float) 353366.66, 24373423);
+				.getInstance().getTime(), new BigDecimal("353366.66"), 24373423);
 		createDummyOutgoingPayment("Isiah Mwiki", "+25472012345", Calendar
-				.getInstance().getTime(), (float) 5456555.66, 108949744);
+				.getInstance().getTime(), new BigDecimal("5456555.66"), 108949744);
 		createDummyOutgoingPayment("Kimani Karao", "+254720347345", Calendar
-				.getInstance().getTime(), (float) 535635.45, 00425425);
+				.getInstance().getTime(), new BigDecimal("535635.45"), 00425425);
 		createDummyOutgoingPayment("Lowuya Lamini", "+254720455345", Calendar
-				.getInstance().getTime(), (float) 636336.33, 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.34"), 232363547);
 
 		createDummyOutgoingPayment("Angela Koki", "+254720999345", Calendar
-				.getInstance().getTime(), (float) 636336.33, 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.34"), 232363547);
 		createDummyOutgoingPayment("Isiah Mwiki", "+254720785345", Calendar
-				.getInstance().getTime(), (float) 636336.33, 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.34"), 232363547);
 		createDummyOutgoingPayment("Roy Owino", "+254720487545", Calendar
-				.getInstance().getTime(), (float) 636336.33, 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.34"), 232363547);
 		createDummyOutgoingPayment("Wambui Waweru", "+254720113445", Calendar
-				.getInstance().getTime(), (float) 636336.33, 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.34"), 232363547);
 		createDummyOutgoingPayment("Lavendar Akoth", "+254724666645", Calendar
-				.getInstance().getTime(), (float) 636336.33, 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.34"), 232363547);
 	}
 
 	private void createDummyOutgoingPayment(String paymentTo, String phoneNumber,
-			Date timePaid, float amountPaid, int accountId) {
+			Date timePaid, BigDecimal amountPaid, int accountId) {
 		OutgoingPayment o = new OutgoingPayment();
 		o.setAmountPaid(amountPaid);
 		Account myAcc = accountDao.getAccountByAccountNumber(accountId);
@@ -182,7 +183,7 @@ public class DummyData {
 	}
 
 	private void createDummyIncomingPayment(String paymentBy,
-			String phoneNumber, Date timePaid, float amountPaid, long accountId) {
+			String phoneNumber, Date timePaid, BigDecimal amountPaid, long accountId) {
 		IncomingPayment i = new IncomingPayment();
 		i.setAmountPaid(amountPaid);
 		Account myAcc = accountDao.getAccountByAccountNumber(accountId);

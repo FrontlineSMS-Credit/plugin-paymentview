@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.data.domain;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Calendar;
 
@@ -42,7 +43,7 @@ public class IncomingPayment{
 	@Column(name="amountPaid",
 			nullable=false,
 			unique=false)
-	private float amountPaid;
+	private BigDecimal amountPaid;
 		
 	@Column(name="timePaid",
 			nullable=false,
@@ -54,21 +55,32 @@ public class IncomingPayment{
 			nullable = true)
 	private Account account;
 	
-	
+	//For Dummy Purposes...
+	public IncomingPayment(){}
 	
 	public IncomingPayment(long incomingPaymentId, String paymentBy,
-			String phoneNumber, float amountPaid, Date timePaid, Account account) {
+			String phoneNumber, BigDecimal amountPaid, long timePaid, Account account) {
 		super();
 		this.incomingPaymentId = incomingPaymentId;
 		this.paymentBy = paymentBy;
 		this.phoneNumber = phoneNumber;
 		this.amountPaid = amountPaid;
-		this.timePaid = timePaid;
+		this.timePaid = new Date(timePaid);
 		this.account = account;
 	}
 
 	public IncomingPayment(String paymentBy, String phoneNumber,
-			float amountPaid, Date timePaid, Account account) {
+			BigDecimal amountPaid, long timePaid, Account account) {
+		super();
+		this.paymentBy = paymentBy;
+		this.phoneNumber = phoneNumber;
+		this.amountPaid = amountPaid;
+		this.timePaid = new Date(timePaid);
+		this.account = account;
+	}
+	
+	public IncomingPayment(String paymentBy, String phoneNumber,
+			BigDecimal amountPaid, Date timePaid, Account account) {
 		super();
 		this.paymentBy = paymentBy;
 		this.phoneNumber = phoneNumber;
@@ -101,11 +113,11 @@ public class IncomingPayment{
 		this.phoneNumber = phoneNumber;
 	}
 
-	public float getAmountPaid() {
+	public BigDecimal getAmountPaid() {
 		return amountPaid;
 	}
 
-	public void setAmountPaid(float amountPaid) {
+	public void setAmountPaid(BigDecimal amountPaid) {
 		this.amountPaid = amountPaid;
 	}
 

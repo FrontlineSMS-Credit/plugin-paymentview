@@ -2,6 +2,7 @@ package org.creditsms.plugins.paymentview.data.repository.hibernate;
 import java.util.List;
 
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
+
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.hibernate.Criteria;
@@ -53,6 +54,11 @@ public class HibernateAccountDao extends BaseHibernateDao<Account>  implements A
 
 	public void saveUpdateAccount(Account account) {
 		this.getHibernateTemplate().saveOrUpdate(account);
+	}
+
+	public Account getAccountByAccountNumber(long parseLong) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

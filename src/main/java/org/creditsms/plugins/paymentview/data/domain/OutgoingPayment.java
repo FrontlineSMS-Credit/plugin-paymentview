@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.data.domain;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Calendar;
 
@@ -37,7 +38,7 @@ public class OutgoingPayment {
 	@Column(name="amountPaid",
 			nullable=false,
 			unique=false)
-	private float amountPaid;
+	private BigDecimal amountPaid;
 	
 	@Column(name="datePaid",
 			nullable=false,
@@ -80,11 +81,11 @@ public class OutgoingPayment {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public float getAmountPaid() {
+	public BigDecimal getAmountPaid() {
 		return amountPaid;
 	}
 
-	public void setAmountPaid(float amountPaid) {
+	public void setAmountPaid(BigDecimal amountPaid) {
 		this.amountPaid = amountPaid;
 	}
 
