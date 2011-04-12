@@ -9,6 +9,8 @@ import net.frontlinesms.ui.handler.BaseTabHandler;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
+import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsImportHandler;
 
 public class IncomingPaymentsTabHandler extends BaseTabHandler{
 	private static final String XML_INCOMING_PAYMENTS_TAB = "/ui/plugins/paymentview/incomingpayments/tabincomingpayments.xml";
@@ -36,12 +38,16 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler{
 
 //> EVENTS...
 	public void exportPayments(){		
+		new IncomingPaymentsExportHandler(ui).showWizard();
+		this.refresh();
 	}
 	
 	public void addClient(){			
 	}
 	
-	public void importPayments(){		
+	public void importPayments(){
+		new IncomingPaymentsImportHandler(ui).showWizard();
+		this.refresh();
 	}	
 	
 //> PRIVATE HELPER METHODS
@@ -52,7 +58,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler{
 			ui.add(table, createRow(i));
 		}
 	}
-
+	
 	private Object createRow(IncomingPayment i) { 
 		Object row = ui.createTableRow();		
 		ui.add(row, ui.createTableCell(i.getPaymentBy()));

@@ -1,9 +1,15 @@
 package org.creditsms.plugins.paymentview.data.importexport;
 
+import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.ACCOUNTS_DELIMITER;
+import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_ACCOUNT;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_ACCOUNTS;
+import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_AMOUNT_PAID;
+import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_CONFIRMATION;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_FIRST_NAME;
+import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_NOTES;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_OTHER_NAME;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_PHONE;
+import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_TIME_PAID;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +26,6 @@ import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.utils.FrontlineUtils;
 
 public class CsvExporter extends net.frontlinesms.csv.CsvExporter {
-	private static final String ACCOUNTS_DELIMITER = ",";
-
 	/**
 	 * @param exportFile
 	 * @param incomingPayments
@@ -71,12 +75,12 @@ public class CsvExporter extends net.frontlinesms.csv.CsvExporter {
 		try {
 			out = new Utf8FileWriter(exportFile);
 			CsvUtils.writeLine(out, outgoingPaymentFormat,
-					CsvUtils.MARKER_INCOMING_PHONE_NUMBER, InternationalisationUtils.getI18nString(COMMON_FIRST_NAME),
-					CsvUtils.MARKER_INCOMING_AMOUNT_PAID, InternationalisationUtils.getI18nString(COMMON_OTHER_NAME),
-					CsvUtils.MARKER_INCOMING_TIME_PAID, InternationalisationUtils.getI18nString(COMMON_PHONE),
-					CsvUtils.MARKER_INCOMING_ACCOUNT, InternationalisationUtils.getI18nString(COMMON_ACCOUNTS),
-					CsvUtils.MARKER_OUTGOING_NOTES, InternationalisationUtils.getI18nString(COMMON_ACCOUNTS),
-					CsvUtils.MARKER_OUTGOING_CONFIRMATION, InternationalisationUtils.getI18nString(COMMON_ACCOUNTS)
+					CsvUtils.MARKER_INCOMING_PHONE_NUMBER, InternationalisationUtils.getI18nString(COMMON_PHONE),
+					CsvUtils.MARKER_INCOMING_AMOUNT_PAID, InternationalisationUtils.getI18nString(COMMON_AMOUNT_PAID),
+					CsvUtils.MARKER_INCOMING_TIME_PAID, InternationalisationUtils.getI18nString(COMMON_TIME_PAID),
+					CsvUtils.MARKER_INCOMING_ACCOUNT, InternationalisationUtils.getI18nString(COMMON_ACCOUNT),
+					CsvUtils.MARKER_OUTGOING_NOTES, InternationalisationUtils.getI18nString(COMMON_NOTES),
+					CsvUtils.MARKER_OUTGOING_CONFIRMATION, InternationalisationUtils.getI18nString(COMMON_CONFIRMATION)
 					);
 			for (OutgoingPayment outgoingPayment : outgoingPayments) {
 				CsvUtils.writeLine(out, outgoingPaymentFormat,						
@@ -108,10 +112,10 @@ public class CsvExporter extends net.frontlinesms.csv.CsvExporter {
 		try {
 			out = new Utf8FileWriter(exportFile);
 			CsvUtils.writeLine(out, incomingPaymentFormat,
-					CsvUtils.MARKER_INCOMING_PHONE_NUMBER, InternationalisationUtils.getI18nString(COMMON_FIRST_NAME),
-					CsvUtils.MARKER_INCOMING_AMOUNT_PAID, InternationalisationUtils.getI18nString(COMMON_OTHER_NAME),
-					CsvUtils.MARKER_INCOMING_TIME_PAID, InternationalisationUtils.getI18nString(COMMON_PHONE),
-					CsvUtils.MARKER_INCOMING_ACCOUNT, InternationalisationUtils.getI18nString(COMMON_ACCOUNTS));
+					CsvUtils.MARKER_INCOMING_PHONE_NUMBER, InternationalisationUtils.getI18nString(COMMON_PHONE),
+					CsvUtils.MARKER_INCOMING_AMOUNT_PAID, InternationalisationUtils.getI18nString(COMMON_AMOUNT_PAID),
+					CsvUtils.MARKER_INCOMING_TIME_PAID, InternationalisationUtils.getI18nString(COMMON_TIME_PAID),
+					CsvUtils.MARKER_INCOMING_ACCOUNT, InternationalisationUtils.getI18nString(COMMON_ACCOUNT));
 			for (IncomingPayment incomingPayment : incomingPayments) {
 				CsvUtils.writeLine(out, incomingPaymentFormat,						
 					CsvUtils.MARKER_INCOMING_PHONE_NUMBER, incomingPayment.getPhoneNumber(),

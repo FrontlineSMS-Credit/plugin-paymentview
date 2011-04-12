@@ -25,7 +25,7 @@
 			</combobox>			
 			<panel weightx="1"/>
 			<panel weightx="1"/>
-			<button colspan="1" icon="/icons/export.png" name="btn_export" text="Export" />
+			<button colspan="1" icon="/icons/export.png" action="exportPayments" name="btn_export" text="Export" />
 		</panel>
 	</panel>
 </tab>

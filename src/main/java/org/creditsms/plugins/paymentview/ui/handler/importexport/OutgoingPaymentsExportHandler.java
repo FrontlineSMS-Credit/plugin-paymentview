@@ -15,11 +15,15 @@ import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.importexport.CsvExporter;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 
+/**
+ * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
+ *
+ */
 public class OutgoingPaymentsExportHandler extends ExportDialogHandler<OutgoingPayment> {
 
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_EXPORTING_SELECTED_CONTACTS = "plugins.paymentview.message.exporting.selected.client";
-	private static final String UI_FILE_OPTIONS_PANEL_CLIENT = "/ui/plugins/paymentview/importexport/pnClientDetails.xml";
+	private static final String UI_FILE_OPTIONS_PANEL_OUTGOING_PAYMENT = "/ui/plugins/paymentview/importexport/pnOutgoingPaymentsDetails.xml";
 	/** i18n Text Key: "Active" */
 	private static final String COMPONENT_CB_PHONE_NUMBER = "cbPhoneNumber";
 	private static final String COMPONENT_CB_ACCOUNT = "cbAccount";
@@ -42,7 +46,7 @@ public class OutgoingPaymentsExportHandler extends ExportDialogHandler<OutgoingP
 	
 	@Override
 	protected String getOptionsFilePath() {
-		return UI_FILE_OPTIONS_PANEL_CLIENT;
+		return UI_FILE_OPTIONS_PANEL_OUTGOING_PAYMENT;
 	}
 	
 	@Override

@@ -20,14 +20,12 @@ public class IncomingPaymentsExportHandler extends ExportDialogHandler<IncomingP
 
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_EXPORTING_SELECTED_CONTACTS = "plugins.paymentview.message.exporting.selected.client";
-	private static final String UI_FILE_OPTIONS_PANEL_CLIENT = "/ui/plugins/paymentview/importexport/pnClientDetails.xml";
+	private static final String UI_FILE_OPTIONS_PANEL_INCOMING_PAYMENT = "/ui/plugins/paymentview/importexport/pnIncomingPaymentsDetails.xml";
 	/** i18n Text Key: "Active" */
 	private static final String COMPONENT_CB_PHONE_NUMBER = "cbPhoneNumber";
 	private static final String COMPONENT_CB_ACCOUNT = "cbAccount";
 	private static final String COMPONENT_CB_AMOUNT_PAID = "cbAmountPaid";
 	private static final String COMPONENT_CB_TIME_PAID = "cbTimePaid";
-	private static final String COMPONENT_CB_OUTGOING_NOTES = "cbNotes";
-	private static final String COMPONENT_CB_OUTGOING_CONFIRMATION = "cbConfirmation";
 	 
 	private IncomingPaymentDao incomingPaymentDao;
 	
@@ -43,7 +41,7 @@ public class IncomingPaymentsExportHandler extends ExportDialogHandler<IncomingP
 	
 	@Override
 	protected String getOptionsFilePath() {
-		return UI_FILE_OPTIONS_PANEL_CLIENT;
+		return UI_FILE_OPTIONS_PANEL_INCOMING_PAYMENT;
 	}
 	
 	@Override
@@ -89,10 +87,6 @@ public class IncomingPaymentsExportHandler extends ExportDialogHandler<IncomingP
 				COMPONENT_CB_AMOUNT_PAID);
 		addMarker(rowFormat, CsvUtils.MARKER_INCOMING_TIME_PAID,
 				COMPONENT_CB_TIME_PAID);
-		addMarker(rowFormat, CsvUtils.MARKER_OUTGOING_NOTES,
-				COMPONENT_CB_OUTGOING_NOTES);
-		addMarker(rowFormat, CsvUtils.MARKER_OUTGOING_CONFIRMATION,
-				COMPONENT_CB_OUTGOING_CONFIRMATION); 
 		return rowFormat;
 	}
 }

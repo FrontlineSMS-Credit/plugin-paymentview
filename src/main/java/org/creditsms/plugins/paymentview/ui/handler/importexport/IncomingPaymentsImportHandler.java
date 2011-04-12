@@ -28,7 +28,7 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 public class IncomingPaymentsImportHandler extends ImportDialogHandler {
 	private static final String UI_FILE_OPTIONS_PANEL_CONTACT = "/ui/plugins/paymentview/importexport/pnIncomingPaymentsDetails.xml";
 	/** I18n Text Key: TODO document */
-	private static final String MESSAGE_IMPORTING_SELECTED_CLIENTS = "Import Clients";
+	private static final String UI_FILE_OPTIONS_PANEL_INCOMING_PAYMENT = "Import Clients";
 	/** i18n Text Key: "Active" */
 	private static final String I18N_COMMON_ACTIVE = "common.active";
 	private static final String COMPONENT_CB_PAYMENT_BY = "cbPaymentBy";
@@ -51,7 +51,7 @@ public class IncomingPaymentsImportHandler extends ImportDialogHandler {
 
 	@Override
 	protected String getWizardTitleI18nKey() {
-		return MESSAGE_IMPORTING_SELECTED_CLIENTS;
+		return UI_FILE_OPTIONS_PANEL_INCOMING_PAYMENT; 
 	}
 
 	@Override

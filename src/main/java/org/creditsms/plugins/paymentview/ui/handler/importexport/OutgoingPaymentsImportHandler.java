@@ -17,19 +17,16 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.csv.CsvUtils;
 import org.creditsms.plugins.paymentview.data.dummy.DummyData;
-import org.creditsms.plugins.paymentview.data.importexport.IncomingPaymentCsvImporter;
 import org.creditsms.plugins.paymentview.data.importexport.OutgoingPaymentCsvImporter;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 
 public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
-	private static final String UI_FILE_OPTIONS_PANEL_CONTACT = "/ui/plugins/paymentview/importexport/pnIncomingPaymentsDetails.xml";
+	private static final String UI_FILE_OPTIONS_PANEL_CONTACT = "/ui/plugins/paymentview/importexport/pnOutgoingPaymentsDetails.xml";
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_IMPORTING_SELECTED_CLIENTS = "Import Clients";
 	/** i18n Text Key: "Active" */
 	private static final String I18N_COMMON_ACTIVE = "common.active";
-	private static final String COMPONENT_CB_PAYMENT_BY = "cbPaymentBy";
 	private static final String COMPONENT_CB_PHONE_NUMBER = "cbPhoneNumber";
 	private static final String COMPONENT_CB_ACCOUNT = "cbAccount";
 	private static final String COMPONENT_CB_AMOUNT_PAID = "cbAmountPaid";
@@ -40,7 +37,6 @@ public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
 	// > INSTANCE PROPERTIES
 	private OutgoingPaymentCsvImporter importer;
 	private int columnCount;
-	private ClientDao clientDao = DummyData.INSTANCE.getClientDao();
 	private OutgoingPaymentDao outgoingPaymentDao = DummyData.INSTANCE.getOutgoingPaymentDao();
 	private AccountDao accountDao = DummyData.INSTANCE.getAccountDao();
 

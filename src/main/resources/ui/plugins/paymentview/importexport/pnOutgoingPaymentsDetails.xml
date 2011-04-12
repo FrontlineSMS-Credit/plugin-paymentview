@@ -5,4 +5,6 @@
 	<checkbox action="columnCheckboxChanged" icon="/icons/phone.png" name="cbAccount" selected="true" text="i18n.common.phone.number" />
 	<checkbox action="columnCheckboxChanged" icon="/icons/money.png" name="cbAmountPaid" selected="true" text="Amount Paid" />
 	<checkbox action="columnCheckboxChanged" icon="/icons/time.png" name="cbTimePaid" selected="true" text="Time Paid" />
+	<checkbox action="columnCheckboxChanged" icon="/icons/time.png" name="cbNotes" selected="true" text="Notes" />
+	<checkbox action="columnCheckboxChanged" icon="/icons/time.png" name="cbConfirmation" selected="true" text="Confirmation" />
 </panel>
