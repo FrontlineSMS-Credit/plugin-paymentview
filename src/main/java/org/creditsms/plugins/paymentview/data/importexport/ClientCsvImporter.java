@@ -46,7 +46,7 @@ public class ClientCsvImporter extends CsvImporter {
 		for(String[] lineValues : this.getRawValues()) {
 			String firstname = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CLIENT_FIRST_NAME);
 			String otherName = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CLIENT_OTHER_NAME);
-			String phonenumber = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CONTACT_PHONE);
+			String phonenumber = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CLIENT_PHONE);
 			String accounts = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CLIENT_ACCOUNTS);
 						
 			Client c = new Client(firstname, otherName, phonenumber, getAccountsFromString(accounts));					

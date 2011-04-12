@@ -116,7 +116,7 @@ public class ClientsTabHandler extends BaseTabHandler implements
 	}
 	
 	public void importClient() {
-		new ClientImportHandler(ui).showWizard();
+		new ClientImportHandler(ui, this).showWizard();
 		this.refresh();
 	}
 	
