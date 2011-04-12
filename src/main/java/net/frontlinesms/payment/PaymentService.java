@@ -7,5 +7,5 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 public interface PaymentService {
 	void setIncomingPaymentProcessor(IncomingPaymentProcessor incomingPaymentProcessor);
 	void makePayment(Account account, BigDecimal amount);
-	void checkBalance(Account account);
+	void checkBalance();
 }
