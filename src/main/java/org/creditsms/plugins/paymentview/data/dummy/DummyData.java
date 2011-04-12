@@ -106,32 +106,39 @@ public class DummyData {
 		createDummyIncomingPayment("Phanice Nafula", "+25472014545", Calendar
 				.getInstance().getTime(), new BigDecimal("44343.23"), 43493444);
 		createDummyIncomingPayment("Charlene Nyambura", "+25472014545",
-				Calendar.getInstance().getTime(), new BigDecimal("345323.63"), 23432674);
+				Calendar.getInstance().getTime(), new BigDecimal("345323.63"),
+				23432674);
 		createDummyIncomingPayment("Tangus Koech", "+25472014545", Calendar
 				.getInstance().getTime(), new BigDecimal("34243.44"), 42400255);
 		createDummyIncomingPayment("Peter Kamau", "+254724555345", Calendar
 				.getInstance().getTime(), new BigDecimal("353366.66"), 24373423);
 		createDummyIncomingPayment("Isiah Mwiki", "+25472012345", Calendar
-				.getInstance().getTime(), new BigDecimal("5456555.66"), 108949744);
+				.getInstance().getTime(), new BigDecimal("5456555.66"),
+				108949744);
 		createDummyIncomingPayment("Kimani Karao", "+254720347345", Calendar
 				.getInstance().getTime(), new BigDecimal("535635.45"), 00425425);
 		createDummyIncomingPayment("Lowuya Lamini", "+254720455345", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.33"), 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.33"),
+				232363547);
 
 		createDummyIncomingPayment("Angela Koki", "+254720999345", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.33"), 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.33"),
+				232363547);
 		createDummyIncomingPayment("Isiah Mwiki", "+254720785345", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.33"), 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.33"),
+				232363547);
 		createDummyIncomingPayment("Roy Owino", "+254720487545", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.33"), 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.33"),
+				232363547);
 		createDummyIncomingPayment("Wambui Waweru", "+254720113445", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.33"), 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.33"),
+				232363547);
 		createDummyIncomingPayment("Lavendar Akoth", "+254724666645", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.33"), 232363547);
-		
+				.getInstance().getTime(), new BigDecimal("636336.33"),
+				232363547);
 
 		createDummyOutgoingPayment("Isiah Muchene", "+254723312235", Calendar
-				.getInstance().getTime(), new BigDecimal("43513.60"), 59536723);		
+				.getInstance().getTime(), new BigDecimal("43513.60"), 59536723);
 		createDummyOutgoingPayment("Ian Mukewa", "+25472762345", Calendar
 				.getInstance().getTime(), new BigDecimal("313.60"), 23432674);
 		createDummyOutgoingPayment("Justin Mwakidedi", "+25475412345", Calendar
@@ -141,32 +148,41 @@ public class DummyData {
 		createDummyOutgoingPayment("Phanice Nafula", "+25472014545", Calendar
 				.getInstance().getTime(), new BigDecimal("44343.23"), 43493444);
 		createDummyOutgoingPayment("Charlene Nyambura", "+25472014545",
-				Calendar.getInstance().getTime(), new BigDecimal("345323.64"), 23432674);
+				Calendar.getInstance().getTime(), new BigDecimal("345323.64"),
+				23432674);
 		createDummyOutgoingPayment("Tangus Koech", "+25472014545", Calendar
 				.getInstance().getTime(), new BigDecimal("34243.46"), 42400255);
 		createDummyOutgoingPayment("Peter Kamau", "+254724555345", Calendar
 				.getInstance().getTime(), new BigDecimal("353366.66"), 24373423);
 		createDummyOutgoingPayment("Isiah Mwiki", "+25472012345", Calendar
-				.getInstance().getTime(), new BigDecimal("5456555.66"), 108949744);
+				.getInstance().getTime(), new BigDecimal("5456555.66"),
+				108949744);
 		createDummyOutgoingPayment("Kimani Karao", "+254720347345", Calendar
 				.getInstance().getTime(), new BigDecimal("535635.45"), 00425425);
 		createDummyOutgoingPayment("Lowuya Lamini", "+254720455345", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.34"), 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.34"),
+				232363547);
 
 		createDummyOutgoingPayment("Angela Koki", "+254720999345", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.34"), 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.34"),
+				232363547);
 		createDummyOutgoingPayment("Isiah Mwiki", "+254720785345", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.34"), 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.34"),
+				232363547);
 		createDummyOutgoingPayment("Roy Owino", "+254720487545", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.34"), 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.34"),
+				232363547);
 		createDummyOutgoingPayment("Wambui Waweru", "+254720113445", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.34"), 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.34"),
+				232363547);
 		createDummyOutgoingPayment("Lavendar Akoth", "+254724666645", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.34"), 232363547);
+				.getInstance().getTime(), new BigDecimal("636336.34"),
+				232363547);
 	}
 
-	private void createDummyOutgoingPayment(String paymentTo, String phoneNumber,
-			Date timePaid, BigDecimal amountPaid, int accountId) {
+	private void createDummyOutgoingPayment(String paymentTo,
+			String phoneNumber, Date timePaid, BigDecimal amountPaid,
+			int accountId) {
 		OutgoingPayment o = new OutgoingPayment();
 		o.setAmountPaid(amountPaid);
 		Account myAcc = accountDao.getAccountByAccountNumber(accountId);
@@ -175,15 +191,16 @@ public class DummyData {
 		o.setPhoneNumber(phoneNumber);
 		o.setTimePaid(timePaid);
 		try {
-			outgoingPaymentDao.saveOrUpdateOutgoingPayment(o); 
+			outgoingPaymentDao.saveOrUpdateOutgoingPayment(o);
 		} catch (Exception e) {// DuplicateKeyException
 			throw new RuntimeException(e);
 		}
-		
+
 	}
 
 	private void createDummyIncomingPayment(String paymentBy,
-			String phoneNumber, Date timePaid, BigDecimal amountPaid, long accountId) {
+			String phoneNumber, Date timePaid, BigDecimal amountPaid,
+			long accountId) {
 		IncomingPayment i = new IncomingPayment();
 		i.setAmountPaid(amountPaid);
 		Account myAcc = accountDao.getAccountByAccountNumber(accountId);
@@ -192,7 +209,7 @@ public class DummyData {
 		i.setPhoneNumber(phoneNumber);
 		i.setTimePaid(timePaid);
 		try {
-			incomingPaymentDao.saveOrUpdateIncomingPayment(i);
+			incomingPaymentDao.saveIncomingPayment(i);
 		} catch (Exception e) {// DuplicateKeyException
 			throw new RuntimeException(e);
 		}
@@ -329,16 +346,15 @@ public class DummyData {
 
 		}
 	}
-	
+
 	private class DummyOutgoingPaymentDao implements OutgoingPaymentDao {
 		private TreeSet<OutgoingPayment> outgoingPayments = new TreeSet<OutgoingPayment>(
 				new Comparator<OutgoingPayment>() {
 					public int compare(OutgoingPayment i1, OutgoingPayment i2) {
-						return (int) (i1.getId() - i2
-								.getId());
+						return (int) (i1.getId() - i2.getId());
 					}
 				});
-		private int incomingPaymentIdCounter = 0; 
+		private int incomingPaymentIdCounter = 0;
 
 		public OutgoingPayment getOutgoingPaymentById(long incomingPaymentId) {
 			// TODO Auto-generated method stub
@@ -368,34 +384,6 @@ public class DummyData {
 		}
 
 		public List<OutgoingPayment> getOutgoingPaymentByClientId(long clientId) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<OutgoingPayment> getOutgoingPaymentsByAccountId(
-				long accountId) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<OutgoingPayment> getOutgoingPaymentsByAccountIdByDateRange(
-				long accountId, Calendar startDate, Calendar endDate) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<OutgoingPayment> getOutgoingPaymentsByAccountIdByTimeRange(
-				long accountId, Date startDate, Date endDate) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<OutgoingPayment> getOutgoingPaymentsByPayer(String payer) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(long phoneNo) {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -440,7 +428,6 @@ public class DummyData {
 		}
 	}
 
-
 	private class DummyIncomingPaymentDao implements IncomingPaymentDao {
 		private TreeSet<IncomingPayment> incomingPayments = new TreeSet<IncomingPayment>(
 				new Comparator<IncomingPayment>() {
@@ -449,10 +436,11 @@ public class DummyData {
 					}
 				});
 		private int incomingPaymentIdCounter = 0;
-		
+
 		public List<IncomingPayment> getAllIncomingPayments(int startingIndex,
 				int limit) {
-			List<IncomingPayment> inps = new ArrayList<IncomingPayment>(incomingPayments);
+			List<IncomingPayment> inps = new ArrayList<IncomingPayment>(
+					incomingPayments);
 			return inps.subList(startingIndex, limit);
 		}
 
@@ -516,7 +504,7 @@ public class DummyData {
 			return null;
 		}
 
-		public void saveOrUpdateIncomingPayment(IncomingPayment incomingPayment) {
+		public void saveIncomingPayment(IncomingPayment incomingPayment) {
 			boolean isNew = incomingPayments.add(incomingPayment);
 			if (isNew) {
 				assignDatabaseId(incomingPayment);
@@ -548,7 +536,13 @@ public class DummyData {
 				long accountId, Date startDate, Date endDate) {
 			// TODO Auto-generated method stub
 			return null;
-		}		
+		}
+
+		public void updateIncomingPayment(IncomingPayment incomingPayment)
+				throws DuplicateKeyException {
+			// TODO Auto-generated method stub
+
+		}
 	}
 
 	private class DummyClientDao implements ClientDao {
@@ -559,16 +553,18 @@ public class DummyData {
 		public List<Client> getAllClients() {
 			return new ArrayList<Client>(clients.values());
 		}
-		
+
 		public List<Client> getAllClients(int startIndex, int limit) {
-			return new ArrayList<Client>(clients.values()).subList(startIndex, limit);
+			return new ArrayList<Client>(clients.values()).subList(startIndex,
+					limit);
 		}
-		
+
 		public int getClientCount() {
 			return this.clients.size();
 		}
 
-		public void saveUpdateClient(Client client) throws DuplicateKeyException {
+		public void saveUpdateClient(Client client)
+				throws DuplicateKeyException {
 			if (client.getId() == NO_ID_SET) {
 				assignDatabaseId(client);
 			}
@@ -587,8 +583,6 @@ public class DummyData {
 			// TODO Auto-generated method stub
 			return null;
 		}
-
-		
 
 		public List<Client> getClientsByName(String clientName) {
 			List<Client> filteredClients = new ArrayList<Client>();
@@ -613,12 +607,12 @@ public class DummyData {
 		}
 
 		public Client getClientByAccount(Account account) {
-			for(Client client : this.clients.values()){
-				if (client.getAccounts().contains(account)){  
+			for (Client client : this.clients.values()) {
+				if (client.getAccounts().contains(account)) {
 					return client;
-				}				 
+				}
 			}
-			return null; 
+			return null;
 		}
 
 	}
