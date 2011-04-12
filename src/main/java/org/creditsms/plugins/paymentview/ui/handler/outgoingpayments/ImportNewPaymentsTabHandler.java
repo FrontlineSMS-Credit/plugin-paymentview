@@ -1,6 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.outgoingpayments;
 
-import org.creditsms.plugins.paymentview.ui.PaymentsImportHandler;
+import org.creditsms.plugins.paymentview.ui.handler.importexport.OutgoingPaymentsImportHandler;
 
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
@@ -26,7 +26,7 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler{
 	}
 	
 	public void showImportWizard(String typeName){
-		new PaymentsImportHandler(ui).showWizard();
+		new OutgoingPaymentsImportHandler(ui).showWizard();
 	}
 }
 

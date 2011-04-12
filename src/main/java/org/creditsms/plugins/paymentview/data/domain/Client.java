@@ -7,12 +7,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.OneToMany;
-import javax.persistence.FetchType;
-import javax.persistence.CascadeType;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -47,6 +44,17 @@ public class Client {
 	
 	@OneToMany
 	private Set<OtherClientDetails> otherClientDetails = new HashSet<OtherClientDetails>();
+
+	public Client(String firstName, String otherName, String phoneNumber,
+			Set<Account> accountsFromString) {
+		this.firstName = firstName;
+		this.otherName = otherName;
+		this.phoneNumber = phoneNumber;
+		this.firstName = firstName;
+	}
+	// Created for DummyData
+	public Client() {
+	}
 
 	public Collection<OtherClientDetails> getOtherClientDetails() {
 		return otherClientDetails;
@@ -99,5 +107,40 @@ public class Client {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Client other = (Client) obj;
+		if (phoneNumber == null) {
+			if (other.phoneNumber != null)
+				return false;
+		} else if (!phoneNumber.equals(other.phoneNumber))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Client [id=" + id + ", firstName=" + firstName + ", otherName="
+				+ otherName + ", phoneNumber=" + phoneNumber + ", accounts="
+				+ accounts + "]";
+	}
+	
+	
 
 }

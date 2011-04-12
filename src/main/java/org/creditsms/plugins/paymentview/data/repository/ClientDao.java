@@ -1,6 +1,10 @@
 package org.creditsms.plugins.paymentview.data.repository;
 
 import java.util.List;
+
+import net.frontlinesms.data.DuplicateKeyException;
+
+import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 
 public interface ClientDao {
@@ -48,6 +52,7 @@ public interface ClientDao {
 	 */
 	public Client getClientByPhoneNumber(long phoneNumber);
 	
+	
 	/** @return number of clients in the system */
 	public int getClientCount();
 	
@@ -61,6 +66,12 @@ public interface ClientDao {
 	 * Saves a client to the system
 	 * @param client
 	 */
-	public void saveUpdateClient(Client client);
+	public void saveUpdateClient(Client client) throws DuplicateKeyException;
+
+	/**
+	 * @param account
+	 * @return
+	 */
+	public Client getClientByAccount(Account account); 
 	
 }

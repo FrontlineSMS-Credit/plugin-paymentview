@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
+import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.hibernate.criterion.MatchMode;
@@ -115,6 +116,11 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements Clie
 			return null;
 		}
 		return clientList.get(0);
+	}
+
+	public Client getClientByAccount(Account account) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

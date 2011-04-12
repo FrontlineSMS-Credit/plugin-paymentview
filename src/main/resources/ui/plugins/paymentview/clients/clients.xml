@@ -1,38 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tab name="tab_clientList" text="Clients">
+<tab name="tab_clientList" text="Clients" icon="/icons/users.png">
 	<panel columns="1" weightx="1" weighty="1" gap="10">
 		<panel weightx="1" weighty="1" columns="1" gap="5" left="5"
-			name="pnl_tbl_clientList" right="5" top="5" width="100">
-			<table colspan="10" name="tbl_clientList" width="1000" weightx="1"
-				weighty="1">
+			name="pnl_tbl_clientList" right="5" top="5" width="100">			
+			<panel weightx="1" gap="5">
+				<label text="Clients Contacts" font="20 Bold" weightx="1"/>
+				<panel weightx="1"/>
+				<panel weightx="1"/>
+				<panel weightx="1"/>
+				<textfield action="setClientFilter(clientsFilter.text)"
+					name="clientsFilter" tooltip="i18n.tooltip.search.here" weightx="1" />
+				<button icon="/icons/search.png" text="i18n.common.search" action="filterClients" />
+			</panel>
+			<table delete="showConfirmationDialog('deleteClient')" colspan="10"
+				name="tbl_clientList" width="1000" weightx="1" weighty="1">
 				<header>
-					<column text="Name" width="100" icon="/icons/user.png" />
-					<column text="Phone" width="100" icon="/icons/phone.png" />
+					<column text="Name" width="200" icon="/icons/user.png" />
+					<column text="Phone" width="150" icon="/icons/phone.png" />
 					<column text="Account" width="100" />
 				</header>
+				<popupmenu name="menu">
+					<menuitem action="editClient" icon="/icons/edit.png" name="miEditClient"
+						text="Edit Client" />
+					<menuitem action="showConfirmationDialog('deleteClient')"
+						icon="/icons/delete.png" name="miDeleteClient" text="Delete Client" />
+					<menuitem action="exportClient"
+						icon="/icons/export.png" name="miExportClient" text="Export Client" />
+				</popupmenu>
 			</table>
 		</panel>
-		<panel gap="5" left="5" right="5" bottom="5"
-			name="pnl_buttons" weightx="1">
+		<panel gap="5" left="5" right="5" bottom="5" name="pnl_buttons"
+			weightx="1">
 			<panel halign="left">
 				<button icon="/icons/keyword.png" action="customizeClientDB"
 					name="btn_tab_clientList_customizeClientDB" text="Customize Client Database" />
 			</panel>
-			<panel weightx="1"/>
+			<panel weightx="1" />
 			<panel columns="2" halign="left" gap="2" weightx="1">
 				<button icon="/icons/user_add.png" action="addClient" name="btn_add"
 					text="Add Client" weightx="1" weighty="1" />
-				<button icon="/icons/importContacts.png" action="showImportWizard('messages')"
+				<button icon="/icons/importContacts.png" action="importClient"
 					name="btn_import" text="Import Client" />
 			</panel>
-			<panel weightx="1"/>
-			<panel weightx="1"/>
-			<panel weightx="1"/>
-			<panel weightx="1"/>
-			<panel weightx="1"/>
-			<panel weightx="1"/>
+			<panel weightx="1" />
+			<panel weightx="1" />
+			<panel weightx="1" />
+			<panel weightx="1" />
+			<panel weightx="1" />
+			<panel weightx="1" />
 			<panel>
-				<button action="addClient" icon="/icons/export.png" name="btn_tab_clientList_export"
+				<button action="exportClient" icon="/icons/export.png" name="btn_tab_clientList_export"
 					text="Export" />
 			</panel>
 		</panel>

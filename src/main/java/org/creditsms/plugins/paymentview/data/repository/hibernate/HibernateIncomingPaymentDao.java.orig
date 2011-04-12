@@ -4,12 +4,21 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+<<<<<<< HEAD
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
+import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+=======
+import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+>>>>>>> origin/master
 
 @SuppressWarnings("unchecked")
 public class HibernateIncomingPaymentDao extends BaseHibernateDao<IncomingPayment> implements IncomingPaymentDao {
@@ -19,15 +28,20 @@ public class HibernateIncomingPaymentDao extends BaseHibernateDao<IncomingPaymen
 	}
 	
 	public IncomingPayment getIncomingPaymentById(long incomingPaymentId) {
-	//FIXME call super.getById()
-		// TODO Auto-generated method stub
-		return null;
+		Session session = getSession();
+		Criteria criteria = session.createCriteria(IncomingPayment.class)
+		.add(Restrictions.eq("id", incomingPaymentId));
+			
+		List<IncomingPayment> ipLst = criteria.list();
+
+		if (ipLst.size() == 0) {
+			return null;
+		}
+		return ipLst.get(0);
 	}
 
 	public List<IncomingPayment> getAllIncomingPayments() {
-	// FIXME call super.getAll()
-		// TODO Auto-generated method stub
-		return null;
+		return this.getHibernateTemplate().loadAll(IncomingPayment.class);
 	}
 
 	public List<IncomingPayment> getIncomingPaymentsByDateRange(
@@ -49,13 +63,19 @@ public class HibernateIncomingPaymentDao extends BaseHibernateDao<IncomingPaymen
 	}
 
 	public List<IncomingPayment> getIncomingPaymentByClientId(long clientId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		Session session = getSession();
+		Criteria criteria = session.createCriteria(IncomingPayment.class);
+			
+		Criteria accountCriteria = criteria.createCriteria("account");
+		Criteria clientCriteria = accountCriteria.createCriteria("client");
+		clientCriteria.add( Restrictions.eq("id", clientId ));
+				
+		List<IncomingPayment> ipLst= criteria.list();
 
-	public List<IncomingPayment> getIncomingPaymentsByAccountId(long accountId) {
-		// TODO Auto-generated method stub
-		return null;
+		if (ipLst.size() == 0) {
+			return null;
+		}
+		return ipLst ;
 	}
 
 	public List<IncomingPayment> getIncomingPaymentsByAccountIdByDateRange(
@@ -71,27 +91,60 @@ public class HibernateIncomingPaymentDao extends BaseHibernateDao<IncomingPaymen
 	}
 
 	public List<IncomingPayment> getIncomingPaymentsByPayer(String payer) {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = getSession();
+		Criteria criteria = session.createCriteria(IncomingPayment.class)
+		.add(Restrictions.ilike("paymentBy", payer.trim(), MatchMode.ANYWHERE));
+			
+		List<IncomingPayment> ipList = criteria.list();
+
+		if (ipList.size() == 0) {
+			return null;
+		}
+		return ipList;
 	}
 
 	public List<IncomingPayment> getIncomingPaymentsByPhoneNo(String phoneNo) {
+<<<<<<< HEAD
+		Session session = getSession();
+		Criteria criteria = session.createCriteria(IncomingPayment.class)
+		.add(Restrictions.eq("phoneNumber", phoneNo));
+			
+		List<IncomingPayment> ipLst = criteria.list();
+
+		if (ipLst.size() == 0) {
+			return null;
+		}
+		return ipLst;
+=======
 		// TODO Auto-generated method stub
 		return null;
+>>>>>>> origin/master
 	}
 
 	public void saveOrUpdateIncomingPayment(IncomingPayment incomingPayment) {
-		// TODO Auto-generated method stub
-		
+		this.getHibernateTemplate().saveOrUpdate(incomingPayment);
 	}
 
 	public void deleteIncomingPayment(IncomingPayment incomingPayment) {
-	// FIXME
+		this.getHibernateTemplate().delete(incomingPayment);
+		
 	}
 
+<<<<<<< HEAD
 	public List<IncomingPayment> getIncomingPaymentsByAccountNumber(
-			long accountNumber) {// FIXME
-		return null;
+			long accountNumber) {
+		Session session = getSession();
+		Criteria criteria = session.createCriteria(IncomingPayment.class);
+			
+		Criteria accountCriteria = criteria.createCriteria("account");
+		accountCriteria.add( Restrictions.eq("accountNumber", accountNumber ));
+				
+		List<IncomingPayment> ipLst= criteria.list();
+
+		if (ipLst.size() == 0) {
+			return null;
+		}
+		return ipLst ;
 	}
 
 	public List<IncomingPayment> getIncomingPaymentsByAccountNumberByDateRange(
@@ -100,15 +153,14 @@ public class HibernateIncomingPaymentDao extends BaseHibernateDao<IncomingPaymen
 		return null;
 	}
 
+	public List<IncomingPayment> getIncomingPaymentsByAccountNumberByTimeRange(
+			long accountId, Date startDate, Date endDate) {
+=======
 	public List<IncomingPayment> getAllIncomingPayments(int startingIndex,
 			int limit) {
+>>>>>>> origin/master
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<IncomingPayment> getIncomingPaymentsByAccountNumberByTimeRange(
-			long accountId, Date startDate, Date endDate) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

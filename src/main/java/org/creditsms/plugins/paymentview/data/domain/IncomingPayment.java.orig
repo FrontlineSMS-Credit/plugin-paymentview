@@ -2,6 +2,8 @@ package org.creditsms.plugins.paymentview.data.domain;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Calendar;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -20,7 +22,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = IncomingPayment.TABLE_NAME)
 
-public class IncomingPayment {
+public class IncomingPayment{
 	public static final String TABLE_NAME = "IncomingPayment";
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -30,7 +32,7 @@ public class IncomingPayment {
 	private long id;
 	
 	@Column(name="paymentBy",
-			nullable=false,
+			nullable=true,
 			unique=false)
 	private String paymentBy;
 	
@@ -43,7 +45,16 @@ public class IncomingPayment {
 			nullable=false,
 			unique=false)
 	private BigDecimal amountPaid;
+<<<<<<< HEAD
+	
+	@Column(name="datePaid",
+			nullable=true,
+			unique=false)
+	private Calendar datePaid;	
+	
+=======
 		
+>>>>>>> origin/master
 	@Column(name="timePaid",
 			nullable=true,
 			unique=false)
@@ -67,12 +78,17 @@ public class IncomingPayment {
 			nullable = true)
 	private Account account;
 	
+<<<<<<< HEAD
+	public long getId() {
+		return id;
+=======
 	//For Dummy Purposes...
 	public IncomingPayment(){}
 	
 	public IncomingPayment(long incomingPaymentId, String paymentBy,
 			String phoneNumber, BigDecimal amountPaid, long timePaid, Account account) {
-		this.id = incomingPaymentId;
+		super();
+		this.incomingPaymentId = incomingPaymentId;
 		this.paymentBy = paymentBy;
 		this.phoneNumber = phoneNumber;
 		this.amountPaid = amountPaid;
@@ -99,9 +115,10 @@ public class IncomingPayment {
 		this.timePaid = timePaid;
 		this.account = account;
 	}
-	
-	public long getId() {
-		return id;
+
+	public long getIncomingPaymentId() {
+		return incomingPaymentId;
+>>>>>>> origin/master
 	}
 
 	public void setId(long id) {

@@ -82,18 +82,23 @@ public class PaymentViewPluginController extends BasePluginController implements
 		uiController.add(mainPane, clientsTab.getTab());		
 		
 		incomingPayTab = new IncomingPaymentsTabHandler(uiController);
+		incomingPayTab.refresh();
 		uiController.add(mainPane, incomingPayTab.getTab());
 		
 		outgoingPayTab = new OutgoingPaymentsTabHandler(uiController);
+		outgoingPayTab.refresh();
 		uiController.add(mainPane, outgoingPayTab.getTab());
 
 		exceptionsTab = new ExceptionsTabHandler(uiController);
+		exceptionsTab.refresh();
 		uiController.add(mainPane, exceptionsTab.getTab());
 
 		exportTab = new ExportTabHandler(uiController);
+		exportTab.refresh();
 		uiController.add(mainPane, exportTab.getTab());
 		
 		analyticsTab = new AnalyticsTabHandler(uiController);
+		analyticsTab.refresh();
 		uiController.add(mainPane, analyticsTab.getTab());
 
 		return paymentViewTab;

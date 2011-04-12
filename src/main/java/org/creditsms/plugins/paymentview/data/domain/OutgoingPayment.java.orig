@@ -2,6 +2,7 @@ package org.creditsms.plugins.paymentview.data.domain;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Calendar;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -22,7 +23,8 @@ import javax.persistence.Table;
 public class OutgoingPayment {
 	public static final String TABLE_NAME = "OutGoingpayment";
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+<<<<<<< HEAD
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id",
             nullable=false,
             unique=true)
@@ -32,22 +34,45 @@ public class OutgoingPayment {
 			nullable=false,
 			unique=false)
 	private String phoneNumber;
+	
+	@Column(name="amountPaid",
+			nullable=false,
+			unique=false)
+	private BigDecimal amountPaid;
+	
+	@Column(name="datePaid",
+			nullable=true,
+			unique=false)
+	private Calendar datePaid;	
+	
+	@Column(name="timePaid",
+			nullable=true,
+			unique=false)
+=======
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "outgoingPaymentId", nullable = false, unique = true)
+	private long outgoingPaymentId;
+
+	@Column(name = "phoneNumber", nullable = false, unique = false)
+	private String phoneNumber;
 
 	@Column(name = "amountPaid", nullable = false, unique = false)
 	private BigDecimal amountPaid;
 
 	@Column(name = "timePaid", nullable = false, unique = false)
+>>>>>>> origin/master
 	private Date timePaid;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "accountId", nullable = true)
 	private Account account;
+<<<<<<< HEAD
 	
 	@Column(name="notes",
 			nullable=true,
 			unique=false)
 	private String notes;
-
+	
 	@Column(name="confirmationCode",
 			nullable=true,
 			unique=false)
@@ -64,6 +89,16 @@ public class OutgoingPayment {
 	@Column(name="confirmation",
 			nullable=true,
 			unique=false)
+	private boolean confirmation;
+	
+	public long getId() {
+		return id;
+=======
+
+	@Column(name = "notes", nullable = false, unique = false)
+	private String notes;
+
+	@Column(name = "confirmation", nullable = false, unique = false)
 	private boolean confirmation;
 
 	public OutgoingPayment(String phoneNumber, BigDecimal amountPaid,
@@ -91,8 +126,9 @@ public class OutgoingPayment {
 	public OutgoingPayment() {
 	}
 
-	public long getId() {
-		return id;
+	public long getOutgoingPaymentId() {
+		return outgoingPaymentId;
+>>>>>>> origin/master
 	}
 
 	public void setId(long id) {

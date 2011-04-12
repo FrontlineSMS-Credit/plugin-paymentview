@@ -7,7 +7,7 @@
 				text="Sort by a characteristic to identify the client(s) or group you would like to export" />
 		</panel>
 		<panel columns="1" gap="5" weightx="1" weighty="1">
-			<table name="tbl_clientsList" weightx="1" weighty="1">
+			<table name="tbl_clientsList" weightx="1" weighty="1"  selection="multiple">
 				<header>
 					<column width="200" icon="/icons/user.png" text="Name" />
 					<column width="150" icon="/icons/phone.png" text="Phone Number" />

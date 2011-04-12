@@ -1,8 +1,11 @@
 package org.creditsms.plugins.paymentview.data.repository;
 
-import java.util.List;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
+import net.frontlinesms.data.DuplicateKeyException;
+
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 
 /**
@@ -18,6 +21,16 @@ public interface IncomingPaymentDao {
 	 * returns all the incomingPayments in the system
 	 * */
 	public List<IncomingPayment> getAllIncomingPayments();
+	
+
+	/**
+	 * returns all the incomingPayments in the system
+	 * 
+	 * @param startingIndex
+	 * @param limit
+	 * @return
+	 */
+	public List<IncomingPayment> getAllIncomingPayments(int startingIndex, int limit);
 	
 	/**
 	 * returns IncomingPayment(s) within a given date range
@@ -67,7 +80,7 @@ public interface IncomingPaymentDao {
 	/**
 	 * saves or updates an IncomingPayment payment to the system
 	 * */
-	public void saveOrUpdateIncomingPayment(IncomingPayment incomingPayment);
+	public void saveOrUpdateIncomingPayment(IncomingPayment incomingPayment) throws DuplicateKeyException;
 	
 	/**
 	 * removes an IncomingPayment payment to the system

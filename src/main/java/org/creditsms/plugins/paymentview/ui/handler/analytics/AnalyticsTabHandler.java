@@ -17,6 +17,7 @@ public class AnalyticsTabHandler implements ThinletUiEventHandler{
 	}
 		
 	public void refresh() {
+		this.createDashBoardHandler.refresh();
 	}
 	
 	protected Object init() {

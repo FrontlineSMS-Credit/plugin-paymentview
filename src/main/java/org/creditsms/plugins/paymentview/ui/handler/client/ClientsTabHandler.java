@@ -2,65 +2,166 @@ package org.creditsms.plugins.paymentview.ui.handler.client;
 
 import java.util.List;
 
+import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.handler.BaseTabHandler;
+import net.frontlinesms.ui.handler.ComponentPagingHandler;
+import net.frontlinesms.ui.handler.PagedComponentItemProvider;
+import net.frontlinesms.ui.handler.PagedListDetails;
+
+import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.ui.PaymentsImportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.client.dialogs.CustomizeClientHandler;
+import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
+import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientImportHandler;
 
-import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.handler.BaseTabHandler;
-
-public class ClientsTabHandler extends BaseTabHandler{
-//> STATIC CONSTANTS
+public class ClientsTabHandler extends BaseTabHandler implements
+		PagedComponentItemProvider {
+	// > STATIC CONSTANTS
 	private static final String XML_CLIENTS_TAB = "/ui/plugins/paymentview/clients/clients.xml";
 	private static final String COMPONENT_CLIENT_TABLE = "tbl_clientList";
-	
-//> INSTANCE PROPERTIES	
+	private static final String COMPONENT_PANEL_CLIENT_LIST = "pnl_tbl_clientList";
+	private Object clientsTableComponent;
+
+	private ComponentPagingHandler clientsTablePager;
+
+	// > INSTANCE PROPERTIES
 	private ClientDao clientDao = DummyData.INSTANCE.getClientDao();
-	
-	
+	private Object pnlClientsList;
+	private String clientFilter;
+
 	public ClientsTabHandler(UiGeneratorController ui) {
-		super(ui);		
+		super(ui);
+		setClientFilter("");
 		init();
+	}
+
+	// > PAGING METHODS
+	public PagedListDetails getListDetails(Object list, int startIndex,
+			int limit) {
+		if (list == this.clientsTableComponent) {
+			return getContactListDetails(startIndex, limit);
+		} else {
+			throw new IllegalStateException();
+		}
+	}
+
+	private PagedListDetails getContactListDetails(int startIndex, int limit) {
+		List<Client> clients = null;
+		if (this.clientFilter.equals("")) {
+			clients = this.clientDao.getAllClients();
+		} else {
+			clients = this.clientDao.getClientsByName(clientFilter);
+		}
+		
+		int totalItemCount = this.clientDao.getClientCount();
+		Object[] listItems = toThinletComponents(clients);
+
+		return new PagedListDetails(totalItemCount, listItems);
+
+	}
+
+	public void updateContactList() {
+		this.clientsTablePager.setCurrentPage(0);
+		this.clientsTablePager.refresh();
+	}
+
+	private Object[] toThinletComponents(List<Client> clients) {
+		Object[] components = new Object[clients.size()];
+		for (int i = 0; i < components.length; i++) {
+			Client c = clients.get(i);
+			components[i] = getRow(c);
+		}
+		return components;
+	}
+
+	public Object getRow(Client client) {
+		Object row = ui.createTableRow(client);
+
+		ui.add(row,
+				ui.createTableCell(client.getFirstName() + " "
+						+ client.getOtherName()));
+		ui.add(row, ui.createTableCell(client.getPhoneNumber()));
+		String accountStr = "";
+		for (Account a : client.getAccounts()) {
+			accountStr += (Long.toString(a.getAccountNumber()) + ", ");
+		}
+		ui.add(row, ui.createTableCell(accountStr));
+		return row;
 	}
 
 	@Override
 	public void refresh() {
-		populateClientsTable();
+		this.updateContactList();
 	}
 
 	@Override
 	protected Object initialiseTab() {
 		Object clientsTab = ui.loadComponentFromFile(XML_CLIENTS_TAB, this);
+		clientsTableComponent = ui.find(clientsTab, COMPONENT_CLIENT_TABLE);
+		clientsTablePager = new ComponentPagingHandler(ui, this,
+				clientsTableComponent);
+		pnlClientsList = ui.find(clientsTab, COMPONENT_PANEL_CLIENT_LIST);
+		this.ui.add(pnlClientsList, this.clientsTablePager.getPanel());
 		return clientsTab;
 	}
 
-//> EVENTS...
-	public void customizeClientDB(){
+	// > EVENTS...
+	public void customizeClientDB() {
 	}
-	
-	public void addClient(){		
+
+	public void addClient() {
 		ui.add(new CustomizeClientHandler(ui).getDialog());
 	}
 	
-	public void showImportWizard(String typeName){
-		new PaymentsImportHandler(ui).showWizard();
+	public void importClient() {
+		new ClientImportHandler(ui).showWizard();
+		this.refresh();
 	}
 	
-//> PRIVATE HELPER METHODS
-	private void populateClientsTable() {
-		Object table = find(COMPONENT_CLIENT_TABLE);
-		List<Client> clients = clientDao.getAllClients();
-		for(Client c : clients) {
-			ui.add(table, createRow(c));
+	public void exportClient() {
+		new ClientExportHandler(ui).showWizard();
+		this.refresh();
+	}
+
+	public void editClient() {
+		Object[] selectedClients = this.ui
+				.getSelectedItems(clientsTableComponent);
+		for (Object selectedClient : selectedClients) {
+			Client c = (Client) ui.getAttachedObject(selectedClient);
+			ui.add(new CustomizeClientHandler(ui, c, clientDao).getDialog());
 		}
 	}
 
-	private Object createRow(Client c) {
-		Object row = ui.createTableRow();
-		ui.add(row, ui.createTableCell(c.getFirstName()));
-		ui.add(row, ui.createTableCell(c.getPhoneNumber()));
-		return row;
+	public void deleteClient() {
+		Object[] selectedClients = this.ui
+				.getSelectedItems(clientsTableComponent);
+		for (Object selectedClient : selectedClients) {
+			Client c = (Client) ui.getAttachedObject(selectedClient);
+			clientDao.deleteClient(c);
+		}
+
+		ui.infoMessage("You have succesfully deleted from the client!");
+		this.refresh();
+	}
+
+	/**
+	 * @param clientFilter
+	 *            the clientFilter to set
+	 */
+	public void setClientFilter(String clientFilter) {
+		this.clientFilter = clientFilter;
+	}
+
+	public void filterClients() {
+		this.updateContactList();
+	}
+
+	/**
+	 * @return the clientFilter
+	 */
+	public String getClientFilter() {
+		return clientFilter;
 	}
 }

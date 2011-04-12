@@ -13,9 +13,11 @@ public interface OtherClientDetailsDao {
 	 * **/
 	public List<OtherClientDetails> getAllOtherDetails();
 	
-	/**
+	/** 
+	 * @param clientId
+	 * @return
 	 * return all the OtherClientDetails belonging to a client
-	 * **/
+	 */
 	public List<OtherClientDetails> getOtherDetailsByClientId(long clientId);
 	
 	/**

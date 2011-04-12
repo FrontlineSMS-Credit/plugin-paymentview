@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name="tab_sentPayments" text="Sent Payments">
-	<panel columns="1" weightx="1" weighty="1" gap="10">
-		<panel gap="5" left="5" right="5" top="5" weightx="1"
+	<panel columns="1" weightx="1" weighty="1" gap="10">		
+		<panel gap="5" columns="1" left="5" right="5" top="5" weightx="1"
 			weighty="1">
+			<label text="Sent Payments" font="20 Bold" weightx="1"/>
 			<table name="tbl_clients" weightx="1" weighty="1">
 				<header>
 					<column width="200" icon="/icons/user.png" text="Name" />
@@ -25,7 +26,7 @@
 			</combobox>			
 			<panel weightx="1"/>
 			<panel weightx="1"/>
-			<button colspan="1" icon="/icons/export.png" name="btn_export" text="Export" />
+			<button colspan="1" icon="/icons/export.png" action="exportPayments" name="btn_export" text="Export" />
 		</panel>
 	</panel>
 </tab>

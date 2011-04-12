@@ -7,7 +7,7 @@
 				<label font="20 bold"
 					name="lbl_tab_outgoingPayments_selectFromClients_banner" text="Select a client to initiate a payment" />
 			</panel>
-			<table name="tbl_clients" weightx="1" weighty="1">
+			<table name="tbl_clients"  selection="multiple" weightx="1" weighty="1">
 				<header>
 					<column text="Select" />
 					<column width="200" icon="/icons/user.png" text="Name" />
