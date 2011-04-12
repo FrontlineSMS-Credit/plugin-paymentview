@@ -78,9 +78,14 @@ public interface IncomingPaymentDao {
 	public List<IncomingPayment> getIncomingPaymentsByPhoneNo(String phoneNo);
 
 	/**
-	 * saves or updates an IncomingPayment payment to the system
+	 * saves an IncomingPayment payment to the system
 	 * */
-	public void saveOrUpdateIncomingPayment(IncomingPayment incomingPayment) throws DuplicateKeyException;
+	public void saveIncomingPayment(IncomingPayment incomingPayment) throws DuplicateKeyException;
+
+	/**
+	 * updates an IncomingPayment payment to the system
+	 * */
+	public void updateIncomingPayment(IncomingPayment incomingPayment) throws DuplicateKeyException;
 	
 	/**
 	 * removes an IncomingPayment payment to the system

@@ -4,14 +4,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 
-@SuppressWarnings("unchecked")
 public class HibernateIncomingPaymentDao extends BaseHibernateDao<IncomingPayment> implements IncomingPaymentDao {
 
 	protected HibernateIncomingPaymentDao(){
@@ -19,15 +17,11 @@ public class HibernateIncomingPaymentDao extends BaseHibernateDao<IncomingPaymen
 	}
 	
 	public IncomingPayment getIncomingPaymentById(long incomingPaymentId) {
-	//FIXME call super.getById()
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public List<IncomingPayment> getAllIncomingPayments() {
-	// FIXME call super.getAll()
-		// TODO Auto-generated method stub
-		return null;
+		return super.getAll();
 	}
 
 	public List<IncomingPayment> getIncomingPaymentsByDateRange(
@@ -80,13 +74,8 @@ public class HibernateIncomingPaymentDao extends BaseHibernateDao<IncomingPaymen
 		return null;
 	}
 
-	public void saveOrUpdateIncomingPayment(IncomingPayment incomingPayment) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public void deleteIncomingPayment(IncomingPayment incomingPayment) {
-	// FIXME
+		super.delete(incomingPayment);
 	}
 
 	public List<IncomingPayment> getIncomingPaymentsByAccountNumber(
@@ -110,5 +99,16 @@ public class HibernateIncomingPaymentDao extends BaseHibernateDao<IncomingPaymen
 			long accountId, Date startDate, Date endDate) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public void saveIncomingPayment(IncomingPayment incomingPayment)
+			throws DuplicateKeyException {
+		super.save(incomingPayment);
+	}
+
+	public void updateIncomingPayment(IncomingPayment incomingPayment)
+			throws DuplicateKeyException {
+		// TODO Auto-generated method stub
+		
 	}
 }

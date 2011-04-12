@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.junit.HibernateTestCase;
 
 public class IncomingPaymentIntergrationTest extends HibernateTestCase{
@@ -23,67 +24,63 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase{
 		assertNotNull(hibernateIncomingPaymentDao);
 	}
 	
-	public void testSavingIncomingPayment(){
+	public void testSavingIncomingPayment() throws DuplicateKeyException{
 		assertEmptyDatabases();
 
-		IncomingPayment ip = new IncomingPayment();
-		ip.setPhoneNumber("0725000000");
-		ip.setAmountPaid(new BigDecimal("2000"));
-		hibernateIncomingPaymentDao.saveOrUpdateIncomingPayment(ip);
+		IncomingPayment ip = createIncomingPayment("0725000000", new BigDecimal("2000"), "bob");
+		hibernateIncomingPaymentDao.saveIncomingPayment(ip);
 		assertEquals(1, hibernateIncomingPaymentDao.getAllIncomingPayments().size());
 	}
-	
-	public void testDeletingIncomingPayment(){
+
+	public void testDeletingIncomingPayment() throws DuplicateKeyException{
 		assertEmptyDatabases();
 		
-		IncomingPayment ip = new IncomingPayment();
-		ip.setPhoneNumber("0726000000");
-		ip.setAmountPaid(new BigDecimal("2100"));
-		hibernateIncomingPaymentDao.saveOrUpdateIncomingPayment(ip);
+		IncomingPayment ip = createIncomingPayment("0726000000", new BigDecimal("2100"), "+3454356435");
+		hibernateIncomingPaymentDao.saveIncomingPayment(ip);
 		assertEquals(1, hibernateIncomingPaymentDao.getAllIncomingPayments().size());
 		
 		hibernateIncomingPaymentDao.deleteIncomingPayment(ip);
 		assertEquals(0, hibernateIncomingPaymentDao.getAllIncomingPayments().size());
 	}
 	
-	public void testGettingIncomingPaymentById(){
+	public void testGettingIncomingPaymentById() throws DuplicateKeyException{
 		assertEmptyDatabases();
 		
 		IncomingPayment ip = new IncomingPayment();
 		ip.setPhoneNumber("0722000000");
 		ip.setAmountPaid(new BigDecimal("2300"));
-		hibernateIncomingPaymentDao.saveOrUpdateIncomingPayment(ip);
-		long ipid = hibernateIncomingPaymentDao.getAllIncomingPayments().get(hibernateIncomingPaymentDao.getAllIncomingPayments().size()-1).getId();
+		hibernateIncomingPaymentDao.saveIncomingPayment(ip);
+		long ipId = this.hibernateIncomingPaymentDao.getAllIncomingPayments().get(0).getId();
 		
-		assertEquals(new BigDecimal("2300"), hibernateIncomingPaymentDao.getIncomingPaymentById(ipid).getAmountPaid());
+		assertEquals(new BigDecimal("2300"), hibernateIncomingPaymentDao.getIncomingPaymentById(ipId).getAmountPaid());
 	}
 	
-	public void testGettingIncomingPaymentByPhoneNumber(){
+	public void testGettingIncomingPaymentByPhoneNumber() throws DuplicateKeyException{
 		assertEmptyDatabases();
 		
 		IncomingPayment ip = new IncomingPayment();
 		ip.setPhoneNumber("0721000000");
 		ip.setAmountPaid(new BigDecimal("2600"));
-		hibernateIncomingPaymentDao.saveOrUpdateIncomingPayment(ip);
+		hibernateIncomingPaymentDao.saveIncomingPayment(ip);
 		String phoneNumber = hibernateIncomingPaymentDao.getAllIncomingPayments().get(hibernateIncomingPaymentDao.getAllIncomingPayments().size()-1).getPhoneNumber();
 
 		assertEquals(new BigDecimal("2600"), hibernateIncomingPaymentDao.getIncomingPaymentsByPhoneNo(phoneNumber).get(hibernateIncomingPaymentDao.getIncomingPaymentsByPhoneNo(phoneNumber).size()-1).getAmountPaid());
 	}
 	
-	public void testGettingIncomingPaymentByPayer(){
+	public void testGettingIncomingPaymentByPayer() throws DuplicateKeyException{
 		assertEmptyDatabases();
 		
 		IncomingPayment ip = new IncomingPayment();
 		ip.setPhoneNumber("0723000000");
 		ip.setPaymentBy("Mr. Renyenjes");
 		ip.setAmountPaid(new BigDecimal("2850"));
-		hibernateIncomingPaymentDao.saveOrUpdateIncomingPayment(ip);
+		hibernateIncomingPaymentDao.saveIncomingPayment(ip);
 		String paidBy = hibernateIncomingPaymentDao.getAllIncomingPayments().get(hibernateIncomingPaymentDao.getAllIncomingPayments().size()-1).getPaymentBy();
 		
 		assertEquals(new BigDecimal("2850"), hibernateIncomingPaymentDao.getIncomingPaymentsByPayer(paidBy).get(hibernateIncomingPaymentDao.getIncomingPaymentsByPayer(paidBy).size()-1).getAmountPaid());
 	}
 	
-	public void testGettingIncomingPaymentByAccountNumber(){
+	public void testGettingIncomingPaymentByAccountNumber() throws DuplicateKeyException{
 		Account ac = new Account();
 		
 		ac.setAccountNumber(4201);
@@ -95,7 +92,7 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase{
 		ip.setAmountPaid(new BigDecimal("12000000"));
 		ip.setAccount(ac);
 		ip.setPaymentBy("Mr Sang");
-		hibernateIncomingPaymentDao.saveOrUpdateIncomingPayment(ip);
+		hibernateIncomingPaymentDao.saveIncomingPayment(ip);
 		assertEquals(1, hibernateIncomingPaymentDao.getAllIncomingPayments().size());
 		
 		long accountNumber = hibernateAccountDao.getAllAcounts().get(hibernateAccountDao.getAllAcounts().size()-1).getAccountNumber();
@@ -103,7 +100,7 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase{
 		
 	}
 	
-	public void testGettingIncomingPaymentsByUserId(){
+	public void testGettingIncomingPaymentsByUserId() throws DuplicateKeyException{
 		
 		Client c = new Client();
 		c.setPhoneNumber("0734000000");
@@ -122,7 +119,7 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase{
 		ip.setAmountPaid(new BigDecimal("24500"));
 		ip.setPaymentBy("Mr Sang");
 		ip.setAccount(ac);
-		hibernateIncomingPaymentDao.saveOrUpdateIncomingPayment(ip);
+		hibernateIncomingPaymentDao.saveIncomingPayment(ip);
 		assertEquals(1, hibernateIncomingPaymentDao.getAllIncomingPayments().size());
 		
 		long clientId = hibernateAccountDao.getAllAcounts().get(hibernateAccountDao.getAllAcounts().size()-1).getClient().getId();
@@ -136,5 +133,13 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase{
 		assertEquals(0, hibernateAccountDao.getAllAcounts().size());
 		assertEquals(0, hibernateIncomingPaymentDao.getAllIncomingPayments().size());
 	}
-	
+
+	private IncomingPayment createIncomingPayment(String phoneNumber, BigDecimal amount,
+			String by) {
+		IncomingPayment ip = new IncomingPayment();
+		ip.setPhoneNumber(phoneNumber);
+		ip.setAmountPaid(amount);
+		ip.setPaymentBy(by);
+		return ip;
+	}	
 }
