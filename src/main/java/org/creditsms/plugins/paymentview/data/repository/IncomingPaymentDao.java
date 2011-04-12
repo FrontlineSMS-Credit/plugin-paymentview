@@ -22,6 +22,16 @@ public interface IncomingPaymentDao {
 	 * */
 	public List<IncomingPayment> getAllIncomingPayments();
 	
+
+	/**
+	 * returns all the incomingPayments in the system
+	 * 
+	 * @param startingIndex
+	 * @param limit
+	 * @return
+	 */
+	public List<IncomingPayment> getAllIncomingPayments(int startingIndex, int limit);
+	
 	/**
 	 * returns IncomingPayment(s) within a given date range
 	 * */
@@ -65,7 +75,7 @@ public interface IncomingPaymentDao {
 	/**
 	 * returns IncomingPayment(s) by phone number
 	 * */
-	public List<IncomingPayment> getIncomingPaymentsByPhoneNo(long phoneNo);
+	public List<IncomingPayment> getIncomingPaymentsByPhoneNo(String phoneNo);
 
 	/**
 	 * saves or updates an IncomingPayment payment to the system

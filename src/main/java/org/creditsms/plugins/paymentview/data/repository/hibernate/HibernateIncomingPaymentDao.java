@@ -4,12 +4,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
-
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 @SuppressWarnings("unchecked")
 public class HibernateIncomingPaymentDao extends HibernateDaoSupport implements IncomingPaymentDao {
@@ -69,7 +66,7 @@ public class HibernateIncomingPaymentDao extends HibernateDaoSupport implements 
 		return null;
 	}
 
-	public List<IncomingPayment> getIncomingPaymentsByPhoneNo(long phoneNo) {
+	public List<IncomingPayment> getIncomingPaymentsByPhoneNo(String phoneNo) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -82,6 +79,12 @@ public class HibernateIncomingPaymentDao extends HibernateDaoSupport implements 
 	public void deleteIncomingPayment(IncomingPayment incomingPayment) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public List<IncomingPayment> getAllIncomingPayments(int startingIndex,
+			int limit) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

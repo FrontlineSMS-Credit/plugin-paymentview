@@ -427,6 +427,12 @@ public class DummyData {
 					}
 				});
 		private int incomingPaymentIdCounter = 0;
+		
+		public List<IncomingPayment> getAllIncomingPayments(int startingIndex,
+				int limit) {
+			List<IncomingPayment> inps = new ArrayList<IncomingPayment>(incomingPayments);
+			return inps.subList(startingIndex, limit);
+		}
 
 		public IncomingPayment getIncomingPaymentById(long incomingPaymentId) {
 			// TODO Auto-generated method stub
@@ -483,7 +489,7 @@ public class DummyData {
 			return null;
 		}
 
-		public List<IncomingPayment> getIncomingPaymentsByPhoneNo(long phoneNo) {
+		public List<IncomingPayment> getIncomingPaymentsByPhoneNo(String phoneNo) {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -502,7 +508,7 @@ public class DummyData {
 		public void deleteIncomingPayment(IncomingPayment incomingPayment) {
 			// TODO Auto-generated method stub
 
-		}
+		}		
 	}
 
 	private class DummyClientDao implements ClientDao {
@@ -513,7 +519,11 @@ public class DummyData {
 		public List<Client> getAllClients() {
 			return new ArrayList<Client>(clients.values());
 		}
-
+		
+		public List<Client> getAllClients(int startIndex, int limit) {
+			return new ArrayList<Client>(clients.values()).subList(startIndex, limit);
+		}
+		
 		public int getClientCount() {
 			return this.clients.size();
 		}
@@ -542,10 +552,7 @@ public class DummyData {
 			return null;
 		}
 
-		public List<Client> getAllClients(int startIndex, int limit) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+		
 
 		public List<Client> getClientsByName(String clientName) {
 			List<Client> filteredClients = new ArrayList<Client>();

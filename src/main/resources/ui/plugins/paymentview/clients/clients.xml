@@ -2,8 +2,12 @@
 <tab name="tab_clientList" text="Clients" icon="/icons/users.png">
 	<panel columns="1" weightx="1" weighty="1" gap="10">
 		<panel weightx="1" weighty="1" columns="1" gap="5" left="5"
-			name="pnl_tbl_clientList" right="5" top="5" width="100">
+			name="pnl_tbl_clientList" right="5" top="5" width="100">			
 			<panel weightx="1" gap="5">
+				<label text="Clients Contacts" font="20 Bold" weightx="1"/>
+				<panel weightx="1"/>
+				<panel weightx="1"/>
+				<panel weightx="1"/>
 				<textfield action="setClientFilter(clientsFilter.text)"
 					name="clientsFilter" tooltip="i18n.tooltip.search.here" weightx="1" />
 				<button icon="/icons/search.png" text="i18n.common.search" action="filterClients" />
