@@ -68,8 +68,6 @@ public class ClientImportHandler extends ImportDialogHandler {
 		CsvRowFormat rowFormat = getRowFormatForClient();
 		this.importer.importClients(this.clientDao, rowFormat);
 		
-			this.clientDao.getAllClients();
-		
 		this.clientsTabHandler.refresh();
 		this.uiController.infoMessage(InternationalisationUtils
 				.getI18nString(I18N_IMPORT_SUCCESSFUL));
