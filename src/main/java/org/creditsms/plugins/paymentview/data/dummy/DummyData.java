@@ -95,93 +95,52 @@ public class DummyData {
 		createDummyClient("Justus Matanda", "+25472014545", new long[] {
 				42547455, 43493444 });
 
-		createDummyIncomingPayment("Isiah Muchene", "+254723312235", Calendar
-				.getInstance().getTime(), new BigDecimal("43513.60"), 59536723);
-		createDummyIncomingPayment("Ian Mukewa", "+25472762345", Calendar
-				.getInstance().getTime(), new BigDecimal("313.60"), 23432674);
-		createDummyIncomingPayment("Justin Mwakidedi", "+25475412345", Calendar
-				.getInstance().getTime(), new BigDecimal("433.00"), 25857623);
-		createDummyIncomingPayment("John Muigai", "+25472012326", Calendar
-				.getInstance().getTime(), new BigDecimal("44232.24"), 24343423);
-		createDummyIncomingPayment("Phanice Nafula", "+25472014545", Calendar
-				.getInstance().getTime(), new BigDecimal("44343.23"), 43493444);
-		createDummyIncomingPayment("Charlene Nyambura", "+25472014545",
-				Calendar.getInstance().getTime(), new BigDecimal("345323.63"),
+		createDummyIncomingPayment("Isiah Muchene", "+254723312235", "1302567149896", new BigDecimal("43513.60"), 59536723);
+		createDummyIncomingPayment("Ian Mukewa", "+25472762345", "1302567149896", new BigDecimal("313.60"), 23432674);
+		createDummyIncomingPayment("Justin Mwakidedi", "+25475412345", "1302567149896", new BigDecimal("433.00"), 25857623);
+		createDummyIncomingPayment("John Muigai", "+25472012326", "1302567149896", new BigDecimal("44232.24"), 24343423);
+		createDummyIncomingPayment("Phanice Nafula", "+25472014545", "1302567149896", new BigDecimal("44343.23"), 43493444);
+		createDummyIncomingPayment("Charlene Nyambura", "+25472014545","1302567149896", new BigDecimal("345323.63"),
 				23432674);
-		createDummyIncomingPayment("Tangus Koech", "+25472014545", Calendar
-				.getInstance().getTime(), new BigDecimal("34243.44"), 42400255);
-		createDummyIncomingPayment("Peter Kamau", "+254724555345", Calendar
-				.getInstance().getTime(), new BigDecimal("353366.66"), 24373423);
-		createDummyIncomingPayment("Isiah Mwiki", "+25472012345", Calendar
-				.getInstance().getTime(), new BigDecimal("5456555.66"),
+		createDummyIncomingPayment("Tangus Koech", "+25472014545", "1302567149896", new BigDecimal("34243.44"), 42400255);
+		createDummyIncomingPayment("Peter Kamau", "+254724555345", "1302567149896", new BigDecimal("353366.66"), 24373423);
+		createDummyIncomingPayment("Isiah Mwiki", "+25472012345", "1302567149896", new BigDecimal("5456555.66"),
 				108949744);
-		createDummyIncomingPayment("Kimani Karao", "+254720347345", Calendar
-				.getInstance().getTime(), new BigDecimal("535635.45"), 00425425);
-		createDummyIncomingPayment("Lowuya Lamini", "+254720455345", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.33"),
+		createDummyIncomingPayment("Kimani Karao", "+254720347345", "1302567149896", new BigDecimal("535635.45"), 00425425);
+		createDummyIncomingPayment("Lowuya Lamini", "+254720455345", "1302567149896", new BigDecimal("636336.33"),
 				232363547);
 
-		createDummyIncomingPayment("Angela Koki", "+254720999345", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.33"),
+		createDummyIncomingPayment("Angela Koki", "+254720999345", "1302567149896", new BigDecimal("636336.33"),
 				232363547);
-		createDummyIncomingPayment("Isiah Mwiki", "+254720785345", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.33"),
+		createDummyIncomingPayment("Isiah Mwiki", "+254720785345", "1302567149896", new BigDecimal("636336.33"),
 				232363547);
-		createDummyIncomingPayment("Roy Owino", "+254720487545", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.33"),
+		createDummyIncomingPayment("Roy Owino", "+254720487545", "1302567149896", new BigDecimal("636336.33"),
 				232363547);
-		createDummyIncomingPayment("Wambui Waweru", "+254720113445", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.33"),
+		createDummyIncomingPayment("Wambui Waweru", "+254720113445", "1302567149896", new BigDecimal("636336.33"),
 				232363547);
-		createDummyIncomingPayment("Lavendar Akoth", "+254724666645", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.33"),
+		createDummyIncomingPayment("Lavendar Akoth", "+254724666645", "1302567149896", new BigDecimal("636336.33"),
 				232363547);
 
-		createDummyOutgoingPayment("Isiah Muchene", "+254723312235", Calendar
-				.getInstance().getTime(), new BigDecimal("43513.60"), 59536723);
-		createDummyOutgoingPayment("Ian Mukewa", "+25472762345", Calendar
-				.getInstance().getTime(), new BigDecimal("313.60"), 23432674);
-		createDummyOutgoingPayment("Justin Mwakidedi", "+25475412345", Calendar
-				.getInstance().getTime(), new BigDecimal("433.00"), 25857623);
-		createDummyOutgoingPayment("John Muigai", "+25472012326", Calendar
-				.getInstance().getTime(), new BigDecimal("44232.24"), 24343423);
-		createDummyOutgoingPayment("Phanice Nafula", "+25472014545", Calendar
-				.getInstance().getTime(), new BigDecimal("44343.23"), 43493444);
-		createDummyOutgoingPayment("Charlene Nyambura", "+25472014545",
-				Calendar.getInstance().getTime(), new BigDecimal("345323.64"),
-				23432674);
-		createDummyOutgoingPayment("Tangus Koech", "+25472014545", Calendar
-				.getInstance().getTime(), new BigDecimal("34243.46"), 42400255);
-		createDummyOutgoingPayment("Peter Kamau", "+254724555345", Calendar
-				.getInstance().getTime(), new BigDecimal("353366.66"), 24373423);
-		createDummyOutgoingPayment("Isiah Mwiki", "+25472012345", Calendar
-				.getInstance().getTime(), new BigDecimal("5456555.66"),
-				108949744);
-		createDummyOutgoingPayment("Kimani Karao", "+254720347345", Calendar
-				.getInstance().getTime(), new BigDecimal("535635.45"), 00425425);
-		createDummyOutgoingPayment("Lowuya Lamini", "+254720455345", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.34"),
-				232363547);
-
-		createDummyOutgoingPayment("Angela Koki", "+254720999345", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.34"),
-				232363547);
-		createDummyOutgoingPayment("Isiah Mwiki", "+254720785345", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.34"),
-				232363547);
-		createDummyOutgoingPayment("Roy Owino", "+254720487545", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.34"),
-				232363547);
-		createDummyOutgoingPayment("Wambui Waweru", "+254720113445", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.34"),
-				232363547);
-		createDummyOutgoingPayment("Lavendar Akoth", "+254724666645", Calendar
-				.getInstance().getTime(), new BigDecimal("636336.34"),
-				232363547);
+		createDummyOutgoingPayment("Isiah Muchene", "+254723312235", "1302567149896", new BigDecimal("43513.60"), 59536723);
+		createDummyOutgoingPayment("Ian Mukewa", "+25472762345", "1302567149896", new BigDecimal("313.60"), 23432674);
+		createDummyOutgoingPayment("Justin Mwakidedi", "+25475412345", "1302567149896", new BigDecimal("433.00"), 25857623);
+		createDummyOutgoingPayment("John Muigai", "+25472012326", "1302567149896", new BigDecimal("44232.24"), 24343423);
+		createDummyOutgoingPayment("Phanice Nafula", "+25472014545", "1302567149896", new BigDecimal("44343.23"), 43493444);
+		createDummyOutgoingPayment("Charlene Nyambura", "+25472014545",	"1302567149896", new BigDecimal("345323.64"),	23432674);
+		createDummyOutgoingPayment("Tangus Koech", "+25472014545", "1302567149296", new BigDecimal("34243.46"), 42400255);
+		createDummyOutgoingPayment("Peter Kamau", "+254724555345", "1302567149596", new BigDecimal("353366.66"), 24373423);
+		createDummyOutgoingPayment("Isiah Mwiki", "+25472012345", "1302567149436", new BigDecimal("5456555.66"),108949744);
+		createDummyOutgoingPayment("Kimani Karao", "+254720347345", "1302567341496", new BigDecimal("535635.45"), 00425425);
+		createDummyOutgoingPayment("Lowuya Lamini", "+254720455345", "1302567149896", new BigDecimal("636336.34"),232363547);
+		createDummyOutgoingPayment("Angela Koki", "+254720999345", "1302567149896", new BigDecimal("636336.34"),232363547);
+		createDummyOutgoingPayment("Isiah Mwiki", "+254720785345", "1302567149896", new BigDecimal("636336.34"),232363547);
+		createDummyOutgoingPayment("Roy Owino", "+254720487545", "1302567149896", new BigDecimal("636336.34"),232363547);
+		createDummyOutgoingPayment("Wambui Waweru", "+254720113445", "1302567149896", new BigDecimal("636336.34"),232363547);
+		createDummyOutgoingPayment("Lavendar Akoth", "+254724666645", "1302567149896", new BigDecimal("636336.34"),232363547);
 	}
 
 	private void createDummyOutgoingPayment(String paymentTo,
-			String phoneNumber, Date timePaid, BigDecimal amountPaid,
+			String phoneNumber, String timePaid, BigDecimal amountPaid,
 			int accountId) {
 		OutgoingPayment o = new OutgoingPayment();
 		o.setAmountPaid(amountPaid);
@@ -189,7 +148,7 @@ public class DummyData {
 		o.setAccount(myAcc);
 		o.setAmountPaid(amountPaid);
 		o.setPhoneNumber(phoneNumber);
-		o.setTimePaid(timePaid);
+		o.setTimePaid(new Date(Long.parseLong(timePaid)));
 		try {
 			outgoingPaymentDao.saveOrUpdateOutgoingPayment(o);
 		} catch (Exception e) {// DuplicateKeyException
@@ -199,7 +158,7 @@ public class DummyData {
 	}
 
 	private void createDummyIncomingPayment(String paymentBy,
-			String phoneNumber, Date timePaid, BigDecimal amountPaid,
+			String phoneNumber, String timePaid, BigDecimal amountPaid,
 			long accountId) {
 		IncomingPayment i = new IncomingPayment();
 		i.setAmountPaid(amountPaid);
@@ -207,7 +166,7 @@ public class DummyData {
 		i.setAccount(myAcc);
 		i.setPaymentBy(paymentBy);
 		i.setPhoneNumber(phoneNumber);
-		i.setTimePaid(timePaid);
+		i.setTimePaid(new Date(Long.parseLong(timePaid)));
 		try {
 			incomingPaymentDao.saveIncomingPayment(i);
 		} catch (Exception e) {// DuplicateKeyException
