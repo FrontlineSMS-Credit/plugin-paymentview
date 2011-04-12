@@ -45,7 +45,9 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase{
 		assertEmptyDatabases();
 		
 		IncomingPayment ip = createIncomingPayment("0722000000", "2300", "Mr Kikalo");
+		hibernateIncomingPaymentDao.saveIncomingPayment(ip);
 		long ipId = this.hibernateIncomingPaymentDao.getAllIncomingPayments().get(0).getId();
+		
 		assertEquals(new BigDecimal("2300"), hibernateIncomingPaymentDao.getIncomingPaymentById(ipId).getAmountPaid());
 	}
 	
