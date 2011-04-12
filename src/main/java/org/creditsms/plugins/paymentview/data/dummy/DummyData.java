@@ -212,7 +212,7 @@ public class DummyData {
 			c.addAccount(a);
 		}
 		try {
-			clientDao.saveClient(c);
+			clientDao.saveUpdateClient(c);
 		} catch (DuplicateKeyException e) {
 			throw new RuntimeException(e);
 		}
@@ -528,11 +528,7 @@ public class DummyData {
 			return this.clients.size();
 		}
 
-		public int getFilteredClientCount(String name) {
-			return 0;
-		}
-
-		public void saveClient(Client client) throws DuplicateKeyException {
+		public void saveUpdateClient(Client client) throws DuplicateKeyException {
 			if (client.getId() == NO_ID_SET) {
 				assignDatabaseId(client);
 			}
@@ -574,11 +570,6 @@ public class DummyData {
 		public Client getClientByPhoneNumber(long phoneNumber) {
 			// TODO Auto-generated method stub
 			return null;
-		}
-
-		public void saveUpdateClient(Client client) {
-			// TODO Auto-generated method stub
-
 		}
 
 		public Client getClientByAccount(Account account) {

@@ -19,6 +19,7 @@ import org.creditsms.plugins.paymentview.csv.CsvUtils;
 import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.importexport.ClientCsvImporter;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.ui.handler.client.ClientsTabHandler;
 import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
 
 public class ClientImportHandler extends ImportDialogHandler {
@@ -32,12 +33,14 @@ public class ClientImportHandler extends ImportDialogHandler {
 	private static final String COMPONENT_CB_PHONE = "cbPhone";
 
 	// > INSTANCE PROPERTIES
+	private final ClientsTabHandler clientsTabHandler;
 	private ClientCsvImporter importer;
 	private int columnCount;
 	private ClientDao clientDao = DummyData.INSTANCE.getClientDao();
 
-	public ClientImportHandler(UiGeneratorController ui) {
+	public ClientImportHandler(UiGeneratorController ui, ClientsTabHandler clientsTabHandler) {
 		super(ui);
+		this.clientsTabHandler = clientsTabHandler;
 	}
 
 	@Override
@@ -64,12 +67,13 @@ public class ClientImportHandler extends ImportDialogHandler {
 	protected void doSpecialImport(String dataPath) {
 		CsvRowFormat rowFormat = getRowFormatForClient();
 		this.importer.importClients(this.clientDao, rowFormat);
-		this.uiController.refreshContactsTab();
+		
+			this.clientDao.getAllClients();
+		
+		this.clientsTabHandler.refresh();
 		this.uiController.infoMessage(InternationalisationUtils
 				.getI18nString(I18N_IMPORT_SUCCESSFUL));
 	}
-
-	// TODO: Roy, look at this to help you solve issue CREDIT-30
 
 	protected CsvRowFormat getRowFormatForClient() {
 		CsvRowFormat rowFormat = new CsvRowFormat();
