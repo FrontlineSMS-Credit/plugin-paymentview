@@ -191,7 +191,7 @@ public class DummyData {
 		o.setPhoneNumber(phoneNumber);
 		o.setTimePaid(timePaid);
 		try {
-			outgoingPaymentDao.saveOrUpdateOutgoingPayment(o);
+			outgoingPaymentDao.saveOutgoingPayment(o);
 		} catch (Exception e) {// DuplicateKeyException
 			throw new RuntimeException(e);
 		}
@@ -297,6 +297,16 @@ public class DummyData {
 		public Account getAccountById(long accountId) {
 			// TODO Auto-generated method stub
 			return null;
+		}
+
+		public void saveAccount(Account account) throws DuplicateKeyException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void updateAccount(Account account) throws DuplicateKeyException {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 
@@ -425,6 +435,18 @@ public class DummyData {
 		public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(String phoneNo) {
 			// TODO Auto-generated method stub
 			return null;
+		}
+
+		public void saveOutgoingPayment(OutgoingPayment outgoingPayment)
+				throws DuplicateKeyException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void updateOutgoingPayment(OutgoingPayment outgoingPayment)
+				throws DuplicateKeyException {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 
@@ -613,6 +635,16 @@ public class DummyData {
 				}
 			}
 			return null;
+		}
+
+		public void saveClient(Client client) throws DuplicateKeyException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void updateClient(Client client) throws DuplicateKeyException {
+			// TODO Auto-generated method stub
+			
 		}
 
 	}

@@ -83,7 +83,7 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 			OutgoingPayment outgoingPayment = new OutgoingPayment(phoneNumber, new BigDecimal(amountPaid), new Date(
 							Long.parseLong(timePaid)), acc, notes, Boolean.parseBoolean(confirmation));
 			try {
-				outgoingPaymentDao.saveOrUpdateOutgoingPayment(outgoingPayment);
+				outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
 			} catch (DuplicateKeyException e) {
 				// FIXME should actually pass details of this back to the user.
 				log.debug("An incoming Payment already exist with this id", e);

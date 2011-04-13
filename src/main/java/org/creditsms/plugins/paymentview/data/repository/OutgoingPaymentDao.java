@@ -1,6 +1,5 @@
 package org.creditsms.plugins.paymentview.data.repository;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -23,19 +22,9 @@ public interface OutgoingPaymentDao {
 	public List<OutgoingPayment> getAllOutgoingPayments();
 	
 	/**
-	 * returns OutgoingPayment(s) within a given date range
-	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByDateRange(Calendar startDate, Calendar endDate);
-	
-	/**
 	 * returns OutgoingPayment(s) by time range
 	 * */
 	public List<OutgoingPayment> getOutgoingPaymentsByTimeRange(Date startTime, Date endtime);
-	
-	/**
-	 * returns OutgoingPayment(s) by client and by date
-	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByClientIdByDateRange(long clientId, Calendar startDate, Calendar endDate);
 	
 	/**
 	 * returns OutgoingPayment(s) by clientId
@@ -46,12 +35,7 @@ public interface OutgoingPaymentDao {
 	 * returns OutgoingPayment(s) by accountId
 	 * */
 	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumber(long accountId);
-	
-	/**
-	 * returns OutgoingPayment(s) by accountId by date ranges
-	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumberByDateRange(long accountId, Calendar startDate, Calendar endDate);
-	
+
 	/**
 	 * returns OutgoingPayment(s) by accountId by time ranges
 	 * */
@@ -63,9 +47,15 @@ public interface OutgoingPaymentDao {
 	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(String phoneNo);
 
 	/**
-	 * saves or updates an OutgoingPayment payment to the system
+	 * updates an OutgoingPayment payment to the system
 	 * */
-	public void saveOrUpdateOutgoingPayment(OutgoingPayment outgoingPayment) throws DuplicateKeyException;
+	public void updateOutgoingPayment(OutgoingPayment outgoingPayment) throws DuplicateKeyException;
+	
+
+	/**
+	 * saves an OutgoingPayment payment to the system
+	 * */
+	public void saveOutgoingPayment(OutgoingPayment outgoingPayment) throws DuplicateKeyException;
 	
 	/**
 	 * removes an OutgoingPayment payment to the system

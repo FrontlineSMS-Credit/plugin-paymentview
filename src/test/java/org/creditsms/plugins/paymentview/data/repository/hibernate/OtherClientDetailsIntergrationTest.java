@@ -4,6 +4,7 @@ import org.creditsms.plugins.paymentview.data.domain.OtherClientDetails;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.junit.HibernateTestCase;
 
 public class OtherClientDetailsIntergrationTest extends HibernateTestCase  {
@@ -36,10 +37,10 @@ public class OtherClientDetailsIntergrationTest extends HibernateTestCase  {
 		assertEquals("Kariobangi",hibernateOtherClientDetailsDao.getOtherClientDetailsById(gId).getLocation());
 	}
 	
-	public void testGetOtherClientDetailsByClientId(){
+	public void testGetOtherClientDetailsByClientId() throws DuplicateKeyException{
 		assertEmptyDatabase();
 		Client c1 = createClientWithPhoneNumber("0721000000");
-		hibernateClientDao.saveUpdateClient(c1);
+		hibernateClientDao.saveClient(c1);
 		
 		OtherClientDetails ocd1 = createOtherClientdetails("Kamkunji");
 		ocd1.setClient(c1);

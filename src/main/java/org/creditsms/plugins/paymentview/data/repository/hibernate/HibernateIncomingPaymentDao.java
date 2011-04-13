@@ -97,7 +97,6 @@ public class HibernateIncomingPaymentDao extends BaseHibernateDao<IncomingPaymen
 
 	public void updateIncomingPayment(IncomingPayment incomingPayment)
 			throws DuplicateKeyException {
-		// TODO Auto-generated method stub
-		
+		super.update(incomingPayment);
 	}
 }

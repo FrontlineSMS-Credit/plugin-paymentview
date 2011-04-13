@@ -2,16 +2,14 @@ package org.creditsms.plugins.paymentview.data.repository.hibernate;
 
 import java.util.List;
 
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
-import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Projections;
-import org.hibernate.Session;
-import org.hibernate.Criteria;
 
 @SuppressWarnings("unchecked")
 public class HibernateClientDao extends BaseHibernateDao<Client> implements ClientDao {
@@ -24,103 +22,51 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements Clie
 	}
 
 	public List<Client> getAllClients(int startIndex, int limit) {
-		List<Client> clientList = null;
-		Session session = this.getSession();
-		Criteria criteria = session.createCriteria(Client.class);
-		criteria.setFirstResult(startIndex);
-		criteria.setMaxResults(limit);
-		clientList = criteria.list();
-		
-		return clientList;
+		return super.getAll(startIndex, limit);
 	}
 
-	public List<Client> getClientsByName(String clientName) {
-
-		Session session = getSession();
-		Criteria criteria = session.createCriteria(Client.class)
+	public List<Client> getClientsByName(String clientName) {	
+		DetachedCriteria criteria = super.getCriterion()
+		.add(Restrictions.disjunction()
 		.add(Restrictions.ilike("firstName", clientName.trim(), MatchMode.ANYWHERE))
-		.add(Restrictions.ilike("otherName", clientName.trim(), MatchMode.ANYWHERE));
-			
-		List<Client> clientList = criteria.list();
-
-		if (clientList.size() == 0) {
-			return null;
-		}
-		return clientList;
+		.add(Restrictions.ilike("otherName", clientName.trim(), MatchMode.ANYWHERE)));
+		return super.getList(criteria);
 	}
 
 	public List<Client> getClientsByName(String clientName, int startIndex,
 			int limit) {
-		Session session = getSession();
-		Criteria criteria = session.createCriteria(Client.class)
+		DetachedCriteria criteria = super.getCriterion()
 		.add(Restrictions.disjunction()
 		.add(Restrictions.ilike("firstName", clientName.trim(), MatchMode.ANYWHERE))
 		.add(Restrictions.ilike("otherName", clientName.trim(), MatchMode.ANYWHERE)));
-			
-		criteria.setFirstResult(startIndex);
-		criteria.setMaxResults(limit);
-		
-		List<Client> clientList = criteria.list();
-
-		if (clientList.size() == 0) {
-			return null;
-		}
-		return clientList;
+		return super.getList(criteria, startIndex, limit);
 	}
 
 	public Client getClientByPhoneNumber(long phoneNumber) {
-		Session session = getSession();
-		Criteria criteria = session.createCriteria(Client.class)
-		.add(Restrictions.eq("phoneNumber", phoneNumber));
-			
-		List<Client> clientList = criteria.list();
-
-		if (clientList.size() == 0) {
-			return null;
-		}
-		return clientList.get(0);
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("phoneNumber", phoneNumber));
+		return super.getUnique(criteria);
 	}
 
-	@SuppressWarnings("rawtypes")
 	public int getClientCount() {
-		Session session = this.getSession();
-		int rowCount = 0;
-		Criteria criteria = session.createCriteria(Client.class);
-
-		criteria.setProjection(Projections.rowCount());
-		List result  = criteria.list();
-		if(!result.isEmpty()){
-			rowCount = (Integer) result.get(0);
-		}else{
-		}
-		return rowCount;
+		return super.getAll().size();
 	}
 
 	public void deleteClient(Client client) {
-		this.getHibernateTemplate().delete(client);
-		this.getHibernateTemplate().flush();
+		super.delete(client);
 	}
 
-	public void saveUpdateClient(Client client) {
-		this.getHibernateTemplate().saveOrUpdate(client);
+	public void saveClient(Client client) throws DuplicateKeyException {
+		super.save(client);
+	}
+	
+	public void updateClient(Client client) throws DuplicateKeyException {
+		super.update(client);
 	}
 
-	public Client getClientById(long clientId) {
-		Session session = getSession();
-		Criteria criteria = session.createCriteria(Client.class)
-		.add(Restrictions.eq("id", clientId));
-			
-		List<Client> clientList = criteria.list();
-
-		if (clientList.size() == 0) {
-			return null;
-		}
-		return clientList.get(0);
+	public Client getClientById(long id) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("id", id));
+		return super.getUnique(criteria);
 	}
-
-	public Client getClientByAccount(Account account) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

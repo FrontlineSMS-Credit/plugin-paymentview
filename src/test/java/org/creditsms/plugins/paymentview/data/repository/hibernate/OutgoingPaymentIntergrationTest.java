@@ -1,11 +1,13 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.junit.HibernateTestCase;
 
 public class OutgoingPaymentIntergrationTest extends HibernateTestCase{
@@ -28,99 +30,94 @@ public class OutgoingPaymentIntergrationTest extends HibernateTestCase{
 		assertEquals(0, hibernateOutgoingPaymentDao.getAllOutgoingPayments().size());
 	}
 
-	public void testSavingOutgoingPayment(){
+	public void testSavingOutgoingPayment() throws DuplicateKeyException{
 		assertEmptyDatabases();
-
-		OutgoingPayment op = new OutgoingPayment();
-		op.setPhoneNumber("0725000000");
-		op.setAmountPaid(new BigDecimal("8000"));
-		
-		hibernateOutgoingPaymentDao.saveOrUpdateOutgoingPayment(op);
+		OutgoingPayment op = createOutgoingPayment("0725000000","8000", new Date());
+		hibernateOutgoingPaymentDao.saveOutgoingPayment(op);
 		assertEquals(1, hibernateOutgoingPaymentDao.getAllOutgoingPayments().size());
 	}
 	
-	public void testDeletingOutgoingPayment(){
+	public void testDeletingOutgoingPayment() throws DuplicateKeyException{
 		assertEmptyDatabases();
-		
-		OutgoingPayment op = new OutgoingPayment();
-		op.setPhoneNumber("0725000000");
-		op.setAmountPaid(new BigDecimal("8000"));
-		hibernateOutgoingPaymentDao.saveOrUpdateOutgoingPayment(op);
-		assertEquals(1, hibernateOutgoingPaymentDao.getAllOutgoingPayments().size());
-		
-		hibernateOutgoingPaymentDao.deleteOutgoingPayment(op);
+		createAndSaveOutgoingPayment("0725000000", "8000", new Date(), null);
+		hibernateOutgoingPaymentDao.deleteOutgoingPayment(getOutgoingPayment());
 		assertEquals(0, hibernateOutgoingPaymentDao.getAllOutgoingPayments().size());
 	}
 	
-	public void testGettingOutgoingPaymentById(){
+	public void testGettingOutgoingPaymentById() throws DuplicateKeyException{
 		assertEmptyDatabases();
-		
-		OutgoingPayment op = new OutgoingPayment();
-		op.setPhoneNumber("0726000000");
-		op.setAmountPaid(new BigDecimal("18000"));
-		hibernateOutgoingPaymentDao.saveOrUpdateOutgoingPayment(op);
-		assertEquals(1, hibernateOutgoingPaymentDao.getAllOutgoingPayments().size());
-		
-		long opId = hibernateOutgoingPaymentDao.getAllOutgoingPayments().get(hibernateOutgoingPaymentDao.getAllOutgoingPayments().size()-1).getId();
+		createAndSaveOutgoingPayment("0726000000", "18000", new Date(), null);
+		long opId = getOutgoingPayment().getId();
 		assertEquals(new BigDecimal("18000"), hibernateOutgoingPaymentDao.getOutgoingPaymentById(opId).getAmountPaid());
 	}
 	
-	public void testGettingOutgoingPaymentByPhoneNumber(){
+	public void testGettingOutgoingPaymentByPhoneNumber() throws DuplicateKeyException{
 		assertEmptyDatabases();
-		
-		OutgoingPayment op = new OutgoingPayment();
-		op.setPhoneNumber("0734000000");
-		op.setAmountPaid(new BigDecimal("23000000"));
-		hibernateOutgoingPaymentDao.saveOrUpdateOutgoingPayment(op);
-		assertEquals(1,hibernateOutgoingPaymentDao.getAllOutgoingPayments().size());
-		
-		String phoneNumber = hibernateOutgoingPaymentDao.getAllOutgoingPayments().get(hibernateOutgoingPaymentDao.getAllOutgoingPayments().size()-1).getPhoneNumber();
-	    assertEquals(new BigDecimal("23000000"), hibernateOutgoingPaymentDao.getOutgoingPaymentsByPhoneNo(phoneNumber).get(hibernateOutgoingPaymentDao.getOutgoingPaymentsByPhoneNo(phoneNumber).size()-1).getAmountPaid());
-	
+		createAndSaveOutgoingPayment("0734000000", "23000000", new Date(), null);
+		String phoneNumber = getOutgoingPayment().getPhoneNumber();
+	    assertEquals(new BigDecimal("23000000"), hibernateOutgoingPaymentDao.getOutgoingPaymentsByPhoneNo(phoneNumber).get(0).getAmountPaid());
 	}
 
-	public void testGettingOutgoingPaymentsByAccountNumber(){
+	public void testGettingOutgoingPaymentsByAccountNumber() throws DuplicateKeyException{
 		assertEmptyDatabases();
 		
-		Account ac = new Account();
-		ac.setAccountNumber(983);
-		hibernateAccountDao.saveUpdateAccount(ac);
-		assertEquals(1, hibernateAccountDao.getAllAcounts().size());
-		
-		OutgoingPayment op = new OutgoingPayment();
-		op.setAccount(ac);
-		op.setPhoneNumber("0739000000");
-		op.setAmountPaid(new BigDecimal("900000"));
-		hibernateOutgoingPaymentDao.saveOrUpdateOutgoingPayment(op);
-		assertEquals(1, hibernateOutgoingPaymentDao.getAllOutgoingPayments().size());
-		
-		long accNumber = hibernateOutgoingPaymentDao.getAllOutgoingPayments().get(hibernateOutgoingPaymentDao.getAllOutgoingPayments().size()-1).getAccount().getAccountNumber();
-		assertEquals(new BigDecimal("900000"), hibernateOutgoingPaymentDao.getOutgoingPaymentsByAccountNumber(accNumber).get(hibernateOutgoingPaymentDao.getOutgoingPaymentsByAccountNumber(accNumber).size()-1).getAmountPaid());
+		Account ac = createAndSaveAccount(983, 1, null);
+		createAndSaveOutgoingPayment("0739000000", "900000", new Date(), ac);
+		long accNumber = getOutgoingPayment().getAccount().getAccountNumber();
+		assertEquals(new BigDecimal("900000"), hibernateOutgoingPaymentDao.getOutgoingPaymentsByAccountNumber(accNumber).get(0).getAmountPaid());
 	}
 	
-	public void testGettingOutgoingPaymentByuserId(){
+	public void testGettingOutgoingPaymentByuserId() throws DuplicateKeyException{
 		assertEmptyDatabases();
 		
-		Client c = new Client();
-		c.setFirstName("Anne Njoki");
-		c.setPhoneNumber("0719000000");
-		hibernateClientDao.saveUpdateClient(c);
-		assertEquals(1, hibernateClientDao.getAllClients().size());
-		
-		Account ac = new Account();
-		ac.setClient(c);
-		ac.setAccountNumber(981);
-		hibernateAccountDao.saveUpdateAccount(ac);
-		assertEquals(1, hibernateAccountDao.getAllAcounts().size());
-		
+		Client c = createAndSaveClient("0719000000", "Anne Njoki", 1);
+		Account ac = createAndSaveAccount(981, 1, c);
+		createAndSaveOutgoingPayment("0739000000", "700000", new Date(), ac);
+		long clientId = getOutgoingPayment().getAccount().getClient().getId();
+		assertEquals(new BigDecimal("700000"), hibernateOutgoingPaymentDao.getOutgoingPaymentByClientId(clientId).get(0).getAmountPaid());
+	}
+	
+	private OutgoingPayment getOutgoingPayment(){
+		return(this.hibernateOutgoingPaymentDao.getAllOutgoingPayments().get(0));
+	}
+	
+	private void createAndSaveOutgoingPayment(String phoneNumber, String amount, Date timePaid, Account account) throws DuplicateKeyException{
+		this.hibernateOutgoingPaymentDao.saveOutgoingPayment(createOutgoingPayment(phoneNumber, amount, timePaid, account));
+		assertEquals(1, this.hibernateOutgoingPaymentDao.getAllOutgoingPayments().size());
+	}
+	
+	private OutgoingPayment createOutgoingPayment(String phoneNumber, String amount, Date timePaid){
 		OutgoingPayment op = new OutgoingPayment();
-		op.setAccount(ac);
-		op.setPhoneNumber("0739000000");
-		op.setAmountPaid(new BigDecimal("700000"));
-		hibernateOutgoingPaymentDao.saveOrUpdateOutgoingPayment(op);
-		assertEquals(1, hibernateOutgoingPaymentDao.getAllOutgoingPayments().size());
-		
-		long clientId = hibernateOutgoingPaymentDao.getAllOutgoingPayments().get(hibernateOutgoingPaymentDao.getAllOutgoingPayments().size()-1).getAccount().getClient().getId();
-		assertEquals(new BigDecimal("700000"), hibernateOutgoingPaymentDao.getOutgoingPaymentByClientId(clientId).get(hibernateOutgoingPaymentDao.getOutgoingPaymentByClientId(clientId).size()-1).getAmountPaid());
+		op.setPhoneNumber(phoneNumber);
+		op.setTimePaid(timePaid);
+		op.setAmountPaid(new BigDecimal(amount));
+		return op;
+	}
+	
+	private OutgoingPayment createOutgoingPayment(String phoneNumber, String amount, Date timePaid, Account account){
+		OutgoingPayment op = new OutgoingPayment();
+		op.setPhoneNumber(phoneNumber);
+		op.setTimePaid(timePaid);
+		op.setAmountPaid(new BigDecimal(amount));
+		if(account != null) op.setAccount(account);
+		return op;
+	}
+	
+	private Account createAndSaveAccount(long accountNumber, int expectedAccountCount, Client client) throws DuplicateKeyException {
+		Account ac = new Account();
+		ac.setAccountNumber(accountNumber);
+		if(client != null) ac.setClient(client);
+		hibernateAccountDao.saveAccount(ac);
+		assertEquals(expectedAccountCount, hibernateAccountDao.getAllAcounts().size());
+		return ac;
+	}
+	
+	private Client createAndSaveClient(String phnNumber, String firstName, int expectedAccountCount) throws DuplicateKeyException{
+		Client c = new Client();
+		c.setPhoneNumber(phnNumber);
+		c.setFirstName(firstName);
+		hibernateClientDao.saveClient(c);
+		assertEquals(expectedAccountCount, hibernateClientDao.getAllClients().size());
+		return c;
 	}
 }
