@@ -18,61 +18,65 @@ public class OtherClientDetailsIntergrationTest extends HibernateTestCase  {
 		assertNotNull(hibernateClientDao);
 	}
 	
-	public void testSave() {
+	public void testSave() throws DuplicateKeyException {
 		assertEmptyDatabase();
-		OtherClientDetails ocd = new OtherClientDetails();
-		hibernateOtherClientDetailsDao.saveUpdateOtherClientDetails(ocd);
+		OtherClientDetails ocd = createOtherClientdetails("Kariobangi South");
+		hibernateOtherClientDetailsDao.saveOtherClientDetails(ocd);
 		assertEquals(1, hibernateOtherClientDetailsDao.getAllOtherDetails().size());
 	}
 	
-	public void testGetOtherClientDetailsById(){
+	public void testGetOtherClientDetailsById() throws DuplicateKeyException{
 		assertEmptyDatabase();
-		
-		OtherClientDetails ocd = new OtherClientDetails();
-		ocd.setLocation("Kariobangi");
-		hibernateOtherClientDetailsDao.saveUpdateOtherClientDetails(ocd);
-		
-		long gId = hibernateOtherClientDetailsDao.getAllOtherDetails().get(hibernateOtherClientDetailsDao.getAllOtherDetails().size()-1).getId();
-		
+		createAndSaveOtherClientDetails("Kariobangi", null, 1);
+		long gId = getOtherClientDetails().getId();
 		assertEquals("Kariobangi",hibernateOtherClientDetailsDao.getOtherClientDetailsById(gId).getLocation());
 	}
 	
 	public void testGetOtherClientDetailsByClientId() throws DuplicateKeyException{
 		assertEmptyDatabase();
-		Client c1 = createClientWithPhoneNumber("0721000000");
-		hibernateClientDao.saveClient(c1);
-		
-		OtherClientDetails ocd1 = createOtherClientdetails("Kamkunji");
-		ocd1.setClient(c1);
-		hibernateOtherClientDetailsDao.saveUpdateOtherClientDetails(ocd1);
-		
-		long clientId = hibernateClientDao.getAllClients().get(hibernateClientDao.getAllClients().size()-1).getId();
-
-		assertEquals("Kamkunji",hibernateOtherClientDetailsDao.getOtherDetailsByClientId(clientId).get(hibernateOtherClientDetailsDao.getOtherDetailsByClientId(clientId).size()-1).getLocation());
-
+		Client c1 = createAndSaveClient("0721000000", "Waweru Nguru", 1);
+		createAndSaveOtherClientDetails("Kamkunji", c1, 1);
+		long clientId = getOtherClientDetails().getClient().getId();
+		assertEquals("Kamkunji",hibernateOtherClientDetailsDao.getOtherDetailsByClientId(clientId).get(0).getLocation());
 	}
 	
-	public void testDeleteAccount(){
+	public void testDeleteAccount() throws DuplicateKeyException{
 		assertEmptyDatabase();
-		OtherClientDetails ocd = new OtherClientDetails();
-		hibernateOtherClientDetailsDao.saveUpdateOtherClientDetails(ocd);
-		assertEquals(1, hibernateOtherClientDetailsDao.getAllOtherDetails().size());
-		
-		hibernateOtherClientDetailsDao.deleteOtherClientDetails(ocd);
+		createAndSaveOtherClientDetails("Mkuru Kwa Jenga", null, 1);
+		hibernateOtherClientDetailsDao.deleteOtherClientDetails(getOtherClientDetails());
 		assertEquals(0, hibernateOtherClientDetailsDao.getAllOtherDetails().size());
 	}
 	
-	private Client createClientWithPhoneNumber(String phoneNumber){
+	private void createAndSaveOtherClientDetails(String location, Client client, int expectedPaymentCount) throws DuplicateKeyException{
+		hibernateOtherClientDetailsDao.saveOtherClientDetails(createOtherClientdetails(location, client));
+		assertEquals(1, hibernateOtherClientDetailsDao.getAllOtherDetails().size());
+	}
+	
+	private OtherClientDetails getOtherClientDetails(){
+		assertEquals(1, hibernateOtherClientDetailsDao.getAllOtherDetails().size());
+		return(this.hibernateOtherClientDetailsDao.getAllOtherDetails().get(0));
+	}
+	
+	
+	private Client createAndSaveClient(String phnNumber, String firstName, int expectedAccountCount) throws DuplicateKeyException{
 		Client c = new Client();
-		
-		c.setPhoneNumber(phoneNumber);
+		c.setPhoneNumber(phnNumber);
+		c.setFirstName(firstName);
+		hibernateClientDao.saveClient(c);
+		assertEquals(expectedAccountCount, hibernateClientDao.getAllClients().size());
 		return c;
 	}
 	
 	private OtherClientDetails createOtherClientdetails(String location){
 		OtherClientDetails ocd = new OtherClientDetails();
-
 		ocd.setLocation(location);
+		return ocd;
+	}
+	
+	private OtherClientDetails createOtherClientdetails(String location, Client client){
+		OtherClientDetails ocd = new OtherClientDetails();
+		ocd.setLocation(location);
+		if(client!=null) ocd.setClient(client);
 		return ocd;
 	}
 	

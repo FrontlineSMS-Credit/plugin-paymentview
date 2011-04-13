@@ -1,6 +1,9 @@
 package org.creditsms.plugins.paymentview.data.repository;
 
 import java.util.List;
+
+import net.frontlinesms.data.DuplicateKeyException;
+
 import org.creditsms.plugins.paymentview.data.domain.OtherClientDetails;
 
 /**
@@ -35,5 +38,11 @@ public interface OtherClientDetailsDao {
 	 * Saves a OtherClientDetails to the system
 	 * @param OtherClientDetails
 	 */
-	public void saveUpdateOtherClientDetails(OtherClientDetails otherClientDetails);
+	public void saveOtherClientDetails(OtherClientDetails otherClientDetails) throws DuplicateKeyException;
+
+	/**
+	 * Updates a OtherClientDetails to the system
+	 * @param OtherClientDetails
+	 */
+	public void updateOtherClientDetails(OtherClientDetails otherClientDetails) throws DuplicateKeyException;
 }
