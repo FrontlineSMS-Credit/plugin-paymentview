@@ -18,7 +18,6 @@ public class SentPaymentsTabHandler extends BaseTabHandler {
 	private static final String XML_SENTPAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/sentpayments.xml";
 	private static final String COMPONENT_CLIENT_TABLE = "tbl_clients";
 	private Object sentPaymentsTab;
-	private ClientDao clientDao = DummyData.INSTANCE.getClientDao();
 	private static final String TABBED_PANE_MAIN = "tabbedPaneMain";
 	private static final String COMPONENT_INCOMING_PAYMENTS_TABLE = "tbl_clients";
 	private OutgoingPaymentDao outgoingPaymentDao = DummyData.INSTANCE
@@ -61,11 +60,11 @@ public class SentPaymentsTabHandler extends BaseTabHandler {
 				ui.createTableCell(o.getAccount().getClient().getFirstName() + " "
 						+ o.getAccount().getClient().getOtherName()));
 		ui.add(row, ui.createTableCell(o.getPhoneNumber()));
-		ui.add(row, ui.createTableCell(Long.toString(o.getAccount()
-				.getAccountNumber())));
 		ui.add(row, ui.createTableCell(o.getAmountPaid().toString()));
 		ui.add(row, ui.createTableCell(df.format(o.getTimePaid())));
 		ui.add(row, ui.createTableCell(tf.format(o.getTimePaid())));
+		ui.add(row, ui.createTableCell(Long.toString(o.getAccount().getAccountNumber())));
+		ui.add(row, ui.createTableCell(o.getNotes()));
 		return row;
 	}
 	
