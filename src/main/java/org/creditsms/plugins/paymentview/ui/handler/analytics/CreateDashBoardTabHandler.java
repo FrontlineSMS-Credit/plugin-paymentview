@@ -2,6 +2,7 @@ package org.creditsms.plugins.paymentview.ui.handler.analytics;
 
 import java.util.List;
 
+import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
@@ -95,8 +96,14 @@ public class CreateDashBoardTabHandler extends BaseTabHandler {
 
 		private Object createRow(Client c) {
 			Object row = ui.createTableRow();
-			ui.add(row, ui.createTableCell(c.getFirstName()));
+			ui.add(row, ui.createTableCell(c.getFirstName() + " "+ c.getOtherName()));
 			ui.add(row, ui.createTableCell(c.getPhoneNumber()));
+			String accountStr = "";
+			for (Account a : c.getAccounts()) {
+				accountStr += (Long.toString(a.getAccountNumber()) + ", ");
+			}
+			ui.add(row, ui.createTableCell(accountStr));
+			
 			return row;
 		}
 	}
