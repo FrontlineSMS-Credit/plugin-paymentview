@@ -1,7 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler.export;
 
-import org.creditsms.plugins.paymentview.ui.handler.outgoingpayments.SentPaymentsTabHandler;
-
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
@@ -13,7 +11,7 @@ public class ExportTabHandler extends BaseTabHandler{
 	private Object mainTabbedPane;
 	private ExportClientsTabHandler clientsTab;
 	private ExportClientHistoryTabHandler clientHistoryTab;
-	private ExportPaymentsTabHandler paymentsTab; 
+	private ExportPaymentsTabHandler paymentsTab; 	
 		
 	public ExportTabHandler(UiGeneratorController ui) {
 		super(ui);		

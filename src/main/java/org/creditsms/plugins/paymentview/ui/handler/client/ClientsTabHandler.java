@@ -3,6 +3,7 @@ package org.creditsms.plugins.paymentview.ui.handler.client;
 import java.util.List;
 
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.UiGeneratorControllerConstants;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
@@ -33,7 +34,7 @@ public class ClientsTabHandler extends BaseTabHandler implements
 
 	public ClientsTabHandler(UiGeneratorController ui) {
 		super(ui);
-		setClientFilter("");
+		this.clientFilter = "";
 		init();
 	}
 
@@ -141,17 +142,19 @@ public class ClientsTabHandler extends BaseTabHandler implements
 			Client c = (Client) ui.getAttachedObject(selectedClient);
 			clientDao.deleteClient(c);
 		}
-
+		
+		ui.removeDialog(ui.find(UiGeneratorControllerConstants.COMPONENT_CONFIRM_DIALOG));
 		ui.infoMessage("You have succesfully deleted from the client!");
 		this.refresh();
 	}
 
 	/**
 	 * @param clientFilter
-	 *            the clientFilter to set
+	 * the clientFilter to set
 	 */
 	public void setClientFilter(String clientFilter) {
 		this.clientFilter = clientFilter;
+		filterClients();
 	}
 
 	public void filterClients() {
