@@ -76,7 +76,7 @@ public class CustomizeClientHandler implements ThinletUiEventHandler {
 	}
 
 	public void saveClient() throws DuplicateKeyException {
-		this.clientDao.saveUpdateClient(getClientObj());  
+		this.clientDao.saveClient(getClientObj());  
 	}
 
 	/** Remove the dialog from view. */

@@ -1,6 +1,5 @@
 package org.creditsms.plugins.paymentview.data.repository;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -33,19 +32,9 @@ public interface IncomingPaymentDao {
 	public List<IncomingPayment> getAllIncomingPayments(int startingIndex, int limit);
 	
 	/**
-	 * returns IncomingPayment(s) within a given date range
-	 * */
-	public List<IncomingPayment> getIncomingPaymentsByDateRange(Calendar startDate, Calendar endDate);
-	
-	/**
 	 * returns IncomingPayment(s) by time range
 	 * */
 	public List<IncomingPayment> getIncomingPaymentsByTimeRange(Date startTime, Date endtime);
-	
-	/**
-	 * returns IncomingPayment(s) by client and by date
-	 * */
-	public List<IncomingPayment> getIncomingPaymentsByClientIdByDateRange(long clientId, Calendar startDate, Calendar endDate);
 	
 	/**
 	 * returns IncomingPayment(s) by clientId
@@ -56,11 +45,6 @@ public interface IncomingPaymentDao {
 	 * returns IncomingPayment(s) by accountId
 	 * */
 	public List<IncomingPayment> getIncomingPaymentsByAccountNumber(long accountId);
-	
-	/**
-	 * returns IncomingPayment(s) by accountId by date ranges
-	 * */
-	public List<IncomingPayment> getIncomingPaymentsByAccountNumberByDateRange(long accountId, Calendar startDate, Calendar endDate);
 	
 	/**
 	 * returns IncomingPayment(s) by accountId by time ranges

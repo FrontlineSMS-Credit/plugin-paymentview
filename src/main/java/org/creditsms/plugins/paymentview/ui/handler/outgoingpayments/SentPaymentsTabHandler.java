@@ -56,10 +56,9 @@ public class SentPaymentsTabHandler extends BaseTabHandler {
 
 	private Object createRow(OutgoingPayment o) {
 		Object row = ui.createTableRow();
-		Client clientByAccount = clientsDao.getClientByAccount(o.getAccount());
 		ui.add(row,
-				ui.createTableCell(clientByAccount.getFirstName() + " "
-						+ clientByAccount.getOtherName()));
+				ui.createTableCell(o.getAccount().getClient().getFirstName() + " "
+						+ o.getAccount().getClient().getOtherName()));
 		ui.add(row, ui.createTableCell(o.getPhoneNumber()));
 		ui.add(row, ui.createTableCell(o.getAmountPaid().toString()));
 		ui.add(row, ui.createTableCell(df.format(o.getTimePaid())));

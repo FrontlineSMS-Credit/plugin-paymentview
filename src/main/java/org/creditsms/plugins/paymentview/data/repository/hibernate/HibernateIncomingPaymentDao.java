@@ -9,6 +9,8 @@ import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 
 public class HibernateIncomingPaymentDao extends BaseHibernateDao<IncomingPayment> implements IncomingPaymentDao {
 
@@ -16,18 +18,26 @@ public class HibernateIncomingPaymentDao extends BaseHibernateDao<IncomingPaymen
 		super(IncomingPayment.class);
 	}
 	
-	public IncomingPayment getIncomingPaymentById(long incomingPaymentId) {
-		return null;
+	public IncomingPayment getIncomingPaymentById(long id) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("id", id));
+		return super.getUnique(criteria);
 	}
 
 	public List<IncomingPayment> getAllIncomingPayments() {
 		return super.getAll();
 	}
 
-	public List<IncomingPayment> getIncomingPaymentsByDateRange(
-			Calendar startDate, Calendar endDate) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<IncomingPayment> getIncomingPaymentsByPhoneNo(String phoneNo) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("phoneNumber", phoneNo));
+		return super.getList(criteria);
+	}
+	
+	public List<IncomingPayment> getIncomingPaymentsByPayer(String payer) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("paymentBy", payer));
+		return super.getList(criteria);
 	}
 
 	public List<IncomingPayment> getIncomingPaymentsByTimeRange(Date startTime,
@@ -43,33 +53,15 @@ public class HibernateIncomingPaymentDao extends BaseHibernateDao<IncomingPaymen
 	}
 
 	public List<IncomingPayment> getIncomingPaymentByClientId(long clientId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<IncomingPayment> getIncomingPaymentsByAccountId(long accountId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<IncomingPayment> getIncomingPaymentsByAccountIdByDateRange(
-			long accountId, Calendar startDate, Calendar endDate) {
-		// TODO Auto-generated method stub
-		return null;
+		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria accountCriteria = criteria.createCriteria("account");
+		DetachedCriteria clientCriteria = accountCriteria.createCriteria("client");
+		clientCriteria.add(Restrictions.eq("id", clientId));
+		return super.getList(criteria);
 	}
 
 	public List<IncomingPayment> getIncomingPaymentsByAccountIdByTimeRange(
 			long accountId, Date startDate, Date endDate) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<IncomingPayment> getIncomingPaymentsByPayer(String payer) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<IncomingPayment> getIncomingPaymentsByPhoneNo(String phoneNo) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -79,14 +71,11 @@ public class HibernateIncomingPaymentDao extends BaseHibernateDao<IncomingPaymen
 	}
 
 	public List<IncomingPayment> getIncomingPaymentsByAccountNumber(
-			long accountNumber) {// FIXME
-		return null;
-	}
-
-	public List<IncomingPayment> getIncomingPaymentsByAccountNumberByDateRange(
-			long accountId, Calendar startDate, Calendar endDate) {
-		// TODO Auto-generated method stub
-		return null;
+			long accountNumber) {
+		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria accountCriteria = criteria.createCriteria("account");
+		accountCriteria.add(Restrictions.eq("accountNumber", accountNumber));
+		return super.getList(criteria);
 	}
 
 	public List<IncomingPayment> getAllIncomingPayments(int startingIndex,
@@ -108,7 +97,6 @@ public class HibernateIncomingPaymentDao extends BaseHibernateDao<IncomingPaymen
 
 	public void updateIncomingPayment(IncomingPayment incomingPayment)
 			throws DuplicateKeyException {
-		// TODO Auto-generated method stub
-		
+		super.update(incomingPayment);
 	}
 }

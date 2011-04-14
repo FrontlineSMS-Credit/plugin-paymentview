@@ -38,11 +38,17 @@ public interface AccountDao {
 	 * Saves a Account to the system
 	 * @param account
 	 */
-	public void saveUpdateAccount(Account account) throws DuplicateKeyException;
-
+	public void saveAccount(Account account) throws DuplicateKeyException;
+	
 	/**
-	 * @param parseLong
+	 * Saves a Account to the system
+	 * @param account
+	 */
+	public void updateAccount(Account account) throws DuplicateKeyException;
+	
+	/**
+	 * @param accNumber
 	 * @return
 	 */
-	public Account getAccountByAccountNumber(long parseLong); 
+	public Account getAccountByAccountNumber(long accNumber); 
 }

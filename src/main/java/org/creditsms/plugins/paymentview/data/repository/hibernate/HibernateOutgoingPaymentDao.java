@@ -4,36 +4,28 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
-@SuppressWarnings("unchecked")
 public class HibernateOutgoingPaymentDao extends BaseHibernateDao<OutgoingPayment> implements OutgoingPaymentDao {
 
 	protected HibernateOutgoingPaymentDao(){
 		super(OutgoingPayment.class);
 	}
 
-	public OutgoingPayment getOutgoingPaymentById(long outgoingPaymentId) {
-		Session session = getSession();
-		Criteria criteria = session.createCriteria(OutgoingPayment.class)
-		.add(Restrictions.eq("id", outgoingPaymentId));
-			
-		List<OutgoingPayment> opLst = criteria.list();
-
-		if (opLst.size() == 0) {
-			return null;
-		}
-		return opLst.get(0);
+	public OutgoingPayment getOutgoingPaymentById(long id) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("id", id));
+		return super.getUnique(criteria);
 	}
 
 	public List<OutgoingPayment> getAllOutgoingPayments() {
-		return this.getHibernateTemplate().loadAll(OutgoingPayment.class);
+		return super.getAll();
 	}
 
 	public List<OutgoingPayment> getOutgoingPaymentsByDateRange(
@@ -54,36 +46,26 @@ public class HibernateOutgoingPaymentDao extends BaseHibernateDao<OutgoingPaymen
 		return null;
 	}
 
+	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(String phoneNo) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("phoneNumber", phoneNo));
+		return super.getList(criteria);
+	}
+	
 	public List<OutgoingPayment> getOutgoingPaymentByClientId(long clientId) {
-		Session session = getSession();
-		Criteria criteria = session.createCriteria(OutgoingPayment.class);
-			
-		Criteria accountCriteria = criteria.createCriteria("account");
-		Criteria clientCriteria = accountCriteria.createCriteria("client");
-		clientCriteria.add( Restrictions.eq("id", clientId ));
-				
-		List<OutgoingPayment> opLst= criteria.list();
-
-		if (opLst.size() == 0) {
-			return null;
-		}
-		return opLst ;
+		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria accountCriteria = criteria.createCriteria("account");
+		DetachedCriteria clientCriteria = accountCriteria.createCriteria("client");
+		clientCriteria.add(Restrictions.eq("id", clientId));
+		return super.getList(criteria);
 	}
 
 	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumber(
 			long accNumber) {
-		Session session = getSession();
-		Criteria criteria = session.createCriteria(OutgoingPayment.class);
-			
-		Criteria accountCriteria = criteria.createCriteria("account");
-		accountCriteria.add( Restrictions.eq("accountNumber", accNumber ));
-				
-		List<OutgoingPayment> opLst= criteria.list();
-
-		if (opLst.size() == 0) {
-			return null;
-		}
-		return opLst ;
+		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria accountCriteria = criteria.createCriteria("account");
+		accountCriteria.add(Restrictions.eq("accountNumber", accNumber));
+		return super.getList(criteria);
 	}
 
 	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumberByDateRange(
@@ -98,24 +80,17 @@ public class HibernateOutgoingPaymentDao extends BaseHibernateDao<OutgoingPaymen
 		return null;
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(String phoneNo) {
-		Session session = getSession();
-		Criteria criteria = session.createCriteria(OutgoingPayment.class)
-		.add(Restrictions.eq("phoneNumber", phoneNo));
-			
-		List<OutgoingPayment> opLst = criteria.list();
-
-		if (opLst.size() == 0) {
-			return null;
-		}
-		return opLst;
+	public void saveOutgoingPayment(OutgoingPayment outgoingPayment)throws DuplicateKeyException {
+		super.save(outgoingPayment);
 	}
-
-	public void saveOrUpdateOutgoingPayment(OutgoingPayment outgoingPayment) {
-		this.getHibernateTemplate().saveOrUpdate(outgoingPayment);
-	}
-
+	
 	public void deleteOutgoingPayment(OutgoingPayment outgoingPayment) {
-		this.getHibernateTemplate().delete(outgoingPayment);
+		super.delete(outgoingPayment);
+	}
+
+	public void updateOutgoingPayment(OutgoingPayment outgoingPayment)
+			throws DuplicateKeyException {
+		super.update(outgoingPayment);
+		
 	}
 }
