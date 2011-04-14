@@ -5,6 +5,7 @@ import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 import org.creditsms.plugins.paymentview.data.domain.OtherClientDetails;
 import org.creditsms.plugins.paymentview.data.repository.OtherClientDetailsDao;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
 public class HibernateOtherClientDetailsDao extends BaseHibernateDao<OtherClientDetails>  implements OtherClientDetailsDao{
@@ -40,6 +41,16 @@ public class HibernateOtherClientDetailsDao extends BaseHibernateDao<OtherClient
 
 	public void updateOtherClientDetails(OtherClientDetails otherClientDetails) throws DuplicateKeyException {
 		super.update(otherClientDetails);
+	}
+
+	public List<OtherClientDetails> getOtherDetailsByCustomFieldByValue(long customfieldId,
+			String strValue) {
+		DetachedCriteria criteria = super.getCriterion()
+		.add(Restrictions.disjunction()
+		.add(Restrictions.ilike("strValue", strValue.trim(), MatchMode.ANYWHERE)));
+		DetachedCriteria customFieldCriteria = criteria.createCriteria("customField");
+		customFieldCriteria.add(Restrictions.eq("id",customfieldId));
+		return super.getList(criteria);
 	}
 
 }

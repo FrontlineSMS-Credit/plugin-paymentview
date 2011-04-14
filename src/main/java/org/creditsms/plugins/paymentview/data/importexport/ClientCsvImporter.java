@@ -51,7 +51,7 @@ public class ClientCsvImporter extends CsvImporter {
 						
 			Client c = new Client(firstname, otherName, phonenumber, getAccountsFromString(accounts));					
 			try {
-				clientDao.saveUpdateClient(c); 
+				clientDao.saveClient(c); 
 			} catch (DuplicateKeyException e) {
 				// FIXME should actually pass details of this back to the user.
 				log.debug("Client already exist with this number", e);

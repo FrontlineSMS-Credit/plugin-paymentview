@@ -7,6 +7,7 @@
 		<mapping class="org.creditsms.plugins.paymentview.data.domain.OtherClientDetails" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.OutgoingPayment" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.IncomingPayment" />
+    	<mapping class="org.creditsms.plugins.paymentview.data.domain.CustomField" />
 		
     	<!-- 
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.NetworkOperator" />
@@ -19,6 +20,7 @@
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.OtherClientDetails" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.OutgoingPayment" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.IncomingPayment" />
+    	<mapping class="org.creditsms.plugins.paymentview.data.domain.CustomField" />
     	 -->
 	</session-factory>
 </hibernate-configuration>

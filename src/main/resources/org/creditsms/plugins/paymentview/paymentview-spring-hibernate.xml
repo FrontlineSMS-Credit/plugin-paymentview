@@ -39,6 +39,9 @@
 	<bean id="otherClientDetailsDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateOtherClientDetailsDao">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
+	<bean id="customFieldDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateCustomFieldDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
 	<bean id="incomingPaymentDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateIncomingPaymentDao">
 	    <property name="sessionFactory" ref="sessionFactory" />
 	</bean>

@@ -22,6 +22,13 @@ public interface OtherClientDetailsDao {
 	 * return all the OtherClientDetails belonging to a client
 	 */
 	public List<OtherClientDetails> getOtherDetailsByClientId(long clientId);
+
+	/** 
+	 * @param customfieldId and otherdetails value
+	 * @return
+	 * return OtherClientDetails with CustomField and otherdetails value
+	 */
+	public List<OtherClientDetails> getOtherDetailsByCustomFieldByValue(long customfieldId, String strValue);
 	
 	/**
 	 * returning a specific OtherClientDetails

@@ -26,30 +26,20 @@ public class OtherClientDetails {
             unique=true)
 	private long id;
 
-	@Column(name="location",
+	@Column(name="strValue",
 			nullable=true,
 			unique=false)
-	private String location;
-	
-	@Column(name="clientGroup",
-			nullable=true,
-			unique=false)
-	private String group;
-	
-	@Column(name="branchOffice",
-			nullable=true,
-			unique=false)
-	private String branchOffice;
-	
-	@Column(name="representatives",
-			nullable=true,
-			unique=false)
-	private String representatives;	
+	private String strValue;	
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "clientId", 
 			nullable = true)
 	private Client client;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "otherDetailsId", 
+			nullable = false)
+	private CustomField customField;
 
 	public long getId() {
 		return id;
@@ -59,36 +49,12 @@ public class OtherClientDetails {
 		this.id = id;
 	}
 
-	public String getLocation() {
-		return location;
+	public String getStrValue() {
+		return strValue;
 	}
 
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public String getGroup() {
-		return group;
-	}
-
-	public void setGroup(String group) {
-		this.group = group;
-	}
-
-	public String getBranchOffice() {
-		return branchOffice;
-	}
-
-	public void setBranchOffice(String branchOffice) {
-		this.branchOffice = branchOffice;
-	}
-
-	public String getRepresentatives() {
-		return representatives;
-	}
-
-	public void setRepresentatives(String representatives) {
-		this.representatives = representatives;
+	public void setStrValue(String strValue) {
+		this.strValue = strValue;
 	}
 
 	public Client getClient() {
@@ -99,4 +65,18 @@ public class OtherClientDetails {
 		this.client = client;
 	}
 
+	public CustomField getCustomField() {
+		return customField;
+	}
+
+	public void setCustomField(CustomField customField) {
+		this.customField = customField;
+	}
+/*
+ * 	
+	location;
+	group;
+	branchOffice;
+	representatives;	
+ * */
 }

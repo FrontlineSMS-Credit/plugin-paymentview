@@ -72,7 +72,7 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 
 			try {
 				acc = new Account(Long.parseLong(account));
-				accountDao.saveUpdateAccount(acc);
+				accountDao.saveAccount(acc);
 			} catch (DuplicateKeyException e) {
 				// FIXME should actually pass details of this back to the user.
 				log.debug("An Account already exist with this number", e);

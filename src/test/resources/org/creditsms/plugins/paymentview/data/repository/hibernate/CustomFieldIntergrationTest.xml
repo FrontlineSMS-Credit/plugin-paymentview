@@ -7,7 +7,6 @@
 	<import resource="classpath:frontlinesms-spring-hibernate-junit.xml" />
 
 	<!-- DAO declarations -->	
-	<bean id="hibernateOtherClientDetailsDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateOtherClientDetailsDao" parent="baseHibernateDao"/>
 	<bean id="hibernateCustomFieldDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateCustomFieldDao" parent="baseHibernateDao"/>
-	<bean id="hibernateClientDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateClientDao" parent="baseHibernateDao"/>
+	<bean id="hibernateOtherClientDetailsDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateOtherClientDetailsDao" parent="baseHibernateDao"/>
 </beans>

@@ -9,7 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.junit.HibernateTestCase;
-
+/**
+ * 
+ * @author Roy
+ *
+ */
 public class OutgoingPaymentIntergrationTest extends HibernateTestCase{
 	@Autowired                     
 	HibernateClientDao hibernateClientDao;
