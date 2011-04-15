@@ -4,22 +4,14 @@
 	<session-factory>
 		<mapping class="org.creditsms.plugins.paymentview.data.domain.Client" />
 		<mapping class="org.creditsms.plugins.paymentview.data.domain.Account" />
-		<mapping class="org.creditsms.plugins.paymentview.data.domain.OtherClientDetails" />
+		<mapping class="org.creditsms.plugins.paymentview.data.domain.CustomValue" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.OutgoingPayment" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.IncomingPayment" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.CustomField" />
-		
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.NetworkOperator" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.PaymentService" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.PaymentServiceTransaction" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.QuickDialCode" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.PaymentViewError" />
-    	<!-- 
-    	<mapping class="org.creditsms.plugins.paymentview.data.domain.Account" />
-    	<mapping class="org.creditsms.plugins.paymentview.data.domain.OtherClientDetails" />
-    	<mapping class="org.creditsms.plugins.paymentview.data.domain.OutgoingPayment" />
-    	<mapping class="org.creditsms.plugins.paymentview.data.domain.IncomingPayment" />
-    	<mapping class="org.creditsms.plugins.paymentview.data.domain.CustomField" />
-    	-->
 	</session-factory>
 </hibernate-configuration>

@@ -15,9 +15,9 @@ import javax.persistence.Table;
  * */
 
 @Entity
-@Table(name = OtherClientDetails.TABLE_NAME)
+@Table(name = CustomValue.TABLE_NAME)
 
-public class OtherClientDetails {
+public class CustomValue {
 	public static final String TABLE_NAME = "OtherClientDetails";
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -37,7 +37,7 @@ public class OtherClientDetails {
 	private Client client;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "otherDetailsId", 
+	@JoinColumn(name = "customDataId", 
 			nullable = false)
 	private CustomField customField;
 

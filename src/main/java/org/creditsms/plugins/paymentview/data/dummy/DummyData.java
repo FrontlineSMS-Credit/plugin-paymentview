@@ -95,13 +95,12 @@ public class DummyData {
 		createDummyClient("Justus Matanda", "+25472014545", new long[] {
 				42547455, 43493444 });
 
-	createDummyIncomingPayment("Isiah Muchene", "+254723312235", "1300560000000", new BigDecimal("43513.60"), 59536723);
+	    createDummyIncomingPayment("Isiah Muchene", "+254723312235", "1300560000000", new BigDecimal("43513.60"), 59536723);
 		createDummyIncomingPayment("Ian Mukewa", "+25472762345", "1300560000100", new BigDecimal("313.60"), 23432674);
 		createDummyIncomingPayment("Justin Mwakidedi", "+25475412345", "1300560000200", new BigDecimal("433.00"), 25857623);
 		createDummyIncomingPayment("John Muigai", "+25472012326", "1300560200300", new BigDecimal("44232.24"), 24343423);
 		createDummyIncomingPayment("Phanice Nafula", "+25472014545", "1300560020400", new BigDecimal("44343.23"), 43493444);
-		createDummyIncomingPayment("Charlene Nyambura", "+25472014545","1300560000500", new BigDecimal("345323.63"),
-				23432674);
+		createDummyIncomingPayment("Charlene Nyambura", "+25472014545","1300560000500", new BigDecimal("345323.63"), 23432674);
 		createDummyIncomingPayment("Tangus Koech", "+25472014545", "1300560200600", new BigDecimal("34243.44"), 42400255);
 		createDummyIncomingPayment("Peter Kamau", "+254724555345", "1300560200700", new BigDecimal("353366.66"), 24373423);
 		createDummyIncomingPayment("Isiah Mwiki", "+25472012345", "1300560000800", new BigDecimal("5456555.66"),
