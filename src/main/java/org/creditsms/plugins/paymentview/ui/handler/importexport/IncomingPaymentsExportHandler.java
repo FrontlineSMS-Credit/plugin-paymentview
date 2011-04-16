@@ -9,11 +9,11 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.importexport.ExportDialogHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
-import org.creditsms.plugins.paymentview.csv.CsvUtils;
+import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.dummy.DummyData;
-import org.creditsms.plugins.paymentview.data.importexport.CsvExporter;
+import org.creditsms.plugins.paymentview.data.importexport.PaymentViewCsvExporter;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 
 public class IncomingPaymentsExportHandler extends ExportDialogHandler<IncomingPayment> {
@@ -72,20 +72,20 @@ public class IncomingPaymentsExportHandler extends ExportDialogHandler<IncomingP
 		
 		log.debug("Row Format [" + rowFormat + "]");
 		
-		CsvExporter.exportIncomingPayment(new File(filename), incomingPayment, rowFormat);
+		PaymentViewCsvExporter.exportIncomingPayment(new File(filename), incomingPayment, rowFormat);
 		uiController.setStatus(InternationalisationUtils.getI18nString(MESSAGE_EXPORT_TASK_SUCCESSFUL));
 		this.uiController.infoMessage(InternationalisationUtils.getI18nString(MESSAGE_EXPORT_TASK_SUCCESSFUL));
 	}
 	
 	protected CsvRowFormat getRowFormatForIncomingPayment() { 
 		CsvRowFormat rowFormat = new CsvRowFormat();
-		addMarker(rowFormat, CsvUtils.MARKER_INCOMING_PHONE_NUMBER,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER,
 				COMPONENT_CB_PHONE_NUMBER);
-		addMarker(rowFormat, CsvUtils.MARKER_INCOMING_ACCOUNT,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT,
 				COMPONENT_CB_ACCOUNT);
-		addMarker(rowFormat, CsvUtils.MARKER_INCOMING_AMOUNT_PAID,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
 				COMPONENT_CB_AMOUNT_PAID);
-		addMarker(rowFormat, CsvUtils.MARKER_INCOMING_TIME_PAID,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,
 				COMPONENT_CB_TIME_PAID);
 		return rowFormat;
 	}

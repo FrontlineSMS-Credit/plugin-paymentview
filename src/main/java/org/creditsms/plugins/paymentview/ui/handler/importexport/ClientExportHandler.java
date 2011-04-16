@@ -9,10 +9,10 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.importexport.ExportDialogHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
-import org.creditsms.plugins.paymentview.csv.CsvUtils;
+import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.dummy.DummyData;
-import org.creditsms.plugins.paymentview.data.importexport.CsvExporter;
+import org.creditsms.plugins.paymentview.data.importexport.PaymentViewCsvExporter;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 
 public class ClientExportHandler extends ExportDialogHandler<Client> {
@@ -69,17 +69,17 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 		
 		log.debug("Row Format [" + rowFormat + "]");
 		
-		CsvExporter.exportClients(new File(filename), clients, rowFormat);
+		PaymentViewCsvExporter.exportClients(new File(filename), clients, rowFormat);
 		uiController.setStatus(InternationalisationUtils.getI18nString(MESSAGE_EXPORT_TASK_SUCCESSFUL));
 		this.uiController.infoMessage(InternationalisationUtils.getI18nString(MESSAGE_EXPORT_TASK_SUCCESSFUL));
 	}
 	
 	protected CsvRowFormat getRowFormatForClient() { 
 		CsvRowFormat rowFormat = new CsvRowFormat();
-		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_FIRST_NAME, COMPONENT_CB_FIRSTNAME);
-		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_OTHER_NAME, COMPONENT_CB_OTHERNAME);
-		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_PHONE, COMPONENT_CB_PHONE);
-		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_ACCOUNTS, COMPONENT_ACCOUNTS);		
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME, COMPONENT_CB_FIRSTNAME);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME, COMPONENT_CB_OTHERNAME);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_PHONE, COMPONENT_CB_PHONE);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS, COMPONENT_ACCOUNTS);		
 		return rowFormat;
 	}
 }

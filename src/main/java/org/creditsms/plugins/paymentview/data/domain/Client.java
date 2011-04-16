@@ -77,8 +77,8 @@ public class Client {
 		return accounts;
 	}
 
-	void setAccounts(Set<Account> accountLst) {
-		this.accounts = accountLst;
+	void setAccounts(Set<Account> accounts) {
+		this.accounts = accounts;
 	}
 	
 	public void addAccount(Account account) {

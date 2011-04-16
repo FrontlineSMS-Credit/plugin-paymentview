@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 
-public class FrontlineUtils extends net.frontlinesms.FrontlineUtils{
+public class PaymentViewUtils extends net.frontlinesms.FrontlineUtils{
 
 	public static String accountsAsString(Collection<Account> accounts,
 			String groupsDelimiter) {
