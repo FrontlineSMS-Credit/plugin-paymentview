@@ -33,7 +33,7 @@
 			weightx="1">
 			<panel halign="left">
 				<button icon="/icons/keyword.png" action="customizeClientDB"
-					name="btn_tab_clientList_customizeClientDB" text="Customize Client Database" />
+					name="btn_customizeClientDB" text="Customize Client Database" />
 			</panel>
 			<panel weightx="1" />
 			<panel columns="2" halign="left" gap="2" weightx="1">

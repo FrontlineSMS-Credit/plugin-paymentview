@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<tab name="tabStepSelectService">
+<panel name="tabStepSelectService">
     <panel border="true" bottom="5" columns="1" gap="5" left="5" right="5" top="5">
         <label font="18" text="View Client progress"/>
         <label text="1. Select the serveice you wish to view"/>
@@ -7,7 +7,6 @@
         <button text="Targeted Savings / Layaway"/>
     </panel>
     <panel gap="5" halign="right" weightx="1">
-        <button action="saveClient" icon="/icons/tick.png" name="btSaveClient" text="Previous"/>
-        <button action="removeDialog(clientDetailsDialog)" icon="/icons/cross.png" text="Next"/>
+        <button action="next" icon="/icons/right.png" text="Next"/>
     </panel>
-</tab>
+</panel>

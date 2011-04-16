@@ -8,6 +8,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.OneToMany;
 
+import net.frontlinesms.ui.Icon;
+
+import org.creditsms.plugins.paymentview.utils.FieldMeta;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,8 +28,10 @@ public class Client {
 	@Column(name="id",
             nullable=false,
             unique=true)
+    @FieldMeta(icon="/icons/key.png")
 	private long id;
 	
+	@FieldMeta(icon=Icon.USER_STATUS_ACTIVE)
 	@Column(name="firstName",
 			nullable=true,
 			unique=false)
@@ -34,12 +40,15 @@ public class Client {
 	@Column(name="otherName",
 			nullable=true,
 			unique=false)
+	@FieldMeta(icon=Icon.USER_STATUS_ACTIVE)
 	private String otherName;
 	
 	@Column(name="phoneNumber", nullable=false, unique=true)
+	@FieldMeta(icon="/icons/phone.png")
 	private String phoneNumber;
 	
 	@OneToMany
+	@FieldMeta(icon="/icons/accounts.png")
 	private Set<Account> accounts = new HashSet<Account>();
 	
 	@OneToMany

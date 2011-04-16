@@ -13,7 +13,8 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.ui.handler.client.dialogs.CustomizeClientHandler;
+import org.creditsms.plugins.paymentview.ui.handler.client.dialogs.CustomizeClientDBHandler;
+import org.creditsms.plugins.paymentview.ui.handler.client.dialogs.EditClientHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientImportHandler;
 
@@ -110,10 +111,11 @@ public class ClientsTabHandler extends BaseTabHandler implements
 
 	// > EVENTS...
 	public void customizeClientDB() {
+		ui.add(new CustomizeClientDBHandler(ui).getDialog());
 	}
 
 	public void addClient() {
-		ui.add(new CustomizeClientHandler(ui).getDialog());
+		ui.add(new EditClientHandler(ui).getDialog());
 	}
 	
 	public void importClient() {
@@ -131,7 +133,7 @@ public class ClientsTabHandler extends BaseTabHandler implements
 				.getSelectedItems(clientsTableComponent);
 		for (Object selectedClient : selectedClients) {
 			Client c = (Client) ui.getAttachedObject(selectedClient);
-			ui.add(new CustomizeClientHandler(ui, c, clientDao).getDialog());
+			ui.add(new EditClientHandler(ui, c, clientDao).getDialog());
 		}
 	}
 
