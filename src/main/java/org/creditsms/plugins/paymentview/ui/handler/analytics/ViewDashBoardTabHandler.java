@@ -10,6 +10,8 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.ui.handler.analytics.dialogs.CreateAlertHandler;
+import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
 
 public class ViewDashBoardTabHandler extends BaseTabHandler {
 	private static final String TAB_VIEW_DASHBOARD = "tab_viewDashBoard";
@@ -125,11 +127,11 @@ public class ViewDashBoardTabHandler extends BaseTabHandler {
 		}
 		
 		public void export() {
-			
+			new ClientExportHandler((UiGeneratorController) ui).showWizard();
 		}
 		
 		public void createAlert() {
-			
+			ui.add(new CreateAlertHandler((UiGeneratorController)ui).getDialog());
 		}
 	}
 
