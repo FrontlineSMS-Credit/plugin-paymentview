@@ -18,7 +18,11 @@
 		<panel columns="4" bottom="5" columns="1" gap="5" left="10"
 			right="10" top="10" weightx="1">
 			<label colspan="1" text="What is the Savings target / goal" />
-			<textfield colspan="3" />
+			<combobox colspan="3" action="evaluate(this)">
+				<choice text="Small Product - 1,995 KES"/>
+				<choice text="Large Product - 4,995 KES"/>
+				<choice text="Enter New Target"/>
+			</combobox>
 			<label colspan="1" text="What is the start date?" />
 			<panel colspan="3">
 				<textfield columns="10" name="txt_StartDate" />
