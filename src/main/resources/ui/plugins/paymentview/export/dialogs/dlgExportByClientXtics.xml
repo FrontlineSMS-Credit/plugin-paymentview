@@ -3,39 +3,41 @@
 	left="9" modal="true" name="exportByCharacteristic1" resizable="true"
 	right="9" text="Export By Client Characteristic" top="9">
 
-	<panel columns="2" weightx="1">
-		<label colspan="2" text="Choose the kind of payment to export:" />
+	<panel columns="2" gap="5">
+		<label colspan="2" font="bold" text="Choose the kind of payment to export:" />
 		<panel weightx="1" />
-		<checkbox text="Incoming Payments (from clients)" />
+		<checkbox group="payType" text="Incoming Payments (from clients)" />
 		<panel weightx="1" />
-		<checkbox text="Outgoing Payments (to clients)" />
-	</panel>
-	<panel columns="2">
-		<label text="Choose the date range for export:" />
+		<checkbox group="payType" text="Outgoing Payments (to clients)" />
 		<panel weightx="1" />
-		<checkbox text="Today" />
 		<panel weightx="1" />
-		<checkbox halign="left" text="Past Week" />
+		<label colspan="2" font="bold" text="Choose the date range for export:" />
 		<panel weightx="1" />
-		<checkbox text="All" />
+		<checkbox group="range" text="Today" />
 		<panel weightx="1" />
-		<checkbox text="Date Range:" />
+		<checkbox group="range" text="Past Week" />
+		<panel weightx="1" />
+		<checkbox group="range" text="All" /> 
+		<panel weightx="1" />
+		<checkbox group="range" text="Date Range:" />
 		<panel weightx="1" />
 		<panel weightx="1">
 			<textfield columns="10" name="txt_FromDate" />
 			<button action="showDateSelecter(txt_FromDate)" icon="/icons/date.png" />
-			<textfield columns="10" name="txt_FromDate" />
-			<button action="showDateSelecter(txt_FromDate)" icon="/icons/date.png" />
+			<panel weightx="1" />
+			<textfield columns="10" name="txt_ToDate" />
+			<button action="showDateSelecter(txt_ToDate)" icon="/icons/date.png" />
 		</panel>
-	</panel>
-	<panel columns="1" rows="2">
-		<label text="Select the file format you wish to export to:"
+		<label colspan="2" font="bold" text="Select the file format you wish to export to:"
 			rowspan="2" />
-		<checkbox text="CSV" />
-		<checkbox text="PDF" />
+		<panel weightx="1" />
+		<checkbox group="filetype" text="CSV" />
+		<panel weightx="1" />
+		<checkbox group="filetype" text="PDF" />
 	</panel>
-	<panel gap="5" halign="right" weightx="1">
+	<panel gap="5" weightx="1">
 		<button action="removeDialog" icon="/icons/cross.png" text="Cancel" />
-		<button text="Next" icon="/icons/right.png" />
+		<panel weightx="1" />
+		<button text="Next" action="next" icon="/icons/right.png" />
 	</panel>
 </dialog>

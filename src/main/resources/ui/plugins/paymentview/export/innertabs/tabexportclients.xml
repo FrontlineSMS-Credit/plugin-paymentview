@@ -31,7 +31,7 @@
 			<panel weightx="1">
 				<button name="btn_selectAll" text="Select All" />
 				<panel weightx="1" />
-				<button icon="/icons/export.png" name="btn_exportSelectedClients" text="Export Selected Clients" />
+				<button icon="/icons/export.png" action="exportSelectedClients" name="btn_exportSelectedClients" text="Export Selected Clients" />
 			</panel>
 			<panel columns="1" weightx="1" gap="5">
 				<separator />

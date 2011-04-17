@@ -1,5 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler.export;
 
+import org.creditsms.plugins.paymentview.ui.handler.export.dialogs.ExportByClientXticsStep1Handler;
+
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
@@ -20,5 +22,9 @@ public class ExportClientsTabHandler extends BaseTabHandler{
 	protected Object initialiseTab() {
 		clientsTab = ui.loadComponentFromFile(XML_EXPORT_CLIENTS_TAB, this);
 		return clientsTab;
+	}
+	
+	public void exportSelectedClients() {
+		ui.add(new ExportByClientXticsStep1Handler(ui).getDialog());
 	}
 }
