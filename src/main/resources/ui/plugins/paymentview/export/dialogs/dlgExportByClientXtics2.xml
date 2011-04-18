@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dialog bottom="9" close="removeDialog(this)" columns="1" gap="15"
+	left="9" modal="true" name="clientDetailsDialog" resizable="true"
+	right="9" text="i18n.plugins.paymentview.dialog.client" top="9">
+	<panel border="true" bottom="5" columns="1" gap="5" left="5"
+		right="5" top="5">
+		<label text="You have chosen to export:" />
+		<label name="clientNumber" text="" />
+		<label text="Date Range:" />
+		<label name="dateRange" text="" />
+		<label text="Destination File:" />
+		<label name="lblFilePath" text="" />
+	</panel>
+	<panel gap="5" weightx="1">
+		<button action="removeDialog(clientDetailsDialog)" icon="/icons/cross.png"
+			text="Previous" />
+		<panel weightx="1"/>
+		<button action="export" icon="/icons/export.png" text="Export" />
+	</panel>
+</dialog>

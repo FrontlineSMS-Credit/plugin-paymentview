@@ -11,7 +11,7 @@ import net.frontlinesms.csv.CsvParseException;
 import net.frontlinesms.csv.CsvRowFormat;
 import net.frontlinesms.data.DuplicateKeyException;
 
-import org.creditsms.plugins.paymentview.csv.CsvUtils;
+import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
@@ -52,15 +52,15 @@ public class IncomingPaymentCsvImporter extends CsvImporter {
 
 		for (String[] lineValues : this.getRawValues()) {
 			String paymentBy = rowFormat.getOptionalValue(lineValues,
-					CsvUtils.MARKER_INCOMING_PAYMENT_BY);
+					PaymentViewCsvUtils.MARKER_INCOMING_PAYMENT_BY);
 			String phoneNumber = rowFormat.getOptionalValue(lineValues,
-					CsvUtils.MARKER_INCOMING_PHONE_NUMBER);
+					PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER);
 			String amountPaid = rowFormat.getOptionalValue(lineValues,
-					CsvUtils.MARKER_INCOMING_AMOUNT_PAID);
+					PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID);
 			String timePaid = rowFormat.getOptionalValue(lineValues,
-					CsvUtils.MARKER_INCOMING_TIME_PAID);
+					PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID);
 			String account = rowFormat.getOptionalValue(lineValues,
-					CsvUtils.MARKER_INCOMING_ACCOUNT);
+					PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT);
 
 			Account acc;
 

@@ -9,12 +9,12 @@
 		<panel columns="1" gap="5" weightx="1" weighty="1">
 			<table name="tbl_clientsList" weightx="1" weighty="1"  selection="multiple">
 				<header>
-					<column width="200" icon="/icons/user.png" text="Name" />
-					<column width="150" icon="/icons/phone.png" text="Phone Number" />
-					<column width="120" icon="/icons/money.png" text="Amount" />
-					<column width="120" icon="/icons/date.png" text="Date" />
-					<column width="120" icon="/icons/time.png" text="Time" />
-					<column width="150" icon="/icons/key.png" text="Payment ID." />
+					<column width="200" icon="/icons/user.png" sort="descent" text="Name" />
+					<column width="150" icon="/icons/phone.png" sort="none" text="Phone Number" />
+					<column width="120" icon="/icons/money.png" sort="none" text="Amount" />
+					<column width="120" icon="/icons/date.png" sort="none" text="Date" />
+					<column width="120" icon="/icons/time.png" sort="none" text="Time" />
+					<column width="150" icon="/icons/key.png" sort="none" text="Payment ID." />
 					<column icon="/icons/description.png" text="Notes" />
 				</header>
 				<!--
@@ -31,7 +31,7 @@
 			<panel weightx="1">
 				<button name="btn_selectAll" text="Select All" />
 				<panel weightx="1" />
-				<button icon="/icons/export.png" name="btn_exportSelectedClients" text="Export Selected Clients" />
+				<button icon="/icons/export.png" action="exportSelectedClients" name="btn_exportSelectedClients" text="Export Selected Clients" />
 			</panel>
 			<panel columns="1" weightx="1" gap="5">
 				<separator />

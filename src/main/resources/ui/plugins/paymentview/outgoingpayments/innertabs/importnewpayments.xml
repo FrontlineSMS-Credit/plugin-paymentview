@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name="tab_importNewPayments" text="Import New Payments">
 	<panel columns="1" gap="10" weightx="1" weighty="1">
-		<panel columns="1" gap="5" left="5" right="5" top="5"
-			weightx="1" weighty="1">
+		<panel columns="1" gap="5" left="5" right="5" top="5" weightx="1"
+			weighty="1">
 			<label font="20 bold" text="Import New Payments to Send"
-					weightx="1"/>
-			<panel gap="5" weightx="1">				
-				<button action="showImportWizard('messages')" icon="/icons/import.png" text="Import Payments" weightx="1"/>
-				<panel weightx="1"/>
-				<panel weightx="1"/>
-				<panel weightx="1"/>
-				<panel weightx="1"/>
-				<panel weightx="1"/>
-				<panel weightx="1"/>
-				<panel weightx="1"/>
-				<panel weightx="1"/>
+				weightx="1" />
+			<panel gap="5" weightx="1">
+				<button action="showImportWizard('messages')" icon="/icons/import.png"
+					text="Import Payments" weightx="1" />
+				<panel weightx="1" />
+				<panel weightx="1" />
+				<panel weightx="1" />
+				<panel weightx="1" />
+				<panel weightx="1" />
+				<panel weightx="1" />
+				<panel weightx="1" />
+				<panel weightx="1" />
 			</panel>
-			<separator/>
+			<separator />
 			<panel columns="1" weightx="1" weighty="1" gap="5">
 				<label text="Preview Payment to send" />
 				<table name="tbl_clients" weightx="1" weighty="1">
@@ -34,8 +35,10 @@
 		</panel>
 		<panel halign="right" gap="5" left="5" right="5" bottom="5"
 			weightx="1">
-			<button icon="/icons/recipient_number.png" name="btn_sendPaymentNow" text="Send Payment Now" />
-			<button icon="/icons/time.png" name="btn_schedulePayment" text="Schedule Payment" />
+			<button icon="/icons/recipient_number.png" action="showSendPaymentAuthDialog"
+				name="btn_sendPaymentToSelection" text="Send Payment Now" />
+			<button icon="/icons/time.png" name="btn_schedulePaymentToSelection"
+				action="showSchedulePaymentAuthDialog" text="Schedule Payment" />
 		</panel>
 	</panel>
 </tab>

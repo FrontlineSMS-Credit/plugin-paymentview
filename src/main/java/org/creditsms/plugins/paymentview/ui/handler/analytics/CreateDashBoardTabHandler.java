@@ -7,6 +7,8 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.ui.handler.analytics.CreateDashBoardTabHandler.StepSelectClientsHandler;
+import org.creditsms.plugins.paymentview.ui.handler.analytics.dialogs.CreateAlertHandler;
+import org.creditsms.plugins.paymentview.ui.handler.analytics.dialogs.CreateNewTargetHandler;
 
 import net.frontlinesms.ui.FrontlineUI;
 import net.frontlinesms.ui.ThinletUiEventHandler;
@@ -126,6 +128,13 @@ public class CreateDashBoardTabHandler extends BaseTabHandler {
 
 		public void previous() {
 			setCurrentStepPanel(new StepSelectClientsHandler((UiGeneratorController) ui).getPanelComponent());
+		}
+		
+		public void evaluate(Object combo){
+			int index = ui.getSelectedIndex(combo);
+			if (index==2){
+				ui.add(new CreateNewTargetHandler((UiGeneratorController)ui).getDialog());
+			}
 		}
 		
 		public void next() {

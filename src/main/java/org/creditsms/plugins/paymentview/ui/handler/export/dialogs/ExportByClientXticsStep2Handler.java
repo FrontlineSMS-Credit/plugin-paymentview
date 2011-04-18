@@ -1,4 +1,4 @@
-package org.creditsms.plugins.paymentview.ui.handler.importexport;
+package org.creditsms.plugins.paymentview.ui.handler.export.dialogs;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,9 @@ import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.importexport.PaymentViewCsvExporter;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 
-public class ClientExportHandler extends ExportDialogHandler<Client> {
+public class ExportByClientXticsStep2Handler extends ExportDialogHandler<Client> {
+	private static final String UI_FILE_EXPORT_WIZARD_FORM = "/ui/plugins/paymentview/export/dialogs/dlgExportByClientXtics1.xml";
+	
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_EXPORTING_SELECTED_CONTACTS = "plugins.paymentview.message.exporting.selected.client";
 	private static final String UI_FILE_OPTIONS_PANEL_CLIENT = "/ui/plugins/paymentview/importexport/pnClientDetails.xml";
@@ -25,10 +27,17 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 	private static final String COMPONENT_CB_PHONE = "cbPhone";
 	 
 	private ClientDao clientDao;
+
+	private String exportfilepath;
 	
-	public ClientExportHandler(UiGeneratorController ui) {
+	public ExportByClientXticsStep2Handler(UiGeneratorController ui) {
 		super(Client.class, ui);
 		clientDao = DummyData.INSTANCE.getClientDao();
+	}
+	
+	@Override
+	protected String getDialogFile() {
+		return UI_FILE_EXPORT_WIZARD_FORM;
 	}
 
 	@Override
@@ -81,5 +90,32 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_PHONE, COMPONENT_CB_PHONE);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS, COMPONENT_ACCOUNTS);		
 		return rowFormat;
+	}
+	
+	public void next(String exportfilepath){
+		this.exportfilepath = exportfilepath;
+		uiController.add(new ExportByClientXticsStep3Handler(uiController).getDialog());
+		removeDialog();
+	}
+	
+	/** Remove the dialog from view. */
+	public void removeDialog() {
+		this.removeDialog(this.wizardDialog);
+	}
+
+	/** Remove a dialog from view. */
+	public void removeDialog(Object dialog) {
+		this.uiController.removeDialog(dialog);
+	}
+	
+	/**
+	 * @return the exportfilepath
+	 */
+	public String getExportfilepath() {
+		return exportfilepath;
+	}
+	
+	public void handleDoExport() {
+		super.handleDoExport(this.exportfilepath);
 	}
 }

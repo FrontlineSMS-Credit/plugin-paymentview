@@ -9,7 +9,8 @@ public class AnalyticsTabHandler implements ThinletUiEventHandler{
 	
 	private Object analyticsTab;
 	private CreateDashBoardTabHandler createDashBoardHandler;
-	private UiGeneratorController ui; 
+	private UiGeneratorController ui;
+	private ViewDashBoardTabHandler viewDashBoardHandler; 
 	
 	public AnalyticsTabHandler(UiGeneratorController ui) {
 		this.ui = ui; 
@@ -18,11 +19,13 @@ public class AnalyticsTabHandler implements ThinletUiEventHandler{
 		
 	public void refresh() {
 		this.createDashBoardHandler.refresh();
-	}
+		this.viewDashBoardHandler.refresh();
+	} 
 	
 	protected Object init() {
 		analyticsTab = ui.loadComponentFromFile(XML_ANALYTICS_TAB, this);
-		createDashBoardHandler = new CreateDashBoardTabHandler(ui, analyticsTab);		
+		createDashBoardHandler = new CreateDashBoardTabHandler(ui, analyticsTab);
+		viewDashBoardHandler = new ViewDashBoardTabHandler(ui, analyticsTab);
 		return analyticsTab;
 	}
 

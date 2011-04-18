@@ -11,7 +11,7 @@ import net.frontlinesms.csv.CsvParseException;
 import net.frontlinesms.csv.CsvRowFormat;
 import net.frontlinesms.data.DuplicateKeyException;
 
-import org.creditsms.plugins.paymentview.csv.CsvUtils;
+import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.dummy.DummyData;
@@ -44,10 +44,10 @@ public class ClientCsvImporter extends CsvImporter {
 		log.trace("ENTER");
 		
 		for(String[] lineValues : this.getRawValues()) {
-			String firstname = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CLIENT_FIRST_NAME);
-			String otherName = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CLIENT_OTHER_NAME);
-			String phonenumber = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CLIENT_PHONE);
-			String accounts = rowFormat.getOptionalValue(lineValues, CsvUtils.MARKER_CLIENT_ACCOUNTS);
+			String firstname = rowFormat.getOptionalValue(lineValues, PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME);
+			String otherName = rowFormat.getOptionalValue(lineValues, PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME);
+			String phonenumber = rowFormat.getOptionalValue(lineValues, PaymentViewCsvUtils.MARKER_CLIENT_PHONE);
+			String accounts = rowFormat.getOptionalValue(lineValues, PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS);
 						
 			Client c = new Client(firstname, otherName, phonenumber, getAccountsFromString(accounts));					
 			try {

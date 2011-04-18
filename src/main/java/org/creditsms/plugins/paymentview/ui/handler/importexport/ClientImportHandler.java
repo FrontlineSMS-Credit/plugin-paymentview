@@ -15,7 +15,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.importexport.ImportDialogHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
-import org.creditsms.plugins.paymentview.csv.CsvUtils;
+import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.importexport.ClientCsvImporter;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
@@ -75,12 +75,12 @@ public class ClientImportHandler extends ImportDialogHandler {
 
 	protected CsvRowFormat getRowFormatForClient() {
 		CsvRowFormat rowFormat = new CsvRowFormat();
-		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_FIRST_NAME,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME,
 				COMPONENT_CB_FIRSTNAME);
-		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_OTHER_NAME,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME,
 				COMPONENT_CB_OTHERNAME);
-		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_PHONE, COMPONENT_ACCOUNTS);
-		addMarker(rowFormat, CsvUtils.MARKER_CLIENT_ACCOUNTS,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_PHONE, COMPONENT_ACCOUNTS);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS,
 				COMPONENT_CB_PHONE);
 		return rowFormat;
 	}

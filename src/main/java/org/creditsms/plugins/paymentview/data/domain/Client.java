@@ -8,6 +8,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.OneToMany;
 
+import net.frontlinesms.ui.Icon;
+
+import org.creditsms.plugins.paymentview.utils.FieldMeta;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -68,8 +72,8 @@ public class Client {
 		return accounts;
 	}
 
-	void setAccounts(Set<Account> accountLst) {
-		this.accounts = accountLst;
+	void setAccounts(Set<Account> accounts) {
+		this.accounts = accounts;
 	}
 	
 	public void addAccount(Account account) {

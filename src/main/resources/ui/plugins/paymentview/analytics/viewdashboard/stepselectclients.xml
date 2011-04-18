@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<panel name="pnlSelectClients" bottom="5" columns="1" gap="10"
+	left="5" right="5" top="10" weightx="1" weighty="1">
+
+	<panel columns="2" gap="5" weightx="1" weighty="1">
+		<label font="20 Bold" colspan="2" text="View Client progress" />
+		<label text="2. Select the clients you wish to view" colspan="2"/>
+		<checkbox group="plan" text="All" colspan="2"/>
+		<checkbox group="plan" text="By Product"/>
+		<combobox text="Select Product"/>
+		<checkbox group="plan" text="All Completed" colspan="2"/>
+		<checkbox group="plan" text="All In Progress" colspan="2"/>
+		<checkbox group="plan" text="Select By Client Characteristic"/>
+		<combobox text="Client Groups"/>
+		<checkbox group="plan" text="Select By Client" colspan="2"/>
+		<table colspan="2" name="tbl_clients" weightx="1" weighty="1">
+			<header>
+				<column text="Name" width="200" icon="/icons/user.png" />
+				<column text="Phone" width="150" icon="/icons/phone.png" />
+				<column text="Account" width="100" />
+			</header>
+		</table>
+	</panel>
+	<panel gap="5" halign="right" weightx="1">
+		<button action="previous" icon="/icons/left.png" text="Previous" />
+		<button action="next" icon="/icons/right.png" text="Next" />
+	</panel>
+</panel>

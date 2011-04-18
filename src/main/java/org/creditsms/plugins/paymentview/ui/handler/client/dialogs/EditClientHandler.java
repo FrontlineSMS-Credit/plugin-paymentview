@@ -1,21 +1,22 @@
 package org.creditsms.plugins.paymentview.ui.handler.client.dialogs;
 
-import org.creditsms.plugins.paymentview.data.domain.Account;
-import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
-public class CustomizeClientHandler implements ThinletUiEventHandler {
+import org.creditsms.plugins.paymentview.data.domain.Account;
+import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+
+public class EditClientHandler implements ThinletUiEventHandler {
+	private static final String XML_EDIT_CLIENT = "/ui/plugins/paymentview/clients/dialogs/dlgEditClient.xml";
+	
 	private static final String COMPONENT_TEXT_FIRST_NAME = "fldFirstName";
 	private static final String COMPONENT_TEXT_PHONE_NUMBER = "fldPhoneNumber";
 	private static final String COMPONENT_TEXT_OTHER_NAME = "fldOtherName";
 	private static final String COMPONENT_LIST_ACCOUNTS = "fldAccounts";
 
-	private UiGeneratorController ui;
-	private String XML_CUSTOMIZE_CLIENT = "/ui/plugins/paymentview/clients/dialogs/dlgCustomizeClient.xml";
+	private UiGeneratorController ui;	
 	private Object dialogComponent;
 	private Client clientObj;
 	private ClientDao clientDao;
@@ -26,14 +27,14 @@ public class CustomizeClientHandler implements ThinletUiEventHandler {
 	private Object fieldListAccounts;
 	private boolean editMode; 
 
-	public CustomizeClientHandler(UiGeneratorController ui) {
+	public EditClientHandler(UiGeneratorController ui) {
 		this.ui = ui;
 		this.editMode = false;
 		init();
 		refresh();
 	}
 	
-	public CustomizeClientHandler(UiGeneratorController ui, Client clientObj,
+	public EditClientHandler(UiGeneratorController ui, Client clientObj,
 			ClientDao clientDao) {
 		this.editMode = true;
 		this.setClientObj(clientObj);
@@ -60,7 +61,7 @@ public class CustomizeClientHandler implements ThinletUiEventHandler {
 	}	
 
 	public void init() {
-		dialogComponent = ui.loadComponentFromFile(XML_CUSTOMIZE_CLIENT, this);
+		dialogComponent = ui.loadComponentFromFile(XML_EDIT_CLIENT, this);
 
 		fieldFirstName = ui.find(dialogComponent, COMPONENT_TEXT_FIRST_NAME);
 		fieldPhoneNumber = ui.find(dialogComponent, COMPONENT_TEXT_PHONE_NUMBER);
@@ -91,7 +92,7 @@ public class CustomizeClientHandler implements ThinletUiEventHandler {
 
 	/**
 	 * @param clientObj
-	 *            the clientObj to set
+	 * the clientObj to set
 	 */
 	public void setClientObj(Client clientObj) {
 		this.clientObj = clientObj;
