@@ -32,7 +32,7 @@ public class CustomField {
 	private String strName;
 	
 	@OneToMany
-	private Set<OtherClientDetails> otherClientDetails = new HashSet<OtherClientDetails>();
+	private Set<CustomValue> otherClientDetails = new HashSet<CustomValue>();
 	
 	public long getId() {
 		return id;
@@ -50,11 +50,11 @@ public class CustomField {
 		this.strName = strName;
 	}
 
-	public Set<OtherClientDetails> getOtherClientDetails() {
+	public Set<CustomValue> getOtherClientDetails() {
 		return otherClientDetails;
 	}
 
-	public void setOtherClientDetails(Set<OtherClientDetails> otherClientDetails) {
+	public void setOtherClientDetails(Set<CustomValue> otherClientDetails) {
 		this.otherClientDetails = otherClientDetails;
 	}
 }

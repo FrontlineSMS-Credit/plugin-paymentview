@@ -47,7 +47,7 @@ public class Client {
 	private Set<Account> accounts = new HashSet<Account>();
 	
 	@OneToMany
-	private Set<OtherClientDetails> otherClientDetails = new HashSet<OtherClientDetails>();
+	private Set<CustomValue> customData = new HashSet<CustomValue>();
 
 	public Client(String firstName, String otherName, String phoneNumber,
 			Set<Account> accountsFromString) {
@@ -60,12 +60,12 @@ public class Client {
 	public Client() {
 	}
 
-	public Collection<OtherClientDetails> getOtherClientDetails() {
-		return otherClientDetails;
+	public Collection<CustomValue> getCustomData() {
+		return customData;
 	}
 
-	public void setOtherClientDetails(Set<OtherClientDetails> otherClientDetails) {
-		this.otherClientDetails = otherClientDetails;
+	public void setOtherClientDetails(Set<CustomValue> otherClientDetails) {
+		this.customData = otherClientDetails;
 	}
 
 	public Collection<Account> getAccounts() {

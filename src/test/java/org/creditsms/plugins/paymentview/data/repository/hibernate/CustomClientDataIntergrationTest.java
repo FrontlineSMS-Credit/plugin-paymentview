@@ -1,6 +1,6 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
 
-import org.creditsms.plugins.paymentview.data.domain.OtherClientDetails;
+import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +13,9 @@ import net.frontlinesms.junit.HibernateTestCase;
  * @author Roy
  *
  */
-public class OtherClientDetailsIntergrationTest extends HibernateTestCase {
+public class CustomClientDataIntergrationTest extends HibernateTestCase {
 	@Autowired                     
-	HibernateOtherClientDetailsDao hibernateOtherClientDetailsDao;
+	HibernateCustomValueDao hibernateOtherClientDetailsDao;
 	@Autowired
 	HibernateClientDao hibernateClientDao;
 	@Autowired                     
@@ -30,7 +30,7 @@ public class OtherClientDetailsIntergrationTest extends HibernateTestCase {
 	public void testSave() throws DuplicateKeyException {
 		assertEmptyDatabase();
 		createAndSaveCustomField("Location", 1);
-		OtherClientDetails ocd = createOtherClientdetails("Kariobangi South", getCustomField());
+		CustomValue ocd = createOtherClientdetails("Kariobangi South", getCustomField());
 		hibernateOtherClientDetailsDao.saveOtherClientDetails(ocd);
 		assertEquals(1, hibernateOtherClientDetailsDao.getAllOtherDetails().size());
 	}
@@ -66,7 +66,7 @@ public class OtherClientDetailsIntergrationTest extends HibernateTestCase {
 		assertEquals(1, hibernateOtherClientDetailsDao.getAllOtherDetails().size());
 	}
 	
-	private OtherClientDetails getOtherClientDetails(){
+	private CustomValue getOtherClientDetails(){
 		assertEquals(1, hibernateOtherClientDetailsDao.getAllOtherDetails().size());
 		return(this.hibernateOtherClientDetailsDao.getAllOtherDetails().get(0));
 	}
@@ -81,15 +81,15 @@ public class OtherClientDetailsIntergrationTest extends HibernateTestCase {
 		return c;
 	}
 	
-	private OtherClientDetails createOtherClientdetails(String strVal, CustomField cf){
-		OtherClientDetails ocd = new OtherClientDetails();
+	private CustomValue createOtherClientdetails(String strVal, CustomField cf){
+		CustomValue ocd = new CustomValue();
 		ocd.setStrValue(strVal);
 		ocd.setCustomField(cf);
 		return ocd;
 	}
 	
-	private OtherClientDetails createOtherClientdetails(String strVal, Client client, CustomField cf){
-		OtherClientDetails ocd = new OtherClientDetails();
+	private CustomValue createOtherClientdetails(String strVal, Client client, CustomField cf){
+		CustomValue ocd = new CustomValue();
 		ocd.setStrValue(strVal);
 		ocd.setCustomField(cf);
 		if(client!=null) ocd.setClient(client);

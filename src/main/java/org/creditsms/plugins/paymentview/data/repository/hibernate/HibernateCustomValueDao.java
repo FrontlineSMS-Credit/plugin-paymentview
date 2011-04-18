@@ -2,48 +2,48 @@ package org.creditsms.plugins.paymentview.data.repository.hibernate;
 import java.util.List;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
-import org.creditsms.plugins.paymentview.data.domain.OtherClientDetails;
-import org.creditsms.plugins.paymentview.data.repository.OtherClientDetailsDao;
+import org.creditsms.plugins.paymentview.data.domain.CustomValue;
+import org.creditsms.plugins.paymentview.data.repository.CustomDataDao;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
-public class HibernateOtherClientDetailsDao extends BaseHibernateDao<OtherClientDetails>  implements OtherClientDetailsDao{
+public class HibernateCustomValueDao extends BaseHibernateDao<CustomValue>  implements CustomDataDao{
 	
-	protected HibernateOtherClientDetailsDao(){
-		super(OtherClientDetails.class);
+	protected HibernateCustomValueDao(){
+		super(CustomValue.class);
 	}
 
-	public List<OtherClientDetails> getAllOtherDetails() {
+	public List<CustomValue> getAllOtherDetails() {
 		return super.getAll();
 	}
 
-	public List<OtherClientDetails> getOtherDetailsByClientId(long id) {
+	public List<CustomValue> getOtherDetailsByClientId(long id) {
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria clientCriteria = criteria.createCriteria("client");
 		clientCriteria.add(Restrictions.eq("id", id));
 		return super.getList(criteria);
 	}
 
-	public OtherClientDetails getOtherClientDetailsById(long id) {
+	public CustomValue getOtherClientDetailsById(long id) {
 		DetachedCriteria criteria = super.getCriterion();
 		criteria.add(Restrictions.eq("id", id));
 		return super.getUnique(criteria);
 	}
 
-	public void deleteOtherClientDetails(OtherClientDetails otherClientDetails) {
+	public void deleteOtherClientDetails(CustomValue otherClientDetails) {
 		super.delete(otherClientDetails);
 	}
 
-	public void saveOtherClientDetails(OtherClientDetails otherClientDetails) throws DuplicateKeyException {
+	public void saveOtherClientDetails(CustomValue otherClientDetails) throws DuplicateKeyException {
 		super.save(otherClientDetails);
 	}
 
-	public void updateOtherClientDetails(OtherClientDetails otherClientDetails) throws DuplicateKeyException {
+	public void updateOtherClientDetails(CustomValue otherClientDetails) throws DuplicateKeyException {
 		super.update(otherClientDetails);
 	}
 
-	public List<OtherClientDetails> getOtherDetailsByCustomFieldByValue(long customfieldId,
+	public List<CustomValue> getOtherDetailsByCustomFieldByValue(long customfieldId,
 			String strValue) {
 		DetachedCriteria criteria = super.getCriterion()
 		.add(Restrictions.disjunction()

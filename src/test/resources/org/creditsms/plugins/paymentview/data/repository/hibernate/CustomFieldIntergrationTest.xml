@@ -8,5 +8,5 @@
 
 	<!-- DAO declarations -->	
 	<bean id="hibernateCustomFieldDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateCustomFieldDao" parent="baseHibernateDao"/>
-	<bean id="hibernateOtherClientDetailsDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateOtherClientDetailsDao" parent="baseHibernateDao"/>
+	<bean id="hibernateCustomValueDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateCustomValueDao" parent="baseHibernateDao"/>
 </beans>
