@@ -28,10 +28,8 @@ public class Client {
 	@Column(name="id",
             nullable=false,
             unique=true)
-    @FieldMeta(icon="/icons/key.png")
 	private long id;
 	
-	@FieldMeta(icon=Icon.USER_STATUS_ACTIVE)
 	@Column(name="firstName",
 			nullable=true,
 			unique=false)
@@ -40,15 +38,12 @@ public class Client {
 	@Column(name="otherName",
 			nullable=true,
 			unique=false)
-	@FieldMeta(icon=Icon.USER_STATUS_ACTIVE)
 	private String otherName;
 	
 	@Column(name="phoneNumber", nullable=false, unique=true)
-	@FieldMeta(icon="/icons/phone.png")
 	private String phoneNumber;
 	
 	@OneToMany
-	@FieldMeta(icon="/icons/accounts.png")
 	private Set<Account> accounts = new HashSet<Account>();
 	
 	@OneToMany
