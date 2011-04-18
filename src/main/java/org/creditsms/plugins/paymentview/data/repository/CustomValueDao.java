@@ -10,7 +10,7 @@ import org.creditsms.plugins.paymentview.data.domain.CustomValue;
  * @author Roy
  * */
 
-public interface CustomDataDao {
+public interface CustomValueDao {
 	/**
 	 * return all the OtherClientDetails in the system
 	 * **/

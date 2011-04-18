@@ -60,8 +60,8 @@ public class Client {
 		return customData;
 	}
 
-	public void setOtherClientDetails(Set<CustomValue> otherClientDetails) {
-		this.customData = otherClientDetails;
+	public void setCustomData(Set<CustomValue> customData) {
+		this.customData = customData;
 	}
 
 	public Collection<Account> getAccounts() {

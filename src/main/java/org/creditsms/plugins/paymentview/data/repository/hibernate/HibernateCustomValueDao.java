@@ -3,12 +3,12 @@ import java.util.List;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 import org.creditsms.plugins.paymentview.data.domain.CustomValue;
-import org.creditsms.plugins.paymentview.data.repository.CustomDataDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
-public class HibernateCustomValueDao extends BaseHibernateDao<CustomValue>  implements CustomDataDao{
+public class HibernateCustomValueDao extends BaseHibernateDao<CustomValue>  implements CustomValueDao{
 	
 	protected HibernateCustomValueDao(){
 		super(CustomValue.class);
