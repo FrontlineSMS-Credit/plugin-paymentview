@@ -7,10 +7,7 @@
 	<panel name="pnlFields" weightx="1" weighty="1" columns="3" gap="15"/>
 
 	<panel weightx="1">
-		<button action="addField" icon="/icons/tick.png"
-			name="btSaveClient" text="i18n.action.save" />
-		<panel weightx="1" />
-		<button action="removeField" icon="/icons/cross.png" text="i18n.action.cancel"
-			action="removeDialog" />
+		<button action="showOtherFieldDialog" icon="/icons/tick.png"
+			name="btSaveClient" text="Add Field" />
 	</panel>
 </dialog>

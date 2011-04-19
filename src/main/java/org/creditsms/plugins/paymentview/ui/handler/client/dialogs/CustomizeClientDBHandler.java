@@ -36,15 +36,16 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		Object label;
 		Object txtfield;
 		String name;
+		int c = 0;
 		for (Field field : Client.class.getDeclaredFields()) {
 			if (field.isAnnotationPresent(Column.class)) {
 				name = field.getName();
-				label = ui.createLabel("Field"); 
+				label = ui.createLabel("Field "+ ++c); 
 				txtfield = ui.createTextfield("fld"+name, name);
 				ui.setColspan(txtfield, 2);
-				ui.setColumns(txtfield, 50);
+				ui.setColumns(txtfield, 50);				
 				ui.add(compPanelFields, label);
-				ui.add(compPanelFields, txtfield);
+				ui.add(compPanelFields, txtfield);				
 			}			
 		}		
 	}
@@ -66,17 +67,12 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		this.ui.removeDialog(dialog);
 	}
 
-	public void addField() {
-		Object label = ui.createLabel("Field"); 
-		ui.add(compPanelFields, label);
-		Object txtfield = ui.createTextfield("", "");
-		ui.add(compPanelFields, txtfield);
-		this.refresh();
+	public void showOtherFieldDialog() {
+		ui.add(new OtherFieldHandler(ui, this).getDialog());
 	}
-
-	public void removeField() {
-		// TODO Auto-generated method stub
-
+	
+	public void addField() {
+		
 	}
 
 }

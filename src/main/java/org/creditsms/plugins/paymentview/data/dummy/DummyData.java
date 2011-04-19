@@ -14,11 +14,13 @@ import net.frontlinesms.data.DuplicateKeyException;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.NetworkOperator;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.NetworkOperatorDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
@@ -29,6 +31,7 @@ public class DummyData {
 	public static final long NO_ID_SET = 0;
 
 	private final DummyClientDao clientDao = new DummyClientDao();
+	private final CustomFieldDao customFieldDao = new DummyCustomFieldDao();
 	private final DummyAccountDao accountDao = new DummyAccountDao();
 	private final DummyIncomingPaymentDao incomingPaymentDao = new DummyIncomingPaymentDao();
 	private final DummyNetworkOperatorDao networkOperatorDao = new DummyNetworkOperatorDao();
@@ -187,7 +190,7 @@ public class DummyData {
 			c.addAccount(a);
 		}
 		try {
-			clientDao.saveUpdateClient(c);
+			clientDao.saveClient(c);
 		} catch (DuplicateKeyException e) {
 			throw new RuntimeException(e);
 		}
@@ -407,6 +410,86 @@ public class DummyData {
 			
 		}
 	}
+	
+	private class DummyCustomFieldDao implements CustomFieldDao {
+		private TreeSet<CustomField> customFields = new TreeSet<CustomField>(
+				new Comparator<CustomField>() {
+					public int compare(CustomField i1, CustomField i2) {
+						return (int) (i1.getId() - i2.getId());
+					}
+				});
+		private int customFieldsIdCounter = 0;
+
+		public OutgoingPayment getOutgoingPaymentById(long incomingPaymentId) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public List<CustomField> getAllOutgoingPayments() {
+			return new ArrayList<CustomField>(customFields);
+		}
+
+		
+		public List<CustomField> getCustomFieldByClientId(long clientId) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		private void assignDatabaseId(CustomField incomingPayment) {
+			incomingPayment.setId(++customFieldsIdCounter);
+		}
+
+		public List<CustomField> getAllCustomFields() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public CustomField getCustomFieldById(long id) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public List<CustomField> getAllCustomFields(int startIndex, int limit) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public List<CustomField> getCustomFieldsByName(String strName) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public List<CustomField> getCustomFieldsByName(String strName,
+				int startIndex, int limit) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public int getCustomFieldCount() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		public void deleteCustomField(CustomField customField) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void saveCustomField(CustomField customField)
+				throws DuplicateKeyException {
+			boolean isNew = customFields.add(customField); 
+			if (isNew) {
+				assignDatabaseId(customField);
+			}
+			
+		}
+
+		public void updateCustomField(CustomField customField)
+				throws DuplicateKeyException {
+			saveCustomField(customField);
+		}
+	}
+
 
 	private class DummyIncomingPaymentDao implements IncomingPaymentDao {
 		private TreeSet<IncomingPayment> incomingPayments = new TreeSet<IncomingPayment>(
@@ -543,7 +626,7 @@ public class DummyData {
 			return this.clients.size();
 		}
 
-		public void saveUpdateClient(Client client)
+		public void saveClient(Client client)
 				throws DuplicateKeyException {
 			if (client.getId() == NO_ID_SET) {
 				assignDatabaseId(client);
@@ -595,14 +678,8 @@ public class DummyData {
 			return null;
 		}
 
-		public void saveClient(Client client) throws DuplicateKeyException {
-			// TODO Auto-generated method stub
-			
-		}
-
 		public void updateClient(Client client) throws DuplicateKeyException {
-			// TODO Auto-generated method stub
-			
+			this.saveClient(client);
 		}
 
 	}
@@ -617,5 +694,9 @@ public class DummyData {
 
 	public AccountDao getAccountDao() {
 		return this.accountDao;
+	}
+
+	public CustomFieldDao getCustomFieldDao() {
+		return this.customFieldDao;
 	}
 }

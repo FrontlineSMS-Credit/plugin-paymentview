@@ -7,14 +7,6 @@
  */
 package org.creditsms.plugins.paymentview;
 
-import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
-import org.creditsms.plugins.paymentview.ui.handler.ExceptionsTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.IncomingPaymentsTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.analytics.AnalyticsTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.client.ClientsTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.export.ExportTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.outgoingpayments.OutgoingPaymentsTabHandler;
-import org.springframework.context.ApplicationContext;
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.listener.IncomingMessageListener;
@@ -22,6 +14,14 @@ import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.ui.UiGeneratorController;
+
+import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
+import org.creditsms.plugins.paymentview.ui.handler.IncomingPaymentsTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.analytics.AnalyticsTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.client.ClientsTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.export.ExportTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.outgoingpayments.OutgoingPaymentsTabHandler;
+import org.springframework.context.ApplicationContext;
 /**
  * This is the base class for the FrontlineSMS:Credit PaymentView plugin. The PaymentView
  * plugin is used to process payments transacted via the connected mobile phone. Processing
@@ -51,7 +51,6 @@ public class PaymentViewPluginController extends BasePluginController implements
 
 //> THE OFFICIAL TABS FOR PAYMENTVIEW
 	private ClientsTabHandler clientsTab;
-	private ExceptionsTabHandler exceptionsTab;
 	private ExportTabHandler exportTab;
 	private OutgoingPaymentsTabHandler outgoingPayTab;
 	private IncomingPaymentsTabHandler incomingPayTab;
@@ -88,10 +87,6 @@ public class PaymentViewPluginController extends BasePluginController implements
 		outgoingPayTab = new OutgoingPaymentsTabHandler(uiController);
 		outgoingPayTab.refresh();
 		uiController.add(mainPane, outgoingPayTab.getTab());
-
-		exceptionsTab = new ExceptionsTabHandler(uiController);
-		exceptionsTab.refresh();
-		uiController.add(mainPane, exceptionsTab.getTab());
 
 		exportTab = new ExportTabHandler(uiController);
 		exportTab.refresh();
