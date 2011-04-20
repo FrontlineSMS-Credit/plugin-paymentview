@@ -18,7 +18,7 @@ import javax.persistence.Table;
 @Table(name = CustomValue.TABLE_NAME)
 
 public class CustomValue {
-	public static final String TABLE_NAME = "OtherClientDetails";
+	public static final String TABLE_NAME = "CustomValue";
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id",

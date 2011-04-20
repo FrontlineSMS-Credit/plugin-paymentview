@@ -14,42 +14,42 @@ public interface CustomValueDao {
 	/**
 	 * return all the OtherClientDetails in the system
 	 * **/
-	public List<CustomValue> getAllOtherDetails();
+	public List<CustomValue> getAllCustomValues();
 	
 	/** 
 	 * @param clientId
 	 * @return
 	 * return all the OtherClientDetails belonging to a client
 	 */
-	public List<CustomValue> getOtherDetailsByClientId(long clientId);
+	public List<CustomValue> getCustomValuesByClientId(long clientId);
 
 	/** 
 	 * @param customfieldId and otherdetails value
 	 * @return
 	 * return OtherClientDetails with CustomField and otherdetails value
 	 */
-	public List<CustomValue> getOtherDetailsByCustomFieldByValue(long customfieldId, String strValue);
+	public List<CustomValue> getCustomValuesByCustomFieldByValue(long customfieldId, String strValue);
 	
 	/**
 	 * returning a specific OtherClientDetails
 	 * */
-	public CustomValue getOtherClientDetailsById(long id); 
+	public CustomValue getCustomValueById(long id); 
 	
 	/**
 	 * Deletes a OtherClientDetails from the system
 	 * @param CustomValue
 	 */
-	public void deleteOtherClientDetails(CustomValue otherClientDetails);
+	public void deleteCustomValue(CustomValue customValue);
 
 	/**
 	 * Saves a OtherClientDetails to the system
 	 * @param CustomValue
 	 */
-	public void saveOtherClientDetails(CustomValue otherClientDetails) throws DuplicateKeyException;
+	public void saveCustomValue(CustomValue customValue) throws DuplicateKeyException;
 
 	/**
 	 * Updates a OtherClientDetails to the system
 	 * @param CustomValue
 	 */
-	public void updateOtherClientDetails(CustomValue otherClientDetails) throws DuplicateKeyException;
+	public void updateCustomValue(CustomValue customValue) throws DuplicateKeyException;
 }
