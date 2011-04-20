@@ -14,7 +14,7 @@
 		<button icon="/icons/tick.png" text="Advanced"
 			action="removeDialog" />
 		<panel weightx="1" />
-		<button icon="/icons/tick.png" text="Create"
+		<button icon="/icons/tick.png" text="Next"
 			action="removeDialog" />
 	</panel>
 </dialog>

@@ -71,4 +71,9 @@ import javax.persistence.Table;
 			this.target = target;
 		}
 
+		@Override
+		public String toString() {
+			return "ServiceItem [id=" + id + ", targetName=" + targetName
+					+ ", amount=" + amount + ", target=" + target + "]";
+		}
 }
