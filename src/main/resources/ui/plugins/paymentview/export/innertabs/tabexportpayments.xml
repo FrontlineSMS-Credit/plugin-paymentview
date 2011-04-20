@@ -3,35 +3,31 @@
 	<panel columns="1" gap="10" weightx="1" weighty="1" left="5"
 		right="5">
 		<panel columns="1" weightx="1">
-			<label font="20 bold" name="lbl_banner" text="Export By Client Characteristic" />
+			<label font="20 bold" name="lbl_banner" text="Export Payments" />
 		</panel>
-		<panel columns="1" weightx="1">
-			<label font="14 italic" name="lbl_typeOfPayment"
-				text="Choose the kind of payment to export:" />
-			<checkbox group="exportModel" name="grp_incomingPayments"
-				text="Incoming Payments (from clients)" />
-			<checkbox group="exportModel" name="grp_outgoingPayments"
-				text="Outgoing Payments (to clients)" />
-		</panel>
+		<label font="14 italic" name="lbl_typeOfPayment"
+			text="Choose the kind of payment to export:" />
+		<checkbox group="exportModel" name="grp_incomingPayments"
+			text="Incoming Payments (from clients)" />
+		<checkbox group="exportModel" name="grp_outgoingPayments"
+			text="Outgoing Payments (to clients)" />
 		<separator />
-		<panel columns="1" weightx="1">
-			<checkbox group="exportModel" text="Choose the date range for export:" />
-			<panel weightx="1" gap="10">
-				<label icon="/icons/date_start.png" text="i18n.common.from" />
-				<panel>
-					<textfield columns="10" name="txt_FromDate" />
-					<button action="showDateSelecter(txt_FromDate)" icon="/icons/date.png" />
-				</panel>
-				<label icon="/icons/date_end.png" text="i18n.common.until" />
-				<panel>
-					<textfield columns="10" name="txt_ToDate" />
-					<button action="showDateSelecter(txt_ToDate)" icon="/icons/date.png" />
-				</panel>
+		<checkbox group="exportModel" text="Choose the date range for export:" />
+		<panel weightx="1" gap="10">
+			<label icon="/icons/date_start.png" text="i18n.common.from" />
+			<panel>
+				<textfield columns="10" name="txt_FromDate" />
+				<button action="showDateSelecter(txt_FromDate)" icon="/icons/date.png" />
+			</panel>
+			<label icon="/icons/date_end.png" text="i18n.common.until" />
+			<panel>
+				<textfield columns="10" name="txt_ToDate" />
+				<button action="showDateSelecter(txt_ToDate)" icon="/icons/date.png" />
 			</panel>
 		</panel>
 		<separator />
-		<panel columns="1" gap="5" weightx="1" weighty="1">
-			<checkbox group="exportModel" text="Export by selection" />
+		<checkbox group="exportModel" text="Export by selection" />
+		<panel columns="1" gap="5" weightx="1" weighty="1">			
 			<table name="tbl_clients" weightx="1" weighty="1">
 				<header>
 					<column text="Select" />

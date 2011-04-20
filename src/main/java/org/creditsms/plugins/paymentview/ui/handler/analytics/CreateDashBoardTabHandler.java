@@ -2,19 +2,15 @@ package org.creditsms.plugins.paymentview.ui.handler.analytics;
 
 import java.util.List;
 
+import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.handler.BasePanelHandler;
+import net.frontlinesms.ui.handler.BaseTabHandler;
+
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.ui.handler.analytics.CreateDashBoardTabHandler.StepSelectClientsHandler;
-import org.creditsms.plugins.paymentview.ui.handler.analytics.dialogs.CreateAlertHandler;
 import org.creditsms.plugins.paymentview.ui.handler.analytics.dialogs.CreateNewTargetHandler;
-
-import net.frontlinesms.ui.FrontlineUI;
-import net.frontlinesms.ui.ThinletUiEventHandler;
-import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.handler.BasePanelHandler;
-import net.frontlinesms.ui.handler.BaseTabHandler;
 
 public class CreateDashBoardTabHandler extends BaseTabHandler {
 	private static final String TAB_CREATE_DASHBOARD = "tab_createDashboard";
