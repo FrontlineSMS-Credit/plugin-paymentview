@@ -7,11 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.OneToMany;
-
-import net.frontlinesms.ui.Icon;
-
-import org.creditsms.plugins.paymentview.utils.FieldMeta;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;

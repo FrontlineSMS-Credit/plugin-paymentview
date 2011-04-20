@@ -88,7 +88,6 @@ public class AccountIntergrationTest extends HibernateTestCase {
 	private Account setAccountNumber(long accNum){
 		Account acc = new Account();
 		acc.setAccountNumber(accNum);
-		
 		return acc;
 	}
 	
