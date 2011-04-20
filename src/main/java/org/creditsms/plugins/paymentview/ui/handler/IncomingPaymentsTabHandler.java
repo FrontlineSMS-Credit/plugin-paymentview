@@ -1,5 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -21,8 +23,9 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements PagedC
 	private static final String COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE = "pnl_clients";
 	private Object incomingPaymentsTab;
 	private IncomingPaymentDao incomingPaymentDao = DummyData.INSTANCE.getIncomingPaymentDao();  
-	SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
-	SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss");
+	private SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+	private SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss");
+	private NumberFormat formatter = new DecimalFormat("#,000.00");
 	
 	private Object incomingPaymentsTableComponent;
 	private Object pnlIncomingPaymentsTableComponent;
@@ -77,12 +80,14 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements PagedC
 		}
 	}
 	
-	private Object createRow(IncomingPayment i) { 
+	
+	
+	private Object createRow(IncomingPayment i) {
 		Object row = ui.createTableRow();		
 		ui.add(row, ui.createTableCell(i.getPaymentBy()));
 		ui.add(row, ui.createTableCell(i.getPhoneNumber()));
 		ui.add(row, ui.createTableCell(Long.toString(i.getAccount().getAccountNumber())));
-		ui.add(row, ui.createTableCell(i.getAmountPaid().toString()));		 
+		ui.add(row, ui.createTableCell(formatter.format(i.getAmountPaid())));
 		ui.add(row, ui.createTableCell(df.format(i.getTimePaid())));
 		ui.add(row, ui.createTableCell(tf.format(i.getTimePaid())));
 		return row;

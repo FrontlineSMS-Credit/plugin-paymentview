@@ -147,4 +147,13 @@ public class OutgoingPayment {
 		this.confirmation = confirmation;
 	}
 
+	@Override
+	public String toString() {
+		return "OutgoingPayment [id=" + id + ", phoneNumber=" + phoneNumber
+				+ ", amountPaid=" + amountPaid + ", timePaid=" + timePaid
+				+ ", account=" + account + ", notes=" + notes
+				+ ", confirmationCode=" + confirmationCode + ", confirmation="
+				+ confirmation + "]";
+	}
+
 }

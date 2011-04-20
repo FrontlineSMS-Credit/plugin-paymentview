@@ -1,7 +1,10 @@
 package org.creditsms.plugins.paymentview.ui.handler.outgoingpayments;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Random;
 
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
@@ -51,16 +54,25 @@ public class SentPaymentsTabHandler extends BaseTabHandler {
 			ui.add(table, createRow(o));
 		}
 	}
-
 	
+	
+	//
+	//For Dummy Purposes
+	ClientDao clientDao = DummyData.INSTANCE.getClientDao();
+	List<Client> allClients = clientDao.getAllClients(); 
+	Random random = new Random();	
+	//
 
-	private Object createRow(OutgoingPayment o) {
+	private NumberFormat formatter = new DecimalFormat("#,000.00");
+
+	private Object createRow(OutgoingPayment o) {	
+		Client c = allClients.get(random.nextInt(allClients.size()));
 		Object row = ui.createTableRow();
 		ui.add(row,
-				ui.createTableCell(o.getAccount().getClient().getFirstName() + " "
-						+ o.getAccount().getClient().getOtherName()));
+				ui.createTableCell(c.getFirstName() + " "
+						+ c.getOtherName()));
 		ui.add(row, ui.createTableCell(o.getPhoneNumber()));
-		ui.add(row, ui.createTableCell(o.getAmountPaid().toString()));
+		ui.add(row, ui.createTableCell(formatter.format(o.getAmountPaid())));
 		ui.add(row, ui.createTableCell(df.format(o.getTimePaid())));
 		ui.add(row, ui.createTableCell(tf.format(o.getTimePaid())));
 		ui.add(row, ui.createTableCell(Long.toString(o.getAccount().getAccountNumber())));

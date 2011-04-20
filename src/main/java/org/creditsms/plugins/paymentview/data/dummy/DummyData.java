@@ -35,7 +35,7 @@ public class DummyData {
 	private final DummyAccountDao accountDao = new DummyAccountDao();
 	private final DummyIncomingPaymentDao incomingPaymentDao = new DummyIncomingPaymentDao();
 	private final DummyNetworkOperatorDao networkOperatorDao = new DummyNetworkOperatorDao();
-	private final OutgoingPaymentDao outgoingPaymentDao = new DummyOutgoingPaymentDao();
+	private final DummyOutgoingPaymentDao outgoingPaymentDao = new DummyOutgoingPaymentDao();
 
 	private DummyData() {
 		// Create dummy clients
@@ -98,47 +98,47 @@ public class DummyData {
 		createDummyClient("Justus Matanda", "+25472014545", new long[] {
 				42547455, 43493444 });
 
-	    createDummyIncomingPayment("Isiah Muchene", "+254723312235", "1300560000000", new BigDecimal("43513.60"), 59536723);
-		createDummyIncomingPayment("Ian Mukewa", "+25472762345", "1300560000100", new BigDecimal("313.60"), 23432674);
-		createDummyIncomingPayment("Justin Mwakidedi", "+25475412345", "1300560000200", new BigDecimal("433.00"), 25857623);
-		createDummyIncomingPayment("John Muigai", "+25472012326", "1300560200300", new BigDecimal("44232.24"), 24343423);
-		createDummyIncomingPayment("Phanice Nafula", "+25472014545", "1300560020400", new BigDecimal("44343.23"), 43493444);
-		createDummyIncomingPayment("Charlene Nyambura", "+25472014545","1300560000500", new BigDecimal("345323.63"), 23432674);
-		createDummyIncomingPayment("Tangus Koech", "+25472014545", "1300560200600", new BigDecimal("34243.44"), 42400255);
-		createDummyIncomingPayment("Peter Kamau", "+254724555345", "1300560200700", new BigDecimal("353366.66"), 24373423);
-		createDummyIncomingPayment("Isiah Mwiki", "+25472012345", "1300560000800", new BigDecimal("5456555.66"),
+	    createDummyIncomingPayment("Isiah Muchene", "+254723312235", "1300560000000", new BigDecimal("4513.20"), 59536723);
+		createDummyIncomingPayment("Ian Mukewa", "+25472762345", "1300560000100", new BigDecimal("300.00"), 23432674);
+		createDummyIncomingPayment("Justin Mwakidedi", "+25475412345", "1300560000200", new BigDecimal("420.00"), 25857623);
+		createDummyIncomingPayment("John Muigai", "+25472012326", "1300560200300", new BigDecimal("400.00"), 24343423);
+		createDummyIncomingPayment("Phanice Nafula", "+25472014545", "1300560020400", new BigDecimal("500.00"), 43493444);
+		createDummyIncomingPayment("Charlene Nyambura", "+25472014545","1300560000500", new BigDecimal("7030.60"), 23432674);
+		createDummyIncomingPayment("Tangus Koech", "+25472014545", "1300560200600", new BigDecimal("3000.00"), 42400255);
+		createDummyIncomingPayment("Peter Kamau", "+254724555345", "1300560200700", new BigDecimal("100.00"), 24373423);
+		createDummyIncomingPayment("Isiah Mwiki", "+25472012345", "1300560000800", new BigDecimal("5000.00"),
 				108949744);
-		createDummyIncomingPayment("Kimani Karao", "+254720347345", "1300560000900", new BigDecimal("535635.45"), 00425425);
-		createDummyIncomingPayment("Lowuya Lamini", "+254720455345", "1300560001000", new BigDecimal("636336.33"),
+		createDummyIncomingPayment("Kimani Karao", "+254720347345", "1300560000900", new BigDecimal("1000.00"), 00425425);
+		createDummyIncomingPayment("Lowuya Lamini", "+254720455345", "1300560001000", new BigDecimal("1200.00"),
 				434147425);
 
-		createDummyIncomingPayment("Angela Koki", "+254720999345", "1300564344000", new BigDecimal("636336.33"),
+		createDummyIncomingPayment("Angela Koki", "+254720999345", "1300564344000", new BigDecimal("4000.95"),
 				23278523);
-		createDummyIncomingPayment("Isiah Mwiki", "+254720785345", "1300232333300", new BigDecimal("636336.33"),
+		createDummyIncomingPayment("Isiah Mwiki", "+254720785345", "1300232333300", new BigDecimal("8800.00"),
 				233854323);
-		createDummyIncomingPayment("Roy Owino", "+254720487545",   "1302304299006", new BigDecimal("636336.33"),
+		createDummyIncomingPayment("Roy Owino", "+254720487545",   "1302304299006", new BigDecimal("10000.00"),
 				25857623);
-		createDummyIncomingPayment("Wambui Waweru", "+254720113445", "1302304299996", new BigDecimal("636336.33"),
+		createDummyIncomingPayment("Wambui Waweru", "+254720113445", "1302304299996", new BigDecimal("1780.00"),
 				232363547);
-		createDummyIncomingPayment("Lavendar Akoth", "+254724666645","1302304299996", new BigDecimal("636336.33"),
+		createDummyIncomingPayment("Lavendar Akoth", "+254724666645","1302304299996", new BigDecimal("2000.00"),
 				232255000);
 
-		createDummyOutgoingPayment("Isiah Muchene", 	"+254723312233", "1302560000896", new BigDecimal("43513.60"), 	59536723);
-		createDummyOutgoingPayment("Ian Mukewa", 		"+254727623453", "1300000000896", new BigDecimal("313.60"), 	23432674);
-		createDummyOutgoingPayment("Justin Mwakidedi", 	"+254754123445", "1302300049896", new BigDecimal("433.00"), 	25857623);
-		createDummyOutgoingPayment("John Muigai", 		"+254720123426", "1302000034896", new BigDecimal("44232.24"), 	24343423);
-		createDummyOutgoingPayment("Phanice Nafula", 	"+254720145345", "1302000500896", new BigDecimal("44343.23"), 	43493444);
-		createDummyOutgoingPayment("Charlene Nyambura", "+254720145345", "1302000433896", new BigDecimal("345323.64"),	23432674);
-		createDummyOutgoingPayment("Tangus Koech", 		"+254720145445", "1302000004296", new BigDecimal("34243.46"), 	42400255);
-		createDummyOutgoingPayment("Peter Kamau", 		"+254724555434", "1302000233596", new BigDecimal("353366.66"), 	24373423);
-		createDummyOutgoingPayment("Isiah Mwiki", 		"+254720123435", "1302567149436", new BigDecimal("5456555.66"),	108949744);
-		createDummyOutgoingPayment("Kimani Karao", 		"+254720347344", "1302002333496", new BigDecimal("535635.45"), 	00425425);
-		createDummyOutgoingPayment("Lowuya Lamini", 	"+254720455344", "1300000382896", new BigDecimal("636336.34"),	265373423);
-		createDummyOutgoingPayment("Angela Koki", 		"+254720999334", "1302000233896", new BigDecimal("636336.34"),	872243234);
-		createDummyOutgoingPayment("Isiah Mwiki", 		"+254720785334", "1302038720896", new BigDecimal("636336.34"),	232363547);
-		createDummyOutgoingPayment("Roy Owino", 		"+254720487354", "1302003230896", new BigDecimal("636336.34"),	23355753);
-		createDummyOutgoingPayment("Wambui Waweru", 	"+254720113344", "1302002323896", new BigDecimal("636336.34"),	4323425);
-		createDummyOutgoingPayment("Lavendar Akoth", 	"+254724666364", "1302000003896", new BigDecimal("636336.34"),	234327443);
+		createDummyOutgoingPayment("Isiah Muchene", 	"+254723312233", "1302560000896", new BigDecimal("3000.00"), 	59536723);
+		createDummyOutgoingPayment("Ian Mukewa", 		"+254727623453", "1300000000896", new BigDecimal("4000.00"), 	23432674);
+		createDummyOutgoingPayment("Justin Mwakidedi", 	"+254754123445", "1302300049896", new BigDecimal("100.00"), 	25857623);
+		createDummyOutgoingPayment("John Muigai", 		"+254720123426", "1302000034896", new BigDecimal("500.00"), 	24343423);
+		createDummyOutgoingPayment("Phanice Nafula", 	"+254720145345", "1302000500896", new BigDecimal("4200.00"), 	43493444);
+		createDummyOutgoingPayment("Charlene Nyambura", "+254720145345", "1302000433896", new BigDecimal("9320.60"),	23432674);
+		createDummyOutgoingPayment("Tangus Koech", 		"+254720145445", "1302000004296", new BigDecimal("3000.40"), 	42400255);
+		createDummyOutgoingPayment("Peter Kamau", 		"+254724555434", "1302000233596", new BigDecimal("3005.60"), 	24373423);
+		createDummyOutgoingPayment("Isiah Mwiki", 		"+254720123435", "1302567149436", new BigDecimal("5400.66"),	108949744);
+		createDummyOutgoingPayment("Kimani Karao", 		"+254720347344", "1302002333496", new BigDecimal("590.00"), 	00425425);
+		createDummyOutgoingPayment("Lowuya Lamini", 	"+254720455344", "1300000382896", new BigDecimal("600.00"),	265373423);
+		createDummyOutgoingPayment("Angela Koki", 		"+254720999334", "1302000233896", new BigDecimal("1300.00"),	872243234);
+		createDummyOutgoingPayment("Isiah Mwiki", 		"+254720785334", "1302038720896", new BigDecimal("400.00"),	232363547);
+		createDummyOutgoingPayment("Roy Owino", 		"+254720487354", "1302003230896", new BigDecimal("1350.00"),	23355753);
+		createDummyOutgoingPayment("Wambui Waweru", 	"+254720113344", "1302002323896", new BigDecimal("6600.00"),	4323425);
+		createDummyOutgoingPayment("Lavendar Akoth", 	"+254724666364", "1302000003896", new BigDecimal("7000.34"),	234327443);
 	}
 
 	private void createDummyOutgoingPayment(String paymentTo,
@@ -148,8 +148,9 @@ public class DummyData {
 		o.setAmountPaid(amountPaid);
 		Account myAcc = accountDao.getAccountByAccountNumber(accountId);
 		o.setAccount(myAcc);
-		o.setAmountPaid(amountPaid);
+		myAcc.setClient(clientDao.getClientByAccount(myAcc));
 		o.setPhoneNumber(phoneNumber);
+		
 		o.setTimePaid(new Date(Long.parseLong(timePaid)));
 		try {
 			outgoingPaymentDao.saveOutgoingPayment(o);
@@ -400,10 +401,12 @@ public class DummyData {
 
 		public void saveOutgoingPayment(OutgoingPayment outgoingPayment)
 				throws DuplicateKeyException {
-			// TODO Auto-generated method stub
-			
+			boolean isNew = outgoingPayments.add(outgoingPayment);
+			if (isNew) {
+				assignDatabaseId(outgoingPayment);
+			}		
 		}
-
+		
 		public void updateOutgoingPayment(OutgoingPayment outgoingPayment)
 				throws DuplicateKeyException {
 			// TODO Auto-generated method stub

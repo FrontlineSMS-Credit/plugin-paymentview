@@ -115,6 +115,7 @@ public class Account {
 
 	@Override
 	public String toString() {
-		return "Account [id=" + id + ", accountNumber=" + accountNumber + "]";
+		return "Account [id=" + id + ", accountNumber=" + accountNumber
+				+ ", client=" + client + "]";
 	}
 }
