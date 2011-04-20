@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dialog bottom="9" close="removeDialog(this)" 
+	columns="1" gap="15" left="9" name="clientDetailsDialog"
+	right="9" text="Create Alert"
+	top="9" resizable="true" modal="true" closable="true">
+
+	<label text="When..." />
+	<combobox columns="50" name="cmbSelectAction" colspan="2" text="Select Action">
+		<choice text="Client Meets Total"/>
+		<choice text="Client Meets 50% of Total"/>
+		<choice text="Client Misses Deadline"/>
+		<choice text="Client Goes from AHEAD to BEHIND"/>
+		<choice text="Client Does not save for 2 Weeks"/>
+		<choice text="Client Does not save for 1 Month"/>
+		<choice text="Client Does not save for 2 Months"/>
+		<choice text="Client Does not save for 3 Months"/>
+	</combobox>
+	<label text="... an alert will be displayed." />
+
+	<panel colspan="3" weightx="1">
+		<panel weightx="1" />
+		<button icon="/icons/tick.png" text="Create"
+			action="removeDialog" />
+	</panel>
+</dialog>

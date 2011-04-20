@@ -1,16 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tab name="tbSettings" text="i18n.plugins.paymentview.tab.settings" icon="/icons/phone_make_model.png">
-  <splitpane divider="220" weightx="1" weighty="1">
-      <panel gap="5" top="5" left="5" bottom="5" right="5" weightx="1" weighty="1">
-          <tree angle="true" line="false" weightx="1" weighty="1" action="showSettingsItem(tbSettings, this)">
-              <node name="ndNetworkOperators" text="i18n.plugins.paymentview.settings.network.operators"></node>
-              <node name="ndPaymentSystems" text="i18n.plugins.paymentview.settings.payment.systems" />                                   
-              <node name="ndAutoTopUp" text="i18n.plugins.paymentview.settings.autotopup"></node>
-          </tree>
-      </panel>
-      <panel gap="5" top="5" left="5" bottom="5" right="5" weightx="1" weighty="1">
-          <panel name="pnSettingsRightPane" weightx="1" weighty="1" border="true" gap="5" top="5" right="5" bottom="5" left="5">
-          </panel>
-      </panel>
-  </splitpane>
+<tab name="tab_settings" text="Settings" icon="/icons/keyword.png">
+	<panel weightx="1" weighty="1" top="5" right="5" left="5"
+		columns="1" gap="10">
+		<panel columns="1" gap="5" name="pnl_accounts" weightx="1"
+			weighty="1">
+			<label text="Mobile Payment Account Settings" font="20 Bold" weightx="1"/>
+			<table name="tbl_accounts" weightx="1" weighty="1" delete="showConfirmationDialog('deleteAccount')">
+				<header>					
+					<column text="Account" width="200" />
+					<column text="Phone" width="200" icon="/icons/phone.png" />
+					<column text="Amount" width="200" icon="/icons/money.png" />
+				</header>
+				<popupmenu name="menu">
+					<menuitem action="examineAccount" icon="/icons/edit.png" name="miExamineAccount"
+						text="Examine Account" />
+					<menuitem action="configureAccount"
+						icon="/icons/keyword.png" name="miConfigureAccount" text="Configure Account" />
+					<menuitem action="showConfirmationDialog('deleteAccount')"
+						icon="/icons/delete.png" name="miDeleteAccount" text="Delete Account" />
+					<menuitem action="updateAccountBalance"
+						icon="/icons/delete.png" name="miUpdateAccount" text="Update Account Balance" />					
+				</popupmenu>
+			</table>
+		</panel>
+		<panel gap="5" bottom="5" name="pnl_buttons"
+			weightx="1">
+			<button name="btn_analyse" text="Configure" action="configureAccount"/>
+			<button name="btn_analyse" text="Create New" action="createNew" />
+			<panel weightx="1"/>
+			<panel weightx="1"/>		
+			<button action="updateAccountBalance" halign="right" name="btn_export"
+				text="Update Account Balance" />
+		</panel>
+	</panel>
 </tab>

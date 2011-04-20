@@ -20,6 +20,8 @@
 					<column text="Account" width="100" />
 				</header>
 				<popupmenu name="menu">
+					<menuitem action="analyseClient" icon="/icons/search.png" name="miAnalyseClient"
+						text="Analyse Client" />
 					<menuitem action="editClient" icon="/icons/edit.png" name="miEditClient"
 						text="Edit Client" />
 					<menuitem action="showConfirmationDialog('deleteClient')"

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dialog bottom="9" close="removeDialog(this)" columns="1" gap="15"
+	left="9" name="otherFieldDialog" right="9"
+	text="Field 10 - Other Field" top="9" resizable="true"
+	modal="true" closable="true">
+	
+	<label text="Enter new name for a field"/>
+	<panel name="pnlFields" weightx="1" weighty="1" columns="2" gap="10">
+		<textfield text="" name="fldName" weightx="1" columns="20"/><button action="createField(fldName.text)" text="create"/>
+	</panel>
+</dialog>

@@ -34,6 +34,15 @@ public class CustomField {
 	@OneToMany
 	private Set<CustomValue> otherClientDetails = new HashSet<CustomValue>();
 	
+	public CustomField(String strName) {
+		this.strName = strName;
+	}
+	
+	public CustomField(String strName, Set<CustomValue> otherClientDetails) {
+		this.strName = strName;
+		this.otherClientDetails = otherClientDetails;
+	}
+
 	public long getId() {
 		return id;
 	}

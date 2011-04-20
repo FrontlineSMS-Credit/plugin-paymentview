@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<panel name="pnlViewClients" bottom="5" columns="1" gap="10"
+	left="5" right="5" top="10" weightx="1" weighty="1">
+
+	<panel columns="1" gap="5" weightx="1" weighty="1">
+		<label font="20 Bold" text="Configure Layaway" />
+		<label text="Current Savings target" />
+		<table name="tbl_clients" weightx="1" weighty="1">
+			<header>
+				<column text="Target Name" width="200"/>
+				<column text="Taget Amount" width="200" icon="/icons/money.png" />
+			</header>
+		</table>
+	</panel>
+	<panel gap="5" weightx="1">
+		<button action="createNew" icon="/icons/task_next_execution.png" text="Create New" />
+		<panel weightx="1"/>
+	</panel>
+</panel>

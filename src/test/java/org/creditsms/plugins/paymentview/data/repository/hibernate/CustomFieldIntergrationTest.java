@@ -52,8 +52,7 @@ public class CustomFieldIntergrationTest extends HibernateTestCase{
 	}
 
 	private CustomField createCustomField(String strName){
-		CustomField cf = new CustomField();
-		cf.setStrName(strName);
+		CustomField cf = new CustomField(strName);
 		return cf;
 	}
 	
