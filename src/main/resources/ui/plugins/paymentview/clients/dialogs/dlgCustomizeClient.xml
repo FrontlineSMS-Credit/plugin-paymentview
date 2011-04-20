@@ -4,8 +4,10 @@
 	text="i18n.plugins.paymentview.dialog.client" top="9" resizable="true"
 	modal="true" closable="true">
 
-	<panel name="pnlFields" weightx="1" weighty="1" columns="3" gap="15"/>
-
+	<panel weightx="1" weighty="1" name="parentPnlFields">
+		<panel name="pnlFields" weightx="1" weighty="1" columns="3" gap="15"/>
+	</panel>
+	
 	<panel weightx="1">
 		<button action="showOtherFieldDialog" icon="/icons/tick.png"
 			name="btSaveClient" text="Add Field" />

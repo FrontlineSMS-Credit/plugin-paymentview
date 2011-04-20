@@ -23,9 +23,7 @@ public class OtherFieldHandler implements ThinletUiEventHandler {
 		this.dlgCustomizeClientDB = dlgCustomizeClientDB;
 	}
 
-	public void refresh() {
-		// TODO Auto-generated method stub
-		
+	public void refresh() {				
 	}
 
 	public void init() {
@@ -39,9 +37,10 @@ public class OtherFieldHandler implements ThinletUiEventHandler {
 		} catch (DuplicateKeyException e) {
 			throw new RuntimeException(e);
 		}
-		this.removeDialog();
 		
-		this.refresh();
+		this.removeDialog();
+		this.dlgCustomizeClientDB.addField(fieldName);
+		this.dlgCustomizeClientDB.refresh();
 	}
 	
 	/** Remove the dialog from view. */

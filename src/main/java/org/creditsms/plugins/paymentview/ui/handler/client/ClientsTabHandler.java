@@ -127,6 +127,10 @@ public class ClientsTabHandler extends BaseTabHandler implements
 		new ClientExportHandler(ui).showWizard();
 		this.refresh();
 	}
+	
+	public void analyseClient() {
+		// TODO Auto-generated method stub
+	}
 
 	public void editClient() {
 		Object[] selectedClients = this.ui

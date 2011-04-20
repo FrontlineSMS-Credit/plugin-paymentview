@@ -21,6 +21,7 @@ import org.creditsms.plugins.paymentview.ui.handler.analytics.AnalyticsTabHandle
 import org.creditsms.plugins.paymentview.ui.handler.client.ClientsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.export.ExportTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.outgoingpayments.OutgoingPaymentsTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.settings.SettingsTabHandler;
 import org.springframework.context.ApplicationContext;
 /**
  * This is the base class for the FrontlineSMS:Credit PaymentView plugin. The PaymentView
@@ -54,7 +55,8 @@ public class PaymentViewPluginController extends BasePluginController implements
 	private ExportTabHandler exportTab;
 	private OutgoingPaymentsTabHandler outgoingPayTab;
 	private IncomingPaymentsTabHandler incomingPayTab;
-	private AnalyticsTabHandler analyticsTab;  
+	private AnalyticsTabHandler analyticsTab;
+	private SettingsTabHandler settingsTab;  
 
 //> CONFIG METHODS
 	/** @see net.frontlinesms.plugins.PluginController#init(FrontlineSMS, ApplicationContext) */
@@ -96,6 +98,10 @@ public class PaymentViewPluginController extends BasePluginController implements
 		analyticsTab.refresh();
 		uiController.add(mainPane, analyticsTab.getTab());
 
+		settingsTab = new SettingsTabHandler(uiController);
+		settingsTab.refresh();
+		uiController.add(mainPane, settingsTab.getTab());
+		
 		return paymentViewTab;
 	}
 

@@ -13,41 +13,41 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 	private static final String XML_CUSTOMIZE_CLIENT_DB = "/ui/plugins/paymentview/clients/dialogs/dlgCustomizeClient.xml";
 
 	private static final String COMPONENT_PNL_FIELDS = "pnlFields";
+	private static final String COMPONENT_PARENT_PNL_FIELDS = "parentPnlFields";
 
 	private UiGeneratorController ui;
 	private Object dialogComponent;
 
 	private Object compPanelFields;
 
+	private int c;
+
+	private Object compParentPanelFields;
+
 	public CustomizeClientDBHandler(UiGeneratorController ui) {
 		this.ui = ui;
 		init();
 		refresh();
-	}
+	} 
 
-	private void refresh() {		
+	public void refresh() {
+		ui.remove(compPanelFields);
+		ui.add(compParentPanelFields,compPanelFields);		
 	}
 
 	private void init() {
 		dialogComponent = ui.loadComponentFromFile(XML_CUSTOMIZE_CLIENT_DB,
 				this);
 		compPanelFields = ui.find(dialogComponent, COMPONENT_PNL_FIELDS);
+		compParentPanelFields = ui.find(dialogComponent, COMPONENT_PARENT_PNL_FIELDS);
 		
-		Object label;
-		Object txtfield;
-		String name;
-		int c = 0;
+		c = 0;
 		for (Field field : Client.class.getDeclaredFields()) {
 			if (field.isAnnotationPresent(Column.class)) {
-				name = field.getName();
-				label = ui.createLabel("Field "+ ++c); 
-				txtfield = ui.createTextfield("fld"+name, name);
-				ui.setColspan(txtfield, 2);
-				ui.setColumns(txtfield, 50);				
-				ui.add(compPanelFields, label);
-				ui.add(compPanelFields, txtfield);				
+				addField(field.getName());	
 			}			
 		}		
+		refresh();
 	}
 
 	/**
@@ -71,8 +71,20 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		ui.add(new OtherFieldHandler(ui, this).getDialog());
 	}
 	
-	public void addField() {
-		
+	public void addField(String name) {
+		this.addField(name, false);
+	}
+	
+	public void addField(String name, boolean refresh) {
+		Object label = ui.createLabel("Field "+ ++c); 
+		Object txtfield = ui.createTextfield("fld"+name, name);
+		ui.setColspan(txtfield, 2);
+		ui.setColumns(txtfield, 50);
+		ui.add(compPanelFields, label);
+		ui.add(compPanelFields, txtfield);
+		if (refresh){
+			this.refresh();	
+		}
 	}
 
 }
