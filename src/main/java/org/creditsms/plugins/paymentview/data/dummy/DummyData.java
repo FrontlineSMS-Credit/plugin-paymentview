@@ -2,7 +2,6 @@ package org.creditsms.plugins.paymentview.data.dummy;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,13 +15,11 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
-import org.creditsms.plugins.paymentview.data.domain.NetworkOperator;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
-import org.creditsms.plugins.paymentview.data.repository.NetworkOperatorDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 
 public class DummyData {
@@ -34,7 +31,6 @@ public class DummyData {
 	private final CustomFieldDao customFieldDao = new DummyCustomFieldDao();
 	private final DummyAccountDao accountDao = new DummyAccountDao();
 	private final DummyIncomingPaymentDao incomingPaymentDao = new DummyIncomingPaymentDao();
-	private final DummyNetworkOperatorDao networkOperatorDao = new DummyNetworkOperatorDao();
 	private final DummyOutgoingPaymentDao outgoingPaymentDao = new DummyOutgoingPaymentDao();
 
 	private DummyData() {
@@ -198,17 +194,6 @@ public class DummyData {
 		return c;
 	}
 
-	private NetworkOperator createDummyNetworkOperator(String name) {
-		NetworkOperator n = new NetworkOperator();
-		n.setOperatorName(name);
-		try {
-			networkOperatorDao.saveNetworkOperator(n);
-		} catch (DuplicateKeyException e) {
-			throw new RuntimeException(e);
-		}
-		return n;
-	}
-
 	public ClientDao getClientDao() {
 		return clientDao;
 	}
@@ -272,53 +257,6 @@ public class DummyData {
 		}
 	}
 
-	private class DummyNetworkOperatorDao implements NetworkOperatorDao {
-		private TreeSet<NetworkOperator> incomingPayments = new TreeSet<NetworkOperator>(
-				new Comparator<NetworkOperator>() {
-					public int compare(NetworkOperator n1, NetworkOperator n2) {
-						return (int) (n1.getId() - n1.getId());
-					}
-				});
-
-		public List<NetworkOperator> getAllNetworkOperators() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<NetworkOperator> getAllNetworkOperators(int startIndex,
-				int limit) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public NetworkOperator getNetworkOperatorByName(String name) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public int getNetworkOperatorCount() {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		public void saveNetworkOperator(NetworkOperator operator)
-				throws DuplicateKeyException {
-			// TODO Auto-generated method stub
-
-		}
-
-		public void updateNetworkOperator(NetworkOperator operator)
-				throws DuplicateKeyException {
-			// TODO Auto-generated method stub
-
-		}
-
-		public void deleteNetworkOperator(NetworkOperator operator) {
-			// TODO Auto-generated method stub
-
-		}
-	}
-
 	private class DummyOutgoingPaymentDao implements OutgoingPaymentDao {
 		private TreeSet<OutgoingPayment> outgoingPayments = new TreeSet<OutgoingPayment>(
 				new Comparator<OutgoingPayment>() {
@@ -337,20 +275,8 @@ public class DummyData {
 			return new ArrayList<OutgoingPayment>(outgoingPayments);
 		}
 
-		public List<OutgoingPayment> getOutgoingPaymentsByDateRange(
-				Calendar startDate, Calendar endDate) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
 		public List<OutgoingPayment> getOutgoingPaymentsByTimeRange(
 				Date startTime, Date endtime) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<OutgoingPayment> getOutgoingPaymentsByClientIdByDateRange(
-				long clientId, Calendar startDate, Calendar endDate) {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -358,13 +284,6 @@ public class DummyData {
 		public List<OutgoingPayment> getOutgoingPaymentByClientId(long clientId) {
 			// TODO Auto-generated method stub
 			return null;
-		}
-
-		public void saveOrUpdateOutgoingPayment(OutgoingPayment incomingPayment) {
-			boolean isNew = outgoingPayments.add(incomingPayment);
-			if (isNew) {
-				assignDatabaseId(incomingPayment);
-			}
 		}
 
 		private void assignDatabaseId(OutgoingPayment incomingPayment) {
@@ -378,12 +297,6 @@ public class DummyData {
 
 		public List<OutgoingPayment> getOutgoingPaymentsByAccountNumber(
 				long accountId) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<OutgoingPayment> getOutgoingPaymentsByAccountNumberByDateRange(
-				long accountId, Calendar startDate, Calendar endDate) {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -423,28 +336,12 @@ public class DummyData {
 				});
 		private int customFieldsIdCounter = 0;
 
-		public OutgoingPayment getOutgoingPaymentById(long incomingPaymentId) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<CustomField> getAllOutgoingPayments() {
+		public List<CustomField> getAllCustomFields() {
 			return new ArrayList<CustomField>(customFields);
-		}
-
-		
-		public List<CustomField> getCustomFieldByClientId(long clientId) {
-			// TODO Auto-generated method stub
-			return null;
 		}
 
 		private void assignDatabaseId(CustomField incomingPayment) {
 			incomingPayment.setId(++customFieldsIdCounter);
-		}
-
-		public List<CustomField> getAllCustomFields() {
-			// TODO Auto-generated method stub
-			return null;
 		}
 
 		public CustomField getCustomFieldById(long id) {
@@ -519,11 +416,6 @@ public class DummyData {
 			return new ArrayList<IncomingPayment>(incomingPayments);
 		}
 
-		public List<IncomingPayment> getIncomingPaymentsByDateRange(
-				Calendar startDate, Calendar endDate) {
-			// TODO Auto-generated method stub
-			return null;
-		}
 
 		public List<IncomingPayment> getIncomingPaymentsByTimeRange(
 				Date startTime, Date endtime) {
@@ -531,31 +423,7 @@ public class DummyData {
 			return null;
 		}
 
-		public List<IncomingPayment> getIncomingPaymentsByClientIdByDateRange(
-				long clientId, Calendar startDate, Calendar endDate) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
 		public List<IncomingPayment> getIncomingPaymentByClientId(long clientId) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<IncomingPayment> getIncomingPaymentsByAccountId(
-				long accountId) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<IncomingPayment> getIncomingPaymentsByAccountIdByDateRange(
-				long accountId, Calendar startDate, Calendar endDate) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<IncomingPayment> getIncomingPaymentsByAccountIdByTimeRange(
-				long accountId, Date startDate, Date endDate) {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -588,12 +456,6 @@ public class DummyData {
 
 		public List<IncomingPayment> getIncomingPaymentsByAccountNumber(
 				long accountId) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<IncomingPayment> getIncomingPaymentsByAccountNumberByDateRange(
-				long accountId, Calendar startDate, Calendar endDate) {
 			// TODO Auto-generated method stub
 			return null;
 		}

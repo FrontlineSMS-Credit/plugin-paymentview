@@ -20,7 +20,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = OutgoingPayment.TABLE_NAME)
 public class OutgoingPayment {
-	public static final String TABLE_NAME = "OutGoingpayment";
+	public static final String TABLE_NAME = "Outgoingpayment";
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id",

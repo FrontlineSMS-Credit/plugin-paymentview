@@ -14,11 +14,10 @@ import net.frontlinesms.data.DuplicateKeyException;
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 
 /**
- * @author Ian Onesmus Mukewa <ian@frontlinesms.com> 
+ * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com> 
  */
 public class ClientCsvImporter extends CsvImporter {
 	/** The delimiter to use between group names when they are exported. */

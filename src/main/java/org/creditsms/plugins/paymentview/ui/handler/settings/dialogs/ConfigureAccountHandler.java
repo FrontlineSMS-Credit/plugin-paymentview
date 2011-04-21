@@ -1,18 +1,18 @@
 package org.creditsms.plugins.paymentview.ui.handler.settings.dialogs;
 
-import org.creditsms.plugins.paymentview.data.domain.NetworkOperator;
-import org.creditsms.plugins.paymentview.data.repository.NetworkOperatorDao;
-
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
+
+import org.creditsms.plugins.paymentview.data.domain.Account;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 
 public class ConfigureAccountHandler implements ThinletUiEventHandler {
 	private static final String XML_CONFIGURE_ACCOUNT = "/ui/plugins/paymentview/settings/dialogs/dlgConfigureAccount.xml";
 
 	private UiGeneratorController ui;
 	private Object dialogComponent;
-
-	private Object compPanelFields;
+	private Account account;
+	private AccountDao accountDao;
 
 	public ConfigureAccountHandler(UiGeneratorController ui) {
 		this.ui = ui;
@@ -21,8 +21,10 @@ public class ConfigureAccountHandler implements ThinletUiEventHandler {
 	}
 
 	public ConfigureAccountHandler(UiGeneratorController ui,
-			NetworkOperator networkOperator, NetworkOperatorDao networkOperatorDao) {
+			Account account, AccountDao accountDao) {
 		this(ui);
+		this.account = account;
+		this.accountDao = accountDao;
 	}
 
 	private void refresh() {		

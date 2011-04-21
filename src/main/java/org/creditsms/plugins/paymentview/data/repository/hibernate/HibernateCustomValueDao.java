@@ -14,36 +14,36 @@ public class HibernateCustomValueDao extends BaseHibernateDao<CustomValue>  impl
 		super(CustomValue.class);
 	}
 
-	public List<CustomValue> getAllOtherDetails() {
+	public List<CustomValue> getAllCustomValues() {
 		return super.getAll();
 	}
 
-	public List<CustomValue> getOtherDetailsByClientId(long id) {
+	public List<CustomValue> getCustomValuesByClientId(long id) {
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria clientCriteria = criteria.createCriteria("client");
 		clientCriteria.add(Restrictions.eq("id", id));
 		return super.getList(criteria);
 	}
 
-	public CustomValue getOtherClientDetailsById(long id) {
+	public CustomValue getCustomValueById(long id) {
 		DetachedCriteria criteria = super.getCriterion();
 		criteria.add(Restrictions.eq("id", id));
 		return super.getUnique(criteria);
 	}
 
-	public void deleteOtherClientDetails(CustomValue otherClientDetails) {
-		super.delete(otherClientDetails);
+	public void deleteCustomValue(CustomValue customValue) {
+		super.delete(customValue);
 	}
 
-	public void saveOtherClientDetails(CustomValue otherClientDetails) throws DuplicateKeyException {
-		super.save(otherClientDetails);
+	public void saveCustomValue(CustomValue customValue) throws DuplicateKeyException {
+		super.save(customValue);
 	}
 
-	public void updateOtherClientDetails(CustomValue otherClientDetails) throws DuplicateKeyException {
-		super.update(otherClientDetails);
+	public void updateCustomValue(CustomValue customValue) throws DuplicateKeyException {
+		super.update(customValue);
 	}
 
-	public List<CustomValue> getOtherDetailsByCustomFieldByValue(long customfieldId,
+	public List<CustomValue> getCustomValuesByCustomFieldByValue(long customfieldId,
 			String strValue) {
 		DetachedCriteria criteria = super.getCriterion()
 		.add(Restrictions.disjunction()

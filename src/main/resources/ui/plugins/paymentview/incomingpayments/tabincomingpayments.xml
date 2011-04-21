@@ -22,7 +22,6 @@
 				text="Select Mobile payment account" />
 			<panel weightx="1"/>
 			<panel weightx="1"/>
-			<button icon="/icons/tick.png" name="btn_analyse" text="Analyse" />
 			<button icon="/icons/export.png" action="exportPayments" halign="right" name="btn_export"
 				text="Export" />
 		</panel>

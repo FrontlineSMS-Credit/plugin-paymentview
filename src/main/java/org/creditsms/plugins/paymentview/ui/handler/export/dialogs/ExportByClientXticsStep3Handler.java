@@ -1,14 +1,12 @@
 package org.creditsms.plugins.paymentview.ui.handler.export.dialogs;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.creditsms.plugins.paymentview.data.domain.Client;
-
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.handler.importexport.ExportDialogHandler;
+
+import org.creditsms.plugins.paymentview.data.domain.Client;
 
 public class ExportByClientXticsStep3Handler implements ThinletUiEventHandler {
 	private static final String XML_EXPORT_BY_CLIENT_XTICS = "/ui/plugins/paymentview/export/dialogs/dlgExportByClientXtics2.xml";
@@ -18,7 +16,6 @@ public class ExportByClientXticsStep3Handler implements ThinletUiEventHandler {
 
 	private String dateRange;
 	private List<Client> clients;
-	private Method methodExport;
 	private ExportByClientXticsStep2Handler previousObj;
 
 	public ExportByClientXticsStep3Handler(UiGeneratorController ui) {

@@ -4,17 +4,17 @@
 	right="9" text="Create Alert"
 	top="9" resizable="true" modal="true" closable="true">
 
-	<label text="Select Mobile Payment Service" />
-	<combobox columns="50" name="cmbSelectAction" colspan="2" text="Select">
-		<choice text="MPESA - Safaricom"/>
-		<choice text="MPESA Tanzania - Vodacom"/>
+	<label text="Select Account Type" />
+	<combobox columns="50" name="cmbSelectAction" colspan="2" text="Account Type">
+		<choice text="Personal"/>
+		<choice text="Paybill"/>
 	</combobox>
 
 	<panel colspan="3" weightx="1">
-		<button icon="/icons/tick.png" text="Advanced"
+		<button icon="/icons/tick.png" text="Previous"
 			action="removeDialog" />
 		<panel weightx="1" />
-		<button icon="/icons/tick.png" text="Create"
+		<button icon="/icons/tick.png" text="Next"
 			action="removeDialog" />
 	</panel>
 </dialog>

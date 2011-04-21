@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import javax.persistence.Column;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -24,8 +26,13 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 
 	private Object compParentPanelFields;
 
-	public CustomizeClientDBHandler(UiGeneratorController ui) {
+	private CustomFieldDao customFieldDao;
+	private CustomValueDao customValueDao;
+
+	public CustomizeClientDBHandler(UiGeneratorController ui, CustomFieldDao customFieldDao, CustomValueDao customValueDao) {
 		this.ui = ui;
+		this.customFieldDao = customFieldDao;
+		this.customValueDao = customValueDao;		
 		init();
 		refresh();
 	} 
