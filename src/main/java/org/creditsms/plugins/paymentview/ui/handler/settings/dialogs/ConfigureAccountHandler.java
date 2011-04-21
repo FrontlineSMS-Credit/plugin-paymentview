@@ -9,10 +9,10 @@ import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 public class ConfigureAccountHandler implements ThinletUiEventHandler {
 	private static final String XML_CONFIGURE_ACCOUNT = "/ui/plugins/paymentview/settings/dialogs/dlgConfigureAccount.xml";
 
-	private UiGeneratorController ui;
-	private Object dialogComponent;
 	private Account account;
 	private AccountDao accountDao;
+	private Object dialogComponent;
+	private UiGeneratorController ui;
 
 	public ConfigureAccountHandler(UiGeneratorController ui) {
 		this.ui = ui;
@@ -20,41 +20,30 @@ public class ConfigureAccountHandler implements ThinletUiEventHandler {
 		refresh();
 	}
 
-	public ConfigureAccountHandler(UiGeneratorController ui,
-			Account account, AccountDao accountDao) {
+	public ConfigureAccountHandler(UiGeneratorController ui, Account account,
+			AccountDao accountDao) {
 		this(ui);
 		this.account = account;
 		this.accountDao = accountDao;
 	}
 
-	private void refresh() {		
-	}
-
-	private void init() {
-		dialogComponent = ui.loadComponentFromFile(XML_CONFIGURE_ACCOUNT,
-				this);
-	}
-
-	public void updateAccPIN() {
-		// TODO Auto-generated method stub
-
-	}
-	
-	public void updateAuthSettings() {
-		// TODO Auto-generated method stub
-
-	}
-	
 	public void deteteAccount() {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	/**
 	 * @return the customizeClientDialog
 	 */
 	public Object getDialog() {
 		return dialogComponent;
+	}
+
+	private void init() {
+		dialogComponent = ui.loadComponentFromFile(XML_CONFIGURE_ACCOUNT, this);
+	}
+
+	private void refresh() {
 	}
 
 	/** Remove the dialog from view. */
@@ -65,5 +54,15 @@ public class ConfigureAccountHandler implements ThinletUiEventHandler {
 	/** Remove a dialog from view. */
 	public void removeDialog(Object dialog) {
 		this.ui.removeDialog(dialog);
+	}
+
+	public void updateAccPIN() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void updateAuthSettings() {
+		// TODO Auto-generated method stub
+
 	}
 }

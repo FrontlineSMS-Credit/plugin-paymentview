@@ -11,78 +11,84 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
-import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.importexport.PaymentViewCsvExporter;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 
 /**
  * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
- *
+ * 
  */
-public class OutgoingPaymentsExportHandler extends ExportDialogHandler<OutgoingPayment> {
+public class OutgoingPaymentsExportHandler extends
+		ExportDialogHandler<OutgoingPayment> {
 
+	private static final String COMPONENT_CB_ACCOUNT = "cbAccount";
+	private static final String COMPONENT_CB_AMOUNT_PAID = "cbAmountPaid";
+	private static final String COMPONENT_CB_OUTGOING_CONFIRMATION = "cbConfirmation";
+	private static final String COMPONENT_CB_OUTGOING_NOTES = "cbNotes";
+	/** i18n Text Key: "Active" */
+	private static final String COMPONENT_CB_PHONE_NUMBER = "cbPhoneNumber";
+	private static final String COMPONENT_CB_TIME_PAID = "cbTimePaid";
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_EXPORTING_SELECTED_CONTACTS = "plugins.paymentview.message.exporting.selected.client";
 	private static final String UI_FILE_OPTIONS_PANEL_OUTGOING_PAYMENT = "/ui/plugins/paymentview/importexport/pnOutgoingPaymentsDetails.xml";
-	/** i18n Text Key: "Active" */
-	private static final String COMPONENT_CB_PHONE_NUMBER = "cbPhoneNumber";
-	private static final String COMPONENT_CB_ACCOUNT = "cbAccount";
-	private static final String COMPONENT_CB_AMOUNT_PAID = "cbAmountPaid";
-	private static final String COMPONENT_CB_TIME_PAID = "cbTimePaid";
-	private static final String COMPONENT_CB_OUTGOING_NOTES = "cbNotes";
-	private static final String COMPONENT_CB_OUTGOING_CONFIRMATION = "cbConfirmation";
-	 
+
 	private OutgoingPaymentDao outgoingPaymentDao;
-	
-	public OutgoingPaymentsExportHandler(UiGeneratorController ui) {
+
+	public OutgoingPaymentsExportHandler(UiGeneratorController ui,
+			OutgoingPaymentDao outgoingPaymentDao) {
 		super(OutgoingPayment.class, ui);
-		outgoingPaymentDao = DummyData.INSTANCE.getOutgoingPaymentDao();
+		this.outgoingPaymentDao = outgoingPaymentDao;
 	}
 
 	@Override
-	protected String getWizardTitleI18nKey() {
-		return MESSAGE_EXPORTING_SELECTED_CONTACTS;
+	public void doSpecialExport(String dataPath) throws IOException {
+		log.debug("Exporting all contacts..");
+		exportOutgoingPayment(this.outgoingPaymentDao.getAllOutgoingPayments(),
+				dataPath);
 	}
-	
+
+	@Override
+	public void doSpecialExport(String dataPath, List<OutgoingPayment> selected)
+			throws IOException {
+		exportOutgoingPayment(selected, dataPath);
+	}
+
+	/**
+	 * Export the supplied contacts using settings set in {@link #wizardDialog}.
+	 * 
+	 * @param outgoingPayment
+	 *            The contacts to export
+	 * @param filename
+	 *            The file to export the contacts to
+	 * @throws IOException
+	 */
+	private void exportOutgoingPayment(List<OutgoingPayment> outgoingPayment,
+			String filename) throws IOException {
+		CsvRowFormat rowFormat = getRowFormatForClient();
+
+		if (!rowFormat.hasMarkers()) {
+			uiController.alert(InternationalisationUtils
+					.getI18nString(MESSAGE_NO_FIELD_SELECTED));
+			log.trace("EXIT");
+			return;
+		}
+
+		log.debug("Row Format [" + rowFormat + "]");
+
+		PaymentViewCsvExporter.exportOutgoingPayment(new File(filename),
+				outgoingPayment, rowFormat);
+		uiController.setStatus(InternationalisationUtils
+				.getI18nString(MESSAGE_EXPORT_TASK_SUCCESSFUL));
+		this.uiController.infoMessage(InternationalisationUtils
+				.getI18nString(MESSAGE_EXPORT_TASK_SUCCESSFUL));
+	}
+
 	@Override
 	protected String getOptionsFilePath() {
 		return UI_FILE_OPTIONS_PANEL_OUTGOING_PAYMENT;
 	}
-	
-	@Override
-	public void doSpecialExport(String dataPath) throws IOException {
-		log.debug("Exporting all contacts..");
-		exportOutgoingPayment(this.outgoingPaymentDao.getAllOutgoingPayments(), dataPath); 
-	}
 
-	@Override
-	public void doSpecialExport(String dataPath, List<OutgoingPayment> selected) throws IOException {
-		exportOutgoingPayment(selected, dataPath);
-	}
-	
-	/**
-	 * Export the supplied contacts using settings set in {@link #wizardDialog}.
-	 * @param outgoingPayment The contacts to export
-	 * @param filename The file to export the contacts to
-	 * @throws IOException 
-	 */
-	private void exportOutgoingPayment(List<OutgoingPayment> outgoingPayment, String filename) throws IOException { 
-		CsvRowFormat rowFormat = getRowFormatForClient();
-		
-		if (!rowFormat.hasMarkers()) {
-			uiController.alert(InternationalisationUtils.getI18nString(MESSAGE_NO_FIELD_SELECTED));
-			log.trace("EXIT");
-			return;
-		}
-		
-		log.debug("Row Format [" + rowFormat + "]");
-		
-		PaymentViewCsvExporter.exportOutgoingPayment(new File(filename), outgoingPayment, rowFormat);
-		uiController.setStatus(InternationalisationUtils.getI18nString(MESSAGE_EXPORT_TASK_SUCCESSFUL));
-		this.uiController.infoMessage(InternationalisationUtils.getI18nString(MESSAGE_EXPORT_TASK_SUCCESSFUL));
-	}
-	
-	protected CsvRowFormat getRowFormatForClient() { 
+	protected CsvRowFormat getRowFormatForClient() {
 		CsvRowFormat rowFormat = new CsvRowFormat();
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER,
 				COMPONENT_CB_PHONE_NUMBER);
@@ -95,7 +101,12 @@ public class OutgoingPaymentsExportHandler extends ExportDialogHandler<OutgoingP
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_OUTGOING_NOTES,
 				COMPONENT_CB_OUTGOING_NOTES);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_OUTGOING_CONFIRMATION,
-				COMPONENT_CB_OUTGOING_CONFIRMATION); 
+				COMPONENT_CB_OUTGOING_CONFIRMATION);
 		return rowFormat;
+	}
+
+	@Override
+	protected String getWizardTitleI18nKey() {
+		return MESSAGE_EXPORTING_SELECTED_CONTACTS;
 	}
 }

@@ -6,10 +6,10 @@ import net.frontlinesms.ui.UiGeneratorController;
 public class CreateAlertHandler implements ThinletUiEventHandler {
 	private static final String XML_CREATE_ALERT = "/ui/plugins/paymentview/analytics/dialogs/dlgCreateAlert.xml";
 
-	private UiGeneratorController ui;
+	private Object compPanelFields;
 	private Object dialogComponent;
 
-	private Object compPanelFields;
+	private UiGeneratorController ui;
 
 	public CreateAlertHandler(UiGeneratorController ui) {
 		this.ui = ui;
@@ -17,12 +17,12 @@ public class CreateAlertHandler implements ThinletUiEventHandler {
 		refresh();
 	}
 
-	private void refresh() {		
-	}
-
-	private void init() {
-		dialogComponent = ui.loadComponentFromFile(XML_CREATE_ALERT,
-				this);
+	public void addField() {
+		Object label = ui.createLabel("Field");
+		ui.add(compPanelFields, label);
+		Object txtfield = ui.createTextfield("", "");
+		ui.add(compPanelFields, txtfield);
+		this.refresh();
 	}
 
 	/**
@@ -30,6 +30,13 @@ public class CreateAlertHandler implements ThinletUiEventHandler {
 	 */
 	public Object getDialog() {
 		return dialogComponent;
+	}
+
+	private void init() {
+		dialogComponent = ui.loadComponentFromFile(XML_CREATE_ALERT, this);
+	}
+
+	private void refresh() {
 	}
 
 	/** Remove the dialog from view. */
@@ -40,14 +47,6 @@ public class CreateAlertHandler implements ThinletUiEventHandler {
 	/** Remove a dialog from view. */
 	public void removeDialog(Object dialog) {
 		this.ui.removeDialog(dialog);
-	}
-
-	public void addField() {
-		Object label = ui.createLabel("Field"); 
-		ui.add(compPanelFields, label);
-		Object txtfield = ui.createTextfield("", "");
-		ui.add(compPanelFields, txtfield);
-		this.refresh();
 	}
 
 	public void removeField() {

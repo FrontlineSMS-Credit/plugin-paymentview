@@ -22,23 +22,24 @@ import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientImportHan
 
 public class ClientsTabHandler extends BaseTabHandler implements
 		PagedComponentItemProvider {
-	// > STATIC CONSTANTS
-	private static final String XML_CLIENTS_TAB = "/ui/plugins/paymentview/clients/clients.xml";
 	private static final String COMPONENT_CLIENT_TABLE = "tbl_clientList";
 	private static final String COMPONENT_PANEL_CLIENT_LIST = "pnl_tbl_clientList";
-	private Object clientsTableComponent;
-
-	private ComponentPagingHandler clientsTablePager;
-
+	// > STATIC CONSTANTS
+	private static final String XML_CLIENTS_TAB = "/ui/plugins/paymentview/clients/clients.xml";
 	// > INSTANCE PROPERTIES
 	private ClientDao clientDao;
-	private Object pnlClientsList;
+
 	private String clientFilter;
-	private CustomValueDao customValueDao;
+
+	private Object clientsTableComponent;
+	private ComponentPagingHandler clientsTablePager;
 	private CustomFieldDao customFieldDao;
+	private CustomValueDao customValueDao;
+	private Object pnlClientsList;
 
 	public ClientsTabHandler(UiGeneratorController ui, ClientDao clientDao,
-			AccountDao accountDao, CustomFieldDao customFieldDao, CustomValueDao customValueDao) {
+			AccountDao accountDao, CustomFieldDao customFieldDao,
+			CustomValueDao customValueDao) {
 		super(ui);
 		this.clientFilter = "";
 		init();
@@ -47,14 +48,57 @@ public class ClientsTabHandler extends BaseTabHandler implements
 		this.customValueDao = customValueDao;
 	}
 
-	// > PAGING METHODS
-	public PagedListDetails getListDetails(Object list, int startIndex,
-			int limit) {
-		if (list == this.clientsTableComponent) {
-			return getContactListDetails(startIndex, limit);
-		} else {
-			throw new IllegalStateException();
+	public void addClient() {
+		ui.add(new EditClientHandler(ui).getDialog());
+	}
+
+	public void analyseClient() {
+		// TODO Auto-generated method stub
+	}
+
+	// > EVENTS...
+	public void customizeClientDB() {
+		ui.add(new CustomizeClientDBHandler(ui, customFieldDao, customValueDao)
+				.getDialog());
+	}
+
+	public void deleteClient() {
+		Object[] selectedClients = this.ui
+				.getSelectedItems(clientsTableComponent);
+		for (Object selectedClient : selectedClients) {
+			Client c = (Client) ui.getAttachedObject(selectedClient);
+			clientDao.deleteClient(c);
 		}
+
+		ui.removeDialog(ui
+				.find(UiGeneratorControllerConstants.COMPONENT_CONFIRM_DIALOG));
+		ui.infoMessage("You have succesfully deleted from the client!");
+		this.refresh();
+	}
+
+	public void editClient() {
+		Object[] selectedClients = this.ui
+				.getSelectedItems(clientsTableComponent);
+		for (Object selectedClient : selectedClients) {
+			Client c = (Client) ui.getAttachedObject(selectedClient);
+			ui.add(new EditClientHandler(ui, c, clientDao).getDialog());
+		}
+	}
+
+	public void exportClient() {
+		new ClientExportHandler(ui, clientDao).showWizard();
+		this.refresh();
+	}
+
+	public void filterClients() {
+		this.updateContactList();
+	}
+
+	/**
+	 * @return the clientFilter
+	 */
+	public String getClientFilter() {
+		return clientFilter;
 	}
 
 	private PagedListDetails getContactListDetails(int startIndex, int limit) {
@@ -72,18 +116,14 @@ public class ClientsTabHandler extends BaseTabHandler implements
 
 	}
 
-	public void updateContactList() {
-		this.clientsTablePager.setCurrentPage(0);
-		this.clientsTablePager.refresh();
-	}
-
-	private Object[] toThinletComponents(List<Client> clients) {
-		Object[] components = new Object[clients.size()];
-		for (int i = 0; i < components.length; i++) {
-			Client c = clients.get(i);
-			components[i] = getRow(c);
+	// > PAGING METHODS
+	public PagedListDetails getListDetails(Object list, int startIndex,
+			int limit) {
+		if (list == this.clientsTableComponent) {
+			return getContactListDetails(startIndex, limit);
+		} else {
+			throw new IllegalStateException();
 		}
-		return components;
 	}
 
 	public Object getRow(Client client) {
@@ -101,9 +141,9 @@ public class ClientsTabHandler extends BaseTabHandler implements
 		return row;
 	}
 
-	@Override
-	public void refresh() {
-		this.updateContactList();
+	public void importClient() {
+		new ClientImportHandler(ui, this, clientDao).showWizard();
+		this.refresh();
 	}
 
 	@Override
@@ -117,50 +157,9 @@ public class ClientsTabHandler extends BaseTabHandler implements
 		return clientsTab;
 	}
 
-	// > EVENTS...
-	public void customizeClientDB() {
-		ui.add(new CustomizeClientDBHandler(ui, customFieldDao, customValueDao).getDialog());
-	}
-
-	public void addClient() {
-		ui.add(new EditClientHandler(ui).getDialog());
-	}
-
-	public void importClient() {
-		new ClientImportHandler(ui, this).showWizard();
-		this.refresh();
-	}
-
-	public void exportClient() {
-		new ClientExportHandler(ui).showWizard();
-		this.refresh();
-	}
-
-	public void analyseClient() {
-		// TODO Auto-generated method stub
-	}
-
-	public void editClient() {
-		Object[] selectedClients = this.ui
-				.getSelectedItems(clientsTableComponent);
-		for (Object selectedClient : selectedClients) {
-			Client c = (Client) ui.getAttachedObject(selectedClient);
-			ui.add(new EditClientHandler(ui, c, clientDao).getDialog());
-		}
-	}
-
-	public void deleteClient() {
-		Object[] selectedClients = this.ui
-				.getSelectedItems(clientsTableComponent);
-		for (Object selectedClient : selectedClients) {
-			Client c = (Client) ui.getAttachedObject(selectedClient);
-			clientDao.deleteClient(c);
-		}
-
-		ui.removeDialog(ui
-				.find(UiGeneratorControllerConstants.COMPONENT_CONFIRM_DIALOG));
-		ui.infoMessage("You have succesfully deleted from the client!");
-		this.refresh();
+	@Override
+	public void refresh() {
+		this.updateContactList();
 	}
 
 	/**
@@ -172,14 +171,17 @@ public class ClientsTabHandler extends BaseTabHandler implements
 		filterClients();
 	}
 
-	public void filterClients() {
-		this.updateContactList();
+	private Object[] toThinletComponents(List<Client> clients) {
+		Object[] components = new Object[clients.size()];
+		for (int i = 0; i < components.length; i++) {
+			Client c = clients.get(i);
+			components[i] = getRow(c);
+		}
+		return components;
 	}
 
-	/**
-	 * @return the clientFilter
-	 */
-	public String getClientFilter() {
-		return clientFilter;
+	public void updateContactList() {
+		this.clientsTablePager.setCurrentPage(0);
+		this.clientsTablePager.refresh();
 	}
 }

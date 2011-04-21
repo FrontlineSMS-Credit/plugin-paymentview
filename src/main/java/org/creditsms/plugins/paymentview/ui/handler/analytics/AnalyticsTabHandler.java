@@ -13,18 +13,18 @@ import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 public class AnalyticsTabHandler implements ThinletUiEventHandler {
 	private static final String XML_ANALYTICS_TAB = "/ui/plugins/paymentview/analytics/tabanalytics.xml";
 
+	private AccountDao accountDao;
 	private Object analyticsTab;
+	private ClientDao clientDao;
+	private ConfigureServiceTabHandler configureServiceTabHandler;
 	private CreateDashBoardTabHandler createDashBoardHandler;
+
+	private IncomingPaymentDao incomingPaymentDao;
+	private OutgoingPaymentDao outgoingPaymentDao;
+	private ServiceItemDao serviceItemDao;
+	private TargetDao targetDao;
 	private UiGeneratorController ui;
 	private ViewDashBoardTabHandler viewDashBoardHandler;
-	private ConfigureServiceTabHandler configureServiceTabHandler;
-
-	private TargetDao targetDao;
-	private ClientDao clientDao;
-	private OutgoingPaymentDao outgoingPaymentDao;
-	private IncomingPaymentDao incomingPaymentDao;
-	private AccountDao accountDao;
-	private ServiceItemDao serviceItemDao;
 
 	public AnalyticsTabHandler(UiGeneratorController ui, ClientDao clientDao,
 			AccountDao accountDao, IncomingPaymentDao incomingPaymentDao,
@@ -41,23 +41,25 @@ public class AnalyticsTabHandler implements ThinletUiEventHandler {
 		init();
 	}
 
-	public void refresh() {
-		this.createDashBoardHandler.refresh();
-		this.viewDashBoardHandler.refresh();
-		this.configureServiceTabHandler.refresh();
+	public Object getTab() {
+		return analyticsTab;
 	}
 
 	protected Object init() {
 		analyticsTab = ui.loadComponentFromFile(XML_ANALYTICS_TAB, this);
-		createDashBoardHandler = new CreateDashBoardTabHandler(ui, analyticsTab);
-		viewDashBoardHandler = new ViewDashBoardTabHandler(ui, analyticsTab);
+		createDashBoardHandler = new CreateDashBoardTabHandler(ui,
+				analyticsTab, clientDao);
+		viewDashBoardHandler = new ViewDashBoardTabHandler(ui, analyticsTab,
+				clientDao);
 		configureServiceTabHandler = new ConfigureServiceTabHandler(ui,
 				analyticsTab);
 		return analyticsTab;
 	}
 
-	public Object getTab() {
-		return analyticsTab;
+	public void refresh() {
+		this.createDashBoardHandler.refresh();
+		this.viewDashBoardHandler.refresh();
+		this.configureServiceTabHandler.refresh();
 	}
 
 	// > EVENTS...

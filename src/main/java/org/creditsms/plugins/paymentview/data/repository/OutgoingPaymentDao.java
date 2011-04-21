@@ -12,34 +12,36 @@ import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
  * */
 public interface OutgoingPaymentDao {
 	/**
-	 * get and return an OutgoingPayment with a specific id 
+	 * removes an OutgoingPayment payment to the system
 	 * */
-	public OutgoingPayment getOutgoingPaymentById(long outgoingPaymentId);
-	
+	public void deleteOutgoingPayment(OutgoingPayment outgoingPayment);
+
 	/**
 	 * returns all the OutgoingPayments in the system
 	 * */
 	public List<OutgoingPayment> getAllOutgoingPayments();
-	
-	/**
-	 * returns OutgoingPayment(s) by time range
-	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByTimeRange(Date startTime, Date endtime);
-	
+
 	/**
 	 * returns OutgoingPayment(s) by clientId
 	 * */
 	public List<OutgoingPayment> getOutgoingPaymentByClientId(long clientId);
-	
+
+	/**
+	 * get and return an OutgoingPayment with a specific id
+	 * */
+	public OutgoingPayment getOutgoingPaymentById(long outgoingPaymentId);
+
 	/**
 	 * returns OutgoingPayment(s) by accountId
 	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumber(long accountId);
+	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumber(
+			long accountId);
 
 	/**
 	 * returns OutgoingPayment(s) by accountId by time ranges
 	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumberByTimeRange(long accountId, Date startDate, Date endDate);
+	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumberByTimeRange(
+			long accountId, Date startDate, Date endDate);
 
 	/**
 	 * returns OutgoingPayment(s) by phone number
@@ -47,18 +49,20 @@ public interface OutgoingPaymentDao {
 	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(String phoneNo);
 
 	/**
-	 * updates an OutgoingPayment payment to the system
+	 * returns OutgoingPayment(s) by time range
 	 * */
-	public void updateOutgoingPayment(OutgoingPayment outgoingPayment) throws DuplicateKeyException;
-	
+	public List<OutgoingPayment> getOutgoingPaymentsByTimeRange(Date startTime,
+			Date endtime);
 
 	/**
 	 * saves an OutgoingPayment payment to the system
 	 * */
-	public void saveOutgoingPayment(OutgoingPayment outgoingPayment) throws DuplicateKeyException;
-	
+	public void saveOutgoingPayment(OutgoingPayment outgoingPayment)
+			throws DuplicateKeyException;
+
 	/**
-	 * removes an OutgoingPayment payment to the system
+	 * updates an OutgoingPayment payment to the system
 	 * */
-	public void deleteOutgoingPayment(OutgoingPayment outgoingPayment);
+	public void updateOutgoingPayment(OutgoingPayment outgoingPayment)
+			throws DuplicateKeyException;
 }

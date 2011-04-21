@@ -12,42 +12,23 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
-public class HibernateIncomingPaymentDao extends BaseHibernateDao<IncomingPayment> implements IncomingPaymentDao {
+public class HibernateIncomingPaymentDao extends
+		BaseHibernateDao<IncomingPayment> implements IncomingPaymentDao {
 
-	protected HibernateIncomingPaymentDao(){
+	protected HibernateIncomingPaymentDao() {
 		super(IncomingPayment.class);
 	}
-	
-	public IncomingPayment getIncomingPaymentById(long id) {
-		DetachedCriteria criteria = super.getCriterion();
-		criteria.add(Restrictions.eq("id", id));
-		return super.getUnique(criteria);
+
+	public void deleteIncomingPayment(IncomingPayment incomingPayment) {
+		super.delete(incomingPayment);
 	}
 
 	public List<IncomingPayment> getAllIncomingPayments() {
 		return super.getAll();
 	}
 
-	public List<IncomingPayment> getIncomingPaymentsByPhoneNo(String phoneNo) {
-		DetachedCriteria criteria = super.getCriterion();
-		criteria.add(Restrictions.eq("phoneNumber", phoneNo));
-		return super.getList(criteria);
-	}
-	
-	public List<IncomingPayment> getIncomingPaymentsByPayer(String payer) {
-		DetachedCriteria criteria = super.getCriterion();
-		criteria.add(Restrictions.eq("paymentBy", payer));
-		return super.getList(criteria);
-	}
-
-	public List<IncomingPayment> getIncomingPaymentsByTimeRange(Date startTime,
-			Date endtime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<IncomingPayment> getIncomingPaymentsByClientIdByDateRange(
-			long clientId, Calendar startDate, Calendar endDate) {
+	public List<IncomingPayment> getAllIncomingPayments(int startingIndex,
+			int limit) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -55,19 +36,22 @@ public class HibernateIncomingPaymentDao extends BaseHibernateDao<IncomingPaymen
 	public List<IncomingPayment> getIncomingPaymentByClientId(long clientId) {
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria accountCriteria = criteria.createCriteria("account");
-		DetachedCriteria clientCriteria = accountCriteria.createCriteria("client");
+		DetachedCriteria clientCriteria = accountCriteria
+				.createCriteria("client");
 		clientCriteria.add(Restrictions.eq("id", clientId));
 		return super.getList(criteria);
+	}
+
+	public IncomingPayment getIncomingPaymentById(long id) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("id", id));
+		return super.getUnique(criteria);
 	}
 
 	public List<IncomingPayment> getIncomingPaymentsByAccountIdByTimeRange(
 			long accountId, Date startDate, Date endDate) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	public void deleteIncomingPayment(IncomingPayment incomingPayment) {
-		super.delete(incomingPayment);
 	}
 
 	public List<IncomingPayment> getIncomingPaymentsByAccountNumber(
@@ -78,14 +62,32 @@ public class HibernateIncomingPaymentDao extends BaseHibernateDao<IncomingPaymen
 		return super.getList(criteria);
 	}
 
-	public List<IncomingPayment> getAllIncomingPayments(int startingIndex,
-			int limit) {
+	public List<IncomingPayment> getIncomingPaymentsByAccountNumberByTimeRange(
+			long accountId, Date startDate, Date endDate) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<IncomingPayment> getIncomingPaymentsByAccountNumberByTimeRange(
-			long accountId, Date startDate, Date endDate) {
+	public List<IncomingPayment> getIncomingPaymentsByClientIdByDateRange(
+			long clientId, Calendar startDate, Calendar endDate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<IncomingPayment> getIncomingPaymentsByPayer(String payer) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("paymentBy", payer));
+		return super.getList(criteria);
+	}
+
+	public List<IncomingPayment> getIncomingPaymentsByPhoneNo(String phoneNo) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("phoneNumber", phoneNo));
+		return super.getList(criteria);
+	}
+
+	public List<IncomingPayment> getIncomingPaymentsByTimeRange(Date startTime,
+			Date endtime) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -1,9 +1,9 @@
 package org.creditsms.plugins.paymentview.ui.handler.analytics;
 
-import org.creditsms.plugins.paymentview.ui.handler.analytics.dialogs.CreateNewTargetHandler;
-
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
+
+import org.creditsms.plugins.paymentview.ui.handler.analytics.dialogs.CreateNewTargetHandler;
 
 public class ConfigureServiceTabHandler extends BaseTabHandler {
 	private static final String TAB_CONFIGURE_SERVICE = "tab_configureService";
@@ -18,22 +18,23 @@ public class ConfigureServiceTabHandler extends BaseTabHandler {
 		this.init();
 	}
 
-	public void refresh() {
-		
+	public void createNew() {
+		ui.add(new CreateNewTargetHandler((UiGeneratorController) ui)
+				.getDialog());
 	}
 
 	public void deinit() {
 	}
-	 	
+
 	@Override
 	protected Object initialiseTab() {
-		ui.add(configureServiceTab, ui.loadComponentFromFile(XML_CONFIGURE_SERVICE, this));
+		ui.add(configureServiceTab,
+				ui.loadComponentFromFile(XML_CONFIGURE_SERVICE, this));
 		return configureServiceTab;
 	}
-	
-	public void createNew() {
-		ui.add(new CreateNewTargetHandler((UiGeneratorController)ui).getDialog());
+
+	public void refresh() {
+
 	}
-	
-	
+
 }

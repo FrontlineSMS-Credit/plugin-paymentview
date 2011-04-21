@@ -11,32 +11,65 @@ import net.frontlinesms.ui.handler.BaseTabHandler;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
-import org.creditsms.plugins.paymentview.data.dummy.DummyData;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.OutgoingPaymentsExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.OutgoingPaymentsImportHandler;
 
 public class SentPaymentsTabHandler extends BaseTabHandler {
-	private static final String XML_SENTPAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/sentpayments.xml";
 	private static final String COMPONENT_CLIENT_TABLE = "tbl_clients";
-	private Object sentPaymentsTab;
-	private static final String TABBED_PANE_MAIN = "tabbedPaneMain";
 	private static final String COMPONENT_INCOMING_PAYMENTS_TABLE = "tbl_clients";
-	private OutgoingPaymentDao outgoingPaymentDao = DummyData.INSTANCE
-			.getOutgoingPaymentDao();
-	private ClientDao clientsDao = DummyData.INSTANCE.getClientDao();
+	private static final String TABBED_PANE_MAIN = "tabbedPaneMain";
+	private static final String XML_SENTPAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/sentpayments.xml";
+	private AccountDao accountDao;
+	private ClientDao clientDao;
 	SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+	private NumberFormat formatter = new DecimalFormat("#,000.00");
+	private OutgoingPaymentDao outgoingPaymentDao;
+	//
+	// For Dummy Purposes
+	Random random = new Random();
+	//
+
+	private Object sentPaymentsTab;
+
 	SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss");
 
-	public SentPaymentsTabHandler(UiGeneratorController ui) {
+	public SentPaymentsTabHandler(UiGeneratorController ui,
+			ClientDao clientDao, OutgoingPaymentDao outgoingPaymentDao,
+			AccountDao accountDao) {
 		super(ui);
+		this.clientDao = clientDao;
+		this.accountDao = accountDao;
+		this.outgoingPaymentDao = outgoingPaymentDao;
 		init();
 	}
 
-	@Override
-	public void refresh() {
-		populateOutgoingPaymentsTable();
+	private Object createRow(OutgoingPayment o) {
+		Client c = clientDao.getAllClients().get(
+				random.nextInt(clientDao.getAllClients().size()));
+		Object row = ui.createTableRow();
+		ui.add(row,
+				ui.createTableCell(c.getFirstName() + " " + c.getOtherName()));
+		ui.add(row, ui.createTableCell(o.getPhoneNumber()));
+		ui.add(row, ui.createTableCell(formatter.format(o.getAmountPaid())));
+		ui.add(row, ui.createTableCell(df.format(o.getTimePaid())));
+		ui.add(row, ui.createTableCell(tf.format(o.getTimePaid())));
+		ui.add(row, ui.createTableCell(Long.toString(o.getAccount()
+				.getAccountNumber())));
+		ui.add(row, ui.createTableCell(o.getNotes()));
+		return row;
+	}
+
+	public void exportPayments() {
+		new OutgoingPaymentsExportHandler(ui, outgoingPaymentDao).showWizard();
+		this.refresh();
+	}
+
+	public void importPayments() {
+		new OutgoingPaymentsImportHandler(ui, accountDao).showWizard();
+		this.refresh();
 	}
 
 	@Override
@@ -54,39 +87,9 @@ public class SentPaymentsTabHandler extends BaseTabHandler {
 			ui.add(table, createRow(o));
 		}
 	}
-	
-	
-	//
-	//For Dummy Purposes
-	ClientDao clientDao = DummyData.INSTANCE.getClientDao();
-	List<Client> allClients = clientDao.getAllClients(); 
-	Random random = new Random();	
-	//
 
-	private NumberFormat formatter = new DecimalFormat("#,000.00");
-
-	private Object createRow(OutgoingPayment o) {	
-		Client c = allClients.get(random.nextInt(allClients.size()));
-		Object row = ui.createTableRow();
-		ui.add(row,
-				ui.createTableCell(c.getFirstName() + " "
-						+ c.getOtherName()));
-		ui.add(row, ui.createTableCell(o.getPhoneNumber()));
-		ui.add(row, ui.createTableCell(formatter.format(o.getAmountPaid())));
-		ui.add(row, ui.createTableCell(df.format(o.getTimePaid())));
-		ui.add(row, ui.createTableCell(tf.format(o.getTimePaid())));
-		ui.add(row, ui.createTableCell(Long.toString(o.getAccount().getAccountNumber())));
-		ui.add(row, ui.createTableCell(o.getNotes()));
-		return row;
-	}
-	
-	public void exportPayments() {
-		new OutgoingPaymentsExportHandler(ui).showWizard();
-		this.refresh();
-	}
-	
-	public void importPayments() {
-		new OutgoingPaymentsImportHandler(ui).showWizard();
-		this.refresh();
+	@Override
+	public void refresh() {
+		populateOutgoingPaymentsTable();
 	}
 }

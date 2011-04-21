@@ -1,6 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler.export.dialogs;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 import net.frontlinesms.ui.ThinletUiEventHandler;
@@ -11,12 +10,12 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 public class ExportByClientXticsStep3Handler implements ThinletUiEventHandler {
 	private static final String XML_EXPORT_BY_CLIENT_XTICS = "/ui/plugins/paymentview/export/dialogs/dlgExportByClientXtics2.xml";
 
-	private UiGeneratorController ui;
-	private Object dialogComponent;
-
-	private String dateRange;
 	private List<Client> clients;
+	private String dateRange;
+
+	private Object dialogComponent;
 	private ExportByClientXticsStep2Handler previousObj;
+	private UiGeneratorController ui;
 
 	public ExportByClientXticsStep3Handler(UiGeneratorController ui) {
 		this.ui = ui;
@@ -35,12 +34,8 @@ public class ExportByClientXticsStep3Handler implements ThinletUiEventHandler {
 		this.previousObj = previousObj;
 	}
 
-	public void refresh() {
-	}
-
-	public void init() {
-		dialogComponent = ui.loadComponentFromFile(XML_EXPORT_BY_CLIENT_XTICS,
-				this);
+	public void export() {
+		previousObj.handleDoExport();
 	}
 
 	/**
@@ -48,6 +43,17 @@ public class ExportByClientXticsStep3Handler implements ThinletUiEventHandler {
 	 */
 	public Object getDialog() {
 		return dialogComponent;
+	}
+
+	public void init() {
+		dialogComponent = ui.loadComponentFromFile(XML_EXPORT_BY_CLIENT_XTICS,
+				this);
+	}
+
+	public void next() {
+	}
+
+	public void refresh() {
 	}
 
 	/** Remove the dialog from view. */
@@ -62,12 +68,5 @@ public class ExportByClientXticsStep3Handler implements ThinletUiEventHandler {
 
 	public void showDateSelecter(Object textField) {
 		this.ui.showDateSelecter(textField);
-	}
-
-	public void next() {
-	}
-
-	public void export(){		
-		previousObj.handleDoExport();
 	}
 }

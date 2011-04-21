@@ -1,4 +1,5 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
+
 import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
@@ -9,15 +10,27 @@ import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
-
-public class HibernateAccountDao extends BaseHibernateDao<Account>  implements AccountDao{
+public class HibernateAccountDao extends BaseHibernateDao<Account> implements
+		AccountDao {
 
 	protected HibernateAccountDao() {
 		super(Account.class);
 	}
-	
-	public List<Account> getAllAcounts() {
-		return super.getAll();
+
+	public void deleteAccount(Account account) {
+		super.delete(account);
+	}
+
+	public Account getAccountByAccountNumber(long accNumber) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("accountNumber", accNumber));
+		return super.getUnique(criteria);
+	}
+
+	public Account getAccountById(long id) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("id", id));
+		return super.getUnique(criteria);
 	}
 
 	public List<Account> getAccountsByClientId(long id) {
@@ -27,20 +40,8 @@ public class HibernateAccountDao extends BaseHibernateDao<Account>  implements A
 		return super.getList(criteria);
 	}
 
-	public Account getAccountById(long id) {
-		DetachedCriteria criteria = super.getCriterion();
-		criteria.add(Restrictions.eq("id", id));
-		return super.getUnique(criteria);
-	}
-
-	public Account getAccountByAccountNumber(long accNumber) {
-		DetachedCriteria criteria = super.getCriterion();
-		criteria.add(Restrictions.eq("accountNumber", accNumber));
-		return super.getUnique(criteria);
-	}
-
-	public void deleteAccount(Account account) {
-		super.delete(account);
+	public List<Account> getAllAcounts() {
+		return super.getAll();
 	}
 
 	public void saveAccount(Account account) throws DuplicateKeyException {

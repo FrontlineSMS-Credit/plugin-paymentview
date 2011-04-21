@@ -42,51 +42,62 @@ import org.springframework.context.ApplicationContext;
  * 
  * @author Emmanuel Kala
  */
-@PluginControllerProperties(
-	name = "Payment View", 
-	iconPath = "/icons/creditsms.png", 
-	i18nKey = "plugins.paymentview", 
-	springConfigLocation = "classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml", 
-	hibernateConfigPath = "classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml")
+@PluginControllerProperties(name = "Payment View", iconPath = "/icons/creditsms.png", i18nKey = "plugins.paymentview", springConfigLocation = "classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml", hibernateConfigPath = "classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml")
 public class PaymentViewPluginController extends BasePluginController implements
 		IncomingMessageListener, ThinletUiEventHandler {
 
-	// > INSTANCE PROPERTIES
-	/** DAO for clients */
-	private ClientDao clientDao;
-	/** DAO for accounts */
-	private AccountDao accountDao;
-	/** DAO for custom fields */
-	private CustomFieldDao customFieldDao;
-	/** DAO for incoming payments */
-	private IncomingPaymentDao incomingPaymentDao;
-	/** DAO for quick dial codes (USSD requests) */
-	private CustomValueDao customValueDao;
-	/** DAO for payment view errors */
-	private OutgoingPaymentDao outgoingPaymentDao;
-	/** DAO for payment view errors */
-	private TargetDao targetDao;
-	/** DAO for payment view errors */
-	private ServiceItemDao serviceItemDao;
-
+	private static final String TABP_MAIN_PANE = "tabP_mainPane";
 	// > CONSTANTS
 	/** Filename and path of the XML for the PaymentView tab */
 	private static final String XML_PAYMENT_VIEW_TAB = "/ui/plugins/paymentview/paymentViewTab.xml";
-	private static final String TABP_MAIN_PANE = "tabP_mainPane";
-
-	private FrontlineSMS frontlineController;
-	private PaymentViewThinletTabController tabController;
-	Object paymentViewTab;
-
-	private Object mainPane;
-
+	/** DAO for accounts */
+	private AccountDao accountDao;
+	private AnalyticsTabHandler analyticsTab;
+	// > INSTANCE PROPERTIES
+	/** DAO for clients */
+	private ClientDao clientDao;
 	// > THE OFFICIAL TABS FOR PAYMENTVIEW
 	private ClientsTabHandler clientsTab;
+	/** DAO for custom fields */
+	private CustomFieldDao customFieldDao;
+	/** DAO for quick dial codes (USSD requests) */
+	private CustomValueDao customValueDao;
+
 	private ExportTabHandler exportTab;
-	private OutgoingPaymentsTabHandler outgoingPayTab;
+	private FrontlineSMS frontlineController;
+
+	/** DAO for incoming payments */
+	private IncomingPaymentDao incomingPaymentDao;
 	private IncomingPaymentsTabHandler incomingPayTab;
-	private AnalyticsTabHandler analyticsTab;
+	private Object mainPane;
+
+	/** DAO for payment view errors */
+	private OutgoingPaymentDao outgoingPaymentDao;
+
+	private OutgoingPaymentsTabHandler outgoingPayTab;
+	Object paymentViewTab;
+	/** DAO for payment view errors */
+	private ServiceItemDao serviceItemDao;
 	private SettingsTabHandler settingsTab;
+	private PaymentViewThinletTabController tabController;
+	/** DAO for payment view errors */
+	private TargetDao targetDao;
+
+	/**
+	 * @see net.frontlinesms.plugins.PluginController#deinit()
+	 */
+	public void deinit() {
+		// this.frontlineController.removeIncomingMessageListener(this);
+	}
+
+	/**
+	 * Ensures that the incoming message is trapped and the necessary
+	 * information is extracted i.e. transaction type, amount, sender and
+	 * transaction code (if any) The above parameters may vary amongst service
+	 * providers
+	 */
+	public void incomingMessageEvent(FrontlineMessage message) {
+	}
 
 	// > CONFIG METHODS
 	/**
@@ -138,7 +149,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 		uiController.add(mainPane, incomingPayTab.getTab());
 
 		outgoingPayTab = new OutgoingPaymentsTabHandler(uiController,
-				outgoingPaymentDao);
+				outgoingPaymentDao, clientDao);
 		outgoingPayTab.refresh();
 		uiController.add(mainPane, outgoingPayTab.getTab());
 
@@ -160,21 +171,5 @@ public class PaymentViewPluginController extends BasePluginController implements
 		uiController.add(mainPane, settingsTab.getTab());
 
 		return paymentViewTab;
-	}
-
-	/**
-	 * @see net.frontlinesms.plugins.PluginController#deinit()
-	 */
-	public void deinit() {
-		// this.frontlineController.removeIncomingMessageListener(this);
-	}
-
-	/**
-	 * Ensures that the incoming message is trapped and the necessary
-	 * information is extracted i.e. transaction type, amount, sender and
-	 * transaction code (if any) The above parameters may vary amongst service
-	 * providers
-	 */
-	public void incomingMessageEvent(FrontlineMessage message) {
 	}
 }

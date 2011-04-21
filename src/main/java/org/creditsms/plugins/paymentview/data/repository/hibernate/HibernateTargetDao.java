@@ -3,33 +3,36 @@ package org.creditsms.plugins.paymentview.data.repository.hibernate;
 import java.sql.Time;
 import java.util.List;
 
+import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
+
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
-import net.frontlinesms.data.DuplicateKeyException;
-import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
-
 /**
  * 
  * @author Roy
- *
+ * 
  */
-public class HibernateTargetDao extends BaseHibernateDao<Target>  implements TargetDao{
-	
-	protected HibernateTargetDao(){
+public class HibernateTargetDao extends BaseHibernateDao<Target> implements
+		TargetDao {
+
+	protected HibernateTargetDao() {
 		super(Target.class);
+	}
+
+	public void deleteTarget(Target target) {
+		super.delete(target);
 	}
 
 	public List<Target> getAllTarget() {
 		return super.getAll();
 	}
 
-	public Target getTargetById(long id) {
-		DetachedCriteria criteria = super.getCriterion();
-		criteria.add(Restrictions.eq("id", id));
-		return super.getUnique(criteria);
+	public List<Target> getAllTargets(int startIndex, int limit) {
+		return super.getAll(startIndex, limit);
 	}
 
 	public Target getTargetByAccount(long accNumber) {
@@ -45,38 +48,39 @@ public class HibernateTargetDao extends BaseHibernateDao<Target>  implements Tar
 		return null;
 	}
 
-	public List<Target> getAllTargets(int startIndex, int limit) {
-		return super.getAll(startIndex, limit);
+	public Target getTargetById(long id) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("id", id));
+		return super.getUnique(criteria);
 	}
 
 	public List<Target> getTargetByName(String targetName) {
 		DetachedCriteria criteria = super.getCriterion();
-		DetachedCriteria targetItemCriteria = criteria.createCriteria("serviceItem");
+		DetachedCriteria targetItemCriteria = criteria
+				.createCriteria("serviceItem");
 		targetItemCriteria.add(Restrictions.eq("targetName", targetName));
-		return super.getList(criteria);
-	}
-
-	public List<Target> getTargetByTargetItem(long targetItemId) {
-		DetachedCriteria criteria = super.getCriterion();
-		DetachedCriteria targetItemCriteria = criteria.createCriteria("serviceItem");
-		targetItemCriteria.add(Restrictions.eq("id", targetItemId));
 		return super.getList(criteria);
 	}
 
 	public List<Target> getTargetByName(String targetName, int startIndex,
 			int limit) {
 		DetachedCriteria criteria = super.getCriterion();
-		DetachedCriteria targetItemCriteria = criteria.createCriteria("serviceItem");
+		DetachedCriteria targetItemCriteria = criteria
+				.createCriteria("serviceItem");
 		targetItemCriteria.add(Restrictions.eq("targetName", targetName));
 		return super.getList(criteria, startIndex, limit);
 	}
 
-	public int getTargetCount() {
-		return super.countAll();
+	public List<Target> getTargetByTargetItem(long targetItemId) {
+		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria targetItemCriteria = criteria
+				.createCriteria("serviceItem");
+		targetItemCriteria.add(Restrictions.eq("id", targetItemId));
+		return super.getList(criteria);
 	}
 
-	public void deleteTarget(Target target) {
-		super.delete(target);
+	public int getTargetCount() {
+		return super.countAll();
 	}
 
 	public void saveTarget(Target target) throws DuplicateKeyException {
@@ -85,6 +89,6 @@ public class HibernateTargetDao extends BaseHibernateDao<Target>  implements Tar
 
 	public void updateTarget(Target target) throws DuplicateKeyException {
 		super.update(target);
-	} 
+	}
 
 }

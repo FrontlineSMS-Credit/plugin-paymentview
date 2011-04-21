@@ -19,50 +19,50 @@ import javax.persistence.Table;
 @Table(name = ServiceItem.TABLE_NAME)
 public class ServiceItem {
 	public static final String TABLE_NAME = "ServiceItem";
+	@Column(name = "amount", nullable = false, unique = false)
+	private BigDecimal amount;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
 
-	@Column(name = "targetName", nullable = false, unique = false)
-	private String targetName;
-
-	@Column(name = "amount", nullable = false, unique = false)
-	private BigDecimal amount;
-
 	@OneToMany
 	private Set<Target> target = new HashSet<Target>();
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getTargetName() {
-		return targetName;
-	}
-
-	public void setTargetName(String targetName) {
-		this.targetName = targetName;
-	}
+	@Column(name = "targetName", nullable = false, unique = false)
+	private String targetName;
 
 	public BigDecimal getAmount() {
 		return amount;
 	}
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
+	public long getId() {
+		return id;
 	}
 
 	public Set<Target> getTarget() {
 		return target;
 	}
 
+	public String getTargetName() {
+		return targetName;
+	}
+
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
 	public void setTarget(Set<Target> target) {
 		this.target = target;
+	}
+
+	public void setTargetName(String targetName) {
+		this.targetName = targetName;
 	}
 
 	@Override

@@ -20,65 +20,62 @@ import javax.persistence.Table;
 @Table(name = Target.TABLE_NAME)
 public class Target {
 	public static final String TABLE_NAME = "Target";
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id",
-            nullable=false,
-            unique=true)
-	private long id;
-	
-	@Column(name = "startDate", nullable = true, unique = false)
-	private Date startDate;
-
-	@Column(name = "endDate", nullable = true, unique = false)
-	private Date endDate;
-	
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "accountId")
 	private Account account;
-	
+
+	@Column(name = "endDate", nullable = true, unique = false)
+	private Date endDate;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false, unique = true)
+	private long id;
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "serviceItemId", 
-			nullable = true)
+	@JoinColumn(name = "serviceItemId", nullable = true)
 	private ServiceItem serviceItem;
 
-	public long getId() {
-		return id;
-	}
+	@Column(name = "startDate", nullable = true, unique = false)
+	private Date startDate;
 
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public Date getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+	public Account getAccount() {
+		return account;
 	}
 
 	public Date getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-
-	public Account getAccount() {
-		return account;
-	}
-
-	public void setAccount(Account account) {
-		this.account = account;
+	public long getId() {
+		return id;
 	}
 
 	public ServiceItem getServiceItem() {
 		return serviceItem;
 	}
 
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
 	public void setServiceItem(ServiceItem targetItem) {
 		this.serviceItem = targetItem;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 	}
 }

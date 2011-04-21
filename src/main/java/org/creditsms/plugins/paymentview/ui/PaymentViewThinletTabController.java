@@ -22,17 +22,17 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 public class PaymentViewThinletTabController extends
 		BasePluginThinletTabController<PaymentViewPluginController> implements
 		ThinletUiEventHandler, PagedComponentItemProvider {
-	// > UI FILES
-	private static final String UI_FILE_SEND_MONEY_DIALOG = "/ui/plugins/paymentview/dgSendMoneyForm.xml";
 	// > CONSTANTS
 	private static final Logger LOG = FrontlineUtils
 			.getLogger(PaymentViewThinletTabController.class);
+	// > UI FILES
+	private static final String UI_FILE_SEND_MONEY_DIALOG = "/ui/plugins/paymentview/dgSendMoneyForm.xml";
+
+	private PaymentViewPluginController controller;
 
 	// > UI COMPONENTS
 	/** Thinlet tab component whose functionality is handled by this class */
 	private Object paymentViewTab;
-
-	private PaymentViewPluginController controller;
 
 	/**
 	 * 
@@ -48,15 +48,15 @@ public class PaymentViewThinletTabController extends
 		this.controller = controller;
 	}
 
-	/**
-	 * Refreshes the tab display
-	 */
-	public void refresh() {
-	}
-
 	public PagedListDetails getListDetails(Object list, int startIndex,
 			int limit) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * Refreshes the tab display
+	 */
+	public void refresh() {
 	}
 }

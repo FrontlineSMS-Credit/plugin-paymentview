@@ -3,23 +3,22 @@ package org.creditsms.plugins.paymentview.ui.handler.export.dialogs;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+
 public class ExportByClientXticsStep1Handler implements ThinletUiEventHandler {
 	private static final String XML_EXPORT_BY_CLIENT_XTICS = "/ui/plugins/paymentview/export/dialogs/dlgExportByClientXtics.xml";
-	
-	private UiGeneratorController ui;	
+
+	private ClientDao clientDao;
 	private Object dialogComponent;
 
-	public ExportByClientXticsStep1Handler(UiGeneratorController ui) {
+	private UiGeneratorController ui;
+
+	public ExportByClientXticsStep1Handler(UiGeneratorController ui,
+			ClientDao clientDao) {
 		this.ui = ui;
+		this.clientDao = clientDao;
 		init();
 		refresh();
-	}
-	
-	public void refresh() {
-	}
-	
-	public void init() {
-		dialogComponent = ui.loadComponentFromFile(XML_EXPORT_BY_CLIENT_XTICS, this);	
 	}
 
 	/**
@@ -27,6 +26,19 @@ public class ExportByClientXticsStep1Handler implements ThinletUiEventHandler {
 	 */
 	public Object getDialog() {
 		return dialogComponent;
+	}
+
+	public void init() {
+		dialogComponent = ui.loadComponentFromFile(XML_EXPORT_BY_CLIENT_XTICS,
+				this);
+	}
+
+	public void next() {
+		new ExportByClientXticsStep2Handler(ui, clientDao).showWizard();
+		removeDialog();
+	}
+
+	public void refresh() {
 	}
 
 	/** Remove the dialog from view. */
@@ -38,13 +50,8 @@ public class ExportByClientXticsStep1Handler implements ThinletUiEventHandler {
 	public void removeDialog(Object dialog) {
 		this.ui.removeDialog(dialog);
 	}
-	
+
 	public void showDateSelecter(Object textField) {
 		this.ui.showDateSelecter(textField);
-	}
-	
-	public void next() {
-		new ExportByClientXticsStep2Handler(ui).showWizard();
-		removeDialog();
 	}
 }

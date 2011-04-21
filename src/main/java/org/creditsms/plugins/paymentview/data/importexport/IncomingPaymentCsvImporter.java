@@ -14,10 +14,8 @@ import net.frontlinesms.data.DuplicateKeyException;
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
-import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
-import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 
 /**
  * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
@@ -46,8 +44,9 @@ public class IncomingPaymentCsvImporter extends CsvImporter {
 	 * @throws CsvParseException
 	 *             If there was a problem with the format of the file
 	 */
-	public CsvImportReport importIncomingPayments(IncomingPaymentDao incomingPaymentDao,
-			AccountDao accountDao, CsvRowFormat rowFormat) {
+	public CsvImportReport importIncomingPayments(
+			IncomingPaymentDao incomingPaymentDao, AccountDao accountDao,
+			CsvRowFormat rowFormat) {
 		log.trace("ENTER");
 
 		for (String[] lineValues : this.getRawValues()) {
@@ -90,6 +89,5 @@ public class IncomingPaymentCsvImporter extends CsvImporter {
 
 		return new CsvImportReport();
 	}
- 
-	
+
 }

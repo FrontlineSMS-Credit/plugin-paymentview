@@ -12,9 +12,14 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
 @SuppressWarnings("unchecked")
-public class HibernateClientDao extends BaseHibernateDao<Client> implements ClientDao {
+public class HibernateClientDao extends BaseHibernateDao<Client> implements
+		ClientDao {
 	protected HibernateClientDao() {
 		super(Client.class);
+	}
+
+	public void deleteClient(Client client) {
+		super.delete(client);
 	}
 
 	public List<Client> getAllClients() {
@@ -25,21 +30,10 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements Clie
 		return super.getAll(startIndex, limit);
 	}
 
-	public List<Client> getClientsByName(String clientName) {	
-		DetachedCriteria criteria = super.getCriterion()
-		.add(Restrictions.disjunction()
-		.add(Restrictions.ilike("firstName", clientName.trim(), MatchMode.ANYWHERE))
-		.add(Restrictions.ilike("otherName", clientName.trim(), MatchMode.ANYWHERE)));
-		return super.getList(criteria);
-	}
-
-	public List<Client> getClientsByName(String clientName, int startIndex,
-			int limit) {
-		DetachedCriteria criteria = super.getCriterion()
-		.add(Restrictions.disjunction()
-		.add(Restrictions.ilike("firstName", clientName.trim(), MatchMode.ANYWHERE))
-		.add(Restrictions.ilike("otherName", clientName.trim(), MatchMode.ANYWHERE)));
-		return super.getList(criteria, startIndex, limit);
+	public Client getClientById(long id) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("id", id));
+		return super.getUnique(criteria);
 	}
 
 	public Client getClientByPhoneNumber(long phoneNumber) {
@@ -52,21 +46,34 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements Clie
 		return super.getAll().size();
 	}
 
-	public void deleteClient(Client client) {
-		super.delete(client);
+	public List<Client> getClientsByName(String clientName) {
+		DetachedCriteria criteria = super.getCriterion().add(
+				Restrictions
+						.disjunction()
+						.add(Restrictions.ilike("firstName", clientName.trim(),
+								MatchMode.ANYWHERE))
+						.add(Restrictions.ilike("otherName", clientName.trim(),
+								MatchMode.ANYWHERE)));
+		return super.getList(criteria);
+	}
+
+	public List<Client> getClientsByName(String clientName, int startIndex,
+			int limit) {
+		DetachedCriteria criteria = super.getCriterion().add(
+				Restrictions
+						.disjunction()
+						.add(Restrictions.ilike("firstName", clientName.trim(),
+								MatchMode.ANYWHERE))
+						.add(Restrictions.ilike("otherName", clientName.trim(),
+								MatchMode.ANYWHERE)));
+		return super.getList(criteria, startIndex, limit);
 	}
 
 	public void saveClient(Client client) throws DuplicateKeyException {
 		super.save(client);
 	}
-	
+
 	public void updateClient(Client client) throws DuplicateKeyException {
 		super.update(client);
-	}
-
-	public Client getClientById(long id) {
-		DetachedCriteria criteria = super.getCriterion();
-		criteria.add(Restrictions.eq("id", id));
-		return super.getUnique(criteria);
 	}
 }

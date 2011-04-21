@@ -1,8 +1,10 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
+
 import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
+
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.hibernate.criterion.DetachedCriteria;
@@ -11,24 +13,29 @@ import org.hibernate.criterion.Restrictions;
 /**
  * @author Roy
  **/
-public class HibernateServiceItemDao extends BaseHibernateDao<ServiceItem>  implements ServiceItemDao{
-	
-	protected HibernateServiceItemDao(){
+public class HibernateServiceItemDao extends BaseHibernateDao<ServiceItem>
+		implements ServiceItemDao {
+
+	protected HibernateServiceItemDao() {
 		super(ServiceItem.class);
+	}
+
+	public void deleteServiceItem(ServiceItem serviceItem) {
+		super.delete(serviceItem);
 	}
 
 	public List<ServiceItem> getAllServiceItem() {
 		return super.getAll();
 	}
 
+	public List<ServiceItem> getAllServiceItem(int startIndex, int limit) {
+		return super.getAll(startIndex, limit);
+	}
+
 	public ServiceItem getServiceItemById(long id) {
 		DetachedCriteria criteria = super.getCriterion();
 		criteria.add(Restrictions.eq("id", id));
 		return super.getUnique(criteria);
-	}
-
-	public List<ServiceItem> getAllServiceItem(int startIndex, int limit) {
-		return super.getAll(startIndex, limit);
 	}
 
 	public List<ServiceItem> getServiceItemByName(String serviceItemName) {
@@ -46,10 +53,6 @@ public class HibernateServiceItemDao extends BaseHibernateDao<ServiceItem>  impl
 
 	public int getServiceItemCount() {
 		return super.countAll();
-	}
-
-	public void deleteServiceItem(ServiceItem serviceItem) {
-		super.delete(serviceItem);
 	}
 
 	public void saveServiceItem(ServiceItem serviceItem)

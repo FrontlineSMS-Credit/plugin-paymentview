@@ -1,7 +1,6 @@
 package org.creditsms.plugins.paymentview.data.importexport;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
@@ -15,43 +14,61 @@ import net.frontlinesms.data.DuplicateKeyException;
 
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Account;
-import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 
 /**
- * @author Ian Onesmus Mukewa <ian@frontlinesms.com> 
+ * @author Ian Onesmus Mukewa <ian@frontlinesms.com>
  */
 public class OutgoingPaymentCsvImporter extends CsvImporter {
 	/** The delimiter to use between group names when they are exported. */
 	protected static final String GROUPS_DELIMITER = "\\\\";
-	private ClientDao clientDao; 
-	
-//> INSTANCE PROPERTIES
-	
-//> CONSTRUCTORS
+	private ClientDao clientDao;
+
+	// > INSTANCE PROPERTIES
+
+	// > CONSTRUCTORS
 	public OutgoingPaymentCsvImporter(File importFile) throws CsvParseException {
 		super(importFile);
 	}
 
-//> IMPORT METHODS
+	private Set<Account> getAccountsFromString(String strAccounts) {
+		String[] accounts = strAccounts.split(",");
+
+		Set<Account> set_accounts = new HashSet<Account>(accounts.length);
+		for (String account : accounts) {
+			if (account.length() == 0)
+				continue;
+			set_accounts.add(new Account(Long.parseLong(account)));
+		}
+
+		return set_accounts;
+	}
+
+	// > IMPORT METHODS
 	/**
 	 * Import Payments from a CSV file.
-	 * @param importFile the file to import from
-	 * @param contactDao ; paymentDao
-	 * @param rowFormat 
-	 * @throws IOException If there was a problem accessing the file
-	 * @throws CsvParseException If there was a problem with the format of the file
+	 * 
+	 * @param importFile
+	 *            the file to import from
+	 * @param contactDao
+	 *            ; paymentDao
+	 * @param rowFormat
+	 * @throws IOException
+	 *             If there was a problem accessing the file
+	 * @throws CsvParseException
+	 *             If there was a problem with the format of the file
 	 */
 	/**
 	 * @param accountDao
 	 * @param incomingPaymentDao
 	 * @param rowFormat
 	 */
-	public CsvImportReport importOutgoingPayments(OutgoingPaymentDao outgoingPaymentDao, 
-			AccountDao accountDao, CsvRowFormat rowFormat) {
+	public CsvImportReport importOutgoingPayments(
+			OutgoingPaymentDao outgoingPaymentDao, AccountDao accountDao,
+			CsvRowFormat rowFormat) {
 		log.trace("ENTER");
 
 		for (String[] lineValues : this.getRawValues()) {
@@ -80,8 +97,10 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 						.parseLong(account));
 			}
 
-			OutgoingPayment outgoingPayment = new OutgoingPayment(phoneNumber, new BigDecimal(amountPaid), new Date(
-							Long.parseLong(timePaid)), acc, notes, Boolean.parseBoolean(confirmation));
+			OutgoingPayment outgoingPayment = new OutgoingPayment(phoneNumber,
+					new BigDecimal(amountPaid), new Date(
+							Long.parseLong(timePaid)), acc, notes,
+					Boolean.parseBoolean(confirmation));
 			try {
 				outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
 			} catch (DuplicateKeyException e) {
@@ -94,17 +113,6 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 		log.trace("EXIT");
 
 		return new CsvImportReport();
-		
-	}
-	private Set<Account> getAccountsFromString(String strAccounts) {
-		String[] accounts = strAccounts.split(",");		
-		
-		Set<Account> set_accounts = new HashSet<Account>(accounts.length);
-		for (String account : accounts){
-			if (account.length() == 0) continue;
-			set_accounts.add(new Account(Long.parseLong(account)));
-		}
-		
-		return set_accounts;
+
 	}
 }
