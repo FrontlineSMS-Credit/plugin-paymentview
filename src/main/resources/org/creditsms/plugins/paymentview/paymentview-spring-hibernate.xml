@@ -31,14 +31,10 @@
 	</bean>
     <bean id="outgoingPaymentDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateOutgoingPaymentDao">
         <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-<<<<<<< HEAD
-    
+    </bean>    
 	<bean id="serviceItemDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateServiceItemDao">
 	    <property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-=======
->>>>>>> master
     <bean id="targetDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateTargetDao">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
