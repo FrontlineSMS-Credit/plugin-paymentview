@@ -122,8 +122,6 @@ public class PaymentViewPluginController extends BasePluginController implements
 		paymentViewTab = uiController.loadComponentFromFile(
 				XML_PAYMENT_VIEW_TAB, tabController);
 
-		System.out.println("Ian Nes Mukewa");
-
 		tabController.setTabComponent(paymentViewTab);
 		tabController.refresh();
 
