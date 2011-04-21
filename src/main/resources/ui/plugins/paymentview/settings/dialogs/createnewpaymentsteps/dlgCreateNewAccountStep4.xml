@@ -4,16 +4,18 @@
 	right="9" text="Create Alert"
 	top="9" resizable="true" modal="true" closable="true">
 
-	<label text="Existing PIN" />
+	<checkbox colspan="3" text="Require Authorization to send outgoing payments" />
+	
+	<label text="Enter Authorization Code" />
 	<textfield colspan="2" columns="15" text="" />
-	<label text="New PIN" />
+	<label text="Verify Authorization Code" />
 	<textfield colspan="2" columns="15" text="" />
 
 	<panel colspan="3" weightx="1">
 		<button icon="/icons/tick.png" text="Previous"
 			action="removeDialog" />
 		<panel weightx="1" />
-		<button icon="/icons/tick.png" text="Next"
+		<button icon="/icons/tick.png" text="Create"
 			action="removeDialog" />
 	</panel>
 </dialog>

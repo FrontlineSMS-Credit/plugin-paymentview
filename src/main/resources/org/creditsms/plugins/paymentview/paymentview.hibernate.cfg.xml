@@ -2,9 +2,9 @@
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
 	<session-factory>
-		<mapping class="org.creditsms.plugins.paymentview.data.domain.Client" />
-		<mapping class="org.creditsms.plugins.paymentview.data.domain.Account" />
-		<mapping class="org.creditsms.plugins.paymentview.data.domain.CustomValue" />
+	<mapping class="org.creditsms.plugins.paymentview.data.domain.Client" />
+	<mapping class="org.creditsms.plugins.paymentview.data.domain.Account" />
+	<mapping class="org.creditsms.plugins.paymentview.data.domain.CustomValue" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.OutgoingPayment" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.IncomingPayment" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.CustomField" />

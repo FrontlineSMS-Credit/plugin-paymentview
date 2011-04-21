@@ -32,15 +32,15 @@ public class CustomField {
 	private String strName;
 	
 	@OneToMany
-	private Set<CustomValue> otherClientDetails = new HashSet<CustomValue>();
+	private Set<CustomValue> customValue = new HashSet<CustomValue>();
 	
 	public CustomField(String strName) {
 		this.strName = strName;
 	}
 	
-	public CustomField(String strName, Set<CustomValue> otherClientDetails) {
+	public CustomField(String strName, Set<CustomValue> customValue) {
 		this.strName = strName;
-		this.otherClientDetails = otherClientDetails;
+		this.customValue = customValue;
 	}
 
 	public long getId() {
@@ -59,11 +59,11 @@ public class CustomField {
 		this.strName = strName;
 	}
 
-	public Set<CustomValue> getOtherClientDetails() {
-		return otherClientDetails;
+	public Set<CustomValue> getCustomValue() {
+		return customValue;
 	}
 
-	public void setOtherClientDetails(Set<CustomValue> otherClientDetails) {
-		this.otherClientDetails = otherClientDetails;
+	public void setCustomValue(Set<CustomValue> customValue) {
+		this.customValue = customValue;
 	}
 }

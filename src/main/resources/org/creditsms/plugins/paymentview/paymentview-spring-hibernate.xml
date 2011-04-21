@@ -48,9 +48,6 @@
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
     
-	<bean id="targetItemDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateTargetItemDao">
-	    <property name="sessionFactory" ref="sessionFactory" />
-	</bean>
     <bean id="targetDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateTargetDao">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
