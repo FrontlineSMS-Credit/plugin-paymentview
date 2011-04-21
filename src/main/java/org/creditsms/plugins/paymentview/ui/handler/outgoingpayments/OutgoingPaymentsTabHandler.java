@@ -3,11 +3,12 @@ package org.creditsms.plugins.paymentview.ui.handler.outgoingpayments;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
+import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
+
 public class OutgoingPaymentsTabHandler extends BaseTabHandler{
 
 	private static final String XML_OUTGOINGPAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/taboutgoingpayments.xml";
 	private static final String TABBED_PANE_MAIN = "tabbedPaneMain";
-	private static final String COMPONENT_INCOMING_PAYMENTS_TABLE = null;
 	
 	private Object outgoingPaymentsTab;
 	private SentPaymentsTabHandler sentPaymentsTab;
@@ -16,9 +17,12 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler{
 	private SelectFromClientsTabHandler selectFromClientsTab;
 	private Object mainTabbedPane;
 	
+	private OutgoingPaymentDao outgoingPaymentDao;
+	
 	 
-	public OutgoingPaymentsTabHandler(UiGeneratorController ui) {
+	public OutgoingPaymentsTabHandler(UiGeneratorController ui, OutgoingPaymentDao outgoingPaymentDao) {
 		super(ui);		
+		this.outgoingPaymentDao = outgoingPaymentDao;
 		init();
 	}
 

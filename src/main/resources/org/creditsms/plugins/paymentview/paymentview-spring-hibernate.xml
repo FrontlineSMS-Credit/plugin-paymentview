@@ -17,21 +17,6 @@
 	<bean id="clientDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateClientDao">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-	<bean id="networkOperatorDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateNetworkOperatorDao">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
-	<bean id="paymentServiceDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernatePaymentServiceDao">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>	
-	<bean id="paymentServiceTransactionDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernatePaymentServiceTransactionDao">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
-	<bean id="quickDialCodeDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateQuickDialCodeDao">
-	    <property name="sessionFactory" ref="sessionFactory" />
-	</bean>
-    <bean id="paymentViewErrorDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernatePaymentViewErrorDao">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
 	<bean id="accountDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateAccountDao">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
@@ -47,7 +32,6 @@
     <bean id="outgoingPaymentDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateOutgoingPaymentDao">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
-    
     <bean id="targetDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateTargetDao">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>

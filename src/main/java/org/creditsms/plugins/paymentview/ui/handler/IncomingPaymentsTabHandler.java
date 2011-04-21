@@ -12,7 +12,6 @@ import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
 
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
-import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsImportHandler;
@@ -22,7 +21,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements PagedC
 	private static final String COMPONENT_INCOMING_PAYMENTS_TABLE = "tbl_clients";
 	private static final String COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE = "pnl_clients";
 	private Object incomingPaymentsTab;
-	private IncomingPaymentDao incomingPaymentDao = DummyData.INSTANCE.getIncomingPaymentDao();  
+	private IncomingPaymentDao incomingPaymentDao;  
 	private SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 	private SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss");
 	private NumberFormat formatter = new DecimalFormat("#,000.00");
@@ -32,8 +31,9 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements PagedC
 	private ComponentPagingHandler incomingPaymentsTablePager;
 	private String incomingPaymentsFilter;
 	 
-	public IncomingPaymentsTabHandler(UiGeneratorController ui) {
-		super(ui);		
+	public IncomingPaymentsTabHandler(UiGeneratorController ui, IncomingPaymentDao incomingPaymentDao) {
+		super(ui);	
+		this.incomingPaymentDao = incomingPaymentDao;
 		init();		
 	}
 	

@@ -11,8 +11,10 @@ import net.frontlinesms.ui.handler.PagedListDetails;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.dummy.DummyData;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.client.dialogs.CustomizeClientDBHandler;
 import org.creditsms.plugins.paymentview.ui.handler.client.dialogs.EditClientHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
@@ -29,14 +31,20 @@ public class ClientsTabHandler extends BaseTabHandler implements
 	private ComponentPagingHandler clientsTablePager;
 
 	// > INSTANCE PROPERTIES
-	private ClientDao clientDao = DummyData.INSTANCE.getClientDao();
+	private ClientDao clientDao;
 	private Object pnlClientsList;
 	private String clientFilter;
+	private CustomValueDao customValueDao;
+	private CustomFieldDao customFieldDao;
 
-	public ClientsTabHandler(UiGeneratorController ui) {
+	public ClientsTabHandler(UiGeneratorController ui, ClientDao clientDao,
+			AccountDao accountDao, CustomFieldDao customFieldDao, CustomValueDao customValueDao) {
 		super(ui);
 		this.clientFilter = "";
 		init();
+		this.clientDao = clientDao;
+		this.customFieldDao = customFieldDao;
+		this.customValueDao = customValueDao;
 	}
 
 	// > PAGING METHODS
@@ -56,7 +64,7 @@ public class ClientsTabHandler extends BaseTabHandler implements
 		} else {
 			clients = this.clientDao.getClientsByName(clientFilter);
 		}
-		
+
 		int totalItemCount = this.clientDao.getClientCount();
 		Object[] listItems = toThinletComponents(clients);
 
@@ -111,23 +119,23 @@ public class ClientsTabHandler extends BaseTabHandler implements
 
 	// > EVENTS...
 	public void customizeClientDB() {
-		ui.add(new CustomizeClientDBHandler(ui).getDialog());
+		ui.add(new CustomizeClientDBHandler(ui, customFieldDao, customValueDao).getDialog());
 	}
 
 	public void addClient() {
 		ui.add(new EditClientHandler(ui).getDialog());
 	}
-	
+
 	public void importClient() {
 		new ClientImportHandler(ui, this).showWizard();
 		this.refresh();
 	}
-	
+
 	public void exportClient() {
 		new ClientExportHandler(ui).showWizard();
 		this.refresh();
 	}
-	
+
 	public void analyseClient() {
 		// TODO Auto-generated method stub
 	}
@@ -148,15 +156,16 @@ public class ClientsTabHandler extends BaseTabHandler implements
 			Client c = (Client) ui.getAttachedObject(selectedClient);
 			clientDao.deleteClient(c);
 		}
-		
-		ui.removeDialog(ui.find(UiGeneratorControllerConstants.COMPONENT_CONFIRM_DIALOG));
+
+		ui.removeDialog(ui
+				.find(UiGeneratorControllerConstants.COMPONENT_CONFIRM_DIALOG));
 		ui.infoMessage("You have succesfully deleted from the client!");
 		this.refresh();
 	}
 
 	/**
 	 * @param clientFilter
-	 * the clientFilter to set
+	 *            the clientFilter to set
 	 */
 	public void setClientFilter(String clientFilter) {
 		this.clientFilter = clientFilter;

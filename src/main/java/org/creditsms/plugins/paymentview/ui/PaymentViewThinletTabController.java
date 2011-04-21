@@ -8,7 +8,6 @@ import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.plugins.BasePluginThinletTabController;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
 
@@ -162,16 +161,10 @@ public class PaymentViewThinletTabController extends
 	/** Thinlet tab component whose functionality is handled by this class */
 	private Object paymentViewTab;
 
-	/** Paging handler for clients */
-	private ComponentPagingHandler clientsPagingHandler;
-	/** Paging handler for dispersals */
-	private ComponentPagingHandler dispersalsPagingHandler;
-	/** Paging handler for repayments */
-	private ComponentPagingHandler repaymentsPagingHandler;
-
 	private PaymentViewPluginController controller;
+
 	// > PROPERTIES
-	
+
 	// > CONSTRUCTORS
 	/**
 	 * 
@@ -193,7 +186,8 @@ public class PaymentViewThinletTabController extends
 	public void refresh() {
 	}
 
-	public PagedListDetails getListDetails(Object list, int startIndex,	int limit) {
+	public PagedListDetails getListDetails(Object list, int startIndex,
+			int limit) {
 		// TODO Auto-generated method stub
 		return null;
 	}
