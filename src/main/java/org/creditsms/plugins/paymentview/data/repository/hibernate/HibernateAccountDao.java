@@ -35,7 +35,7 @@ public class HibernateAccountDao extends BaseHibernateDao<Account>  implements A
 
 	public Account getAccountByAccountNumber(long accNumber) {
 		DetachedCriteria criteria = super.getCriterion();
-		criteria.add(Restrictions.eq("accNumber", accNumber));
+		criteria.add(Restrictions.eq("accountNumber", accNumber));
 		return super.getUnique(criteria);
 	}
 

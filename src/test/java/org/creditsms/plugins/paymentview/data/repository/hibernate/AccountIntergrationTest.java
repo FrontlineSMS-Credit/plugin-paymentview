@@ -24,48 +24,49 @@ public class AccountIntergrationTest extends HibernateTestCase {
 	}
 	
 	public void testSave() throws DuplicateKeyException {
-		asserEmptyAccount();
+		assertNoAccountsInDatabase();
 		Account ac = setAccountNumber(103);
 		hibernateAccountDao.saveAccount(ac);
 		assertEquals(1, hibernateAccountDao.getAllAcounts().size());
 	}
 	
-	public void testAccountNumberUnique(){
-		asserEmptyAccount();
+	public void testAccountNumberUnique() throws DuplicateKeyException {
+		assertNoAccountsInDatabase();
 		Account ac1 = setAccountNumber(101);
 		Account ac2 = setAccountNumber(101);
-		boolean passedTest = false;
-		
+
+		hibernateAccountDao.saveAccount(ac1);
 		try{
-			hibernateAccountDao.saveAccount(ac1);
 			hibernateAccountDao.saveAccount(ac2);
 			fail("you cannot add more than one account with same accounts number!!");
-			passedTest = false;
 		}catch (DuplicateKeyException e) {
-			passedTest = true;
-			assertTrue(passedTest);
+			// expected
 		}
 	}
 	
 	public void testDeleteAccount() throws DuplicateKeyException{
-		asserEmptyAccount();
-		createAndSaveAccount(104, null, 1);
-		hibernateAccountDao.deleteAccount(getExistingAccount(0));
+		assertNoAccountsInDatabase();
+		Account saved = createAndSaveAccount(104, null, 1);
+		hibernateAccountDao.deleteAccount(saved);
 		assertEquals(0, hibernateAccountDao.getAllAcounts().size());
 	}
 	
 	public void testGetAccountById() throws DuplicateKeyException{
-		asserEmptyAccount();
+		assertNoAccountsInDatabase();
 		createAndSaveAccount(104, null, 1);
 		assertEquals(104, getExistingAccount(0).getAccountNumber());
 	}
 	
+	public void testGetAccountByAccountNumber() throws DuplicateKeyException {
+		Account acc = createAndSaveAccount(123456, null, 1);
+		assertEquals(123456, this.hibernateAccountDao.getAccountByAccountNumber(123456).getAccountNumber());
+	}
+	
 	public void testGetAccountsByUserSingle() throws DuplicateKeyException{
-		createAndSaveClient("+2540720111111", 1);
-		createAndSaveAccount(21,getExistingClient(0), 1);
+		Client client = createAndSaveClient("+2540720111111", 1);
+		createAndSaveAccount(21, client, 1);
 
-		long searchbyClientId = getExistingAccount(0).getClient().getId();
-		assertEquals(21, hibernateAccountDao.getAccountsByClientId(searchbyClientId).get(0).getAccountNumber());
+		assertEquals(21, hibernateAccountDao.getAccountsByClientId(client.getId()).get(0).getAccountNumber());
 	}
 	
 	public void testGetAccountsByUserIdMultiple() throws DuplicateKeyException {
@@ -81,7 +82,7 @@ public class AccountIntergrationTest extends HibernateTestCase {
 		assertEquals(14, hibernateAccountDao.getAccountsByClientId(searchbyClientId).get(0).getAccountNumber());
 	}
 
-	void asserEmptyAccount(){
+	void assertNoAccountsInDatabase() {
 		assertEquals(0, hibernateAccountDao.getAllAcounts().size());
 	}
 	
@@ -91,9 +92,11 @@ public class AccountIntergrationTest extends HibernateTestCase {
 		return acc;
 	}
 	
-	private void createAndSaveClient(String phNoStr, long expectedClientCount) throws DuplicateKeyException{
-		hibernateClientDao.saveClient(createClientWithPhoneNumber(phNoStr));
+	private Client createAndSaveClient(String phNoStr, long expectedClientCount) throws DuplicateKeyException{
+		Client client = createClientWithPhoneNumber(phNoStr);
+		hibernateClientDao.saveClient(client);
 		assertEquals(expectedClientCount, hibernateClientDao.getAllClients().size());
+		return client;
 	}
 	
 	private Client createClientWithPhoneNumber(String phNoStr){
@@ -111,9 +114,11 @@ public class AccountIntergrationTest extends HibernateTestCase {
 		return this.hibernateClientDao.getAllClients().get(clientPoz);
 	}
 	
-	private void createAndSaveAccount(long accNumber, Client client, long expectedAccountCount) throws DuplicateKeyException{
-		hibernateAccountDao.saveAccount(createAccountWithAccountNumber(accNumber, client));
+	private Account createAndSaveAccount(long accNumber, Client client, long expectedAccountCount) throws DuplicateKeyException{
+		Account account = createAccountWithAccountNumber(accNumber, client);
+		hibernateAccountDao.saveAccount(account);
 		assertEquals(expectedAccountCount, hibernateAccountDao.getAllAcounts().size());
+		return account;
 	}
 	
 	private Account createAccountWithAccountNumber(long accNumber, Client client){
