@@ -123,8 +123,6 @@ public class PaymentViewPluginController extends BasePluginController implements
 				XML_PAYMENT_VIEW_TAB, tabController);
 
 		System.out.println("Ian Nes Mukewa");
-		System.out.println(tabController);
-		System.out.println(paymentViewTab);
 
 		tabController.setTabComponent(paymentViewTab);
 		tabController.refresh();
