@@ -37,6 +37,9 @@ public class Client {
 
 	@OneToMany
 	private Collection<CustomValue> customData;
+	
+	/** Empty constructor required for hibernate. */
+	public Client() {}
 
 	public Client(String firstName, String otherName, String phoneNumber,
 			Collection<Account> accountsFromString) {

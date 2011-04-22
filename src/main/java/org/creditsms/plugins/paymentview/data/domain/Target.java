@@ -38,6 +38,9 @@ public class Target {
 
 	@Column(name = "startDate", nullable = true, unique = false)
 	private Date startDate;
+	
+	/** Empty constructor required for hibernate. */
+	public Target() {}
 
 	public Account getAccount() {
 		return account;

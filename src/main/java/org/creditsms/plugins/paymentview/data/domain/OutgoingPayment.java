@@ -49,9 +49,8 @@ public class OutgoingPayment {
 	@Column(name = "timePaid", nullable = false, unique = false)
 	private Date timePaid;
 
-	// For Dummy Data... @ian, Remove Later
-	public OutgoingPayment() {
-	}
+	/** Empty constructor required for hibernate. */
+	public OutgoingPayment() {}
 
 	public OutgoingPayment(String phoneNumber, BigDecimal amountPaid,
 			Date timePaid, Account account, String notes, boolean confirmation) {

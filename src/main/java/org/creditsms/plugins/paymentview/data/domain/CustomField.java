@@ -31,6 +31,9 @@ public class CustomField {
 	@OneToMany
 	private Collection<CustomValue> customValue;
 	
+	/** Empty constructor required for hibernate. */
+	CustomField() {}
+	
 	public CustomField(String strName) {
 		this.strName = strName;
 	}

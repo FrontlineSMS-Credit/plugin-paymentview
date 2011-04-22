@@ -45,9 +45,8 @@ public class IncomingPayment {
 	@Column(name = "timePaid", nullable = true, unique = false)
 	private Date timePaid;
 
-	// For Dummy Purposes...
-	public IncomingPayment() {
-	}
+	/** Empty constructor required for hibernate. */
+	public IncomingPayment() {}
 
 	public IncomingPayment(long incomingPaymentId, String paymentBy,
 			String phoneNumber, BigDecimal amountPaid, long timePaid,

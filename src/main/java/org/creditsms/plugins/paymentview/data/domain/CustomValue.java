@@ -35,6 +35,8 @@ public class CustomValue {
 	@JoinColumn(name = "clientId", nullable = true)
 	private Client client;
 
+	/** Empty constructor required for hibernate. */
+	CustomValue() {}
 	
 	public Client getClient() {
 		return client;

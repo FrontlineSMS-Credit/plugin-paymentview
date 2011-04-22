@@ -32,6 +32,9 @@ public class ServiceItem {
 	@Column(name = "targetName", nullable = false, unique = false)
 	private String targetName;
 
+	/** Empty constructor required for hibernate. */
+	public ServiceItem() {}
+	
 	public BigDecimal getAmount() {
 		return amount;
 	}
