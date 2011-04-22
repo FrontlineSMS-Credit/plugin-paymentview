@@ -2,8 +2,8 @@ package org.creditsms.plugins.paymentview.data.importexport;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import net.frontlinesms.csv.CsvImportReport;
 import net.frontlinesms.csv.CsvImporter;
@@ -30,10 +30,10 @@ public class ClientCsvImporter extends CsvImporter {
 		super(importFile);
 	}
 
-	private Set<Account> getAccountsFromString(String strAccounts) {
+	private Collection<Account> getAccountsFromString(String strAccounts) {
 		String[] accounts = strAccounts.split(",");
 
-		Set<Account> set_accounts = new HashSet<Account>(accounts.length);
+		Collection<Account> set_accounts = new ArrayList<Account>(accounts.length);
 		for (String account : accounts) {
 			if (account.length() == 0)
 				continue;

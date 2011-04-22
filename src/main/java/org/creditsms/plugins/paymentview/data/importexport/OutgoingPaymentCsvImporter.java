@@ -3,8 +3,6 @@ package org.creditsms.plugins.paymentview.data.importexport;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import net.frontlinesms.csv.CsvImportReport;
 import net.frontlinesms.csv.CsvImporter;
@@ -16,7 +14,6 @@ import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 
 /**
@@ -25,26 +22,12 @@ import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 public class OutgoingPaymentCsvImporter extends CsvImporter {
 	/** The delimiter to use between group names when they are exported. */
 	protected static final String GROUPS_DELIMITER = "\\\\";
-	private ClientDao clientDao;
 
 	// > INSTANCE PROPERTIES
 
 	// > CONSTRUCTORS
 	public OutgoingPaymentCsvImporter(File importFile) throws CsvParseException {
 		super(importFile);
-	}
-
-	private Set<Account> getAccountsFromString(String strAccounts) {
-		String[] accounts = strAccounts.split(",");
-
-		Set<Account> set_accounts = new HashSet<Account>(accounts.length);
-		for (String account : accounts) {
-			if (account.length() == 0)
-				continue;
-			set_accounts.add(new Account(Long.parseLong(account)));
-		}
-
-		return set_accounts;
 	}
 
 	// > IMPORT METHODS

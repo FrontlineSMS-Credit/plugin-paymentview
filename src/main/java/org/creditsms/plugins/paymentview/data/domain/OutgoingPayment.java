@@ -21,6 +21,12 @@ import javax.persistence.Table;
 @Table(name = OutgoingPayment.TABLE_NAME)
 public class OutgoingPayment {
 	public static final String TABLE_NAME = "Outgoingpayment";
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false, unique = true)
+	private long id;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "accountId", nullable = true)
 	private Account account;
@@ -33,11 +39,6 @@ public class OutgoingPayment {
 
 	@Column(name = "confirmationCode", nullable = true, unique = false)
 	private String confirmationCode;
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", nullable = false, unique = true)
-	private long id;
 
 	@Column(name = "notes", nullable = true, unique = false)
 	private String notes;

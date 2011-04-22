@@ -1,8 +1,6 @@
 package org.creditsms.plugins.paymentview.data.domain;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,32 +17,29 @@ import javax.persistence.Table;
 @Table(name = Client.TABLE_NAME)
 public class Client {
 	public static final String TABLE_NAME = "Client";
-	@OneToMany
-	private Set<Account> accounts = new HashSet<Account>();
-
-	@OneToMany
-	private Set<CustomValue> customData = new HashSet<CustomValue>();
-
-	@Column(name = "firstName", nullable = true, unique = false)
-	private String firstName;
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
+	
+	@Column(name = "firstName", nullable = true, unique = false)
+	private String firstName;
 
 	@Column(name = "otherName", nullable = true, unique = false)
 	private String otherName;
 
 	@Column(name = "phoneNumber", nullable = false, unique = true)
 	private String phoneNumber;
+	
+	@OneToMany
+	private Collection<Account> accounts;
 
-	// Created for DummyData
-	public Client() {
-	}
+	@OneToMany
+	private Collection<CustomValue> customData;
 
 	public Client(String firstName, String otherName, String phoneNumber,
-			Set<Account> accountsFromString) {
+			Collection<Account> accountsFromString) {
 		this.firstName = firstName;
 		this.otherName = otherName;
 		this.phoneNumber = phoneNumber;
@@ -105,11 +100,11 @@ public class Client {
 		return result;
 	}
 
-	void setAccounts(Set<Account> accounts) {
+	void setAccounts(Collection<Account> accounts) {
 		this.accounts = accounts;
 	}
 
-	public void setCustomData(Set<CustomValue> customData) {
+	public void setCustomData(Collection<CustomValue> customData) {
 		this.customData = customData;
 	}
 

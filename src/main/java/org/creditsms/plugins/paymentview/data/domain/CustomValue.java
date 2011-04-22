@@ -18,22 +18,24 @@ import javax.persistence.Table;
 @Table(name = CustomValue.TABLE_NAME)
 public class CustomValue {
 	public static final String TABLE_NAME = "CustomValue";
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "clientId", nullable = true)
-	private Client client;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "customDataId", nullable = false)
-	private CustomField customField;
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
-
+	
 	@Column(name = "strValue", nullable = true, unique = false)
 	private String strValue;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "customDataId", nullable = false)
+	private CustomField customField;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "clientId", nullable = true)
+	private Client client;
+
+	
 	public Client getClient() {
 		return client;
 	}

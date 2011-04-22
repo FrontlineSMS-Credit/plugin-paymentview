@@ -1,7 +1,6 @@
 package org.creditsms.plugins.paymentview.data.domain;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collection;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,33 +12,35 @@ import javax.persistence.Table;
 
 /**
  * @Author Roy
+ * @author ian
  * */
 
 @Entity
 @Table(name = CustomField.TABLE_NAME)
 public class CustomField {
 	public static final String TABLE_NAME = "CustomField";
-	@OneToMany
-	private Set<CustomValue> customValue = new HashSet<CustomValue>();
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
-
+	
 	@Column(name = "name", nullable = true, unique = false)
 	private String strName;
 
+	@OneToMany
+	private Collection<CustomValue> customValue;
+	
 	public CustomField(String strName) {
 		this.strName = strName;
 	}
 
-	public CustomField(String strName, Set<CustomValue> customValue) {
+	public CustomField(String strName, Collection<CustomValue> customValue) {
 		this.strName = strName;
 		this.customValue = customValue;
 	}
 
-	public Set<CustomValue> getCustomValue() {
+	public Collection<CustomValue> getCustomValue() {
 		return customValue;
 	}
 
@@ -51,7 +52,7 @@ public class CustomField {
 		return strName;
 	}
 
-	public void setCustomValue(Set<CustomValue> customValue) {
+	public void setCustomValue(Collection<CustomValue> customValue) {
 		this.customValue = customValue;
 	}
 

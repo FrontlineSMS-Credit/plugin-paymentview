@@ -2,18 +2,13 @@ package org.creditsms.plugins.paymentview.data.dummy;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
 
 import net.frontlinesms.data.DuplicateKeyException;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
@@ -23,368 +18,89 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 
 public class DummyData {
-	private class DummyAccountDao implements AccountDao {
-		private int accountIdCounter = 0;
-		private TreeSet<Account> accounts = new TreeSet<Account>(
-				new Comparator<Account>() {
-					public int compare(Account a1, Account a2) {
-						return (int) (a1.getAccountId() - a2.getAccountId());
-					}
-				});
+	private AccountDao accountDao;
+	private ClientDao clientDao;
+	private CustomFieldDao customFieldDao;
+	private IncomingPaymentDao incomingPaymentDao;
+	private OutgoingPaymentDao outgoingPaymentDao;
 
-		private void assignDatabaseId(Account account) {
-			account.setAccountId(++accountIdCounter);
-		}
+	public DummyData(AccountDao accountDao, ClientDao clientDao,
+			CustomFieldDao customFieldDao,
+			IncomingPaymentDao incomingPaymentDao,
+			OutgoingPaymentDao outgoingPaymentDao) {
+		this.accountDao = accountDao;
+		this.clientDao = clientDao;
+		this.customFieldDao = customFieldDao;
+		this.incomingPaymentDao = incomingPaymentDao;
+		this.outgoingPaymentDao = outgoingPaymentDao;
 
-		public void deleteAccount(Account account) {
-			accounts.remove(account);
-		}
-
-		public Account getAccountByAccountNumber(long accountNumber) {
-			Account theAcc = null;
-			for (Account acc : accounts) {
-				if (accountNumber == acc.getAccountNumber()) {
-					theAcc = acc;
-				}
-			}
-			return theAcc;
-		}
-
-		public Account getAccountById(long accountId) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<Account> getAccountsByClientId(long clientId) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<Account> getAllAcounts() {
-			return new ArrayList<Account>(accounts);
-		}
-
-		public void saveAccount(Account account) throws DuplicateKeyException {
-			// TODO Auto-generated method stub
-
-		}
-
-		public void saveUpdateAccount(Account account) {
-			boolean isNew = accounts.add(account);
-			if (isNew) {
-				assignDatabaseId(account);
-			}
-		}
-
-		public void updateAccount(Account account) throws DuplicateKeyException {
-			// TODO Auto-generated method stub
-
+		if (clientDao.getAllClients().size() != 0) {
+			createDummyData();
 		}
 	}
 
-	private class DummyClientDao implements ClientDao {
-		/** Counter used for simulating Hibernate database IDs */
-		private long clientIdCounter;
-		private Map<Long, Client> clients = new HashMap<Long, Client>();
-
-		private void assignDatabaseId(Client client) {
-			client.setId(++clientIdCounter);
-		}
-
-		public void deleteClient(Client client) {
-			clients.remove(client.getId());
-		}
-
-		public List<Client> getAllClients() {
-			return new ArrayList<Client>(clients.values());
-		}
-
-		public List<Client> getAllClients(int startIndex, int limit) {
-			return new ArrayList<Client>(clients.values()).subList(startIndex,
-					limit);
-		}
-
-		public Client getClientByAccount(Account account) {
-			for (Client client : this.clients.values()) {
-				if (client.getAccounts().contains(account)) {
-					return client;
-				}
+	private Client createDummyClient(String name, String phoneNumber,
+			long[] accountNumbers) {
+		String[] names = name.split(" ");
+		
+		List<Account> accounts = new ArrayList<Account>();
+		for (long accountNumber : accountNumbers) {
+			Account a = new Account(accountNumber);
+			try {
+				accountDao.saveAccount(a);
+			} catch (DuplicateKeyException e) {
+				throw new RuntimeException(e);
 			}
-			return null;
+			accounts.add(a);
 		}
-
-		public Client getClientById(long clientId) {
-			// TODO Auto-generated method stub
-			return null;
+		
+		Client c = new Client(names[0], names[1], phoneNumber, accounts);
+		
+		try {
+			clientDao.saveClient(c);
+		} catch (DuplicateKeyException e) {
+			throw new RuntimeException(e);
 		}
+		return c;
+	}
 
-		public Client getClientByPhoneNumber(long phoneNumber) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public int getClientCount() {
-			return this.clients.size();
-		}
-
-		public List<Client> getClientsByName(String clientName) {
-			List<Client> filteredClients = new ArrayList<Client>();
-			for (Client c : clients.values()) {
-				if (clientName.toLowerCase().equals(
-						c.getFirstName().toLowerCase())) {
-					filteredClients.add(c);
-				}
-			}
-			return filteredClients;
-		}
-
-		public List<Client> getClientsByName(String clientName, int startIndex,
-				int limit) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public void saveClient(Client client) throws DuplicateKeyException {
-			if (client.getId() == NO_ID_SET) {
-				assignDatabaseId(client);
-			}
-			clients.put(client.getId(), client);
-		}
-
-		public void updateClient(Client client) throws DuplicateKeyException {
-			this.saveClient(client);
+	private void createDummyIncomingPayment(String paymentBy,
+			String phoneNumber, String timePaid, BigDecimal amountPaid,
+			long accountId) {
+		IncomingPayment i = new IncomingPayment();
+		i.setAmountPaid(amountPaid);
+		Account myAcc = accountDao.getAccountByAccountNumber(accountId);
+		i.setAccount(myAcc);
+		i.setPaymentBy(paymentBy);
+		i.setPhoneNumber(phoneNumber);
+		i.setTimePaid(new Date(Long.parseLong(timePaid)));
+		try {
+			incomingPaymentDao.saveIncomingPayment(i);
+		} catch (Exception e) {// DuplicateKeyException
+			throw new RuntimeException(e);
 		}
 
 	}
 
-	private class DummyCustomFieldDao implements CustomFieldDao {
-		private TreeSet<CustomField> customFields = new TreeSet<CustomField>(
-				new Comparator<CustomField>() {
-					public int compare(CustomField i1, CustomField i2) {
-						return (int) (i1.getId() - i2.getId());
-					}
-				});
-		private int customFieldsIdCounter = 0;
+	private void createDummyOutgoingPayment(String paymentTo,
+			String phoneNumber, String timePaid, BigDecimal amountPaid,
+			int accountId) {
+		OutgoingPayment o = new OutgoingPayment();
+		o.setAmountPaid(amountPaid);
+		Account myAcc = accountDao.getAccountByAccountNumber(accountId);
+		o.setAccount(myAcc);
+		o.setPhoneNumber(phoneNumber);
 
-		private void assignDatabaseId(CustomField incomingPayment) {
-			incomingPayment.setId(++customFieldsIdCounter);
+		o.setTimePaid(new Date(Long.parseLong(timePaid)));
+		try {
+			outgoingPaymentDao.saveOutgoingPayment(o);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 
-		public void deleteCustomField(CustomField customField) {
-			// TODO Auto-generated method stub
-
-		}
-
-		public List<CustomField> getAllCustomFields() {
-			return new ArrayList<CustomField>(customFields);
-		}
-
-		public List<CustomField> getAllCustomFields(int startIndex, int limit) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public CustomField getCustomFieldById(long id) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public int getCustomFieldCount() {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		public List<CustomField> getCustomFieldsByName(String strName) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<CustomField> getCustomFieldsByName(String strName,
-				int startIndex, int limit) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public void saveCustomField(CustomField customField)
-				throws DuplicateKeyException {
-			boolean isNew = customFields.add(customField);
-			if (isNew) {
-				assignDatabaseId(customField);
-			}
-
-		}
-
-		public void updateCustomField(CustomField customField)
-				throws DuplicateKeyException {
-			saveCustomField(customField);
-		}
 	}
 
-	private class DummyIncomingPaymentDao implements IncomingPaymentDao {
-		private int incomingPaymentIdCounter = 0;
-		private TreeSet<IncomingPayment> incomingPayments = new TreeSet<IncomingPayment>(
-				new Comparator<IncomingPayment>() {
-					public int compare(IncomingPayment i1, IncomingPayment i2) {
-						return (int) (i1.getId() - i2.getId());
-					}
-				});
-
-		private void assignDatabaseId(IncomingPayment incomingPayment) {
-			incomingPayment.setId(++incomingPaymentIdCounter);
-		}
-
-		public void deleteIncomingPayment(IncomingPayment incomingPayment) {
-			// TODO Auto-generated method stub
-
-		}
-
-		public List<IncomingPayment> getAllIncomingPayments() {
-			return new ArrayList<IncomingPayment>(incomingPayments);
-		}
-
-		public List<IncomingPayment> getAllIncomingPayments(int startingIndex,
-				int limit) {
-			List<IncomingPayment> inps = new ArrayList<IncomingPayment>(
-					incomingPayments);
-			return inps.subList(startingIndex, limit);
-		}
-
-		public List<IncomingPayment> getIncomingPaymentByClientId(long clientId) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public IncomingPayment getIncomingPaymentById(long incomingPaymentId) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<IncomingPayment> getIncomingPaymentsByAccountNumber(
-				long accountId) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<IncomingPayment> getIncomingPaymentsByAccountNumberByTimeRange(
-				long accountId, Date startDate, Date endDate) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<IncomingPayment> getIncomingPaymentsByPayer(String payer) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<IncomingPayment> getIncomingPaymentsByPhoneNo(String phoneNo) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<IncomingPayment> getIncomingPaymentsByTimeRange(
-				Date startTime, Date endtime) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public void saveIncomingPayment(IncomingPayment incomingPayment) {
-			boolean isNew = incomingPayments.add(incomingPayment);
-			if (isNew) {
-				assignDatabaseId(incomingPayment);
-			}
-		}
-
-		public void updateIncomingPayment(IncomingPayment incomingPayment)
-				throws DuplicateKeyException {
-			// TODO Auto-generated method stub
-
-		}
-	}
-
-	private class DummyOutgoingPaymentDao implements OutgoingPaymentDao {
-		private int incomingPaymentIdCounter = 0;
-		private TreeSet<OutgoingPayment> outgoingPayments = new TreeSet<OutgoingPayment>(
-				new Comparator<OutgoingPayment>() {
-					public int compare(OutgoingPayment i1, OutgoingPayment i2) {
-						return (int) (i1.getId() - i2.getId());
-					}
-				});
-
-		private void assignDatabaseId(OutgoingPayment incomingPayment) {
-			incomingPayment.setId(++incomingPaymentIdCounter);
-		}
-
-		public void deleteOutgoingPayment(OutgoingPayment incomingPayment) {
-			// TODO Auto-generated method stub
-
-		}
-
-		public List<OutgoingPayment> getAllOutgoingPayments() {
-			return new ArrayList<OutgoingPayment>(outgoingPayments);
-		}
-
-		public List<OutgoingPayment> getOutgoingPaymentByClientId(long clientId) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public OutgoingPayment getOutgoingPaymentById(long incomingPaymentId) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<OutgoingPayment> getOutgoingPaymentsByAccountNumber(
-				long accountId) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<OutgoingPayment> getOutgoingPaymentsByAccountNumberByTimeRange(
-				long accountId, Date startDate, Date endDate) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(String phoneNo) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public List<OutgoingPayment> getOutgoingPaymentsByTimeRange(
-				Date startTime, Date endtime) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public void saveOutgoingPayment(OutgoingPayment outgoingPayment)
-				throws DuplicateKeyException {
-			boolean isNew = outgoingPayments.add(outgoingPayment);
-			if (isNew) {
-				assignDatabaseId(outgoingPayment);
-			}
-		}
-
-		public void updateOutgoingPayment(OutgoingPayment outgoingPayment)
-				throws DuplicateKeyException {
-			// TODO Auto-generated method stub
-
-		}
-	}
-
-	public static final DummyData INSTANCE = new DummyData();
-	public static final long NO_ID_SET = 0;
-
-	private final DummyAccountDao accountDao = new DummyAccountDao();
-
-	private final DummyClientDao clientDao = new DummyClientDao();
-
-	private final CustomFieldDao customFieldDao = new DummyCustomFieldDao();
-
-	private final DummyIncomingPaymentDao incomingPaymentDao = new DummyIncomingPaymentDao();
-
-	private final DummyOutgoingPaymentDao outgoingPaymentDao = new DummyOutgoingPaymentDao();
-
-	private DummyData() {
+	private void createDummyData() {
 		// Create dummy clients
 		createDummyClient("Alice Wangare", "+25472457645", new long[] {
 				4343625, 247362623 });
@@ -511,63 +227,6 @@ public class DummyData {
 				"1302002323896", new BigDecimal("6600.00"), 4323425);
 		createDummyOutgoingPayment("Lavendar Akoth", "+254724666364",
 				"1302000003896", new BigDecimal("7000.34"), 234327443);
-	}
-
-	private Client createDummyClient(String name, String phoneNumber,
-			long[] accountNumbers) {
-		Client c = new Client();
-		String[] names = name.split(" ");
-		c.setFirstName(names[0]);
-		c.setOtherName(names[1]);
-		c.setPhoneNumber(phoneNumber);
-		for (long accountNumber : accountNumbers) {
-			Account a = new Account(accountNumber);
-			accountDao.saveUpdateAccount(a);
-			c.addAccount(a);
-		}
-		try {
-			clientDao.saveClient(c);
-		} catch (DuplicateKeyException e) {
-			throw new RuntimeException(e);
-		}
-		return c;
-	}
-
-	private void createDummyIncomingPayment(String paymentBy,
-			String phoneNumber, String timePaid, BigDecimal amountPaid,
-			long accountId) {
-		IncomingPayment i = new IncomingPayment();
-		i.setAmountPaid(amountPaid);
-		Account myAcc = accountDao.getAccountByAccountNumber(accountId);
-		i.setAccount(myAcc);
-		i.setPaymentBy(paymentBy);
-		i.setPhoneNumber(phoneNumber);
-		i.setTimePaid(new Date(Long.parseLong(timePaid)));
-		try {
-			incomingPaymentDao.saveIncomingPayment(i);
-		} catch (Exception e) {// DuplicateKeyException
-			throw new RuntimeException(e);
-		}
-
-	}
-
-	private void createDummyOutgoingPayment(String paymentTo,
-			String phoneNumber, String timePaid, BigDecimal amountPaid,
-			int accountId) {
-		OutgoingPayment o = new OutgoingPayment();
-		o.setAmountPaid(amountPaid);
-		Account myAcc = accountDao.getAccountByAccountNumber(accountId);
-		o.setAccount(myAcc);
-		myAcc.setClient(clientDao.getClientByAccount(myAcc));
-		o.setPhoneNumber(phoneNumber);
-
-		o.setTimePaid(new Date(Long.parseLong(timePaid)));
-		try {
-			outgoingPaymentDao.saveOutgoingPayment(o);
-		} catch (Exception e) {// DuplicateKeyExceptioncreateDummyOutgoingPayment
-			throw new RuntimeException(e);
-		}
-
 	}
 
 	public AccountDao getAccountDao() {
