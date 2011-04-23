@@ -7,10 +7,11 @@ import org.creditsms.plugins.paymentview.ui.handler.analytics.innertabs.AddClien
 
 public class ReviewHandler extends BasePanelHandler {
 	private static final String XML_STEP_REVIEW = "/ui/plugins/paymentview/analytics/createdashboard/stepreview.xml";
-	private AddClientTabHandler createDashBoardTabHandler;
+	private AddClientTabHandler addClientTabHandler;
 
-	protected ReviewHandler(UiGeneratorController ui, AddClientTabHandler createDashBoardTabHandler) {
+	protected ReviewHandler(UiGeneratorController ui, AddClientTabHandler addClientTabHandler) {
 		super(ui);
+		this.addClientTabHandler = addClientTabHandler;
 		this.loadPanel(XML_STEP_REVIEW);
 	}
 
@@ -22,13 +23,13 @@ public class ReviewHandler extends BasePanelHandler {
 	}
 
 	public void previous() {
-		createDashBoardTabHandler.setCurrentStepPanel(new CreateSettingsHandler(
-				(UiGeneratorController) ui, createDashBoardTabHandler).getPanelComponent());
+		addClientTabHandler.setCurrentStepPanel(new CreateSettingsHandler(
+				(UiGeneratorController) ui, addClientTabHandler).getPanelComponent());
 	}
 
 	public void selectService() {
-		createDashBoardTabHandler.setCurrentStepPanel(new SelectTargetSavingsHandler(
-				(UiGeneratorController) ui, createDashBoardTabHandler).getPanelComponent());
+		addClientTabHandler.setCurrentStepPanel(new SelectTargetSavingsHandler(
+				(UiGeneratorController) ui, addClientTabHandler).getPanelComponent());
 	}
 
 	public void targetedSavings() {
@@ -36,8 +37,8 @@ public class ReviewHandler extends BasePanelHandler {
 	}
 
 	public void selectClient() {
-		createDashBoardTabHandler.setCurrentStepPanel(new SelectClientsHandler(
-				(UiGeneratorController) ui, createDashBoardTabHandler).getPanelComponent());
+		addClientTabHandler.setCurrentStepPanel(new SelectClientsHandler(
+				(UiGeneratorController) ui, addClientTabHandler).getPanelComponent());
 	}
 
 	public void createSettings() {

@@ -8,11 +8,11 @@ import org.creditsms.plugins.paymentview.ui.handler.analytics.innertabs.AddClien
 
 public class CreateSettingsHandler extends BasePanelHandler {
 	private static final String XML_STEP_CREATE_SETTINGS = "/ui/plugins/paymentview/analytics/createdashboard/stepcreatesettings.xml";
-	private final AddClientTabHandler createDashBoardTabHandler;
+	private final AddClientTabHandler addClientTabHandler;
 
-	protected CreateSettingsHandler(UiGeneratorController ui, AddClientTabHandler createDashBoardTabHandler) {
+	protected CreateSettingsHandler(UiGeneratorController ui, AddClientTabHandler addClientTabHandler) {
 		super(ui);
-		this.createDashBoardTabHandler = createDashBoardTabHandler;
+		this.addClientTabHandler = addClientTabHandler;
 		this.loadPanel(XML_STEP_CREATE_SETTINGS);
 	}
 
@@ -29,13 +29,13 @@ public class CreateSettingsHandler extends BasePanelHandler {
 	}
 
 	public void next() {
-		createDashBoardTabHandler.setCurrentStepPanel(new ReviewHandler(
-				(UiGeneratorController) ui, createDashBoardTabHandler).getPanelComponent());
+		addClientTabHandler.setCurrentStepPanel(new ReviewHandler(
+				(UiGeneratorController) ui, addClientTabHandler).getPanelComponent());
 	}
 
 	public void previous() {
-		createDashBoardTabHandler.setCurrentStepPanel(new SelectClientsHandler(
-				(UiGeneratorController) ui, createDashBoardTabHandler).getPanelComponent());
+		addClientTabHandler.setCurrentStepPanel(new SelectClientsHandler(
+				(UiGeneratorController) ui, addClientTabHandler).getPanelComponent());
 	}
 
 	public void showDateSelecter(Object textField) {
@@ -43,8 +43,8 @@ public class CreateSettingsHandler extends BasePanelHandler {
 	}
 
 	public void selectService() {
-		createDashBoardTabHandler.setCurrentStepPanel(new SelectTargetSavingsHandler(
-				(UiGeneratorController) ui, createDashBoardTabHandler).getPanelComponent());
+		addClientTabHandler.setCurrentStepPanel(new SelectTargetSavingsHandler(
+				(UiGeneratorController) ui, addClientTabHandler).getPanelComponent());
 	}
 
 	public void targetedSavings() {

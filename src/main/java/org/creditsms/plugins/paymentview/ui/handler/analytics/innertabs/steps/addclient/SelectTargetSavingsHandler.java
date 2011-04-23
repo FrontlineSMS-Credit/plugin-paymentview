@@ -7,11 +7,11 @@ import net.frontlinesms.ui.handler.BasePanelHandler;
 
 public class SelectTargetSavingsHandler extends BasePanelHandler {
 	private static final String XML_STEP_SELECT_TARGET_SAVING = "/ui/plugins/paymentview/analytics/createdashboard/stepselecttargetsavings.xml";
-	private AddClientTabHandler createDashBoardTabHandler;
+	private AddClientTabHandler addClientTabHandler;
 
-	public SelectTargetSavingsHandler(UiGeneratorController ui, final AddClientTabHandler createDashBoardTabHandler) {
+	public SelectTargetSavingsHandler(UiGeneratorController ui, final AddClientTabHandler addClientTabHandler) {
 		super(ui);
-		this.createDashBoardTabHandler = createDashBoardTabHandler;
+		this.addClientTabHandler = addClientTabHandler;
 		this.loadPanel(XML_STEP_SELECT_TARGET_SAVING);
 	}
 
@@ -20,8 +20,8 @@ public class SelectTargetSavingsHandler extends BasePanelHandler {
 	}
 
 	public void next() {
-		createDashBoardTabHandler.setCurrentStepPanel(new SelectClientsHandler(
-				(UiGeneratorController) ui, createDashBoardTabHandler).getPanelComponent());
+		addClientTabHandler.setCurrentStepPanel(new SelectClientsHandler(
+				(UiGeneratorController) ui, addClientTabHandler).getPanelComponent());
 	}
 
 	public void selectService() {

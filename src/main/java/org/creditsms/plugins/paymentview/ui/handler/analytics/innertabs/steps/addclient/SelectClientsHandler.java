@@ -19,12 +19,12 @@ public class SelectClientsHandler extends BasePanelHandler implements
 	private Object clientsTableComponent;
 	private String clientFilter = "";
 	private ClientDao clientDao;
-	private final AddClientTabHandler createDashBoardTabHandler;
+	private final AddClientTabHandler addClientTabHandler;
 
 	protected SelectClientsHandler(UiGeneratorController ui,
-			AddClientTabHandler createDashBoardTabHandler) {
+			AddClientTabHandler addClientTabHandler) {
 		super(ui);
-		this.createDashBoardTabHandler = createDashBoardTabHandler;
+		this.addClientTabHandler = addClientTabHandler;
 		this.loadPanel(XML_STEP_SELECT_CLIENT);
 	}
 
@@ -48,15 +48,15 @@ public class SelectClientsHandler extends BasePanelHandler implements
 	}
 
 	public void next() {
-		createDashBoardTabHandler
+		addClientTabHandler
 				.setCurrentStepPanel(new CreateSettingsHandler(
-						(UiGeneratorController) ui, createDashBoardTabHandler).getPanelComponent());
+						(UiGeneratorController) ui, addClientTabHandler).getPanelComponent());
 	}
 
 	public void previous() {
-		createDashBoardTabHandler
+		addClientTabHandler
 				.setCurrentStepPanel(new SelectTargetSavingsHandler(
-						(UiGeneratorController) ui, createDashBoardTabHandler)
+						(UiGeneratorController) ui, addClientTabHandler)
 						.getPanelComponent());
 	}
 
