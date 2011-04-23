@@ -2,7 +2,7 @@
 <tab name="tab_sentPayments" text="Sent Payments">
 	<panel columns="1" weightx="1" weighty="1" gap="10">		
 		<panel gap="5" columns="1" left="5" right="5" top="5" weightx="1"
-			weighty="1">
+			weighty="1" name="pnl_clients">
 			<label text="Sent Payments" font="20 Bold" weightx="1"/>
 			<table name="tbl_clients" weightx="1" weighty="1">
 				<header>

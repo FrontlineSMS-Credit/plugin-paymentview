@@ -20,13 +20,13 @@ import org.hibernate.annotations.IndexColumn;
 @Table(name = Client.TABLE_NAME)
 public class Client {
 	public static final String TABLE_NAME = "Client";
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@IndexColumn(name = "id")
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
-	
+
 	@Column(name = "firstName", nullable = true, unique = false)
 	private String firstName;
 
@@ -35,15 +35,16 @@ public class Client {
 
 	@Column(name = "phoneNumber", nullable = false, unique = true)
 	private String phoneNumber;
-	
-	@OneToMany(fetch=FetchType.EAGER)
+
+	@OneToMany(fetch = FetchType.EAGER)
 	private Set<Account> accounts;
 
 	@OneToMany
 	private Set<CustomValue> customData;
-	
+
 	/** Empty constructor required for hibernate. */
-	public Client() {}
+	public Client() {
+	}
 
 	public Client(String firstName, String otherName, String phoneNumber) {
 		this.firstName = firstName;
@@ -134,6 +135,11 @@ public class Client {
 		return "Client [id=" + id + ", firstName=" + firstName + ", otherName="
 				+ otherName + ", phoneNumber=" + phoneNumber + ", accounts="
 				+ accounts + "]";
+	}
+
+	// > Helper Methods
+	public String getName() {
+		return "" + this.firstName + " " + this.otherName;
 	}
 
 }

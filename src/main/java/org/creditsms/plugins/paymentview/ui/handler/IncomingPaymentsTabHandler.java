@@ -26,7 +26,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 	private NumberFormat formatter = new DecimalFormat("#,000.00");
 	private SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss");
-	
 	private IncomingPaymentDao incomingPaymentDao;
 	
 	private String incomingPaymentsFilter = "";
@@ -85,7 +84,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 
 		ui.add(row, ui.createTableCell(incomingPayment.getPaymentBy()));
 		ui.add(row, ui.createTableCell(incomingPayment.getPhoneNumber()));
-		// ui.add(row, ui.createTableCell(incomingPayment.getAccount()));
+		ui.add(row, ui.createTableCell(Long.toString(incomingPayment.getAccount().getAccountNumber())));
 		return row;
 	}
 

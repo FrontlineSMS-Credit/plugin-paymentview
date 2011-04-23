@@ -27,6 +27,11 @@ public class HibernateOutgoingPaymentDao extends
 		return super.getAll();
 	}
 	
+	public List<OutgoingPayment> getAllOutgoingPayments(int startIndex,
+			int limit) {
+		return super.getAll(startIndex, limit);
+	}
+	
 	public int getOutgoingPaymentsCount() {
 		return super.countAll();
 	}
@@ -99,5 +104,5 @@ public class HibernateOutgoingPaymentDao extends
 			throws DuplicateKeyException {
 		super.update(outgoingPayment);
 
-	}
+	}	
 }

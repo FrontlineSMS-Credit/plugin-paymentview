@@ -20,6 +20,14 @@ public interface OutgoingPaymentDao {
 	 * returns all the OutgoingPayments in the system
 	 * */
 	public List<OutgoingPayment> getAllOutgoingPayments();
+	
+	public List<OutgoingPayment> getAllOutgoingPayments(int startIndex,
+			int limit);
+	
+	/**
+	 * @return
+	 */
+	public int getOutgoingPaymentsCount();
 
 	/**
 	 * returns OutgoingPayment(s) by clientId
@@ -65,4 +73,7 @@ public interface OutgoingPaymentDao {
 	 * */
 	public void updateOutgoingPayment(OutgoingPayment outgoingPayment)
 			throws DuplicateKeyException;
+
+	
+
 }
