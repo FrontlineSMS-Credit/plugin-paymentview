@@ -7,13 +7,13 @@
 		<separator/>
 		
 		<panel weightx="1" bottom="5" gap="5" top="5">
-			<button type="link" text="Select service" />
+			<button type="link" text="Select service" action="selectService"/>
 			<label text=" &gt; " />
-			<button type="link" text="Targeted Savings" />
+			<button type="link" text="Targeted Savings" action="targetedSavings"/>
 			<label text=" &gt; " />
-			<button type="link" text="Select Client" />
+			<button type="link" text="Select Client" action="selectClient"/>
 			<label text=" &gt; " />
-			<button type="link" text="Creating Settings" />
+			<button type="link" text="Creating Settings" action="createSettings"/>
 			<label text=" &gt; " />
 			<label text="Review" />
 		</panel>

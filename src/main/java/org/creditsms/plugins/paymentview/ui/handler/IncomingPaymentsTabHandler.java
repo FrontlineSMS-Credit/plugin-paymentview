@@ -25,7 +25,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	
 	private SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 	private NumberFormat formatter = new DecimalFormat("#,000.00");
-	private SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss");
+	private SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss a");
 	private IncomingPaymentDao incomingPaymentDao;
 	
 	private String incomingPaymentsFilter = "";

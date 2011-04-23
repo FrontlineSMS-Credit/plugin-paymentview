@@ -12,6 +12,49 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.ui.handler.analytics.dialogs.CreateNewTargetHandler;
 
 public class CreateDashBoardTabHandler extends BaseTabHandler {
+	
+	private static final String TAB_CREATE_DASHBOARD = "tab_createDashboard";
+
+	private static final String XML_STEP_SELECT_CLIENTS = "/ui/plugins/paymentview/analytics/createdashboard/stepselectclients.xml";
+
+	private ClientDao clientDao;
+
+	private Object createDashboardTab;
+
+	private Object currentPanel;
+
+	public CreateDashBoardTabHandler(UiGeneratorController ui,
+			Object tabAnalytics, ClientDao clientDao) {
+		super(ui);
+		this.clientDao = clientDao;
+		createDashboardTab = ui.find(tabAnalytics, TAB_CREATE_DASHBOARD);
+		this.init();
+	}
+
+	public void deinit() {
+	}
+
+	@Override
+	protected Object initialiseTab() {
+		// ui.add(createDashboardTab, stepCreateSettings.getPanelComponent());
+		setCurrentStepPanel(new StepSelectTargetSavingsHandler(ui)
+				.getPanelComponent());
+		return createDashboardTab;
+	}
+
+	public void refresh() {
+
+	}
+
+	public void setCurrentStepPanel(Object panel) {
+		if (currentPanel != null)
+			ui.remove(currentPanel);
+
+		ui.add(createDashboardTab, panel);
+		currentPanel = panel;
+		CreateDashBoardTabHandler.this.refresh();
+	}
+	
 	public class StepCreateSettingsHandler extends BasePanelHandler {
 		private static final String XML_STEP_CREATE_SETTINGS = "/ui/plugins/paymentview/analytics/createdashboard/stepcreatesettings.xml";
 
@@ -45,6 +88,18 @@ public class CreateDashBoardTabHandler extends BaseTabHandler {
 		public void showDateSelecter(Object textField) {
 			((UiGeneratorController) ui).showDateSelecter(textField);
 		}
+		
+		public void selectService() {
+			setCurrentStepPanel(new StepSelectTargetSavingsHandler(
+					(UiGeneratorController) ui).getPanelComponent());
+		}
+
+		public void targetedSavings() {
+			selectService();
+		}
+		public void selectClient() {
+			previous();
+		}
 	}
 
 	public class StepReviewHandler extends BasePanelHandler {
@@ -65,6 +120,23 @@ public class CreateDashBoardTabHandler extends BaseTabHandler {
 		public void previous() {
 			setCurrentStepPanel(new StepCreateSettingsHandler(
 					(UiGeneratorController) ui).getPanelComponent());
+		}
+		
+		public void selectService() {
+			setCurrentStepPanel(new StepSelectTargetSavingsHandler(
+					(UiGeneratorController) ui).getPanelComponent());
+
+		}
+		public void targetedSavings() {
+			selectService();
+
+		}
+		public void selectClient() {
+			setCurrentStepPanel(new StepSelectClientsHandler(
+					(UiGeneratorController) ui).getPanelComponent());
+		}
+		public void createSettings() {
+			previous();
 		}
 
 		public void showDateSelecter(Object textField) {
@@ -119,6 +191,15 @@ public class CreateDashBoardTabHandler extends BaseTabHandler {
 			setCurrentStepPanel(new StepSelectTargetSavingsHandler(
 					(UiGeneratorController) ui).getPanelComponent());
 		}
+		
+		public void selectService() {
+			setCurrentStepPanel(new StepSelectTargetSavingsHandler(
+					(UiGeneratorController) ui).getPanelComponent());
+		}
+		
+		public void targetedSavings() {
+			previous();
+		}
 	}
 
 	public class StepSelectTargetSavingsHandler extends BasePanelHandler {
@@ -137,47 +218,9 @@ public class CreateDashBoardTabHandler extends BaseTabHandler {
 			setCurrentStepPanel(new StepSelectClientsHandler(
 					(UiGeneratorController) ui).getPanelComponent());
 		}
-	}
-
-	private static final String TAB_CREATE_DASHBOARD = "tab_createDashboard";
-
-	private static final String XML_STEP_SELECT_CLIENTS = "/ui/plugins/paymentview/analytics/createdashboard/stepselectclients.xml";
-
-	private ClientDao clientDao;
-
-	private Object createDashboardTab;
-
-	private Object currentPanel;
-
-	public CreateDashBoardTabHandler(UiGeneratorController ui,
-			Object tabAnalytics, ClientDao clientDao) {
-		super(ui);
-		this.clientDao = clientDao;
-		createDashboardTab = ui.find(tabAnalytics, TAB_CREATE_DASHBOARD);
-		this.init();
-	}
-
-	public void deinit() {
-	}
-
-	@Override
-	protected Object initialiseTab() {
-		// ui.add(createDashboardTab, stepCreateSettings.getPanelComponent());
-		setCurrentStepPanel(new StepSelectTargetSavingsHandler(ui)
-				.getPanelComponent());
-		return createDashboardTab;
-	}
-
-	public void refresh() {
-
-	}
-
-	public void setCurrentStepPanel(Object panel) {
-		if (currentPanel != null)
-			ui.remove(currentPanel);
-
-		ui.add(createDashboardTab, panel);
-		currentPanel = panel;
-		CreateDashBoardTabHandler.this.refresh();
+		
+		public void selectService() {
+			//Do Nothing!
+		}
 	}
 }

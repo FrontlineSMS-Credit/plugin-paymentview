@@ -6,7 +6,7 @@
 		<label font="20 Bold" text="Add a client" />
 		<separator />
 		<panel weightx="1" bottom="5" gap="5" top="5">
-			<button type="link" text="Select service" />
+			<button type="link" text="Select service" action="selectService"/>
 			<label text=" &gt; " />
 			<label text="Creating Settings" />
 		</panel>

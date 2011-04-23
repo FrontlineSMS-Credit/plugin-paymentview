@@ -35,6 +35,8 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 
 	private SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 	private NumberFormat formatter = new DecimalFormat("#,000.00");
+	SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss a");
+	
 	private OutgoingPaymentDao outgoingPaymentDao;
 	//
 	// For Dummy Purposes
@@ -42,8 +44,6 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	//
 
 	private Object sentPaymentsTab;
-
-	SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss");
 	private String sentPaymentsFilter = "";
 
 	public SentPaymentsTabHandler(UiGeneratorController ui,
