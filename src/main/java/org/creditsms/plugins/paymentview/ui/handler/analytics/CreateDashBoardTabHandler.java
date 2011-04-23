@@ -12,7 +12,7 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.ui.handler.analytics.dialogs.CreateNewTargetHandler;
 
 public class CreateDashBoardTabHandler extends BaseTabHandler {
-	
+
 	private static final String TAB_CREATE_DASHBOARD = "tab_createDashboard";
 
 	private static final String XML_STEP_SELECT_CLIENTS = "/ui/plugins/paymentview/analytics/createdashboard/stepselectclients.xml";
@@ -54,7 +54,7 @@ public class CreateDashBoardTabHandler extends BaseTabHandler {
 		currentPanel = panel;
 		CreateDashBoardTabHandler.this.refresh();
 	}
-	
+
 	public class StepCreateSettingsHandler extends BasePanelHandler {
 		private static final String XML_STEP_CREATE_SETTINGS = "/ui/plugins/paymentview/analytics/createdashboard/stepcreatesettings.xml";
 
@@ -88,7 +88,7 @@ public class CreateDashBoardTabHandler extends BaseTabHandler {
 		public void showDateSelecter(Object textField) {
 			((UiGeneratorController) ui).showDateSelecter(textField);
 		}
-		
+
 		public void selectService() {
 			setCurrentStepPanel(new StepSelectTargetSavingsHandler(
 					(UiGeneratorController) ui).getPanelComponent());
@@ -97,6 +97,7 @@ public class CreateDashBoardTabHandler extends BaseTabHandler {
 		public void targetedSavings() {
 			selectService();
 		}
+
 		public void selectClient() {
 			previous();
 		}
@@ -121,20 +122,23 @@ public class CreateDashBoardTabHandler extends BaseTabHandler {
 			setCurrentStepPanel(new StepCreateSettingsHandler(
 					(UiGeneratorController) ui).getPanelComponent());
 		}
-		
+
 		public void selectService() {
 			setCurrentStepPanel(new StepSelectTargetSavingsHandler(
 					(UiGeneratorController) ui).getPanelComponent());
 
 		}
+
 		public void targetedSavings() {
 			selectService();
 
 		}
+
 		public void selectClient() {
 			setCurrentStepPanel(new StepSelectClientsHandler(
 					(UiGeneratorController) ui).getPanelComponent());
 		}
+
 		public void createSettings() {
 			previous();
 		}
@@ -156,9 +160,7 @@ public class CreateDashBoardTabHandler extends BaseTabHandler {
 
 		private Object createRow(Client c) {
 			Object row = ui.createTableRow();
-			ui.add(row,
-					ui.createTableCell(c.getFirstName() + " "
-							+ c.getOtherName()));
+			ui.add(row,	ui.createTableCell(c.getName()));
 			ui.add(row, ui.createTableCell(c.getPhoneNumber()));
 			String accountStr = "";
 			for (Account a : c.getAccounts()) {
@@ -191,12 +193,12 @@ public class CreateDashBoardTabHandler extends BaseTabHandler {
 			setCurrentStepPanel(new StepSelectTargetSavingsHandler(
 					(UiGeneratorController) ui).getPanelComponent());
 		}
-		
+
 		public void selectService() {
 			setCurrentStepPanel(new StepSelectTargetSavingsHandler(
 					(UiGeneratorController) ui).getPanelComponent());
 		}
-		
+
 		public void targetedSavings() {
 			previous();
 		}
@@ -218,9 +220,9 @@ public class CreateDashBoardTabHandler extends BaseTabHandler {
 			setCurrentStepPanel(new StepSelectClientsHandler(
 					(UiGeneratorController) ui).getPanelComponent());
 		}
-		
+
 		public void selectService() {
-			//Do Nothing!
+			// Do Nothing!
 		}
 	}
 }
