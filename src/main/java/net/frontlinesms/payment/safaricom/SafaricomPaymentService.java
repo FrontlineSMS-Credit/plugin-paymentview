@@ -7,11 +7,13 @@ import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
 import org.smslib.stk.*;
 
+import net.frontlinesms.events.EventObserver;
+import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.payment.IncomingPaymentProcessor;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
 
-public class SafaricomPaymentService implements PaymentService {
+public class SafaricomPaymentService implements PaymentService, EventObserver {
 	private CService cService;
 	private String pin;
 	
@@ -69,5 +71,8 @@ public class SafaricomPaymentService implements PaymentService {
 
 	public void setIncomingPaymentProcessor(
 		IncomingPaymentProcessor incomingPaymentProcessor) {
+	}
+
+	public void notify(FrontlineEventNotification notification) {
 	}
 }

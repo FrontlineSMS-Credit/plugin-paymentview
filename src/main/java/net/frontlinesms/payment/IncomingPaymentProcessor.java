@@ -1,5 +1,7 @@
 package net.frontlinesms.payment;
 
-public interface IncomingPaymentProcessor {
+import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 
+public interface IncomingPaymentProcessor {
+	void process(IncomingPayment payment);
 }
