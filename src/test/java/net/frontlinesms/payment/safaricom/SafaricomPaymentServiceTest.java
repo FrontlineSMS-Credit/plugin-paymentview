@@ -1,5 +1,9 @@
 package net.frontlinesms.payment.safaricom;
 
+import java.math.BigDecimal;
+
+import org.creditsms.plugins.paymentview.data.domain.Account;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.mockito.InOrder;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
@@ -15,36 +19,43 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 	private PaymentService s;
 	private CService c;
 	
+	private StkMenuItem myAccountMenuItem;
+	private StkRequest mpesaMenuItemRequest;
+	private StkMenuItem sendMoneyMenuItem;
+	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		this.s = new SafaricomPaymentService();
 		this.c = mock(CService.class);
 		((SafaricomPaymentService) s).setCService(c);
-	}
-	
-	public void testCheckBalance() throws PaymentServiceException, SMSLibDeviceException {
-		// given
-		((SafaricomPaymentService) s).setPin("1234");
-		
+
 		StkMenuItem mpesaMenuItem = mockMenuItem("M-PESA", 129, 21);
 		when(c.stkRequest(StkRequest.GET_ROOT_MENU)).thenReturn(
 				new StkMenu("Safaricom", "Safaricom+", mpesaMenuItem));
 		
-		StkMenuItem myAccountMenuItem = mockMenuItem("My account");
-		StkRequest mpesaMenuItemRequest = mpesaMenuItem.getRequest();
+		myAccountMenuItem = mockMenuItem("My account");
+		mpesaMenuItemRequest = mpesaMenuItem.getRequest();
+		sendMoneyMenuItem = mockMenuItem("Send money");
 		when(c.stkRequest(mpesaMenuItemRequest)).thenReturn(new StkMenu("M-PESA",
-				"Send money", "Withdraw cash", "Buy airtime",
+				sendMoneyMenuItem , "Withdraw cash", "Buy airtime",
 				"Pay Bill", "Buy Goods", "ATM Withdrawal", myAccountMenuItem));
-
+	}
+	
+	public void testCheckBalance() throws PaymentServiceException, SMSLibDeviceException {
+		// setup
 		StkRequest myAccountMenuItemRequest = myAccountMenuItem.getRequest();
 		StkMenuItem showBalanceMenuItem = mockMenuItem("Show balance");
 		when(c.stkRequest(myAccountMenuItemRequest)).thenReturn(
 				new StkMenu("My account", showBalanceMenuItem, "Call support",
 						"Change PIN", "Secret word", "Language", "Update menu"));
 		StkInputRequiremnent pinRequired = mockInputRequirement("Enter PIN", 0, 0, 4, 4, 0);
+		StkRequest pinRequiredRequest = pinRequired.getRequest();
 		StkRequest showBalanceMenuItemRequest = showBalanceMenuItem.getRequest();
 		when(c.stkRequest(showBalanceMenuItemRequest)).thenReturn(pinRequired);
+		
+		// given
+		((SafaricomPaymentService) s).setPin("1234");
 		
 		// when
 		s.checkBalance();
@@ -55,14 +66,38 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 		inOrder.verify(c).stkRequest(mpesaMenuItemRequest);
 		inOrder.verify(c).stkRequest(myAccountMenuItemRequest);
 		inOrder.verify(c).stkRequest(showBalanceMenuItemRequest);
-		StkRequest pinRequiredRequest = pinRequired.getRequest();
 		inOrder.verify(c).stkRequest(pinRequiredRequest, "1234");
 	}
 	
-	public void testMakePayment() {
-		fail("Not implemented");
+	public void testMakePayment() throws PaymentServiceException, SMSLibDeviceException {
+		// setup
+		StkRequest sendMoneyMenuItemRequest = sendMoneyMenuItem.getRequest();
+		StkInputRequiremnent phoneNumberRequired = mockInputRequirement("Enter phone no.");
+		when(c.stkRequest(sendMoneyMenuItemRequest)).thenReturn(phoneNumberRequired);
+		StkRequest phoneNumberRequest = phoneNumberRequired.getRequest();
+		StkInputRequiremnent amountRequired = mockInputRequirement("Enter amount");
+		when(c.stkRequest(phoneNumberRequest, "071234567")).thenReturn(amountRequired);
+		StkRequest amountRequest = amountRequired.getRequest();
+		StkInputRequiremnent pinRequired = mockInputRequirement("Enter PIN");
+		when(c.stkRequest(amountRequest, "500")).thenReturn(pinRequired);
+		StkRequest pinRequiredRequest = pinRequired.getRequest();
+		
+		// given
+		((SafaricomPaymentService) s).setPin("1234");
+		
+		// when
+		s.makePayment(mockAccount(), new BigDecimal("500"));
+		
+		// then
+		InOrder inOrder = inOrder(c);
+		inOrder.verify(c).stkRequest(StkRequest.GET_ROOT_MENU);
+		inOrder.verify(c).stkRequest(mpesaMenuItemRequest);
+		inOrder.verify(c).stkRequest(sendMoneyMenuItemRequest);
+		inOrder.verify(c).stkRequest(phoneNumberRequest , "071234567");
+		inOrder.verify(c).stkRequest(amountRequest , "500");
+		inOrder.verify(c).stkRequest(pinRequiredRequest , "1234");
 	}
-	
+
 	public void testIncomingPaymentProcessing() {
 		fail("Not implemented");
 	}
@@ -80,5 +115,17 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 		StkRequest mockRequest = mock(StkRequest.class);
 		when(ir.getRequest()).thenReturn(mockRequest);
 		return ir;
+	}
+	
+	private Account mockAccount() {
+		Account a = mock(Account.class);
+		when(a.getAccountId()).thenReturn(Long.valueOf(123456789));
+		
+		Client c = mock(Client.class);
+		when(c.getPhoneNumber()).thenReturn("071234567");
+		
+		when(a.getClient()).thenReturn(c);
+		
+		return a;
 	}
 }

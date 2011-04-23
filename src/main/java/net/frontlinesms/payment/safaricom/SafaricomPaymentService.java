@@ -51,8 +51,17 @@ public class SafaricomPaymentService implements PaymentService {
 	public void makePayment(Account account, BigDecimal amount) throws PaymentServiceException {
 		try {
 			StkMenu mPesaMenu = getMpesaMenu();
-			StkResponse sendMoneyResponse = cService.stkRequest(mPesaMenu.getRequest("Send money"), Long.toString(account.getAccountNumber()), amount.toString());
-			// TODO process sendMoneyResponse
+			StkResponse sendMoneyResponse = cService.stkRequest(mPesaMenu.getRequest("Send money"));
+			String phoneNumber = account.getClient().getPhoneNumber();
+			
+			StkRequest phoneNumberRequest = ((StkInputRequiremnent) sendMoneyResponse).getRequest();
+			StkResponse phoneNumberResponse = cService.stkRequest(phoneNumberRequest, phoneNumber);
+			
+			StkRequest amountRequest = ((StkInputRequiremnent) phoneNumberResponse).getRequest();
+			StkResponse amountResponse = cService.stkRequest(amountRequest, amount.toString());
+			
+			StkRequest pinRequest = ((StkInputRequiremnent) amountResponse).getRequest();
+			cService.stkRequest(pinRequest, this.pin);
 		} catch (SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
 		}
