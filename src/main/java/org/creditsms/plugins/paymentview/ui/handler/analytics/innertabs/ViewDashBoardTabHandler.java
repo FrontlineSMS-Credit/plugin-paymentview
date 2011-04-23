@@ -63,7 +63,7 @@ public class ViewDashBoardTabHandler extends BaseTabHandler {
 			ui.add(row, ui.createTableCell(c.getPhoneNumber()));
 			String accountStr = "";
 			for (Account a : c.getAccounts()) {
-				accountStr += (Long.toString(a.getAccountNumber()) + ", ");
+				accountStr += (a.getAccountNumber()) + ", ";
 			}
 			ui.add(row, ui.createTableCell(accountStr));
 

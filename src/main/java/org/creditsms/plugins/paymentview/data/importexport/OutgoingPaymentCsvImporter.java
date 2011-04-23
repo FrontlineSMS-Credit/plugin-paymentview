@@ -71,13 +71,12 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 			Account acc;
 
 			try {
-				acc = new Account(Long.parseLong(account));
+				acc = new Account(account);
 				accountDao.saveAccount(acc);
 			} catch (DuplicateKeyException e) {
 				// FIXME should actually pass details of this back to the user.
 				log.debug("An Account already exist with this number", e);
-				acc = accountDao.getAccountByAccountNumber(Long
-						.parseLong(account));
+				acc = accountDao.getAccountByAccountNumber(account);
 			}
 
 			OutgoingPayment outgoingPayment = new OutgoingPayment(phoneNumber,

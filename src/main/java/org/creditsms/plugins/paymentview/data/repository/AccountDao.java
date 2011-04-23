@@ -23,7 +23,7 @@ public interface AccountDao {
 	 * @param accNumber
 	 * @return
 	 */
-	public Account getAccountByAccountNumber(long accNumber);
+	public Account getAccountByAccountNumber(String accNumber);
 
 	/**
 	 * Retrieves the Account with

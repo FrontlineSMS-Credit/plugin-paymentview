@@ -21,7 +21,7 @@ public class HibernateAccountDao extends BaseHibernateDao<Account> implements
 		super.delete(account);
 	}
 
-	public Account getAccountByAccountNumber(long accNumber) {
+	public Account getAccountByAccountNumber(String accNumber) {
 		DetachedCriteria criteria = super.getCriterion();
 		criteria.add(Restrictions.eq("accountNumber", accNumber));
 		return super.getUnique(criteria);

@@ -35,18 +35,40 @@ public class SelectClientsHandler extends BasePanelHandler implements
 	}
 
 	private void initialise() {
-		clientsTableComponent = ui.find(this.getPanelComponent(), COMPONENT_CLIENT_TABLE);
-		clientsTablePager = new ComponentPagingHandler((UiGeneratorController) ui, this, clientsTableComponent);
-		pnlClientsList = ui.find(this.getPanelComponent(), COMPONENT_PANEL_CLIENT_LIST);
+		clientsTableComponent = ui.find(this.getPanelComponent(),
+				COMPONENT_CLIENT_TABLE);
+		clientsTablePager = new ComponentPagingHandler(
+				(UiGeneratorController) ui, this, clientsTableComponent);
+		pnlClientsList = ui.find(this.getPanelComponent(),
+				COMPONENT_PANEL_CLIENT_LIST);
 		this.ui.add(pnlClientsList, this.clientsTablePager.getPanel());
-		refresh();
+	}
+
+	public void selectUsers(Object tbl_clients) {
+		Object[] items = ui.getSelectedItems(tbl_clients);
+		
+		for(Object item : items){
+			Object cell = ui.getItem(item, 0);
+			ui.remove(cell);
+			Client attachedClient = (Client) ui.getAttachedObject(item);
+			if (!attachedClient.isSelected()) {
+				attachedClient.setSelected(true);
+				ui.setIcon(cell, "/icons/header/checkbox-selected.png");
+			}else{
+				attachedClient.setSelected(false);
+				ui.setIcon(cell, "/icons/header/checkbox-unselected.png");
+			}
+			
+			ui.add(item, cell, 0);		
+			refresh();
+		}
 	}
 
 	private void refresh() {
-		this.updateContactList();
+		this.updateClientList();
 	}
 
-	public void updateContactList() {
+	public void updateClientList() {
 		this.clientsTablePager.setCurrentPage(0);
 		this.clientsTablePager.refresh();
 	}
@@ -54,15 +76,20 @@ public class SelectClientsHandler extends BasePanelHandler implements
 	private Object getRow(Client client) {
 		Object row = ui.createTableRow(client);
 
+		Object cell = ui.createTableCell("");
+		ui.setIcon(cell, "/icons/header/checkbox-unselected.png");
+		ui.add(row, cell);
+		
 		ui.add(row,
 				ui.createTableCell(client.getFirstName() + " "
 						+ client.getOtherName()));
 		ui.add(row, ui.createTableCell(client.getPhoneNumber()));
 		String accountStr = "";
 		for (Account a : client.getAccounts()) {
-			accountStr += (Long.toString(a.getAccountNumber()) + ", ");
+			accountStr += a.getAccountNumber() + " ";
 		}
 		ui.add(row, ui.createTableCell(accountStr));
+		ui.setAttachedObject(row, client);
 		return row;
 	}
 
@@ -71,16 +98,15 @@ public class SelectClientsHandler extends BasePanelHandler implements
 	}
 
 	public void next() {
-		addClientTabHandler
-				.setCurrentStepPanel(new CreateSettingsHandler(
-						(UiGeneratorController) ui, clientDao, addClientTabHandler).getPanelComponent());
+		addClientTabHandler.setCurrentStepPanel(new CreateSettingsHandler(
+				(UiGeneratorController) ui, clientDao, addClientTabHandler)
+				.getPanelComponent());
 	}
 
 	public void previous() {
-		addClientTabHandler
-				.setCurrentStepPanel(new SelectTargetSavingsHandler(
-						(UiGeneratorController) ui, clientDao, addClientTabHandler)
-						.getPanelComponent());
+		addClientTabHandler.setCurrentStepPanel(new SelectTargetSavingsHandler(
+				(UiGeneratorController) ui, clientDao, addClientTabHandler)
+				.getPanelComponent());
 	}
 
 	public void selectService() {

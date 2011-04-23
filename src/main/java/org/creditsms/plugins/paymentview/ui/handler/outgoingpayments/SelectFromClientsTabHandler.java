@@ -28,9 +28,16 @@ public class SelectFromClientsTabHandler extends BaseTabHandler {
 
 	private Object createRow(Client c) {
 		Object row = ui.createTableRow();
+		Object cell = ui.createTableCell("");
+		ui.setIcon(cell, "/icons/header/checkbox-unselected.png");
+		ui.add(row, cell);
 		ui.add(row, ui.createTableCell(c.getFirstName()));
 		ui.add(row, ui.createTableCell(c.getPhoneNumber()));
 		return row;
+	}
+	
+	public void selectUser(Object tbl_clients) {
+		Object selectedItem = ui.getSelectedItem(tbl_clients);		
 	}
 
 	@Override

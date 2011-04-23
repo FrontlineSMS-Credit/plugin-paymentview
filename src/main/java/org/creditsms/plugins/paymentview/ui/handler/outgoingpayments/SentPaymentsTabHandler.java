@@ -66,8 +66,8 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 		ui.add(row, ui.createTableCell(formatter.format(o.getAmountPaid())));
 		ui.add(row, ui.createTableCell(df.format(o.getTimePaid())));
 		ui.add(row, ui.createTableCell(tf.format(o.getTimePaid())));
-		ui.add(row, ui.createTableCell(Long.toString(o.getAccount()
-				.getAccountNumber())));
+		ui.add(row, ui.createTableCell(o.getAccount()
+				.getAccountNumber()));
 		ui.add(row, ui.createTableCell(o.getNotes()));
 		return row;
 	}

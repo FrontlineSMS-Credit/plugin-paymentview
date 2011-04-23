@@ -45,7 +45,7 @@ public class EditClientHandler implements ThinletUiEventHandler {
 	}
 
 	private Object createListItem(Account acc) {
-		return ui.createListItem(Long.toString(acc.getAccountNumber()), acc,
+		return ui.createListItem(acc.getAccountNumber(), acc,
 				true);
 	}
 

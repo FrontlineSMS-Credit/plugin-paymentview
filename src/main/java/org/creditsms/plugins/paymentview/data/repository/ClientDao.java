@@ -45,7 +45,7 @@ public interface ClientDao {
 	 * @param phoneNumber
 	 * @return
 	 */
-	public Client getClientByPhoneNumber(long phoneNumber);
+	public Client getClientByPhoneNumber(String phoneNumber);
 
 	/** @return number of clients in the system */
 	public int getClientCount();

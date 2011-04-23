@@ -12,50 +12,43 @@ import javax.persistence.Table;
 /**
  * @Author Roy
  * */
-
 @Entity
 @Table(name = Account.TABLE_NAME)
 public class Account {
 	public static final String TABLE_NAME = "Account";
-	@Column(name = "accountNumber", nullable = false, unique = true)
-	private long accountNumber;
-
-	@ManyToOne
-	// (fetch = FetchType.LAZY)
-	@JoinColumn(name = "clientId", nullable = true)
-	private Client client;
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
+	
+	@Column(name = "accountNumber", nullable = false, unique = true)
+	private String accountNumber;
+ 
+	@ManyToOne
+	@JoinColumn(name = "clientId", nullable = true)
+	private Client client;
 
-	// Some constructors Created to be used by the DummyData Class
-	public Account() {
-	}
+	/* Needed by Hibernate */
+	public Account() {}
 
-	public Account(long accountNumber) {
-		super();
+	public Account(String accountNumber) {
 		this.accountNumber = accountNumber;
 	}
 
-	public Account(long accountNumber, Client client) {
-		super();
-		this.accountNumber = accountNumber;
-		this.client = client;
-	}
-
-	public Account(long id, long accountNumber) {
-		super();
-		this.id = id;
-		this.accountNumber = accountNumber;
-	}
-
-	public Account(long id, long accountNumber, Client client) {
-		super();
-		this.id = id;
+	public Account(String accountNumber, Client client) {
 		this.accountNumber = accountNumber;
 		this.client = client;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((accountNumber == null) ? 0 : accountNumber.hashCode());
+		result = prime * result + ((client == null) ? 0 : client.hashCode());
+		return result;
 	}
 
 	@Override
@@ -83,7 +76,7 @@ public class Account {
 		return id;
 	}
 
-	public long getAccountNumber() {
+	public String getAccountNumber() {
 		return accountNumber;
 	}
 
@@ -91,22 +84,11 @@ public class Account {
 		return client;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ (int) (accountNumber ^ (accountNumber >>> 32));
-		result = prime * result + ((client == null) ? 0 : client.hashCode());
-		result = prime * result + (int) (id ^ (id >>> 32));
-		return result;
-	}
-
 	public void setAccountId(long id) {
 		this.id = id;
 	}
 
-	public void setAccountNumber(long accountNumber) {
+	public void setAccountNumber(String accountNumber) {
 		this.accountNumber = accountNumber;
 	}
 

@@ -150,7 +150,7 @@ public class ClientsTabHandler extends BaseTabHandler implements
 		ui.add(row, ui.createTableCell(client.getPhoneNumber()));
 		String accountStr = "";
 		for (Account a : client.getAccounts()) {
-			accountStr += (Long.toString(a.getAccountNumber()) + ", ");
+			accountStr += (a.getAccountNumber()) + ", ";
 		}
 		ui.add(row, ui.createTableCell(accountStr));
 		return row;

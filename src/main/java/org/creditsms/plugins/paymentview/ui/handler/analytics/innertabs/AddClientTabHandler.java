@@ -43,7 +43,6 @@ public class AddClientTabHandler extends BaseTabHandler {
 
 	@Override
 	protected Object initialiseTab() {
-		// ui.add(createDashboardTab, stepCreateSettings.getPanelComponent());
 		setCurrentStepPanel(new SelectTargetSavingsHandler(ui, clientDao, this)
 				.getPanelComponent());
 		return createDashboardTab;

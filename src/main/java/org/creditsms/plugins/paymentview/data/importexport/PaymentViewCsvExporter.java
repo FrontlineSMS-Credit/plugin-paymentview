@@ -103,12 +103,10 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						incomingPayment.getPhoneNumber(),
 						PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
 						incomingPayment.getAmountPaid().toString(),
-						PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID, Long
-								.toString(incomingPayment.getTimePaid()
-										.getTime()),
-						PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT, Long
-								.toString(incomingPayment.getAccount()
-										.getAccountNumber()));
+						PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,
+						Long.toString(incomingPayment.getTimePaid().getTime()),
+						PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT,
+						incomingPayment.getAccount().getAccountNumber());
 
 			}
 		} finally {
@@ -156,12 +154,10 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						outgoingPayment.getPhoneNumber(),
 						PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
 						outgoingPayment.getAmountPaid().toString(),
-						PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID, Long
-								.toString(outgoingPayment.getTimePaid()
-										.getTime()),
-						PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT, Long
-								.toString(outgoingPayment.getAccount()
-										.getAccountNumber()),
+						PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,
+						Long.toString(outgoingPayment.getTimePaid().getTime()),
+						PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT,
+						outgoingPayment.getAccount().getAccountNumber(),
 						PaymentViewCsvUtils.MARKER_OUTGOING_NOTES,
 						outgoingPayment.getNotes(),
 						PaymentViewCsvUtils.MARKER_OUTGOING_CONFIRMATION,

@@ -141,5 +141,21 @@ public class Client {
 	public String getName() {
 		return "" + this.firstName + " " + this.otherName;
 	}
+	
+	@javax.persistence.Transient
+	private boolean selected = false;
+	
+	/**
+	 * @param selected the selected to set
+	 */
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
 
+	/**
+	 * @return the selected
+	 */
+	public boolean isSelected() {
+		return selected;
+	}
 }

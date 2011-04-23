@@ -37,7 +37,7 @@ public class ClientCsvImporter extends CsvImporter {
 		for (String account : accounts) {
 			if (account.length() == 0)
 				continue;
-			set_accounts.add(new Account(Long.parseLong(account)));
+			set_accounts.add(new Account(account));
 		}
 
 		return set_accounts;

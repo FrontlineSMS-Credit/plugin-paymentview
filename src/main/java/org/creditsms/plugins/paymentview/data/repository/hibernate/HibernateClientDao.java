@@ -36,7 +36,7 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements
 		return super.getUnique(criteria);
 	}
 
-	public Client getClientByPhoneNumber(long phoneNumber) {
+	public Client getClientByPhoneNumber(String phoneNumber) {
 		DetachedCriteria criteria = super.getCriterion();
 		criteria.add(Restrictions.eq("phoneNumber", phoneNumber));
 		return super.getUnique(criteria);
