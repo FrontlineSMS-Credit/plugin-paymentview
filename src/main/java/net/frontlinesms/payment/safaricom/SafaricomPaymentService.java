@@ -15,13 +15,23 @@ public class SafaricomPaymentService implements PaymentService {
 	private CService cService;
 	private String pin;
 	
+	public void setCService(CService cService) {
+		this.cService = cService;
+	}
+	
+	public void setPin(String pin) {
+		this.pin = pin;
+	}
+	
 	public void checkBalance() throws PaymentServiceException {
 		try {
 			StkMenu mPesaMenu = getMpesaMenu();
 			StkMenu myAccountMenu = (StkMenu) cService.stkRequest(mPesaMenu.getRequest("My account"));
 			StkResponse getBalanceResponse = cService.stkRequest(myAccountMenu.getRequest("Show balance"));
-			assert(getBalanceResponse.getText().contains("Enter PIN"));
-			StkResponse finalResponse = cService.stkRequest(getBalanceResponse.getIndicatorRequest(), this.pin);
+			assert getBalanceResponse instanceof StkInputRequiremnent;
+			StkInputRequiremnent pinRequired = (StkInputRequiremnent) getBalanceResponse;
+			assert pinRequired.getText().contains("Enter PIN");
+			StkResponse finalResponse = cService.stkRequest(pinRequired.getRequest(), this.pin);
 			// TODO check finalResponse is OK
 			// TODO wait for response...
 		} catch (SMSLibDeviceException ex) {
@@ -50,9 +60,5 @@ public class SafaricomPaymentService implements PaymentService {
 
 	public void setIncomingPaymentProcessor(
 		IncomingPaymentProcessor incomingPaymentProcessor) {
-	}
-
-	public void setCService(CService cService) {
-		this.cService = cService;
 	}
 }
