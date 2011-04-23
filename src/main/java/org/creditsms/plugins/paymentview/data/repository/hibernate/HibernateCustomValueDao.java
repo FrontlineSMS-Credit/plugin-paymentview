@@ -25,6 +25,10 @@ public class HibernateCustomValueDao extends BaseHibernateDao<CustomValue>
 	public List<CustomValue> getAllCustomValues() {
 		return super.getAll();
 	}
+	
+	public int getCustomValuesCount() {
+		return super.countAll();
+	}
 
 	public CustomValue getCustomValueById(long id) {
 		DetachedCriteria criteria = super.getCriterion();

@@ -29,8 +29,7 @@ public class HibernateIncomingPaymentDao extends
 
 	public List<IncomingPayment> getAllIncomingPayments(int startingIndex,
 			int limit) {
-		// TODO Auto-generated method stub
-		return null;
+		return super.getAll(startingIndex, limit);
 	}
 
 	public List<IncomingPayment> getIncomingPaymentByClientId(long clientId) {
@@ -100,5 +99,9 @@ public class HibernateIncomingPaymentDao extends
 	public void updateIncomingPayment(IncomingPayment incomingPayment)
 			throws DuplicateKeyException {
 		super.update(incomingPayment);
+	}
+
+	public int getIncomingPaymentsCount() {
+		return super.countAll();
 	}
 }

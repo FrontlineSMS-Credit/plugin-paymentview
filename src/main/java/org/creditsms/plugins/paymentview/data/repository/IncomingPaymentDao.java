@@ -20,6 +20,11 @@ public interface IncomingPaymentDao {
 	 * returns all the incomingPayments in the system
 	 * */
 	public List<IncomingPayment> getAllIncomingPayments();
+	
+	/**
+	 * returns all the incomingPayments in the system
+	 * */
+	public int getIncomingPaymentsCount();
 
 	/**
 	 * returns all the incomingPayments in the system

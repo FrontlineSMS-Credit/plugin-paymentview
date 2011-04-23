@@ -26,6 +26,10 @@ public class HibernateOutgoingPaymentDao extends
 	public List<OutgoingPayment> getAllOutgoingPayments() {
 		return super.getAll();
 	}
+	
+	public int getOutgoingPaymentsCount() {
+		return super.countAll();
+	}
 
 	public List<OutgoingPayment> getOutgoingPaymentByClientId(long clientId) {
 		DetachedCriteria criteria = super.getCriterion();

@@ -44,6 +44,10 @@ public class HibernateAccountDao extends BaseHibernateDao<Account> implements
 		return super.getAll();
 	}
 
+	public int getAcountsCount() {
+		return super.countAll();
+	}
+	
 	public void saveAccount(Account account) throws DuplicateKeyException {
 		super.save(account);
 	}

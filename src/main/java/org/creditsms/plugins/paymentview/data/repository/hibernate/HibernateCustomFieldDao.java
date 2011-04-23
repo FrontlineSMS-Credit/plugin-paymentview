@@ -36,7 +36,7 @@ public class HibernateCustomFieldDao extends BaseHibernateDao<CustomField>
 	}
 
 	public int getCustomFieldCount() {
-		return super.getAll().size();
+		return super.countAll();
 	}
 
 	public List<CustomField> getCustomFieldsByName(String strName) {

@@ -65,7 +65,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 					.getIncomingPaymentsByPhoneNo(this.incomingPaymentsFilter);
 		}
 
-		int totalItemCount = incomingPayments.size();
+		int totalItemCount = incomingPaymentDao.getIncomingPaymentsCount();
 		Object[] listItems = toThinletComponents(incomingPayments);
 
 		return new PagedListDetails(totalItemCount, listItems);
