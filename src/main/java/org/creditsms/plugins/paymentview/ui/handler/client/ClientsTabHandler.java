@@ -101,7 +101,7 @@ public class ClientsTabHandler extends BaseTabHandler implements
 		return clientFilter;
 	}
 
-	private PagedListDetails getContactListDetails(int startIndex, int limit) {
+	private PagedListDetails getClientListDetails(int startIndex, int limit) {
 		List<Client> clients = null;
 		if (this.clientFilter.equals("")) {
 			clients = this.clientDao.getAllClients();
@@ -113,14 +113,13 @@ public class ClientsTabHandler extends BaseTabHandler implements
 		Object[] listItems = toThinletComponents(clients);
 
 		return new PagedListDetails(totalItemCount, listItems);
-
 	}
 
 	// > PAGING METHODS
 	public PagedListDetails getListDetails(Object list, int startIndex,
 			int limit) {
 		if (list == this.clientsTableComponent) {
-			return getContactListDetails(startIndex, limit);
+			return getClientListDetails(startIndex, limit);
 		} else {
 			throw new IllegalStateException();
 		}

@@ -9,6 +9,9 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
+import org.creditsms.plugins.paymentview.ui.handler.analytics.innertabs.AddClientTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.analytics.innertabs.ConfigureServiceTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.analytics.innertabs.ViewDashBoardTabHandler;
 
 public class AnalyticsTabHandler implements ThinletUiEventHandler {
 	private static final String XML_ANALYTICS_TAB = "/ui/plugins/paymentview/analytics/tabanalytics.xml";
@@ -17,7 +20,7 @@ public class AnalyticsTabHandler implements ThinletUiEventHandler {
 	private Object analyticsTab;
 	private ClientDao clientDao;
 	private ConfigureServiceTabHandler configureServiceTabHandler;
-	private CreateDashBoardTabHandler createDashBoardHandler;
+	private AddClientTabHandler createDashBoardHandler;
 
 	private IncomingPaymentDao incomingPaymentDao;
 	private OutgoingPaymentDao outgoingPaymentDao;
@@ -47,8 +50,8 @@ public class AnalyticsTabHandler implements ThinletUiEventHandler {
 
 	protected Object init() {
 		analyticsTab = ui.loadComponentFromFile(XML_ANALYTICS_TAB, this);
-		createDashBoardHandler = new CreateDashBoardTabHandler(ui,
-				analyticsTab, clientDao);
+		createDashBoardHandler = new AddClientTabHandler(ui,
+				analyticsTab, clientDao, accountDao, targetDao, incomingPaymentDao, outgoingPaymentDao);
 		viewDashBoardHandler = new ViewDashBoardTabHandler(ui, analyticsTab,
 				clientDao);
 		configureServiceTabHandler = new ConfigureServiceTabHandler(ui,
