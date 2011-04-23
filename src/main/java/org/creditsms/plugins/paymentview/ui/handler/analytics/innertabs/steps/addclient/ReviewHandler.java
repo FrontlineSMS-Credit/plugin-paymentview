@@ -3,14 +3,17 @@ package org.creditsms.plugins.paymentview.ui.handler.analytics.innertabs.steps.a
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.ui.handler.analytics.innertabs.AddClientTabHandler;
 
 public class ReviewHandler extends BasePanelHandler {
 	private static final String XML_STEP_REVIEW = "/ui/plugins/paymentview/analytics/createdashboard/stepreview.xml";
 	private AddClientTabHandler addClientTabHandler;
+	private ClientDao clientDao;
 
-	protected ReviewHandler(UiGeneratorController ui, AddClientTabHandler addClientTabHandler) {
+	protected ReviewHandler(UiGeneratorController ui, ClientDao clientDao, AddClientTabHandler addClientTabHandler) {
 		super(ui);
+		this.clientDao = clientDao;
 		this.addClientTabHandler = addClientTabHandler;
 		this.loadPanel(XML_STEP_REVIEW);
 	}
@@ -24,12 +27,12 @@ public class ReviewHandler extends BasePanelHandler {
 
 	public void previous() {
 		addClientTabHandler.setCurrentStepPanel(new CreateSettingsHandler(
-				(UiGeneratorController) ui, addClientTabHandler).getPanelComponent());
+				(UiGeneratorController) ui, clientDao, addClientTabHandler).getPanelComponent());
 	}
 
 	public void selectService() {
 		addClientTabHandler.setCurrentStepPanel(new SelectTargetSavingsHandler(
-				(UiGeneratorController) ui, addClientTabHandler).getPanelComponent());
+				(UiGeneratorController) ui, clientDao, addClientTabHandler).getPanelComponent());
 	}
 
 	public void targetedSavings() {
@@ -38,7 +41,7 @@ public class ReviewHandler extends BasePanelHandler {
 
 	public void selectClient() {
 		addClientTabHandler.setCurrentStepPanel(new SelectClientsHandler(
-				(UiGeneratorController) ui, addClientTabHandler).getPanelComponent());
+				(UiGeneratorController) ui, clientDao,  addClientTabHandler).getPanelComponent());
 	}
 
 	public void createSettings() {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
+import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
 
@@ -16,16 +17,38 @@ public class SelectClientsHandler extends BasePanelHandler implements
 		PagedComponentItemProvider {
 	private static final String COMPONENT_CLIENT_TABLE = "tbl_clients";
 	private static final String XML_STEP_SELECT_CLIENT = "/ui/plugins/paymentview/analytics/createdashboard/stepselectclients.xml";
+	private static final String COMPONENT_PANEL_CLIENT_LIST = "pnl_clients";
 	private Object clientsTableComponent;
 	private String clientFilter = "";
 	private ClientDao clientDao;
 	private final AddClientTabHandler addClientTabHandler;
+	private ComponentPagingHandler clientsTablePager;
+	private Object pnlClientsList;
 
 	protected SelectClientsHandler(UiGeneratorController ui,
-			AddClientTabHandler addClientTabHandler) {
+			ClientDao clientDao, AddClientTabHandler addClientTabHandler) {
 		super(ui);
 		this.addClientTabHandler = addClientTabHandler;
+		this.clientDao = clientDao;
 		this.loadPanel(XML_STEP_SELECT_CLIENT);
+		initialise();
+	}
+
+	private void initialise() {
+		clientsTableComponent = ui.find(this.getPanelComponent(), COMPONENT_CLIENT_TABLE);
+		clientsTablePager = new ComponentPagingHandler((UiGeneratorController) ui, this, clientsTableComponent);
+		pnlClientsList = ui.find(this.getPanelComponent(), COMPONENT_PANEL_CLIENT_LIST);
+		this.ui.add(pnlClientsList, this.clientsTablePager.getPanel());
+		refresh();
+	}
+
+	private void refresh() {
+		this.updateContactList();
+	}
+
+	public void updateContactList() {
+		this.clientsTablePager.setCurrentPage(0);
+		this.clientsTablePager.refresh();
 	}
 
 	private Object getRow(Client client) {
@@ -50,13 +73,13 @@ public class SelectClientsHandler extends BasePanelHandler implements
 	public void next() {
 		addClientTabHandler
 				.setCurrentStepPanel(new CreateSettingsHandler(
-						(UiGeneratorController) ui, addClientTabHandler).getPanelComponent());
+						(UiGeneratorController) ui, clientDao, addClientTabHandler).getPanelComponent());
 	}
 
 	public void previous() {
 		addClientTabHandler
 				.setCurrentStepPanel(new SelectTargetSavingsHandler(
-						(UiGeneratorController) ui, addClientTabHandler)
+						(UiGeneratorController) ui, clientDao, addClientTabHandler)
 						.getPanelComponent());
 	}
 

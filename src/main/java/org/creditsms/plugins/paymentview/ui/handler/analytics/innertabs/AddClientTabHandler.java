@@ -14,10 +14,11 @@ public class AddClientTabHandler extends BaseTabHandler {
 
 	private static final String TAB_CREATE_DASHBOARD = "tab_createDashboard";
 
-	private ClientDao clientDao;
+	
 	private Object createDashboardTab;
 	private static Object currentPanel;
 
+	private ClientDao clientDao;
 	private OutgoingPaymentDao outgoingPaymentDao;
 	private IncomingPaymentDao incomingPaymentDao;
 	private AccountDao accountDao;
@@ -43,7 +44,7 @@ public class AddClientTabHandler extends BaseTabHandler {
 	@Override
 	protected Object initialiseTab() {
 		// ui.add(createDashboardTab, stepCreateSettings.getPanelComponent());
-		setCurrentStepPanel(new SelectTargetSavingsHandler(ui, this)
+		setCurrentStepPanel(new SelectTargetSavingsHandler(ui, clientDao, this)
 				.getPanelComponent());
 		return createDashboardTab;
 	}

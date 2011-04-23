@@ -3,15 +3,18 @@ package org.creditsms.plugins.paymentview.ui.handler.analytics.innertabs.steps.a
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.ui.handler.analytics.dialogs.CreateNewTargetHandler;
 import org.creditsms.plugins.paymentview.ui.handler.analytics.innertabs.AddClientTabHandler;
 
 public class CreateSettingsHandler extends BasePanelHandler {
 	private static final String XML_STEP_CREATE_SETTINGS = "/ui/plugins/paymentview/analytics/createdashboard/stepcreatesettings.xml";
 	private final AddClientTabHandler addClientTabHandler;
+	private ClientDao clientDao;
 
-	protected CreateSettingsHandler(UiGeneratorController ui, AddClientTabHandler addClientTabHandler) {
+	protected CreateSettingsHandler(UiGeneratorController ui, ClientDao clientDao, AddClientTabHandler addClientTabHandler) {
 		super(ui);
+		this.clientDao = clientDao;
 		this.addClientTabHandler = addClientTabHandler;
 		this.loadPanel(XML_STEP_CREATE_SETTINGS);
 	}
@@ -30,12 +33,12 @@ public class CreateSettingsHandler extends BasePanelHandler {
 
 	public void next() {
 		addClientTabHandler.setCurrentStepPanel(new ReviewHandler(
-				(UiGeneratorController) ui, addClientTabHandler).getPanelComponent());
+				(UiGeneratorController) ui, clientDao, addClientTabHandler).getPanelComponent());
 	}
 
 	public void previous() {
 		addClientTabHandler.setCurrentStepPanel(new SelectClientsHandler(
-				(UiGeneratorController) ui, addClientTabHandler).getPanelComponent());
+				(UiGeneratorController) ui, clientDao, addClientTabHandler).getPanelComponent());
 	}
 
 	public void showDateSelecter(Object textField) {
@@ -44,7 +47,7 @@ public class CreateSettingsHandler extends BasePanelHandler {
 
 	public void selectService() {
 		addClientTabHandler.setCurrentStepPanel(new SelectTargetSavingsHandler(
-				(UiGeneratorController) ui, addClientTabHandler).getPanelComponent());
+				(UiGeneratorController) ui, clientDao, addClientTabHandler).getPanelComponent());
 	}
 
 	public void targetedSavings() {

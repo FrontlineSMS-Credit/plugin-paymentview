@@ -41,11 +41,27 @@ public class ClientsTabHandler extends BaseTabHandler implements
 			AccountDao accountDao, CustomFieldDao customFieldDao,
 			CustomValueDao customValueDao) {
 		super(ui);
-		this.clientFilter = "";
-		init();
+		this.clientFilter = "";		
 		this.clientDao = clientDao;
 		this.customFieldDao = customFieldDao;
 		this.customValueDao = customValueDao;
+		init();
+	}
+	
+	@Override
+	protected Object initialiseTab() {
+		Object clientsTab = ui.loadComponentFromFile(XML_CLIENTS_TAB, this);
+		clientsTableComponent = ui.find(clientsTab, COMPONENT_CLIENT_TABLE);
+		clientsTablePager = new ComponentPagingHandler(ui, this,
+				clientsTableComponent);
+		pnlClientsList = ui.find(clientsTab, COMPONENT_PANEL_CLIENT_LIST);
+		this.ui.add(pnlClientsList, this.clientsTablePager.getPanel());
+		return clientsTab;
+	}
+
+	@Override
+	public void refresh() {
+		this.updateContactList();
 	}
 
 	public void addClient() {
@@ -145,21 +161,7 @@ public class ClientsTabHandler extends BaseTabHandler implements
 		this.refresh();
 	}
 
-	@Override
-	protected Object initialiseTab() {
-		Object clientsTab = ui.loadComponentFromFile(XML_CLIENTS_TAB, this);
-		clientsTableComponent = ui.find(clientsTab, COMPONENT_CLIENT_TABLE);
-		clientsTablePager = new ComponentPagingHandler(ui, this,
-				clientsTableComponent);
-		pnlClientsList = ui.find(clientsTab, COMPONENT_PANEL_CLIENT_LIST);
-		this.ui.add(pnlClientsList, this.clientsTablePager.getPanel());
-		return clientsTab;
-	}
-
-	@Override
-	public void refresh() {
-		this.updateContactList();
-	}
+	
 
 	/**
 	 * @param clientFilter
