@@ -21,20 +21,16 @@ import javax.persistence.Table;
 @Table(name = IncomingPayment.TABLE_NAME)
 public class IncomingPayment {
 	public static final String TABLE_NAME = "IncomingPayment";
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "accountId", nullable = true)
-	private Account account;
-
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false, unique = true)
+	private long id;
+	
 	@Column(name = "amountPaid", nullable = false, unique = false)
 	private BigDecimal amountPaid;
 
 	@Column(name = "confirmationCode", nullable = true, unique = false)
 	private String confirmationCode;
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", nullable = false, unique = true)
-	private long id;
 
 	@Column(name = "paymentBy", nullable = false, unique = false)
 	private String paymentBy;
@@ -44,9 +40,15 @@ public class IncomingPayment {
 
 	@Column(name = "timePaid", nullable = true, unique = false)
 	private Date timePaid;
+	
+	//Change By Ian...
+	@ManyToOne//(fetch = FetchType.LAZY)
+	@JoinColumn(name = "accountId", nullable = true)
+	private Account account;
 
 	/** Empty constructor required for hibernate. */
-	public IncomingPayment() {}
+	public IncomingPayment() {
+	}
 
 	public IncomingPayment(long incomingPaymentId, String paymentBy,
 			String phoneNumber, BigDecimal amountPaid, long timePaid,

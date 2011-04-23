@@ -71,8 +71,11 @@ public class ClientCsvImporter extends CsvImporter {
 			String accounts = rowFormat.getOptionalValue(lineValues,
 					PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS);
 
-			Client c = new Client(firstname, otherName, phonenumber,
-					getAccountsFromString(accounts));
+			Client c = new Client(firstname, otherName, phonenumber);
+			for(Account a:getAccountsFromString(accounts)){
+				c.addAccount(a);
+			}
+			
 			try {
 				clientDao.saveClient(c);
 			} catch (DuplicateKeyException e) {

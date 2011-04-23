@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,7 +19,8 @@ import javax.persistence.Table;
 @Table(name = Target.TABLE_NAME)
 public class Target {
 	public static final String TABLE_NAME = "Target";
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne
+	// (fetch = FetchType.LAZY)
 	@JoinColumn(name = "accountId")
 	private Account account;
 
@@ -32,15 +32,17 @@ public class Target {
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
+	// (fetch = FetchType.LAZY)
 	@JoinColumn(name = "serviceItemId", nullable = true)
 	private ServiceItem serviceItem;
 
 	@Column(name = "startDate", nullable = true, unique = false)
 	private Date startDate;
-	
+
 	/** Empty constructor required for hibernate. */
-	public Target() {}
+	public Target() {
+	}
 
 	public Account getAccount() {
 		return account;

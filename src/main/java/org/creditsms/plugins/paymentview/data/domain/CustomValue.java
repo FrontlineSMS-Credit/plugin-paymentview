@@ -2,7 +2,6 @@ package org.creditsms.plugins.paymentview.data.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,26 +17,27 @@ import javax.persistence.Table;
 @Table(name = CustomValue.TABLE_NAME)
 public class CustomValue {
 	public static final String TABLE_NAME = "CustomValue";
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
-	
+
 	@Column(name = "strValue", nullable = true, unique = false)
 	private String strValue;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
+
+	@ManyToOne
 	@JoinColumn(name = "customDataId", nullable = false)
 	private CustomField customField;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "clientId", nullable = true)
 	private Client client;
 
 	/** Empty constructor required for hibernate. */
-	CustomValue() {}
-	
+	CustomValue() {
+	}
+
 	public Client getClient() {
 		return client;
 	}

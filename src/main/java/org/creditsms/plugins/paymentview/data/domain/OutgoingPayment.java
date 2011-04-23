@@ -27,10 +27,6 @@ public class OutgoingPayment {
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "accountId", nullable = true)
-	private Account account;
-
 	@Column(name = "amountPaid", nullable = false, unique = false)
 	private BigDecimal amountPaid;
 
@@ -48,6 +44,11 @@ public class OutgoingPayment {
 
 	@Column(name = "timePaid", nullable = false, unique = false)
 	private Date timePaid;
+	
+	//Change By Ian
+	@ManyToOne//(fetch = FetchType.LAZY)
+	@JoinColumn(name = "accountId", nullable = true)
+	private Account account;
 
 	/** Empty constructor required for hibernate. */
 	public OutgoingPayment() {}

@@ -1,7 +1,7 @@
 package org.creditsms.plugins.paymentview.data.domain;
 
 import java.math.BigDecimal;
-import java.util.Collection;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,23 +11,28 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.IndexColumn;
+
 /**
  * @Author Roy
+ * @author ian
  */
 @Entity
 @Table(name = ServiceItem.TABLE_NAME)
 public class ServiceItem {
+	public static final String TABLE_NAME = "ServiceItem";
+	
 	@Id
+	@IndexColumn(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
 	
-	public static final String TABLE_NAME = "ServiceItem";
 	@Column(name = "amount", nullable = false, unique = false)
 	private BigDecimal amount;
 
 	@OneToMany
-	private Collection<Target> target;
+	private Set<Target> target;
 
 	@Column(name = "targetName", nullable = false, unique = false)
 	private String targetName;
@@ -43,7 +48,7 @@ public class ServiceItem {
 		return id;
 	}
 
-	public Collection<Target> getTarget() {
+	public Set<Target> getTarget() {
 		return target;
 	}
 
@@ -59,7 +64,7 @@ public class ServiceItem {
 		this.id = id;
 	}
 
-	public void setTarget(Collection<Target> target) {
+	public void setTarget(Set<Target> target) {
 		this.target = target;
 	}
 

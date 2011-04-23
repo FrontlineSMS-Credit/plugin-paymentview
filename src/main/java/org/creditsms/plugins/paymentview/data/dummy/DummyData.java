@@ -1,9 +1,7 @@
 package org.creditsms.plugins.paymentview.data.dummy;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
 
@@ -43,7 +41,8 @@ public class DummyData {
 			long[] accountNumbers) {
 		String[] names = name.split(" ");
 		
-		List<Account> accounts = new ArrayList<Account>();
+		Client c = new Client(names[0], names[1], phoneNumber);
+		
 		for (long accountNumber : accountNumbers) {
 			Account a = new Account(accountNumber);
 			try {
@@ -51,10 +50,8 @@ public class DummyData {
 			} catch (DuplicateKeyException e) {
 				throw new RuntimeException(e);
 			}
-			accounts.add(a);
+			c.addAccount(a);
 		}
-		
-		Client c = new Client(names[0], names[1], phoneNumber, accounts);
 		
 		try {
 			clientDao.saveClient(c);

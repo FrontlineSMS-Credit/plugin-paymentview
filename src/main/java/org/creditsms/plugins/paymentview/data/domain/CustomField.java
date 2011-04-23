@@ -1,6 +1,6 @@
 package org.creditsms.plugins.paymentview.data.domain;
 
-import java.util.Collection;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,7 +29,7 @@ public class CustomField {
 	private String strName;
 
 	@OneToMany
-	private Collection<CustomValue> customValue;
+	private Set<CustomValue> customValue;
 	
 	/** Empty constructor required for hibernate. */
 	CustomField() {}
@@ -38,12 +38,12 @@ public class CustomField {
 		this.strName = strName;
 	}
 
-	public CustomField(String strName, Collection<CustomValue> customValue) {
+	public CustomField(String strName, Set<CustomValue> customValue) {
 		this.strName = strName;
 		this.customValue = customValue;
 	}
 
-	public Collection<CustomValue> getCustomValue() {
+	public Set<CustomValue> getCustomValue() {
 		return customValue;
 	}
 
@@ -55,7 +55,7 @@ public class CustomField {
 		return strName;
 	}
 
-	public void setCustomValue(Collection<CustomValue> customValue) {
+	public void setCustomValue(Set<CustomValue> customValue) {
 		this.customValue = customValue;
 	}
 

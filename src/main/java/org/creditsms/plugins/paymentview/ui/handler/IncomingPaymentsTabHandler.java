@@ -3,6 +3,7 @@ package org.creditsms.plugins.paymentview.ui.handler;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.frontlinesms.ui.UiGeneratorController;
@@ -21,16 +22,20 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private static final String COMPONENT_INCOMING_PAYMENTS_TABLE = "tbl_clients";
 	private static final String COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE = "pnl_clients";
 	private static final String XML_INCOMING_PAYMENTS_TAB = "/ui/plugins/paymentview/incomingpayments/tabincomingpayments.xml";
+	
 	private SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 	private NumberFormat formatter = new DecimalFormat("#,000.00");
+	private SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss");
+	
 	private IncomingPaymentDao incomingPaymentDao;
-	private String incomingPaymentsFilter;
+	
+	private String incomingPaymentsFilter = "";
+	
 	private Object incomingPaymentsTab;
 
 	private Object incomingPaymentsTableComponent;
 	private ComponentPagingHandler incomingPaymentsTablePager;
 	private Object pnlIncomingPaymentsTableComponent;
-	private SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss");
 
 	public IncomingPaymentsTabHandler(UiGeneratorController ui,
 			IncomingPaymentDao incomingPaymentDao) {
@@ -42,18 +47,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	public void addClient() {
 	}
 
-	private Object createRow(IncomingPayment i) {
-		Object row = ui.createTableRow();
-		ui.add(row, ui.createTableCell(i.getPaymentBy()));
-		ui.add(row, ui.createTableCell(i.getPhoneNumber()));
-		ui.add(row, ui.createTableCell(Long.toString(i.getAccount()
-				.getAccountNumber())));
-		ui.add(row, ui.createTableCell(formatter.format(i.getAmountPaid())));
-		ui.add(row, ui.createTableCell(df.format(i.getTimePaid())));
-		ui.add(row, ui.createTableCell(tf.format(i.getTimePaid())));
-		return row;
-	}
-
 	// > EVENTS...
 	public void exportPayments() {
 		new IncomingPaymentsExportHandler(ui, incomingPaymentDao).showWizard();
@@ -62,10 +55,12 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 
 	private PagedListDetails getIncomingPaymentsListDetails(int startIndex,
 			int limit) {
-		List<IncomingPayment> incomingPayments = null;
+		List<IncomingPayment> incomingPayments = new ArrayList<IncomingPayment>();
+		
 		if (this.incomingPaymentsFilter.equals("")) {
-			incomingPayments = this.incomingPaymentDao.getAllIncomingPayments();
+			incomingPayments = this.incomingPaymentDao.getAllIncomingPayments(startIndex, limit);
 		} else {
+			//TODO: change this to add more columns to be filtered.
 			incomingPayments = this.incomingPaymentDao
 					.getIncomingPaymentsByPhoneNo(this.incomingPaymentsFilter);
 		}
@@ -114,19 +109,9 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		return incomingPaymentsTab;
 	}
 
-	// > PRIVATE HELPER METHODS
-	private void populateIncomingPaymentsTable() {
-		Object table = this.incomingPaymentsTableComponent;
-		List<IncomingPayment> incomingPayments = incomingPaymentDao
-				.getAllIncomingPayments();
-		for (IncomingPayment i : incomingPayments) {
-			ui.add(table, createRow(i));
-		}
-	}
-
 	@Override
 	public void refresh() {
-		populateIncomingPaymentsTable();
+		this.updateIncomingPaymentsList();
 	}
 
 	private Object[] toThinletComponents(List<IncomingPayment> incomingPayments) {
@@ -138,7 +123,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		return components;
 	}
 
-	public void updateContactList() {
+	public void updateIncomingPaymentsList() {
 		this.incomingPaymentsTablePager.setCurrentPage(0);
 		this.incomingPaymentsTablePager.refresh();
 	}

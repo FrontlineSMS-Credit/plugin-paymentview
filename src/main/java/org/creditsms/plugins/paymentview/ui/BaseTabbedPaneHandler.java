@@ -9,8 +9,7 @@ import org.apache.log4j.Logger;
 
 /**
  * @author ian onesmus mukewa- ian@credit.frontlinesms.com
- * 
- *         adopted from net.frontlinesms.ui.handler.BasePanelHandler
+ * adopted from net.frontlinesms.ui.handler.BasePanelHandler
  * 
  */
 public abstract class BaseTabbedPaneHandler implements ThinletUiEventHandler {

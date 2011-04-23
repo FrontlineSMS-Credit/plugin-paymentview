@@ -1,14 +1,17 @@
 package org.creditsms.plugins.paymentview.data.domain;
 
-import java.util.Collection;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.IndexColumn;
 
 /**
  * @Author Roy
@@ -20,6 +23,7 @@ public class Client {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@IndexColumn(name = "id")
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
 	
@@ -32,21 +36,19 @@ public class Client {
 	@Column(name = "phoneNumber", nullable = false, unique = true)
 	private String phoneNumber;
 	
-	@OneToMany
-	private Collection<Account> accounts;
+	@OneToMany(fetch=FetchType.EAGER)
+	private Set<Account> accounts;
 
 	@OneToMany
-	private Collection<CustomValue> customData;
+	private Set<CustomValue> customData;
 	
 	/** Empty constructor required for hibernate. */
 	public Client() {}
 
-	public Client(String firstName, String otherName, String phoneNumber,
-			Collection<Account> accountsFromString) {
+	public Client(String firstName, String otherName, String phoneNumber) {
 		this.firstName = firstName;
 		this.otherName = otherName;
 		this.phoneNumber = phoneNumber;
-		this.firstName = firstName;
 	}
 
 	public void addAccount(Account account) {
@@ -70,11 +72,11 @@ public class Client {
 		return true;
 	}
 
-	public Collection<Account> getAccounts() {
+	public Set<Account> getAccounts() {
 		return accounts;
 	}
 
-	public Collection<CustomValue> getCustomData() {
+	public Set<CustomValue> getCustomData() {
 		return customData;
 	}
 
@@ -103,11 +105,11 @@ public class Client {
 		return result;
 	}
 
-	void setAccounts(Collection<Account> accounts) {
+	void setAccounts(Set<Account> accounts) {
 		this.accounts = accounts;
 	}
 
-	public void setCustomData(Collection<CustomValue> customData) {
+	public void setCustomData(Set<CustomValue> customData) {
 		this.customData = customData;
 	}
 

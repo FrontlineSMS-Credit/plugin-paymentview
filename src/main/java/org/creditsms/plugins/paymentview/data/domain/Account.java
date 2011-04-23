@@ -2,7 +2,6 @@ package org.creditsms.plugins.paymentview.data.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,7 +20,8 @@ public class Account {
 	@Column(name = "accountNumber", nullable = false, unique = true)
 	private long accountNumber;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
+	// (fetch = FetchType.LAZY)
 	@JoinColumn(name = "clientId", nullable = true)
 	private Client client;
 
