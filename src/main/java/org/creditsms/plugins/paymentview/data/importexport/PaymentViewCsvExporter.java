@@ -161,7 +161,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						PaymentViewCsvUtils.MARKER_OUTGOING_NOTES,
 						outgoingPayment.getNotes(),
 						PaymentViewCsvUtils.MARKER_OUTGOING_CONFIRMATION,
-						Boolean.toString(outgoingPayment.isConfirmation()));
+						outgoingPayment.getStatus().toString());
 
 			}
 		} finally {

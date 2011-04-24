@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,23 +16,24 @@ import javax.persistence.Table;
 
 /**
  * @Author Roy
+ * @author Ian
  * */
 
 @Entity
 @Table(name = OutgoingPayment.TABLE_NAME)
 public class OutgoingPayment {
 	public static final String TABLE_NAME = "Outgoingpayment";
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
-	
+
 	@Column(name = "amountPaid", nullable = false, unique = false)
 	private BigDecimal amountPaid;
 
-	@Column(name = "confirmation", nullable = true, unique = false)
-	private boolean confirmation;
+	@Enumerated(EnumType.ORDINAL)
+	private Status status;
 
 	@Column(name = "confirmationCode", nullable = true, unique = false)
 	private String confirmationCode;
@@ -43,34 +46,61 @@ public class OutgoingPayment {
 
 	@Column(name = "timePaid", nullable = false, unique = false)
 	private Date timePaid;
-	
-	//Change By Ian
-	@ManyToOne//(fetch = FetchType.LAZY)
+
+	@ManyToOne
 	@JoinColumn(name = "accountId", nullable = true)
 	private Account account;
 
 	/** Empty constructor required for hibernate. */
-	public OutgoingPayment() {}
+	public OutgoingPayment() {
+	}
+
+	public static enum Status {
+		SENT("Sent", "/icons/sms_send.png"),
+		RECEIVED("Received","/icons/sms_receive.png"),
+		CONFIRMED("Confirmed", "/icons/tick.png"),
+		ERROR("Error", "/icons/error.png");
+
+		private String status;
+		private String icon;
+
+		private Status(String displayName, String icon) {
+			this.status = displayName;
+			this.icon = icon;
+		}
+
+		public String toString() {
+			return status;
+		}
+
+		public String getIconPath() {
+			return icon;
+		}
+		
+		public static Status getStatusFromString(String status){
+			for(Status s:Status.values()){
+				if(status.equalsIgnoreCase(s.toString())){
+					return s;
+				}
+			}
+			return null;
+		}
+	}
 
 	public OutgoingPayment(String phoneNumber, BigDecimal amountPaid,
-			Date timePaid, Account account, String notes, boolean confirmation) {
-		super();
+			Date timePaid, Account account, String notes, Status status) {
 		this.phoneNumber = phoneNumber;
 		this.amountPaid = amountPaid;
 		this.timePaid = timePaid;
 		this.account = account;
 		this.notes = notes;
-		this.confirmation = confirmation;
+		this.status = status;
 	}
 
 	public OutgoingPayment(String phoneNumber, BigDecimal amountPaid,
-			long timePaid, Account account, String notes, boolean confirmation) {
-		this.phoneNumber = phoneNumber;
-		this.amountPaid = amountPaid;
-		this.timePaid = new Date(timePaid);
-		this.account = account;
-		this.notes = notes;
-		this.confirmation = confirmation;
+			long timePaid, Account account, String notes, Status status) {
+		this(phoneNumber, amountPaid, new Date(timePaid), account, notes,
+				status);
 	}
 
 	public Account getAccount() {
@@ -101,20 +131,12 @@ public class OutgoingPayment {
 		return timePaid;
 	}
 
-	public boolean isConfirmation() {
-		return confirmation;
-	}
-
 	public void setAccount(Account account) {
 		this.account = account;
 	}
 
 	public void setAmountPaid(BigDecimal amountPaid) {
 		this.amountPaid = amountPaid;
-	}
-
-	public void setConfirmation(boolean confirmation) {
-		this.confirmation = confirmation;
 	}
 
 	public void setConfirmationCode(String confirmationCode) {
@@ -143,7 +165,14 @@ public class OutgoingPayment {
 				+ ", amountPaid=" + amountPaid + ", timePaid=" + timePaid
 				+ ", account=" + account + ", notes=" + notes
 				+ ", confirmationCode=" + confirmationCode + ", confirmation="
-				+ confirmation + "]";
+				+ status + "]";
 	}
 
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
 }

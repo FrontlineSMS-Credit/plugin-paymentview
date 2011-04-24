@@ -7,11 +7,11 @@
 		<label text="2. Select the clients you wish to view" colspan="2"/>
 		<checkbox group="plan" text="All" colspan="2"/>
 		<checkbox group="plan" text="By Product"/>
-		<combobox text="Select Product"/>
+		<panel weightx="1"><combobox text="Select Product" weightx="1"/><panel weightx="1"/><panel weightx="1"/></panel>
 		<checkbox group="plan" text="All Completed" colspan="2"/>
 		<checkbox group="plan" text="All In Progress" colspan="2"/>
 		<checkbox group="plan" text="Select By Client Characteristic"/>
-		<combobox text="Client Groups"/>
+		<panel weightx="1"><combobox text="Client Groups" weightx="1"/><panel weightx="1"/><panel weightx="1"/></panel>
 		<checkbox group="plan" text="Select By Client" colspan="2"/>
 		<table colspan="2" name="tbl_clients" weightx="1" weighty="1">
 			<header>

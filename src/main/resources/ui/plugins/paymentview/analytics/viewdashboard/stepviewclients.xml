@@ -6,9 +6,16 @@
 		<label font="20 Bold" text="View Client progress" />
 		<table name="tbl_clients" weightx="1" weighty="1">
 			<header>
-				<column text="Name" width="200" icon="/icons/user.png" />
-				<column text="Phone" width="150" icon="/icons/phone.png" />
-				<column text="Account" width="100" />
+				<column text="Name" width="150" icon="/icons/user.png" />
+				<column text="Start date" width="100" icon="/icons/date.png" />
+				<column text="End date" width="100" icon="/icons/date.png" />
+				<column text="Savings target" width="120" />
+				<column text="Amount saved" width="120" />
+				<column text="Percentage" width="100" />
+				<column text="Last payment" width="100" />
+				<column text="Last payment Date" width="150" />
+				<column text="Days remaining" width="100" />
+				<column text="Rate" width="100" />
 			</header>
 		</table>
 	</panel>

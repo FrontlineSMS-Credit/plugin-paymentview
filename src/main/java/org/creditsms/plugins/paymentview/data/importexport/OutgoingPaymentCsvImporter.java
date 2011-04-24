@@ -13,6 +13,7 @@ import net.frontlinesms.data.DuplicateKeyException;
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment.Status;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 
@@ -65,7 +66,7 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 					PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT);
 			String notes = rowFormat.getOptionalValue(lineValues,
 					PaymentViewCsvUtils.MARKER_OUTGOING_NOTES);
-			String confirmation = rowFormat.getOptionalValue(lineValues,
+			String status = rowFormat.getOptionalValue(lineValues,
 					PaymentViewCsvUtils.MARKER_OUTGOING_CONFIRMATION);
 
 			Account acc;
@@ -82,7 +83,7 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 			OutgoingPayment outgoingPayment = new OutgoingPayment(phoneNumber,
 					new BigDecimal(amountPaid), new Date(
 							Long.parseLong(timePaid)), acc, notes,
-					Boolean.parseBoolean(confirmation));
+					Status.getStatusFromString(status));
 			try {
 				outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
 			} catch (DuplicateKeyException e) {

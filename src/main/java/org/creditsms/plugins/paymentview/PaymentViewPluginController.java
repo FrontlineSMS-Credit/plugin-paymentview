@@ -27,11 +27,11 @@ import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.IncomingPaymentsTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.analytics.AnalyticsTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.client.ClientsTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.export.ExportTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.outgoingpayments.OutgoingPaymentsTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.settings.SettingsTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.AnalyticsTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabexport.ExportTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.OutgoingPaymentsTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabsettings.SettingsTabHandler;
 import org.springframework.context.ApplicationContext;
 
 /**
