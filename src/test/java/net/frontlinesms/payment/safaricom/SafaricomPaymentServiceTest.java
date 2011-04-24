@@ -15,14 +15,15 @@ import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.junit.BaseTestCase;
 import net.frontlinesms.payment.IncomingPaymentProcessor;
-import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
+import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
 import static org.mockito.Mockito.*;
 
 public class SafaricomPaymentServiceTest extends BaseTestCase {
-	private PaymentService s;
+	private SafaricomPaymentService s;
 	private CService c;
+	private IncomingPaymentProcessor incomingPaymentProcessor;
 	
 	private StkMenuItem myAccountMenuItem;
 	private StkRequest mpesaMenuItemRequest;
@@ -33,7 +34,9 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 		super.setUp();
 		this.s = new SafaricomPaymentService();
 		this.c = mock(CService.class);
-		((SafaricomPaymentService) s).setCService(c);
+		s.setCService(c);
+		incomingPaymentProcessor = mock(IncomingPaymentProcessor.class);
+		s.setIncomingPaymentProcessor(incomingPaymentProcessor);
 
 		StkMenuItem mpesaMenuItem = mockMenuItem("M-PESA", 129, 21);
 		when(c.stkRequest(StkRequest.GET_ROOT_MENU)).thenReturn(
@@ -60,7 +63,7 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 		when(c.stkRequest(showBalanceMenuItemRequest)).thenReturn(pinRequired);
 		
 		// given
-		((SafaricomPaymentService) s).setPin("1234");
+		s.setPin("1234");
 		
 		// when
 		s.checkBalance();
@@ -81,14 +84,14 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 		when(c.stkRequest(sendMoneyMenuItemRequest)).thenReturn(phoneNumberRequired);
 		StkRequest phoneNumberRequest = phoneNumberRequired.getRequest();
 		StkInputRequiremnent amountRequired = mockInputRequirement("Enter amount");
-		when(c.stkRequest(phoneNumberRequest, "071234567")).thenReturn(amountRequired);
+		when(c.stkRequest(phoneNumberRequest, "0712345678")).thenReturn(amountRequired);
 		StkRequest amountRequest = amountRequired.getRequest();
 		StkInputRequiremnent pinRequired = mockInputRequirement("Enter PIN");
 		when(c.stkRequest(amountRequest, "500")).thenReturn(pinRequired);
 		StkRequest pinRequiredRequest = pinRequired.getRequest();
 		
 		// given
-		((SafaricomPaymentService) s).setPin("1234");
+		s.setPin("1234");
 		
 		// when
 		s.makePayment(mockAccount(), new BigDecimal("500"));
@@ -98,48 +101,50 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 		inOrder.verify(c).stkRequest(StkRequest.GET_ROOT_MENU);
 		inOrder.verify(c).stkRequest(mpesaMenuItemRequest);
 		inOrder.verify(c).stkRequest(sendMoneyMenuItemRequest);
-		inOrder.verify(c).stkRequest(phoneNumberRequest , "071234567");
+		inOrder.verify(c).stkRequest(phoneNumberRequest , "0712345678");
 		inOrder.verify(c).stkRequest(amountRequest , "500");
 		inOrder.verify(c).stkRequest(pinRequiredRequest , "1234");
 	}
 
 	public void testIncomingPaymentProcessing() {
-		// setup
-		SafaricomPaymentService s = (SafaricomPaymentService) this.s;
-		IncomingPaymentProcessor incomingPaymentProcessor = mock(IncomingPaymentProcessor.class);
-		
 		// then
 		assertTrue(s instanceof EventObserver);
 		
 		// when
-		s.notify(mockMessageNotification("MPESA", "Here is the text to process - this should be valid confirmation text."));
+		s.notify(mockMessageNotification("MPESA", "0712345678 sent payment of 500 KES"));
 		
 		// then
-		verify(incomingPaymentProcessor).process(any(IncomingPayment.class));
+		WaitingJob.waitForEvent();
+		verify(incomingPaymentProcessor).process(new IncomingPayment() {
+			@Override
+			public boolean equals(Object that) {
+				return that instanceof IncomingPayment &&
+						((IncomingPayment) that).getPaymentBy().equals("0712345678") &&
+						((IncomingPayment) that).getAmountPaid() == 500;
+			}
+		});
 	}
 
 	public void testIncomingPaymentProcessorIgnoresIrrelevantMessages() {
-		// setup
-		SafaricomPaymentService s = (SafaricomPaymentService) this.s;
-		IncomingPaymentProcessor incomingPaymentProcessor = mock(IncomingPaymentProcessor.class);
-		
 		// when
 		s.notify(mockMessageNotification("MPESA", "Some random text..."));
 		s.notify(mockMessageNotification("0798765432", "... and some more random text."));
 		
 		// then
+		WaitingJob.waitForEvent();
 		verify(incomingPaymentProcessor, never()).process(any(IncomingPayment.class));
 	}
 	
 	public void testFakedIncomingPayment() {
 		// setup
-		SafaricomPaymentService s = (SafaricomPaymentService) this.s;
+		SafaricomPaymentService s = this.s;
 		IncomingPaymentProcessor incomingPaymentProcessor = mock(IncomingPaymentProcessor.class);
 		
 		// when
 		s.notify(mockMessageNotification("0798765432", "Here is the text to process - this should be valid confirmation text."));
 		
 		// then
+		WaitingJob.waitForEvent();
 		verify(incomingPaymentProcessor, never()).process(any(IncomingPayment.class));
 	}
 	
@@ -163,7 +168,7 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 		when(a.getAccountId()).thenReturn(Long.valueOf(123456789));
 		
 		Client c = mock(Client.class);
-		when(c.getPhoneNumber()).thenReturn("071234567");
+		when(c.getPhoneNumber()).thenReturn("0712345678");
 		
 		when(a.getClient()).thenReturn(c);
 		
@@ -175,5 +180,29 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 		when(m.getSenderMsisdn()).thenReturn(from);
 		when(m.getTextContent()).thenReturn(text);
 		return new EntitySavedNotification<FrontlineMessage>(m);
+	}
+}
+
+class WaitingJob extends FrontlineUiUpateJob {
+	private boolean running;
+	private void block() {
+		running = true;
+		execute();
+		while(running) {
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				running = false;
+			}
+		}
+	}
+	
+	public void run() {
+		running = false;
+	}
+	
+	/** Put a job on the UI event queue, and block until it has been run. */
+	public static void waitForEvent() {
+		new WaitingJob().block();
 	}
 }
