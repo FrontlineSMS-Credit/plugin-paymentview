@@ -112,12 +112,10 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 		assertTrue(s instanceof EventObserver);
 		
 		// when
-		s.notify(mockMessageNotification("Safaricom", "Here is the text to process - this should be valid confirmation text."));
+		s.notify(mockMessageNotification("MPESA", "Here is the text to process - this should be valid confirmation text."));
 		
 		// then
 		verify(incomingPaymentProcessor).process(any(IncomingPayment.class));
-		
-		fail("Not implemented");
 	}
 
 	public void testIncomingPaymentProcessorIgnoresIrrelevantMessages() {
@@ -126,13 +124,11 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 		IncomingPaymentProcessor incomingPaymentProcessor = mock(IncomingPaymentProcessor.class);
 		
 		// when
-		s.notify(mockMessageNotification("Safaricom", "Some random text..."));
+		s.notify(mockMessageNotification("MPESA", "Some random text..."));
 		s.notify(mockMessageNotification("0798765432", "... and some more random text."));
 		
 		// then
-		verify(incomingPaymentProcessor).process(any(IncomingPayment.class));
-		
-		fail("Not implemented");
+		verify(incomingPaymentProcessor, never()).process(any(IncomingPayment.class));
 	}
 	
 	public void testFakedIncomingPayment() {
