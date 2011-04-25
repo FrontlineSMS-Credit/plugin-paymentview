@@ -1,6 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.addclient;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.frontlinesms.ui.UiGeneratorController;
@@ -45,8 +44,6 @@ public class SelectClientsHandler extends BasePanelHandler implements
 				COMPONENT_PANEL_CLIENT_LIST);
 		this.ui.add(pnlClientsList, this.clientsTablePager.getPanel());
 	}
-
-	private final List<Client> selectedclients = new ArrayList<Client>();
 
 	public void selectUsers(Object tbl_clients) {
 		Object[] items = ui.getSelectedItems(tbl_clients);

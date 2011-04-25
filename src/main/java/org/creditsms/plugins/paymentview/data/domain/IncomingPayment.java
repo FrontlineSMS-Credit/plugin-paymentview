@@ -41,8 +41,7 @@ public class IncomingPayment {
 	@Column(name = "timePaid", nullable = true, unique = false)
 	private Date timePaid;
 	
-	//Change By Ian...
-	@ManyToOne//(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "accountId", nullable = true)
 	private Account account;
 

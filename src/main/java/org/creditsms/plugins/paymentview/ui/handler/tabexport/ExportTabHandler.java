@@ -12,13 +12,13 @@ public class ExportTabHandler extends BaseTabHandler {
 	private static final String XML_EXPORT_TAB = "/ui/plugins/paymentview/export/tabexport.xml";
 
 	private ClientDao clientDao;
-	private ExportClientHistoryTabHandler clientHistoryTab;
-	private ExportClientsTabHandler clientsTab;
+	private ExportClientHistoryTabHandler exportclientHistoryTab;
+	private ExportClientsTabHandler exportclientsTab;
 	private Object exportTab;
 	private IncomingPaymentDao incomingPaymentDao;
 	private Object mainTabbedPane;
 	private OutgoingPaymentDao outgoingPaymentDao;
-	private ExportPaymentsTabHandler paymentsTab;
+	private ExportPaymentsTabHandler exportpaymentsTab;
 
 	public ExportTabHandler(UiGeneratorController ui, ClientDao clientDao,
 			IncomingPaymentDao incomingPaymentDao,
@@ -46,12 +46,12 @@ public class ExportTabHandler extends BaseTabHandler {
 		exportTab = ui.loadComponentFromFile(XML_EXPORT_TAB, this);
 		mainTabbedPane = ui.find(exportTab, TABBED_PANE_MAIN);
 
-		clientsTab = new ExportClientsTabHandler(ui, clientDao);
-		ui.add(mainTabbedPane, clientsTab.getTab());
-		clientHistoryTab = new ExportClientHistoryTabHandler(ui);
-		ui.add(mainTabbedPane, clientHistoryTab.getTab());
-		paymentsTab = new ExportPaymentsTabHandler(ui);
-		ui.add(mainTabbedPane, paymentsTab.getTab());
+		exportclientsTab = new ExportClientsTabHandler(ui, clientDao);
+		ui.add(mainTabbedPane, exportclientsTab.getTab());
+		exportclientHistoryTab = new ExportClientHistoryTabHandler(ui);
+		ui.add(mainTabbedPane, exportclientHistoryTab.getTab());
+		exportpaymentsTab = new ExportPaymentsTabHandler(ui);
+		ui.add(mainTabbedPane, exportpaymentsTab.getTab());
 
 		return exportTab;
 	}

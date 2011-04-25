@@ -13,7 +13,7 @@
 			<label text="Select Client" />
 		</panel>
 		<label text="2. Select client(s) for this service." />
-		<table name="tbl_clients" weightx="1" weighty="1" selection="multiple" action="selectUsers(this)">
+		<table name="tbl_clients" weightx="1" weighty="1" selection="single" action="selectUsers(this)">
 			<header>
 				<column text="Select" width="40" />
 				<column text="Name" width="200" icon="/icons/user.png" />

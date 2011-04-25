@@ -4,14 +4,12 @@
  */
 package org.creditsms.plugins.paymentview.ui;
 
-import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.plugins.BasePluginThinletTabController;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
 
-import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 
 /**
@@ -22,17 +20,8 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 public class PaymentViewThinletTabController extends
 		BasePluginThinletTabController<PaymentViewPluginController> implements
 		ThinletUiEventHandler, PagedComponentItemProvider {
-	// > CONSTANTS
-	private static final Logger LOG = FrontlineUtils
-			.getLogger(PaymentViewThinletTabController.class);
-	// > UI FILES
-	private static final String UI_FILE_SEND_MONEY_DIALOG = "/ui/plugins/paymentview/dgSendMoneyForm.xml";
 
 	private PaymentViewPluginController controller;
-
-	// > UI COMPONENTS
-	/** Thinlet tab component whose functionality is handled by this class */
-	private Object paymentViewTab;
 
 	/**
 	 * 
