@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.addclient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.frontlinesms.ui.UiGeneratorController;
@@ -45,23 +46,44 @@ public class SelectClientsHandler extends BasePanelHandler implements
 		this.ui.add(pnlClientsList, this.clientsTablePager.getPanel());
 	}
 
+	private final List<Client> selectedclients = new ArrayList<Client>();
+
 	public void selectUsers(Object tbl_clients) {
 		Object[] items = ui.getSelectedItems(tbl_clients);
-		
-		for(Object item : items){
+
+		// TODO: Change Logic to:
+		// Get a list of users (selected), so that on unselection,
+		// do a set operation and show only those that have had a union
+		// or intersection, or some sort of
+		if (items.length > 1) {
+			for (Object item : items) {
+				Object cell = ui.getItem(item, 0);
+				ui.remove(cell);
+				Client attachedClient = (Client) ui.getAttachedObject(item);
+				if (attachedClient.isSelected()) {
+					attachedClient.setSelected(false);
+					ui.setIcon(cell, "/icons/header/checkbox-unselected.png");
+				} else {
+					attachedClient.setSelected(true);
+					ui.setIcon(cell, "/icons/header/checkbox-selected.png");
+				}
+
+				ui.add(item, cell, 0);
+			}
+		}else if (items.length == 1) {
+			Object item = items[0];
 			Object cell = ui.getItem(item, 0);
 			ui.remove(cell);
 			Client attachedClient = (Client) ui.getAttachedObject(item);
-			if (!attachedClient.isSelected()) {
-				attachedClient.setSelected(true);
-				ui.setIcon(cell, "/icons/header/checkbox-selected.png");
-			}else{
+			if (attachedClient.isSelected()) {
 				attachedClient.setSelected(false);
 				ui.setIcon(cell, "/icons/header/checkbox-unselected.png");
+			} else {
+				attachedClient.setSelected(true);
+				ui.setIcon(cell, "/icons/header/checkbox-selected.png");
 			}
-			
-			ui.add(item, cell, 0);		
-			//refresh();
+
+			ui.add(item, cell, 0);
 		}
 	}
 
@@ -80,7 +102,7 @@ public class SelectClientsHandler extends BasePanelHandler implements
 		Object cell = ui.createTableCell("");
 		ui.setIcon(cell, "/icons/header/checkbox-unselected.png");
 		ui.add(row, cell);
-		
+
 		ui.add(row,
 				ui.createTableCell(client.getFirstName() + " "
 						+ client.getOtherName()));

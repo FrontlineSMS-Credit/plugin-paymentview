@@ -15,8 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * @Author Roy
- * @author Ian
+ * @Author Roy <roy@credit.frontlinesms.com>
+ * @author Ian <ian@credit.frontlinesms.com>
  * */
 
 @Entity
@@ -161,11 +161,11 @@ public class OutgoingPayment {
 
 	@Override
 	public String toString() {
-		return "OutgoingPayment [id=" + id + ", phoneNumber=" + phoneNumber
-				+ ", amountPaid=" + amountPaid + ", timePaid=" + timePaid
-				+ ", account=" + account + ", notes=" + notes
-				+ ", confirmationCode=" + confirmationCode + ", confirmation="
-				+ status + "]";
+		return "OutgoingPayment [id=" + id + ", amountPaid=" + amountPaid
+				+ ", status=" + status + ", confirmationCode="
+				+ confirmationCode + ", notes=" + notes + ", phoneNumber="
+				+ phoneNumber + ", timePaid=" + timePaid + ", account="
+				+ account + "]";
 	}
 
 	public Status getStatus() {
