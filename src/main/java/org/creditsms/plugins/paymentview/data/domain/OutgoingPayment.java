@@ -56,10 +56,10 @@ public class OutgoingPayment {
 	}
 
 	public static enum Status {
+		UNSENT("Unsent","/icons/sms_receive.png"),
 		SENT("Sent", "/icons/sms_send.png"),
-		RECEIVED("Received","/icons/sms_receive.png"),
-		CONFIRMED("Confirmed", "/icons/tick.png"),
-		ERROR("Error", "/icons/error.png");
+		ERROR("Error", "/icons/error.png"),
+		CONFIRMED("Confirmed", "/icons/tick.png");
 
 		private String status;
 		private String icon;

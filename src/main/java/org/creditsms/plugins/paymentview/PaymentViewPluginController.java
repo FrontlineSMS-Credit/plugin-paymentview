@@ -125,7 +125,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 		targetDao = (TargetDao) applicationContext.getBean("targetDao");
 		accountDao = (AccountDao) applicationContext.getBean("accountDao");
 		
-		new DummyData(accountDao, clientDao, customFieldDao, incomingPaymentDao, outgoingPaymentDao); 
+		//new DummyData(accountDao, clientDao, customFieldDao, incomingPaymentDao, outgoingPaymentDao); 
 	}
 
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
