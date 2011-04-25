@@ -54,7 +54,7 @@ public class HibernateIncomingPaymentDao extends
 	}
 
 	public List<IncomingPayment> getIncomingPaymentsByAccountNumber(
-			long accountNumber) {
+			String accountNumber) {
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria accountCriteria = criteria.createCriteria("account");
 		accountCriteria.add(Restrictions.eq("accountNumber", accountNumber));
@@ -103,5 +103,11 @@ public class HibernateIncomingPaymentDao extends
 
 	public int getIncomingPaymentsCount() {
 		return super.countAll();
+	}
+
+	public List<IncomingPayment> getIncomingPaymentsByAccountNumber(
+			long accountId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

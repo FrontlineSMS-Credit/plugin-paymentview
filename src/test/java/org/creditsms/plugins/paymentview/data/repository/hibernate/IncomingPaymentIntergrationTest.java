@@ -69,7 +69,7 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase{
 	}
 	
 	public void testGettingIncomingPaymentByAccountNumber() throws DuplicateKeyException{
-		final long accountNumber = 4201;
+		final String accountNumber = "4201";
 		Account ac = createAndSaveAccount(accountNumber, 1, null);
 		createAndSaveIncomingPayment("0733000000", "12000000", "Mr. Sang", ac, 1);
 		List<IncomingPayment> actualIncomingPayments = hibernateIncomingPaymentDao.getIncomingPaymentsByAccountNumber(accountNumber);
@@ -81,7 +81,7 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase{
 	
 	public void testGettingIncomingPaymentsByUserId() throws DuplicateKeyException{
 		Client c = createAndSaveClient("0734000000", "Hamisi",1);
-		Account ac = createAndSaveAccount(000201, 1, c);
+		Account ac = createAndSaveAccount("000201", 1, c);
 		
 		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Sang", ac, 1);
 		long clientId = hibernateAccountDao.getAllAcounts().get(0).getClient().getId();
@@ -123,7 +123,7 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase{
 		return this.hibernateIncomingPaymentDao.getAllIncomingPayments().get(0);
 	}
 	
-	private Account createAndSaveAccount(long accountNumber, int expectedAccountCount, Client client) throws DuplicateKeyException {
+	private Account createAndSaveAccount(String accountNumber, int expectedAccountCount, Client client) throws DuplicateKeyException {
 		Account ac = new Account();
 		ac.setAccountNumber(accountNumber);
 		if(client != null) ac.setClient(client);

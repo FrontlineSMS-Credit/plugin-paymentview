@@ -50,7 +50,7 @@ public interface IncomingPaymentDao {
 	 * returns IncomingPayment(s) by accountId
 	 * */
 	public List<IncomingPayment> getIncomingPaymentsByAccountNumber(
-			long accountId);
+			String accountNumber);
 
 	/**
 	 * returns IncomingPayment(s) by accountId by time ranges

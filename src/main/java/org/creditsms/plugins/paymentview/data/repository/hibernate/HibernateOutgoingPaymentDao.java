@@ -52,7 +52,7 @@ public class HibernateOutgoingPaymentDao extends
 	}
 
 	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumber(
-			long accNumber) {
+			String accNumber) {
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria accountCriteria = criteria.createCriteria("account");
 		accountCriteria.add(Restrictions.eq("accountNumber", accNumber));

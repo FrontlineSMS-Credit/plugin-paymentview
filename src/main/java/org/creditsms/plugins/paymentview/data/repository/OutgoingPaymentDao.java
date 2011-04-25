@@ -43,7 +43,7 @@ public interface OutgoingPaymentDao {
 	 * returns OutgoingPayment(s) by accountId
 	 * */
 	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumber(
-			long accountId);
+			String accountNumber);
 
 	/**
 	 * returns OutgoingPayment(s) by accountId by time ranges

@@ -31,8 +31,8 @@ public class CustomClientDataIntergrationTest extends HibernateTestCase {
 		assertEmptyDatabase();
 		createAndSaveCustomField("Location", 1);
 		CustomValue ocd = createOtherClientdetails("Kariobangi South", getCustomField());
-		hibernateOtherClientDetailsDao.saveOtherClientDetails(ocd);
-		assertEquals(1, hibernateOtherClientDetailsDao.getAllOtherDetails().size());
+		hibernateOtherClientDetailsDao.saveCustomValue(ocd);
+		assertEquals(1, hibernateOtherClientDetailsDao.getAllCustomValues().size());
 	}
 	
 	public void testGetOtherClientDetailsById() throws DuplicateKeyException{
@@ -40,7 +40,7 @@ public class CustomClientDataIntergrationTest extends HibernateTestCase {
 		createAndSaveCustomField("Location", 1);
 		createAndSaveOtherClientDetails("Kariobangi", null, 1, getCustomField());
 		long gId = getOtherClientDetails().getId();
-		assertEquals("Kariobangi",hibernateOtherClientDetailsDao.getOtherClientDetailsById(gId).getStrValue());
+		assertEquals("Kariobangi",hibernateOtherClientDetailsDao.getCustomValueById(gId).getStrValue());
 	}
 	
 	public void testGetOtherClientDetailsByClientId() throws DuplicateKeyException{
@@ -50,25 +50,25 @@ public class CustomClientDataIntergrationTest extends HibernateTestCase {
 		createAndSaveOtherClientDetails("Kamkunji", c1, 1, getCustomField());
 		long clientId = getOtherClientDetails().getClient().getId();
 		
-		assertEquals("Kamkunji",hibernateOtherClientDetailsDao.getOtherDetailsByClientId(clientId).get(0).getStrValue());
+		assertEquals("Kamkunji",hibernateOtherClientDetailsDao.getCustomValuesByClientId(clientId).get(0).getStrValue());
 	}
 	
 	public void testDeleteAccount() throws DuplicateKeyException{
 		assertEmptyDatabase();
 		createAndSaveCustomField("Location", 1);
 		createAndSaveOtherClientDetails("Mkuru Kwa Jenga", null, 1, getCustomField());
-		hibernateOtherClientDetailsDao.deleteOtherClientDetails(getOtherClientDetails());
-		assertEquals(0, hibernateOtherClientDetailsDao.getAllOtherDetails().size());
+		hibernateOtherClientDetailsDao.deleteCustomValue(getOtherClientDetails());
+		assertEquals(0, hibernateOtherClientDetailsDao.getAllCustomValues().size());
 	}
 	
 	private void createAndSaveOtherClientDetails(String cfName, Client client, int expectedPaymentCount, CustomField cf) throws DuplicateKeyException{
-		hibernateOtherClientDetailsDao.saveOtherClientDetails(createOtherClientdetails(cfName, client, cf));
-		assertEquals(1, hibernateOtherClientDetailsDao.getAllOtherDetails().size());
+		hibernateOtherClientDetailsDao.saveCustomValue(createOtherClientdetails(cfName, client, cf));
+		assertEquals(1, hibernateOtherClientDetailsDao.getAllCustomValues().size());
 	}
 	
 	private CustomValue getOtherClientDetails(){
-		assertEquals(1, hibernateOtherClientDetailsDao.getAllOtherDetails().size());
-		return(this.hibernateOtherClientDetailsDao.getAllOtherDetails().get(0));
+		assertEquals(1, hibernateOtherClientDetailsDao.getAllCustomValues().size());
+		return(this.hibernateOtherClientDetailsDao.getAllCustomValues().get(0));
 	}
 	
 	
@@ -112,6 +112,6 @@ public class CustomClientDataIntergrationTest extends HibernateTestCase {
 	}
 	
 	private void assertEmptyDatabase(){
-		assertEquals(0, hibernateOtherClientDetailsDao.getAllOtherDetails().size());
+		assertEquals(0, hibernateOtherClientDetailsDao.getAllCustomValues().size());
 	}
 }

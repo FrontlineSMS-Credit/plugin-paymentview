@@ -37,21 +37,21 @@ public class TargetIntergrationTest extends HibernateTestCase{
 	
 	public void testAddTarget() throws DuplicateKeyException{
 		assertDatabaseEmpty();
-		Target t = createTarget(getAccountNumber(11), saveAndGetServiceItem("Solar Panel","32000",1), "24/04/2011", "24/07/2011");
+		Target t = createTarget(getAccountNumber("11"), saveAndGetServiceItem("Solar Panel","32000",1), "24/04/2011", "24/07/2011");
 		hibernateTargetDao.saveTarget(t);
 		assertEquals(1, hibernateTargetDao.getTargetCount());
 	}
 	
 	public void testDeleteTarget() throws DuplicateKeyException{
 		assertDatabaseEmpty();
-		createAndSaveTarget(getAccountNumber(11), saveAndGetServiceItem("Solar Panel","32000",1), "24/04/2011", "24/07/2011", 1);
+		createAndSaveTarget(getAccountNumber("11"), saveAndGetServiceItem("Solar Panel","32000",1), "24/04/2011", "24/07/2011", 1);
 		hibernateTargetDao.deleteTarget(getTarget());
 		assertEquals(0, hibernateTargetDao.getTargetCount());
 	}
 	
 	public void testTargetById() throws DuplicateKeyException{
 		assertDatabaseEmpty();
-		createAndSaveTarget(getAccountNumber(11), saveAndGetServiceItem("Water Pump","12000",1), "24/04/2011", "24/07/2011", 1);
+		createAndSaveTarget(getAccountNumber("11"), saveAndGetServiceItem("Water Pump","12000",1), "24/04/2011", "24/07/2011", 1);
 		List<Target> tgtLst = this.hibernateTargetDao.getAllTarget();
 		Target t2 = hibernateTargetDao.getTargetById(tgtLst.get(0).getId());
 		assertEquals(new BigDecimal("12000"), t2.getServiceItem().getAmount());
@@ -59,14 +59,14 @@ public class TargetIntergrationTest extends HibernateTestCase{
 
 	public void testTargetByAccount() throws DuplicateKeyException{
 		assertDatabaseEmpty();
-		createAndSaveTarget(getAccountNumber(13), saveAndGetServiceItem("Solar Lamps","400",1), "24/04/2011", "24/07/2011", 1);
+		createAndSaveTarget(getAccountNumber("13"), saveAndGetServiceItem("Solar Lamps","400",1), "24/04/2011", "24/07/2011", 1);
 		Target t2 = hibernateTargetDao.getTargetByAccount(13);
 		assertEquals(new BigDecimal("400"), t2.getServiceItem().getAmount());
 	}
 	
 	public void testTargetByTargetItemName() throws DuplicateKeyException{
 		assertDatabaseEmpty();
-		createAndSaveTarget(getAccountNumber(13), saveAndGetServiceItem("15,000 Shillings Loan","15000",1), "24/04/2011", "24/07/2011", 1);
+		createAndSaveTarget(getAccountNumber("13"), saveAndGetServiceItem("15,000 Shillings Loan","15000",1), "24/04/2011", "24/07/2011", 1);
 		Target t2 = hibernateTargetDao.getTargetByName("15,000 Shillings Loan").get(0);
 		assertEquals(new BigDecimal("15000"), t2.getServiceItem().getAmount());
 	}
@@ -111,7 +111,7 @@ public class TargetIntergrationTest extends HibernateTestCase{
 		return tgt;
 	}
 	
-	private Account getAccountNumber(long accNum) throws DuplicateKeyException{
+	private Account getAccountNumber(String accNum) throws DuplicateKeyException{
 		Account acc = new Account();
 		acc.setAccountNumber(accNum);
 		hibernateAccountDao.saveAccount(acc);

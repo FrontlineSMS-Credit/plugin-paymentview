@@ -35,7 +35,7 @@ public class CustomValue {
 	private Client client;
 
 	/** Empty constructor required for hibernate. */
-	CustomValue() {
+	public CustomValue() {
 	}
 
 	public Client getClient() {

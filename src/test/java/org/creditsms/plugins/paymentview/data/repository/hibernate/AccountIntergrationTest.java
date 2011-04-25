@@ -25,15 +25,15 @@ public class AccountIntergrationTest extends HibernateTestCase {
 	
 	public void testSave() throws DuplicateKeyException {
 		assertNoAccountsInDatabase();
-		Account ac = setAccountNumber(103);
+		Account ac = setAccountNumber("103");
 		hibernateAccountDao.saveAccount(ac);
 		assertEquals(1, hibernateAccountDao.getAllAcounts().size());
 	}
 	
 	public void testAccountNumberUnique() throws DuplicateKeyException {
 		assertNoAccountsInDatabase();
-		Account ac1 = setAccountNumber(101);
-		Account ac2 = setAccountNumber(101);
+		Account ac1 = setAccountNumber("101");
+		Account ac2 = setAccountNumber("101");
 
 		hibernateAccountDao.saveAccount(ac1);
 		try{
@@ -46,25 +46,25 @@ public class AccountIntergrationTest extends HibernateTestCase {
 	
 	public void testDeleteAccount() throws DuplicateKeyException{
 		assertNoAccountsInDatabase();
-		Account saved = createAndSaveAccount(104, null, 1);
+		Account saved = createAndSaveAccount("104", null, 1);
 		hibernateAccountDao.deleteAccount(saved);
 		assertEquals(0, hibernateAccountDao.getAllAcounts().size());
 	}
 	
 	public void testGetAccountById() throws DuplicateKeyException{
 		assertNoAccountsInDatabase();
-		createAndSaveAccount(104, null, 1);
+		createAndSaveAccount("104", null, 1);
 		assertEquals(104, getExistingAccount(0).getAccountNumber());
 	}
 	
 	public void testGetAccountByAccountNumber() throws DuplicateKeyException {
-		Account acc = createAndSaveAccount(123456, null, 1);
-		assertEquals(123456, this.hibernateAccountDao.getAccountByAccountNumber(123456).getAccountNumber());
+		Account acc = createAndSaveAccount("123456", null, 1);
+		assertEquals(123456, this.hibernateAccountDao.getAccountByAccountNumber("123456").getAccountNumber());
 	}
 	
 	public void testGetAccountsByUserSingle() throws DuplicateKeyException{
 		Client client = createAndSaveClient("+2540720111111", 1);
-		createAndSaveAccount(21, client, 1);
+		createAndSaveAccount("21", client, 1);
 
 		assertEquals(21, hibernateAccountDao.getAccountsByClientId(client.getId()).get(0).getAccountNumber());
 	}
@@ -73,10 +73,10 @@ public class AccountIntergrationTest extends HibernateTestCase {
 		createAndSaveClient("+2540720111111", 1);
 		createAndSaveClient("+2540720000002", 2);
 
-		createAndSaveAccount(12,getExistingClient(0), 1);
-		createAndSaveAccount(13,getExistingClient(0), 2);
-		createAndSaveAccount(14,getExistingClient(1), 3);
-		createAndSaveAccount(15,getExistingClient(1), 4);
+		createAndSaveAccount("12",getExistingClient(0), 1);
+		createAndSaveAccount("13",getExistingClient(0), 2);
+		createAndSaveAccount("14",getExistingClient(1), 3);
+		createAndSaveAccount("15",getExistingClient(1), 4);
 		
 		long searchbyClientId = getExistingClient(1).getId();
 		assertEquals(14, hibernateAccountDao.getAccountsByClientId(searchbyClientId).get(0).getAccountNumber());
@@ -86,7 +86,7 @@ public class AccountIntergrationTest extends HibernateTestCase {
 		assertEquals(0, hibernateAccountDao.getAllAcounts().size());
 	}
 	
-	private Account setAccountNumber(long accNum){
+	private Account setAccountNumber(String accNum){
 		Account acc = new Account();
 		acc.setAccountNumber(accNum);
 		return acc;
@@ -114,14 +114,14 @@ public class AccountIntergrationTest extends HibernateTestCase {
 		return this.hibernateClientDao.getAllClients().get(clientPoz);
 	}
 	
-	private Account createAndSaveAccount(long accNumber, Client client, long expectedAccountCount) throws DuplicateKeyException{
+	private Account createAndSaveAccount(String accNumber, Client client, long expectedAccountCount) throws DuplicateKeyException{
 		Account account = createAccountWithAccountNumber(accNumber, client);
 		hibernateAccountDao.saveAccount(account);
 		assertEquals(expectedAccountCount, hibernateAccountDao.getAllAcounts().size());
 		return account;
 	}
 	
-	private Account createAccountWithAccountNumber(long accNumber, Client client){
+	private Account createAccountWithAccountNumber(String accNumber, Client client){
 		Account account = new Account();
 		account.setAccountNumber(accNumber);
 		if(client!=null)account.setClient(client);

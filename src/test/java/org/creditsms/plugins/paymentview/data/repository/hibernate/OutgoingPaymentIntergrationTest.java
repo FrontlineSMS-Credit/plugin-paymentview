@@ -65,17 +65,18 @@ public class OutgoingPaymentIntergrationTest extends HibernateTestCase{
 	public void testGettingOutgoingPaymentsByAccountNumber() throws DuplicateKeyException{
 		assertEmptyDatabases();
 		
-		Account ac = createAndSaveAccount(983, 1, null);
+		Account ac = createAndSaveAccount("983", 1, null);
 		createAndSaveOutgoingPayment("0739000000", "900000", new Date(), ac);
-		long accNumber = getOutgoingPayment().getAccount().getAccountNumber();
-		assertEquals(new BigDecimal("900000"), hibernateOutgoingPaymentDao.getOutgoingPaymentsByAccountNumber(accNumber).get(0).getAmountPaid());
+		String accNumber = getOutgoingPayment().getAccount().getAccountNumber();
+		assertEquals(new BigDecimal("900000"), hibernateOutgoingPaymentDao.
+				getOutgoingPaymentsByAccountNumber(accNumber).get(0).getAmountPaid());
 	}
 	
 	public void testGettingOutgoingPaymentByuserId() throws DuplicateKeyException{
 		assertEmptyDatabases();
 		
 		Client c = createAndSaveClient("0719000000", "Anne Njoki", 1);
-		Account ac = createAndSaveAccount(981, 1, c);
+		Account ac = createAndSaveAccount("981", 1, c);
 		createAndSaveOutgoingPayment("0739000000", "700000", new Date(), ac);
 		long clientId = getOutgoingPayment().getAccount().getClient().getId();
 		assertEquals(new BigDecimal("700000"), hibernateOutgoingPaymentDao.getOutgoingPaymentByClientId(clientId).get(0).getAmountPaid());
@@ -107,7 +108,7 @@ public class OutgoingPaymentIntergrationTest extends HibernateTestCase{
 		return op;
 	}
 	
-	private Account createAndSaveAccount(long accountNumber, int expectedAccountCount, Client client) throws DuplicateKeyException {
+	private Account createAndSaveAccount(String accountNumber, int expectedAccountCount, Client client) throws DuplicateKeyException {
 		Account ac = new Account();
 		ac.setAccountNumber(accountNumber);
 		if(client != null) ac.setClient(client);
