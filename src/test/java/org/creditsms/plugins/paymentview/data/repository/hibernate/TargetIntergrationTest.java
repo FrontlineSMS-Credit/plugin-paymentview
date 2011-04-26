@@ -60,7 +60,7 @@ public class TargetIntergrationTest extends HibernateTestCase{
 	public void testTargetByAccount() throws DuplicateKeyException{
 		assertDatabaseEmpty();
 		createAndSaveTarget(getAccountNumber("13"), saveAndGetServiceItem("Solar Lamps","400",1), "24/04/2011", "24/07/2011", 1);
-		Target t2 = hibernateTargetDao.getTargetByAccount(13);
+		Target t2 = hibernateTargetDao.getTargetByAccount("13");
 		assertEquals(new BigDecimal("400"), t2.getServiceItem().getAmount());
 	}
 	

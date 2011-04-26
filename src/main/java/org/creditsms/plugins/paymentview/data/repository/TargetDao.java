@@ -38,7 +38,7 @@ public interface TargetDao {
 	 * @param targetId
 	 * @return
 	 */
-	public Target getTargetByAccount(long accountId);
+	public Target getTargetByAccount(String accountNumber);
 
 	/**
 	 * Returns a Target with TargetItem between a given date

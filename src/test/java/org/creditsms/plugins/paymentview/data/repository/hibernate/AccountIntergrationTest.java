@@ -54,19 +54,19 @@ public class AccountIntergrationTest extends HibernateTestCase {
 	public void testGetAccountById() throws DuplicateKeyException{
 		assertNoAccountsInDatabase();
 		createAndSaveAccount("104", null, 1);
-		assertEquals(104, getExistingAccount(0).getAccountNumber());
+		assertEquals("104", getExistingAccount(0).getAccountNumber());
 	}
 	
 	public void testGetAccountByAccountNumber() throws DuplicateKeyException {
 		Account acc = createAndSaveAccount("123456", null, 1);
-		assertEquals(123456, this.hibernateAccountDao.getAccountByAccountNumber("123456").getAccountNumber());
+		assertEquals("123456", this.hibernateAccountDao.getAccountByAccountNumber("123456").getAccountNumber());
 	}
 	
 	public void testGetAccountsByUserSingle() throws DuplicateKeyException{
 		Client client = createAndSaveClient("+2540720111111", 1);
 		createAndSaveAccount("21", client, 1);
 
-		assertEquals(21, hibernateAccountDao.getAccountsByClientId(client.getId()).get(0).getAccountNumber());
+		assertEquals("21", hibernateAccountDao.getAccountsByClientId(client.getId()).get(0).getAccountNumber());
 	}
 	
 	public void testGetAccountsByUserIdMultiple() throws DuplicateKeyException {
@@ -79,7 +79,7 @@ public class AccountIntergrationTest extends HibernateTestCase {
 		createAndSaveAccount("15",getExistingClient(1), 4);
 		
 		long searchbyClientId = getExistingClient(1).getId();
-		assertEquals(14, hibernateAccountDao.getAccountsByClientId(searchbyClientId).get(0).getAccountNumber());
+		assertEquals("14", hibernateAccountDao.getAccountsByClientId(searchbyClientId).get(0).getAccountNumber());
 	}
 
 	void assertNoAccountsInDatabase() {

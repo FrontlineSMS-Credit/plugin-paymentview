@@ -35,10 +35,10 @@ public class HibernateTargetDao extends BaseHibernateDao<Target> implements
 		return super.getAll(startIndex, limit);
 	}
 
-	public Target getTargetByAccount(long accNumber) {
+	public Target getTargetByAccount(String string) {
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria accountCriteria = criteria.createCriteria("account");
-		accountCriteria.add(Restrictions.eq("accountNumber", accNumber));
+		accountCriteria.add(Restrictions.eq("accountNumber", string));
 		return super.getUnique(criteria);
 	}
 
