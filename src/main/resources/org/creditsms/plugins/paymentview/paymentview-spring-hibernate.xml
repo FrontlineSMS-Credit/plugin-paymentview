@@ -14,36 +14,40 @@
 	<tx:annotation-driven />
 
 	<!-- Bean wiring for the Payment View plugin  -->
-	<bean id="clientDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateClientDao">
+	<bean id="clientDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateClientDao" parent="baseHibernateDao">
 		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="eventBus" ref="eventBus"/>
 	</bean>
-	<bean id="networkOperatorDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateNetworkOperatorDao">
+	<bean id="accountDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateAccountDao" parent="baseHibernateDao">
 		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="eventBus" ref="eventBus"/>
 	</bean>
-	<bean id="paymentServiceDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernatePaymentServiceDao">
+	<bean id="customValueDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateCustomValueDao" parent="baseHibernateDao">
 		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>	
-	<bean id="paymentServiceTransactionDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernatePaymentServiceTransactionDao">
-		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="eventBus" ref="eventBus"/>
 	</bean>
-	<bean id="quickDialCodeDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateQuickDialCodeDao">
+	<bean id="customFieldDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateCustomFieldDao" parent="baseHibernateDao">
+		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="eventBus" ref="eventBus"/>
+	</bean>
+	<bean id="incomingPaymentDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateIncomingPaymentDao" parent="baseHibernateDao">
 	    <property name="sessionFactory" ref="sessionFactory" />
+	    <property name="eventBus" ref="eventBus"/>
 	</bean>
-    <bean id="paymentViewErrorDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernatePaymentViewErrorDao">
+    <bean id="outgoingPaymentDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateOutgoingPaymentDao" parent="baseHibernateDao">
         <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-    
-	<bean id="accountDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateAccountDao">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
-	<bean id="otherClientDetailsDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateOtherClientDetailsDao">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
-	<bean id="incomingPaymentDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateIncomingPaymentDao">
+        <property name="eventBus" ref="eventBus"/>
+    </bean>    
+	<bean id="serviceItemDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateServiceItemDao" parent="baseHibernateDao">
 	    <property name="sessionFactory" ref="sessionFactory" />
+	    <property name="eventBus" ref="eventBus"/>
 	</bean>
-    <bean id="outgoingPaymentDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateOutgoingPaymentDao">
+    <bean id="targetDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateTargetDao" parent="baseHibernateDao">
         <property name="sessionFactory" ref="sessionFactory" />
+        <property name="eventBus" ref="eventBus"/>
     </bean>
-    
+    <bean id="baseHibernateDao" abstract="true" class="net.frontlinesms.data.repository.hibernate">
+		<property name="sessionFactory" ref="sessionFactory"/>
+		<property name="eventBus" ref="eventBus"/>
+	</bean>
 </beans>

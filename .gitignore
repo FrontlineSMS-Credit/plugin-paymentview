@@ -10,10 +10,9 @@ bin/
 .project
 .settings/
 
-# Temporary working directory
+# Temporary working files and directory
 temp/
 /izpack-build.xml
 /izpack-build.xml
-/.classpath
-/.settings
-/target
+*.orig
+*.save

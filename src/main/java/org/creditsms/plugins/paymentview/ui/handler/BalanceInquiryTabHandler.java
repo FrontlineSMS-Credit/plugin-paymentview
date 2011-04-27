@@ -7,19 +7,19 @@ public class BalanceInquiryTabHandler extends BaseTabHandler {
 
 	protected BalanceInquiryTabHandler(UiGeneratorController ui) {
 		super(ui);
-		// TODO Auto-generated constructor stub 
-	}
-
-	@Override
-	public void refresh() {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	protected Object initialiseTab() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void refresh() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

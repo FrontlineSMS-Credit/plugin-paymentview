@@ -1,8 +1,10 @@
 package org.creditsms.plugins.paymentview.data.repository;
 
-import java.util.List;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
+import net.frontlinesms.data.DuplicateKeyException;
+
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 
 /**
@@ -10,67 +12,68 @@ import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
  * */
 public interface OutgoingPaymentDao {
 	/**
-	 * get and return an OutgoingPayment with a specific id 
+	 * removes an OutgoingPayment payment to the system
 	 * */
-	public OutgoingPayment getOutgoingPaymentById(long outgoingPaymentId);
-	
+	public void deleteOutgoingPayment(OutgoingPayment outgoingPayment);
+
 	/**
 	 * returns all the OutgoingPayments in the system
 	 * */
 	public List<OutgoingPayment> getAllOutgoingPayments();
 	
-	/**
-	 * returns OutgoingPayment(s) within a given date range
-	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByDateRange(Calendar startDate, Calendar endDate);
+	public List<OutgoingPayment> getAllOutgoingPayments(int startIndex,
+			int limit);
 	
 	/**
-	 * returns OutgoingPayment(s) by time range
-	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByTimeRange(Date startTime, Date endtime);
-	
-	/**
-	 * returns OutgoingPayment(s) by client and by date
-	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByClientIdByDateRange(long clientId, Calendar startDate, Calendar endDate);
-	
+	 * @return
+	 */
+	public int getOutgoingPaymentsCount();
+
 	/**
 	 * returns OutgoingPayment(s) by clientId
 	 * */
-	public List<OutgoingPayment> getOutgoingPaymentByClientId(long clientId);
-	
+	public List<OutgoingPayment> getOutgoingPaymentsByClientId(long clientId);
+
+	/**
+	 * get and return an OutgoingPayment with a specific id
+	 * */
+	public OutgoingPayment getOutgoingPaymentById(long outgoingPaymentId);
+
 	/**
 	 * returns OutgoingPayment(s) by accountId
 	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByAccountId(long accountId);
-	
-	/**
-	 * returns OutgoingPayment(s) by accountId by date ranges
-	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByAccountIdByDateRange(long accountId, Calendar startDate, Calendar endDate);
-	
+	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumber(
+			String accountNumber);
+
 	/**
 	 * returns OutgoingPayment(s) by accountId by time ranges
 	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByAccountIdByTimeRange(long accountId, Date startDate, Date endDate);
-
-	/**
-	 * returns OutgoingPayment(s) by payer 
-	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByPayer(String payer);
+	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumberByTimeRange(
+			long accountId, Date startDate, Date endDate);
 
 	/**
 	 * returns OutgoingPayment(s) by phone number
 	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(long phoneNo);
+	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(String phoneNo);
 
 	/**
-	 * saves or updates an OutgoingPayment payment to the system
+	 * returns OutgoingPayment(s) by time range
 	 * */
-	public void saveOrUpdateOutgoingPayment(OutgoingPayment outgoingPayment);
-	
+	public List<OutgoingPayment> getOutgoingPaymentsByTimeRange(Date startTime,
+			Date endtime);
+
 	/**
-	 * removes an OutgoingPayment payment to the system
+	 * saves an OutgoingPayment payment to the system
 	 * */
-	public void deleteOutgoingPayment(OutgoingPayment outgoingPayment);
+	public void saveOutgoingPayment(OutgoingPayment outgoingPayment)
+			throws DuplicateKeyException;
+
+	/**
+	 * updates an OutgoingPayment payment to the system
+	 * */
+	public void updateOutgoingPayment(OutgoingPayment outgoingPayment)
+			throws DuplicateKeyException;
+
+	
+
 }

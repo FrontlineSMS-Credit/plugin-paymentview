@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dialog bottom="9" close="removeDialog(this)" 
+	columns="1" gap="15" left="9" name="clientDetailsDialog"
+	right="9" text="Create Alert"
+	top="9" resizable="true" modal="true" closable="true">
+
+	<label text="Select Mobile Payment Service" />
+	<combobox columns="50" name="cmbSelectAction" colspan="2" text="Select">
+		<choice text="MPESA - Safaricom"/>
+		<choice text="MPESA Tanzania - Vodacom"/>
+	</combobox>
+
+	<panel colspan="3" weightx="1">
+		<button icon="/icons/tick.png" text="Advanced"
+			action="removeDialog" />
+		<panel weightx="1" />
+		<button icon="/icons/tick.png" text="Next"
+			action="removeDialog" />
+	</panel>
+</dialog>

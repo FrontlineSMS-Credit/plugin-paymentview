@@ -1,73 +1,53 @@
 package org.creditsms.plugins.paymentview.data.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.JoinColumn;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
  * @Author Roy
  * */
-
 @Entity
 @Table(name = Account.TABLE_NAME)
 public class Account {
 	public static final String TABLE_NAME = "Account";
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
-
+	
 	@Column(name = "accountNumber", nullable = false, unique = true)
-	private long accountNumber;
-
-	@ManyToOne(fetch = FetchType.LAZY)
+	private String accountNumber;
+ 
+	@ManyToOne
 	@JoinColumn(name = "clientId", nullable = true)
 	private Client client;
 
+	/* Needed by Hibernate */
 	public Account() {}
 
-	public Account(long accountNumber) {
+	public Account(String accountNumber) {
 		this.accountNumber = accountNumber;
 	}
 
-	public long getAccountId() {
-		return id;
-	}
-
-	public void setAccountId(long id) {
-		this.id = id;
-	}
-
-	public long getAccountNumber() {
-		return accountNumber;
-	}
-
-	public void setAccountNumber(long accountNumber) {
+	public Account(String accountNumber, Client client) {
 		this.accountNumber = accountNumber;
-	}
-
-	public Client getClient() {
-		return client;
-	}
-
-	public void setClient(Client client) {
 		this.client = client;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ (int) (accountNumber ^ (accountNumber >>> 32));
+				+ ((accountNumber == null) ? 0 : accountNumber.hashCode());
 		result = prime * result + ((client == null) ? 0 : client.hashCode());
-		result = prime * result + (int) (id ^ (id >>> 32));
 		return result;
 	}
 
@@ -92,8 +72,33 @@ public class Account {
 		return true;
 	}
 
+	public long getAccountId() {
+		return id;
+	}
+
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+
+	public Client getClient() {
+		return client;
+	}
+
+	public void setAccountId(long id) {
+		this.id = id;
+	}
+
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+
+	public void setClient(Client client) {
+		this.client = client;
+	}
+
 	@Override
 	public String toString() {
-		return "Account [id=" + id + ", accountNumber=" + accountNumber + "]";
+		return "Account [id=" + id + ", accountNumber=" + accountNumber
+				+ ", client=" + client + "]";
 	}
 }

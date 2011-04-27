@@ -4,34 +4,69 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
-@SuppressWarnings("unchecked")
-public class HibernateOutgoingPaymentDao extends HibernateDaoSupport implements OutgoingPaymentDao {
+public class HibernateOutgoingPaymentDao extends
+		BaseHibernateDao<OutgoingPayment> implements OutgoingPaymentDao {
 
-	public OutgoingPayment getOutgoingPaymentById(long outgoingPaymentId) {
-		// TODO Auto-generated method stub
-		return null;
+	protected HibernateOutgoingPaymentDao() {
+		super(OutgoingPayment.class);
+	}
+
+	public void deleteOutgoingPayment(OutgoingPayment outgoingPayment) {
+		super.delete(outgoingPayment);
 	}
 
 	public List<OutgoingPayment> getAllOutgoingPayments() {
+		return super.getAll();
+	}
+	
+	public List<OutgoingPayment> getAllOutgoingPayments(int startIndex,
+			int limit) {
+		return super.getAll(startIndex, limit);
+	}
+	
+	public int getOutgoingPaymentsCount() {
+		return super.countAll();
+	}
+
+	public List<OutgoingPayment> getOutgoingPaymentsByClientId(long clientId) {
+		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria accountCriteria = criteria.createCriteria("account");
+		DetachedCriteria clientCriteria = accountCriteria
+				.createCriteria("client");
+		clientCriteria.add(Restrictions.eq("id", clientId));
+		return super.getList(criteria);
+	}
+
+	public OutgoingPayment getOutgoingPaymentById(long id) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("id", id));
+		return super.getUnique(criteria);
+	}
+
+	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumber(
+			String accNumber) {
+		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria accountCriteria = criteria.createCriteria("account");
+		accountCriteria.add(Restrictions.eq("accountNumber", accNumber));
+		return super.getList(criteria);
+	}
+
+	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumberByDateRange(
+			long accountId, Calendar startDate, Calendar endDate) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentsByDateRange(
-			Calendar startDate, Calendar endDate) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<OutgoingPayment> getOutgoingPaymentsByTimeRange(Date startTime,
-			Date endtime) {
+	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumberByTimeRange(
+			long accountId, Date startDate, Date endDate) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -42,46 +77,32 @@ public class HibernateOutgoingPaymentDao extends HibernateDaoSupport implements 
 		return null;
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentByClientId(long clientId) {
+	public List<OutgoingPayment> getOutgoingPaymentsByDateRange(
+			Calendar startDate, Calendar endDate) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentsByAccountId(long accountId) {
+	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(String phoneNo) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("phoneNumber", phoneNo));
+		return super.getList(criteria);
+	}
+
+	public List<OutgoingPayment> getOutgoingPaymentsByTimeRange(Date startTime,
+			Date endtime) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentsByAccountIdByDateRange(
-			long accountId, Calendar startDate, Calendar endDate) {
-		// TODO Auto-generated method stub
-		return null;
+	public void saveOutgoingPayment(OutgoingPayment outgoingPayment)
+			throws DuplicateKeyException {
+		super.save(outgoingPayment);
 	}
 
-	public List<OutgoingPayment> getOutgoingPaymentsByAccountIdByTimeRange(
-			long accountId, Date startDate, Date endDate) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public void updateOutgoingPayment(OutgoingPayment outgoingPayment)
+			throws DuplicateKeyException {
+		super.update(outgoingPayment);
 
-	public List<OutgoingPayment> getOutgoingPaymentsByPayer(String payer) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(long phoneNo) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void saveOrUpdateOutgoingPayment(OutgoingPayment outgoingPayment) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void deleteOutgoingPayment(OutgoingPayment outgoingPayment) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	}	
 }

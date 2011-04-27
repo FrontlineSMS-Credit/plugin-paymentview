@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dialog bottom="9" close="removeDialog(this)" 
+	columns="3" gap="15" left="9" name="clientDetailsDialog"
+	right="9" text="Create Alert"
+	top="9" resizable="true" modal="true" closable="true">
+
+	<label text="Enter Account PIN" />
+	<textfield colspan="2" columns="15" text="" />
+	<label text="Verify Account PIN" />
+	<textfield colspan="2" columns="15" text="" />
+
+	<panel colspan="3" weightx="1">
+		<button icon="/icons/tick.png" text="Previous"
+			action="removeDialog" />
+		<panel weightx="1" />
+		<button icon="/icons/tick.png" text="Next"
+			action="removeDialog" />
+	</panel>
+</dialog>

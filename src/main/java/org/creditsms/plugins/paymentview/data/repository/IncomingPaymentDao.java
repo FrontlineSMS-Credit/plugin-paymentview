@@ -1,8 +1,10 @@
 package org.creditsms.plugins.paymentview.data.repository;
 
-import java.util.List;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
+import net.frontlinesms.data.DuplicateKeyException;
+
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 
 /**
@@ -10,67 +12,77 @@ import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
  * */
 public interface IncomingPaymentDao {
 	/**
-	 * get and return an IncomingPayment with a specific id 
+	 * removes an IncomingPayment payment to the system
 	 * */
-	public IncomingPayment getIncomingPaymentById(long incomingPaymentId);
-	
+	public void deleteIncomingPayment(IncomingPayment incomingPayment);
+
 	/**
 	 * returns all the incomingPayments in the system
 	 * */
 	public List<IncomingPayment> getAllIncomingPayments();
 	
 	/**
-	 * returns IncomingPayment(s) within a given date range
+	 * returns all the incomingPayments in the system
 	 * */
-	public List<IncomingPayment> getIncomingPaymentsByDateRange(Calendar startDate, Calendar endDate);
-	
+	public int getIncomingPaymentsCount();
+
 	/**
-	 * returns IncomingPayment(s) by time range
-	 * */
-	public List<IncomingPayment> getIncomingPaymentsByTimeRange(Date startTime, Date endtime);
-	
-	/**
-	 * returns IncomingPayment(s) by client and by date
-	 * */
-	public List<IncomingPayment> getIncomingPaymentsByClientIdByDateRange(long clientId, Calendar startDate, Calendar endDate);
-	
+	 * returns all the incomingPayments in the system
+	 * 
+	 * @param startingIndex
+	 * @param limit
+	 * @return
+	 */
+	public List<IncomingPayment> getAllIncomingPayments(int startingIndex,
+			int limit);
+
 	/**
 	 * returns IncomingPayment(s) by clientId
 	 * */
 	public List<IncomingPayment> getIncomingPaymentByClientId(long clientId);
-	
+
+	/**
+	 * get and return an IncomingPayment with a specific id
+	 * */
+	public IncomingPayment getIncomingPaymentById(long incomingPaymentId);
+
 	/**
 	 * returns IncomingPayment(s) by accountId
 	 * */
-	public List<IncomingPayment> getIncomingPaymentsByAccountId(long accountId);
-	
-	/**
-	 * returns IncomingPayment(s) by accountId by date ranges
-	 * */
-	public List<IncomingPayment> getIncomingPaymentsByAccountIdByDateRange(long accountId, Calendar startDate, Calendar endDate);
-	
+	public List<IncomingPayment> getIncomingPaymentsByAccountNumber(
+			String accountNumber);
+
 	/**
 	 * returns IncomingPayment(s) by accountId by time ranges
 	 * */
-	public List<IncomingPayment> getIncomingPaymentsByAccountIdByTimeRange(long accountId, Date startDate, Date endDate);
+	public List<IncomingPayment> getIncomingPaymentsByAccountNumberByTimeRange(
+			long accountId, Date startDate, Date endDate);
 
 	/**
-	 * returns IncomingPayment(s) by payer 
+	 * returns IncomingPayment(s) by payer
 	 * */
 	public List<IncomingPayment> getIncomingPaymentsByPayer(String payer);
 
 	/**
 	 * returns IncomingPayment(s) by phone number
 	 * */
-	public List<IncomingPayment> getIncomingPaymentsByPhoneNo(long phoneNo);
+	public List<IncomingPayment> getIncomingPaymentsByPhoneNo(String phoneNo);
 
 	/**
-	 * saves or updates an IncomingPayment payment to the system
+	 * returns IncomingPayment(s) by time range
 	 * */
-	public void saveOrUpdateIncomingPayment(IncomingPayment incomingPayment);
-	
+	public List<IncomingPayment> getIncomingPaymentsByTimeRange(Date startTime,
+			Date endtime);
+
 	/**
-	 * removes an IncomingPayment payment to the system
+	 * saves an IncomingPayment payment to the system
 	 * */
-	public void deleteIncomingPayment(IncomingPayment incomingPayment);
+	public void saveIncomingPayment(IncomingPayment incomingPayment)
+			throws DuplicateKeyException;
+
+	/**
+	 * updates an IncomingPayment payment to the system
+	 * */
+	public void updateIncomingPayment(IncomingPayment incomingPayment)
+			throws DuplicateKeyException;
 }

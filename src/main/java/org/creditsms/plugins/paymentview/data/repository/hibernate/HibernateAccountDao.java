@@ -1,58 +1,59 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
+
 import java.util.List;
 
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
+
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
-@SuppressWarnings("unchecked")
-public class HibernateAccountDao extends BaseHibernateDao<Account>  implements AccountDao{
+public class HibernateAccountDao extends BaseHibernateDao<Account> implements
+		AccountDao {
 
 	protected HibernateAccountDao() {
 		super(Account.class);
 	}
-	
-	public List<Account> getAllAcounts() {
-		return this.getHibernateTemplate().loadAll(Account.class);
+
+	public void deleteAccount(Account account) {
+		super.delete(account);
 	}
 
-	public List<Account> getAccountsByClientId(long clientId) {
-		Session session = getSession();
-		Criteria criteria = session.createCriteria(Account.class);
-			
-		Criteria clientCriteria = criteria.createCriteria("client");
-		clientCriteria.add( Restrictions.eq("id", clientId ));
-				
-		List<Account> accountLst= criteria.list();
-
-		if (accountLst.size() == 0) {
-			return null;
-		}
-		return accountLst ;
+	public Account getAccountByAccountNumber(String accNumber) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("accountNumber", accNumber));
+		return super.getUnique(criteria);
 	}
 
 	public Account getAccountById(long id) {
-		Session session = getSession();
-		Criteria criteria = session.createCriteria(Account.class)
-		.add(Restrictions.eq("id", id));
-			
-		List<Account> accLst = criteria.list();
-
-		if (accLst.size() == 0) {
-			return null;
-		}
-		return accLst.get(0);
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("id", id));
+		return super.getUnique(criteria);
 	}
 
-	public void deleteAccount(Account account) {
-		this.getHibernateTemplate().delete(account);
+	public List<Account> getAccountsByClientId(long id) {
+		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria clientCriteria = criteria.createCriteria("client");
+		clientCriteria.add(Restrictions.eq("id", id));
+		return super.getList(criteria);
 	}
 
-	public void saveUpdateAccount(Account account) {
-		this.getHibernateTemplate().saveOrUpdate(account);
+	public List<Account> getAllAcounts() {
+		return super.getAll();
+	}
+
+	public int getAcountsCount() {
+		return super.countAll();
+	}
+	
+	public void saveAccount(Account account) throws DuplicateKeyException {
+		super.save(account);
+	}
+
+	public void updateAccount(Account account) throws DuplicateKeyException {
+		super.update(account);
 	}
 
 }

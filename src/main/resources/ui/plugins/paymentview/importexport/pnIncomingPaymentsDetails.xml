@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel name="pnInfo" bottom="5" columns="3" gap="5" left="5" right="5" top="5" weightx="1" weighty="1">
+	<checkbox action="columnCheckboxChanged" icon="/icons/user.png"	name="cbPaymentBy" selected="true" text="First Name" />
+	<checkbox action="columnCheckboxChanged" icon="/icons/user.png" name="cbPhoneNumber" selected="true" text="Other Name" />
+	<checkbox action="columnCheckboxChanged" icon="/icons/phone.png" name="cbAccount" selected="true" text="i18n.common.phone.number" />
+	<checkbox action="columnCheckboxChanged" icon="/icons/money.png" name="cbAmountPaid" selected="true" text="Amount Paid" />
+	<checkbox action="columnCheckboxChanged" icon="/icons/time.png" name="cbTimePaid" selected="true" text="Time Paid" />
+</panel>
