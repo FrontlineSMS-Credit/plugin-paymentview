@@ -120,7 +120,7 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 			public boolean equals(Object that) {
 				return that instanceof IncomingPayment &&
 						((IncomingPayment) that).getPaymentBy().equals("0712345678") &&
-						((IncomingPayment) that).getAmountPaid() == 500;
+						((IncomingPayment) that).getAmountPaid().equals(new BigDecimal("500"));
 			}
 		});
 	}

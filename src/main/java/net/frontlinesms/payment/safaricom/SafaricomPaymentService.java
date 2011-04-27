@@ -1,7 +1,6 @@
 package net.frontlinesms.payment.safaricom;
 
 import java.math.BigDecimal;
-import java.util.regex.Pattern;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
@@ -111,7 +110,7 @@ public class SafaricomPaymentService implements PaymentService, EventObserver {
 		}
 	}
 
-	private float getAmount(FrontlineMessage message) {
+	private BigDecimal getAmount(FrontlineMessage message) {
 		String[] s = message.getTextContent().split("\\s");
 		if(s.length < 2 || !s[s.length-1].equals("KES")) {
 			throw new IllegalArgumentException();
@@ -121,7 +120,7 @@ public class SafaricomPaymentService implements PaymentService, EventObserver {
 			throw new IllegalArgumentException();
 		}
 		
-		return Float.parseFloat(amountString);
+		return new BigDecimal(amountString);
 	}
 
 	private String getPayer(FrontlineMessage message) {
