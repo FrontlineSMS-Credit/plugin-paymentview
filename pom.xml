@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.creditsms.plugins</groupId>
+	<groupId>net.frontlinesms.plugins.credit</groupId>
 	<artifactId>frontlinesms-plugin-credit</artifactId>
 	<name>FrontlineSMS CreditSMS Plugin</name>
 	<version>0.01.2-SNAPSHOT</version>
@@ -16,6 +16,14 @@
 	<scm>
 		<developerConnection>scm:git:git@github.com:${github.projectOwner}/${github.projectName}.git</developerConnection>
 	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>frontlinesms.repo</id>
+			<name>FrontlineSMS Maven repository</name>
+			<url>ftp://dev.frontlinesms.com</url>
+		</repository>
+	</distributionManagement>
 
 	<dependencies>
 		<dependency>
