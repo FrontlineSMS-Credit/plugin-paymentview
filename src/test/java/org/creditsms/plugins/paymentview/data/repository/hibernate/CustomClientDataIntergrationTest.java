@@ -1,5 +1,7 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
 
+import java.util.List;
+
 import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.domain.Client;
@@ -68,7 +70,8 @@ public class CustomClientDataIntergrationTest extends HibernateTestCase {
 	
 	private CustomValue getOtherClientDetails(){
 		assertEquals(1, hibernateOtherClientDetailsDao.getAllCustomValues().size());
-		return(this.hibernateOtherClientDetailsDao.getAllCustomValues().get(0));
+		List<CustomValue> lstCustomValue = hibernateOtherClientDetailsDao.getAllCustomValues();
+		return(this.hibernateOtherClientDetailsDao.getCustomValueById(lstCustomValue.get(0).getId()));
 	}
 	
 	

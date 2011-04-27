@@ -18,7 +18,7 @@ public interface TargetDao {
 	/**
 	 * return all the Target in the system
 	 * **/
-	public List<Target> getAllTarget();
+	public List<Target> getAllTargets();
 
 	/**
 	 * Returns all Target from a particular start index with a maximum number of
@@ -64,7 +64,7 @@ public interface TargetDao {
 	 *            string to be used to match the names
 	 * @return
 	 */
-	public List<Target> getTargetByName(String targetName);
+	public List<Target> getTargetsByName(String targetName);
 
 	/**
 	 * Returns a list of Target whose name is similar to the specified string
@@ -76,7 +76,7 @@ public interface TargetDao {
 	 * @param limit
 	 * @return
 	 */
-	public List<Target> getTargetByName(String targetName, int startIndex,
+	public List<Target> getTargetsByName(String targetName, int startIndex,
 			int limit);
 
 	/**
@@ -86,7 +86,7 @@ public interface TargetDao {
 	 *            string to be used to match the names
 	 * @return
 	 */
-	public List<Target> getTargetByTargetItem(long targetItemId);
+	public List<Target> getTargetsByTargetItem(long targetItemId);
 
 	/** @return number of Target in the system */
 	public int getTargetCount();

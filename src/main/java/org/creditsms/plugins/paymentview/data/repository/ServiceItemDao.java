@@ -17,7 +17,7 @@ public interface ServiceItemDao {
 	/**
 	 * return all the ServiceItem in the system
 	 * **/
-	public List<ServiceItem> getAllServiceItem();
+	public List<ServiceItem> getAllServiceItems();
 
 	/**
 	 * Returns all ServiceItem from a particular start index with a maximum
@@ -29,7 +29,7 @@ public interface ServiceItemDao {
 	 *            Maximum number of ServiceItem to fetch from the start index
 	 * @return
 	 */
-	public List<ServiceItem> getAllServiceItem(int startIndex, int limit);
+	public List<ServiceItem> getAllServiceItems(int startIndex, int limit);
 
 	/**
 	 * Returns a ServiceItem with the same id as the passed id
@@ -47,7 +47,7 @@ public interface ServiceItemDao {
 	 *            string to be used to match the names
 	 * @return
 	 */
-	public List<ServiceItem> getServiceItemByName(String serviceItemName);
+	public List<ServiceItem> getServiceItemsByName(String serviceItemName);
 
 	/**
 	 * Returns a list of ServiceItem whose name is similar to the specified
@@ -59,7 +59,7 @@ public interface ServiceItemDao {
 	 * @param limit
 	 * @return
 	 */
-	public List<ServiceItem> getServiceItemByName(String serviceItemName,
+	public List<ServiceItem> getServiceItemsByName(String serviceItemName,
 			int startIndex, int limit);
 
 	/** @return number of ServiceItem in the system */

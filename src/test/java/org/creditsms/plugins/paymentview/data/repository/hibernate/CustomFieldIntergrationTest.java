@@ -1,5 +1,7 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
 
+import java.util.List;
+
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,6 +33,13 @@ public class CustomFieldIntergrationTest extends HibernateTestCase{
 		createAndSaveCustomField("Ikolomani", 1);
 		hibernateCustomFieldDao.deleteCustomField(getCustomField());
 		assertEquals(0, hibernateCustomFieldDao.getCustomFieldCount());
+	}
+	
+	public void testGetCustomFieldById() throws DuplicateKeyException{
+		assertDatabaseEmpty();
+		createAndSaveCustomField("Lokichogio", 1);
+		List<CustomField> lstCustomField = hibernateCustomFieldDao.getAllCustomFields();
+		assertEquals("Lokichogio", hibernateCustomFieldDao.getCustomFieldById(lstCustomField.get(0).getId()).getStrName());
 	}
 	
 	public void testGetCustomFieldsByName() throws DuplicateKeyException{

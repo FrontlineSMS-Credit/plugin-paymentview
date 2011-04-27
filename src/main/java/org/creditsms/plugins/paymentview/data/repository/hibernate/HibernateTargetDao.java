@@ -27,7 +27,7 @@ public class HibernateTargetDao extends BaseHibernateDao<Target> implements
 		super.delete(target);
 	}
 
-	public List<Target> getAllTarget() {
+	public List<Target> getAllTargets() {
 		return super.getAll();
 	}
 
@@ -54,7 +54,7 @@ public class HibernateTargetDao extends BaseHibernateDao<Target> implements
 		return super.getUnique(criteria);
 	}
 
-	public List<Target> getTargetByName(String targetName) {
+	public List<Target> getTargetsByName(String targetName) {
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria targetItemCriteria = criteria
 				.createCriteria("serviceItem");
@@ -62,7 +62,7 @@ public class HibernateTargetDao extends BaseHibernateDao<Target> implements
 		return super.getList(criteria);
 	}
 
-	public List<Target> getTargetByName(String targetName, int startIndex,
+	public List<Target> getTargetsByName(String targetName, int startIndex,
 			int limit) {
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria targetItemCriteria = criteria
@@ -71,7 +71,7 @@ public class HibernateTargetDao extends BaseHibernateDao<Target> implements
 		return super.getList(criteria, startIndex, limit);
 	}
 
-	public List<Target> getTargetByTargetItem(long targetItemId) {
+	public List<Target> getTargetsByTargetItem(long targetItemId) {
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria targetItemCriteria = criteria
 				.createCriteria("serviceItem");

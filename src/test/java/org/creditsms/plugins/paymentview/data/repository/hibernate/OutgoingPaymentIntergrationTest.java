@@ -1,6 +1,7 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.Account;
@@ -79,11 +80,12 @@ public class OutgoingPaymentIntergrationTest extends HibernateTestCase{
 		Account ac = createAndSaveAccount("981", 1, c);
 		createAndSaveOutgoingPayment("0739000000", "700000", new Date(), ac);
 		long clientId = getOutgoingPayment().getAccount().getClient().getId();
-		assertEquals(new BigDecimal("700000"), hibernateOutgoingPaymentDao.getOutgoingPaymentByClientId(clientId).get(0).getAmountPaid());
+		assertEquals(new BigDecimal("700000"), hibernateOutgoingPaymentDao.getOutgoingPaymentsByClientId(clientId).get(0).getAmountPaid());
 	}
 	
 	private OutgoingPayment getOutgoingPayment(){
-		return(this.hibernateOutgoingPaymentDao.getAllOutgoingPayments().get(0));
+		List<OutgoingPayment> oPaymentsLst = hibernateOutgoingPaymentDao.getAllOutgoingPayments();
+		return(this.hibernateOutgoingPaymentDao.getOutgoingPaymentById(oPaymentsLst.get(0).getId()));
 	}
 	
 	private void createAndSaveOutgoingPayment(String phoneNumber, String amount, Date timePaid, Account account) throws DuplicateKeyException{

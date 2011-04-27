@@ -52,7 +52,7 @@ public class TargetIntergrationTest extends HibernateTestCase{
 	public void testTargetById() throws DuplicateKeyException{
 		assertDatabaseEmpty();
 		createAndSaveTarget(getAccountNumber("11"), saveAndGetServiceItem("Water Pump","12000",1), "24/04/2011", "24/07/2011", 1);
-		List<Target> tgtLst = this.hibernateTargetDao.getAllTarget();
+		List<Target> tgtLst = this.hibernateTargetDao.getAllTargets();
 		Target t2 = hibernateTargetDao.getTargetById(tgtLst.get(0).getId());
 		assertEquals(new BigDecimal("12000"), t2.getServiceItem().getAmount());
 	}
@@ -67,12 +67,12 @@ public class TargetIntergrationTest extends HibernateTestCase{
 	public void testTargetByTargetItemName() throws DuplicateKeyException{
 		assertDatabaseEmpty();
 		createAndSaveTarget(getAccountNumber("13"), saveAndGetServiceItem("15,000 Shillings Loan","15000",1), "24/04/2011", "24/07/2011", 1);
-		Target t2 = hibernateTargetDao.getTargetByName("15,000 Shillings Loan").get(0);
+		Target t2 = hibernateTargetDao.getTargetsByName("15,000 Shillings Loan").get(0);
 		assertEquals(new BigDecimal("15000"), t2.getServiceItem().getAmount());
 	}
 	
 	private Target getTarget(){
-		return this.hibernateTargetDao.getAllTarget().get(0);
+		return this.hibernateTargetDao.getAllTargets().get(0);
 	}
 	
 	private ServiceItem saveAndGetServiceItem(String serviceItemName, String amount, int expectedCount) throws DuplicateKeyException{

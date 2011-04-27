@@ -31,14 +31,14 @@ public class ServiceItemIntergrationTest extends HibernateTestCase{
 	public void testGetServiceItemByName() throws DuplicateKeyException{
 		assertDatabaseEmpty();
 		saveServiceItem("Green house installation","128000", 1);
-		List<ServiceItem> siLst = this.hibernateServiceItemDao.getServiceItemByName("Green house installation");
+		List<ServiceItem> siLst = this.hibernateServiceItemDao.getServiceItemsByName("Green house installation");
 		assertEquals(1, siLst.size());
 	}
 	
 	public void testGetServiceItemById() throws DuplicateKeyException{
 		assertDatabaseEmpty();
 		saveServiceItem("Green house installation","128000", 1);
-		List<ServiceItem> siLst = this.hibernateServiceItemDao.getAllServiceItem();
+		List<ServiceItem> siLst = this.hibernateServiceItemDao.getAllServiceItems();
 		ServiceItem si2 = hibernateServiceItemDao.getServiceItemById(siLst.get(0).getId());
 		assertEquals(new BigDecimal("128000"), si2.getAmount());
 	}
@@ -51,7 +51,7 @@ public class ServiceItemIntergrationTest extends HibernateTestCase{
 	}
 	
 	private ServiceItem getServiceItem(){
-		return this.hibernateServiceItemDao.getAllServiceItem().get(0);
+		return this.hibernateServiceItemDao.getAllServiceItems().get(0);
 	}
 	
 	private void saveServiceItem(String serviceItemName, String amount, int expectedCount) throws DuplicateKeyException{
