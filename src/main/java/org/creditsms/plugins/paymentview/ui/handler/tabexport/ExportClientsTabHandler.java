@@ -17,7 +17,7 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 		PagedComponentItemProvider {
 	private static final String XML_EXPORT_CLIENTS_TAB = "/ui/plugins/paymentview/export/innertabs/tabexportclients.xml";
 	private static final String COMPONENT_TABLE_CLIENTS = "tbl_clients";
-	private static final String COMPONENT_PANEL_CLIENTs = "pnl_clients";
+	private static final String COMPONENT_PANEL_CLIENTS = "pnl_clients";
 	private ClientDao clientDao;
 	private Object clientsTab;
 
@@ -41,7 +41,7 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 	protected Object initialiseTab() {
 		clientsTab = ui.loadComponentFromFile(XML_EXPORT_CLIENTS_TAB, this);
 		
-		pnlClients = ui.find(clientsTab, COMPONENT_PANEL_CLIENTs);
+		pnlClients = ui.find(clientsTab, COMPONENT_PANEL_CLIENTS);
 		tblClients = ui.find(clientsTab, COMPONENT_TABLE_CLIENTS);
 		clientsTablePager = new ComponentPagingHandler(ui, this, tblClients);		
 		

@@ -1,9 +1,9 @@
-package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments;
+package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard;
 
 import java.util.List;
 
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.handler.BaseTabHandler;
+import net.frontlinesms.ui.handler.BasePanelHandler;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
@@ -11,49 +11,69 @@ import net.frontlinesms.ui.handler.PagedListDetails;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SchedulePaymentAuthDialogHandler;
-import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SendPaymentAuthDialogHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
 
-public class SelectFromClientsTabHandler extends BaseTabHandler implements PagedComponentItemProvider {
-	private static final String XML_SELECT_FROM_CLIENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/selectfromclients.xml";
-	
-	private static final String XML_EXPORT_CLIENTS_TAB = "/ui/plugins/paymentview/export/innertabs/tabexportclients.xml";
+public class StepSelectClientsHandler extends BasePanelHandler implements PagedComponentItemProvider {
 	private static final String COMPONENT_TABLE_CLIENTS = "tbl_clients";
+	private static final String XML_STEP_SELECT_CLIENT = "/ui/plugins/paymentview/analytics/viewdashboard/stepselectclients.xml";
 	private static final String COMPONENT_PANEL_CLIENTS = "pnl_clients";
 	private ClientDao clientDao;
-
+	private ViewDashBoardTabHandler viewDashBoardTabHandler;
 	private Object tblClients;
-	private String clientFilter = "";
-	private ComponentPagingHandler clientsTablePager;
 	private Object pnlClients;
+	private ComponentPagingHandler clientsTablePager;
+	private String clientFilter = "";
 
-
-	private Object schedulePaymentAuthDialog;
-	private Object selectFromClientsTab;
-	private Object sendPaymentAuthDialog;
-
-	public SelectFromClientsTabHandler(UiGeneratorController ui,
-			ClientDao clientDao) {
+	protected StepSelectClientsHandler(UiGeneratorController ui,
+			ClientDao clientDao, ViewDashBoardTabHandler viewDashBoardTabHandler) {
 		super(ui);
 		this.clientDao = clientDao;
-		init();
+		this.viewDashBoardTabHandler = viewDashBoardTabHandler;
+		this.loadPanel(XML_STEP_SELECT_CLIENT);
+		this.init();
 		refresh();
 	}
 
-	@Override
-	protected Object initialiseTab() {
-		selectFromClientsTab = ui.loadComponentFromFile(
-				XML_SELECT_FROM_CLIENTS_TAB, this);
+	private void init() {
+		pnlClients = ui.find(this.getPanelComponent(), COMPONENT_PANEL_CLIENTS);
+		tblClients = ui.find(this.getPanelComponent(), COMPONENT_TABLE_CLIENTS);
+		clientsTablePager = new ComponentPagingHandler((UiGeneratorController)ui, this, tblClients);		
 		
-		pnlClients = ui.find(selectFromClientsTab, COMPONENT_PANEL_CLIENTS);
-		tblClients = ui.find(selectFromClientsTab, COMPONENT_TABLE_CLIENTS);
-		clientsTablePager = new ComponentPagingHandler(ui, this, tblClients);		
-		
-		this.ui.add(pnlClients, this.clientsTablePager.getPanel());		
-		
-		return selectFromClientsTab;
+		this.ui.add(pnlClients, this.clientsTablePager.getPanel());
 	}
 
+	private Object createRow(Client c) {
+		Object row = ui.createTableRow();
+		ui.add(row,
+				ui.createTableCell(c.getFirstName() + " " + c.getOtherName()));
+		ui.add(row, ui.createTableCell(c.getPhoneNumber()));
+		String accountStr = "";
+		for (Account a : c.getAccounts()) {
+			accountStr += (a.getAccountNumber()) + ", ";
+		}
+		ui.add(row, ui.createTableCell(accountStr));
+
+		return row;
+	}
+
+	public Object getPanelComponent() {
+		return super.getPanelComponent();
+	}
+
+	public void next() {
+		viewDashBoardTabHandler.setCurrentStepPanel(new StepCreateSettingsHandler(
+				(UiGeneratorController) ui, clientDao, viewDashBoardTabHandler).getPanelComponent());
+	}
+
+	public void previous() {
+		viewDashBoardTabHandler.setCurrentStepPanel(new StepSelectTargetSavingsHandler(
+				(UiGeneratorController) ui, clientDao, viewDashBoardTabHandler).getPanelComponent());
+	}
+	
+	public void refresh() {
+		this.updateClientList();
+	}
+	
 	private Object getRow(Client client) {
 		Object row = ui.createTableRow(client);
 
@@ -93,10 +113,6 @@ public class SelectFromClientsTabHandler extends BaseTabHandler implements Paged
 
 		ui.add(row, cell, 0);
 	}
-	
-	public void refresh() {
-		this.updateClientList();
-	}
 
 	public void updateClientList() {
 		this.clientsTablePager.setCurrentPage(0);
@@ -133,18 +149,5 @@ public class SelectFromClientsTabHandler extends BaseTabHandler implements Paged
 			components[i] = getRow(c);
 		}
 		return components;
-	}
-
-
-	public void showSchedulePaymentAuthDialog() {
-		schedulePaymentAuthDialog = new SchedulePaymentAuthDialogHandler(ui)
-				.getDialog();
-		ui.add(schedulePaymentAuthDialog);
-	}
-
-	public void showSendPaymentAuthDialog() {
-		sendPaymentAuthDialog = new SendPaymentAuthDialogHandler(ui)
-				.getDialog();
-		ui.add(sendPaymentAuthDialog);
 	}
 }
