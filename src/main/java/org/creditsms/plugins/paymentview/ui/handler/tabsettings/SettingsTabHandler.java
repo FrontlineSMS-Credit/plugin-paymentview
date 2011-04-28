@@ -12,6 +12,7 @@ import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
+import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.ConfigureAccountHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.CreateNewAccountHandler;
 
@@ -33,16 +34,16 @@ public class SettingsTabHandler extends BaseTabHandler implements
 	private Object settingsTableComponent;
 	private ComponentPagingHandler settingsTablePager;
 
-	public SettingsTabHandler(UiGeneratorController ui,
-			IncomingPaymentDao incomingPaymentDao,
-			OutgoingPaymentDao outgoingPaymentDao, AccountDao accountDao,
-			ClientDao clientDao) {
+	private final PaymentViewThinletTabController paymentViewThinletTabController;
 
+	public SettingsTabHandler(UiGeneratorController ui, PaymentViewThinletTabController paymentViewThinletTabController) {
 		super(ui);
-		this.incomingPaymentDao = incomingPaymentDao;
-		this.outgoingPaymentDao = outgoingPaymentDao;
-		this.accountDao = accountDao;
-		this.clientDao = clientDao;
+		
+		this.paymentViewThinletTabController = paymentViewThinletTabController;
+		this.incomingPaymentDao = paymentViewThinletTabController.getIncomingPaymentDao();
+		this.outgoingPaymentDao = paymentViewThinletTabController.getOutgoingPaymentDao();
+		this.accountDao = paymentViewThinletTabController.getAccountDao();
+		this.clientDao = paymentViewThinletTabController.getClientDao();
 		init();
 	}
 

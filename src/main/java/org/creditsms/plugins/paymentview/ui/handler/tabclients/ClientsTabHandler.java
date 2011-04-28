@@ -11,10 +11,10 @@ import net.frontlinesms.ui.handler.PagedListDetails;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
+import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientImportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.CustomizeClientDBHandler;
@@ -36,15 +36,15 @@ public class ClientsTabHandler extends BaseTabHandler implements
 	private CustomFieldDao customFieldDao;
 	private CustomValueDao customValueDao;
 	private Object pnlClientsList;
+	private PaymentViewThinletTabController paymentViewThinletTabController; 
 
-	public ClientsTabHandler(UiGeneratorController ui, ClientDao clientDao,
-			AccountDao accountDao, CustomFieldDao customFieldDao,
-			CustomValueDao customValueDao) {
+	public ClientsTabHandler(UiGeneratorController ui, final PaymentViewThinletTabController paymentViewThinletTabController) {
 		super(ui);
+		this.paymentViewThinletTabController = paymentViewThinletTabController;
 		this.clientFilter = "";		
-		this.clientDao = clientDao;
-		this.customFieldDao = customFieldDao;
-		this.customValueDao = customValueDao;
+		this.clientDao = paymentViewThinletTabController.getClientDao();
+		this.customFieldDao = paymentViewThinletTabController.getCustomFieldDao();
+		this.customValueDao = paymentViewThinletTabController.getCustomValueDao();
 		init();
 	}
 	

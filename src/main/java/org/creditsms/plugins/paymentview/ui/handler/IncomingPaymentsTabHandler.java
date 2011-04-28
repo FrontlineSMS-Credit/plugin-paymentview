@@ -14,6 +14,7 @@ import net.frontlinesms.ui.handler.PagedListDetails;
 
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsImportHandler;
 
@@ -35,11 +36,13 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private Object incomingPaymentsTableComponent;
 	private ComponentPagingHandler incomingPaymentsTablePager;
 	private Object pnlIncomingPaymentsTableComponent;
+	private final PaymentViewThinletTabController paymentViewThinletTabController;
 
 	public IncomingPaymentsTabHandler(UiGeneratorController ui,
-			IncomingPaymentDao incomingPaymentDao) {
+			PaymentViewThinletTabController paymentViewThinletTabController) {
 		super(ui);
-		this.incomingPaymentDao = incomingPaymentDao;
+		this.paymentViewThinletTabController = paymentViewThinletTabController;
+		this.incomingPaymentDao = paymentViewThinletTabController.getIncomingPaymentDao(); 
 		init();
 	}
 

@@ -6,6 +6,7 @@ import net.frontlinesms.ui.handler.BaseTabHandler;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
+import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 
 public class OutgoingPaymentsTabHandler extends BaseTabHandler {
 
@@ -22,12 +23,13 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler {
 	private SelectFromClientsTabHandler selectFromClientsTab;
 	private SendNewPaymentsTabHandler sendNewPaymentsTab;
 	private SentPaymentsTabHandler sentPaymentsTab;
+	private PaymentViewThinletTabController paymentViewThinletTabController;
 
-	public OutgoingPaymentsTabHandler(UiGeneratorController ui,
-			OutgoingPaymentDao outgoingPaymentDao, ClientDao clientDao) {
+	public OutgoingPaymentsTabHandler(UiGeneratorController ui, final PaymentViewThinletTabController paymentViewThinletTabController) {
 		super(ui);
-		this.outgoingPaymentDao = outgoingPaymentDao;
-		this.clientDao = clientDao;
+		this.paymentViewThinletTabController = paymentViewThinletTabController;
+		this.outgoingPaymentDao = paymentViewThinletTabController.getOutgoingPaymentDao();
+		this.clientDao = paymentViewThinletTabController.getClientDao();
 		init();
 	}
 

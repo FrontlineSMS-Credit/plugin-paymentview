@@ -9,6 +9,7 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
+import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ConfigureServiceTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
@@ -29,17 +30,14 @@ public class AnalyticsTabHandler implements ThinletUiEventHandler {
 	private UiGeneratorController ui;
 	private ViewDashBoardTabHandler viewDashBoardHandler;
 
-	public AnalyticsTabHandler(UiGeneratorController ui, ClientDao clientDao,
-			AccountDao accountDao, IncomingPaymentDao incomingPaymentDao,
-			OutgoingPaymentDao outgoingPaymentDao,
-			ServiceItemDao serviceItemDao, TargetDao targetDao) {
+	public AnalyticsTabHandler(UiGeneratorController ui, PaymentViewThinletTabController paymentViewThinletTabController) {
 		this.ui = ui;
-		this.accountDao = accountDao;
-		this.targetDao = targetDao;
-		this.clientDao = clientDao;
-		this.incomingPaymentDao = incomingPaymentDao;
-		this.outgoingPaymentDao = outgoingPaymentDao;
-		this.serviceItemDao = serviceItemDao;
+		this.accountDao = paymentViewThinletTabController.getAccountDao();
+		this.targetDao = paymentViewThinletTabController.getTargetDao();
+		this.clientDao = paymentViewThinletTabController.getClientDao();
+		this.incomingPaymentDao = paymentViewThinletTabController.getIncomingPaymentDao();
+		this.outgoingPaymentDao = paymentViewThinletTabController.getOutgoingPaymentDao();
+		this.serviceItemDao = paymentViewThinletTabController.getServiceItemDao();
 
 		init();
 	}
