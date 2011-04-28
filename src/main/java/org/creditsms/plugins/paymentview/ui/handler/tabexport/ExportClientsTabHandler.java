@@ -15,6 +15,8 @@ import org.creditsms.plugins.paymentview.ui.handler.tabexport.dialogs.ExportByCl
 
 public class ExportClientsTabHandler extends BaseTabHandler implements
 		PagedComponentItemProvider {
+	private static final String ICONS_CHECKBOX_SELECTED_PNG = "/icons/checkbox-selected.png";
+	private static final String ICONS_CHECKBOX_UNSELECTED_PNG = "/icons/checkbox-unselected.png";
 	private static final String XML_EXPORT_CLIENTS_TAB = "/ui/plugins/paymentview/export/innertabs/tabexportclients.xml";
 	private static final String COMPONENT_TABLE_CLIENTS = "tbl_clients";
 	private static final String COMPONENT_PANEL_CLIENTS = "pnl_clients";
@@ -76,7 +78,7 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 		Object row = ui.createTableRow(client);
 
 		Object cell = ui.createTableCell("");
-		ui.setIcon(cell, "/icons/header/checkbox-unselected.png");
+		ui.setIcon(cell, ICONS_CHECKBOX_UNSELECTED_PNG);
 		ui.add(row, cell);
 
 		ui.add(row,
@@ -110,7 +112,7 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 			Client attachedClient = (Client) ui.getAttachedObject(row);
 			if (!attachedClient.isSelected()) {
 				attachedClient.setSelected(true);
-				ui.setIcon(cell, "/icons/header/checkbox-selected.png");
+				ui.setIcon(cell, ICONS_CHECKBOX_SELECTED_PNG);
 			}
 
 			ui.add(row, cell, 0);
@@ -128,10 +130,10 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 		Client attachedClient = (Client) ui.getAttachedObject(row);
 		if (attachedClient.isSelected()) {
 			attachedClient.setSelected(false);
-			ui.setIcon(cell, "/icons/header/checkbox-unselected.png");
+			ui.setIcon(cell, ICONS_CHECKBOX_UNSELECTED_PNG);
 		} else {
 			attachedClient.setSelected(true);
-			ui.setIcon(cell, "/icons/header/checkbox-selected.png");
+			ui.setIcon(cell, ICONS_CHECKBOX_SELECTED_PNG);
 		}
 
 		ui.add(row, cell, 0);
