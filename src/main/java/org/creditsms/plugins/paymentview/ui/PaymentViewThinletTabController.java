@@ -102,7 +102,7 @@ public class PaymentViewThinletTabController extends
 		settingsTab.refresh();
 		ui.add(mainPane, settingsTab.getTab());
 		
-		cdtController = new ConnectedDeviceThinletTabController(ui);
+		cdtController = new ConnectedDeviceThinletTabController(ui);		
 		ui.add(mainPane, cdtController.getTab());
 	}
 

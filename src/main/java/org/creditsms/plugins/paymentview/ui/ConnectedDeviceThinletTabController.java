@@ -30,9 +30,18 @@ public class ConnectedDeviceThinletTabController extends BaseTabHandler implemen
 	 */
 	public ConnectedDeviceThinletTabController(UiGeneratorController ui) {
 		super(ui);
-		init();
 		this.smsServiceManager = ui.getFrontlineController().getSmsServiceManager();
+		init();		
 	}
+	
+	@Override
+	protected Object initialiseTab() {
+		connectedDevicesViewTab = ui.loadComponentFromFile(
+				XML_CONNECTED_DEVICE_VIEW_TAB, this);
+		
+		return connectedDevicesViewTab;
+	}
+	
 	/**
 	 * Refreshes the tab display
 	 */
@@ -49,17 +58,12 @@ public class ConnectedDeviceThinletTabController extends BaseTabHandler implemen
 	private Object getConnectedDevicesList() {
 		return find("the name of the list component from the XML file.");
 	}
+	
 	private Object getListItem(SmsService s) {
 		return ui.createListItem("I am a list item", s);
 	}
+	
 	private boolean shouldDisplay(SmsService s) {
-		return true; // eventually this will check if the device is suiotable for MPESA
-	}
-	@Override
-	protected Object initialiseTab() {
-		connectedDevicesViewTab = ui.loadComponentFromFile(
-				XML_CONNECTED_DEVICE_VIEW_TAB, this);
-		
-		return connectedDevicesViewTab;
+		return true; // eventually this will check if the device is suitable for MPESA
 	}
 }

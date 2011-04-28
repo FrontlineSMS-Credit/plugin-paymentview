@@ -20,7 +20,6 @@ public class SelectFromClientsTabHandler extends BaseTabHandler implements Paged
 
 	private static final String XML_SELECT_FROM_CLIENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/selectfromclients.xml";
 	
-	private static final String XML_EXPORT_CLIENTS_TAB = "/ui/plugins/paymentview/export/innertabs/tabexportclients.xml";
 	private static final String COMPONENT_TABLE_CLIENTS = "tbl_clients";
 	private static final String COMPONENT_PANEL_CLIENTS = "pnl_clients";
 	private ClientDao clientDao;
