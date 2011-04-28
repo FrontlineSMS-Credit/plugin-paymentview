@@ -24,6 +24,7 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
+import org.creditsms.plugins.paymentview.ui.ConnectedDeviceThinletTabController;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.springframework.context.ApplicationContext;
 
@@ -42,6 +43,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 
 	// > CONSTANTS
 	/** Filename and path of the XML for the PaymentView tab */
+	
 
 	/** DAO for accounts */
 	private FrontlineSMS frontlineController;
@@ -53,9 +55,11 @@ public class PaymentViewPluginController extends BasePluginController implements
 	private OutgoingPaymentDao outgoingPaymentDao;
 	private ServiceItemDao serviceItemDao;
 	private TargetDao targetDao;
-	private AccountDao accountDao;
+	private ConnectedDeviceThinletTabController connectedDeviceThinletTabController;
 
 	private PaymentViewThinletTabController tabController;
+
+	private AccountDao accountDao;
 
 	/**
 	 * @see net.frontlinesms.plugins.PluginController#deinit()
@@ -120,7 +124,6 @@ public class PaymentViewPluginController extends BasePluginController implements
 		
 		//Just after setting the DAOs
 		tabController.initTabs();
-		
 		return tabController.getPaymentViewTab();
 	}
 }
