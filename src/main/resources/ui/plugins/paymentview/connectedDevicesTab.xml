@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tab name=":connectedDevicesView" text="i18n.plugins.paymentview.manager" icon="/icons/header/connectedDevice.jpg">
+<tab name=":connectedDevicesView" text="i18n.plugins.paymentview.manager" icon="/icons/connectedDevice.jpg">
 	<panel  bottom="9" columns="2" gap="9" left="9" top="9" weightx="1" weighty="1">
 		<panel columns="1" gap="9" right="4" top="9" weighty="1">
 	    	<label icon="" valign="top"/>

@@ -59,6 +59,8 @@ public class PaymentViewPluginController extends BasePluginController implements
 
 	private PaymentViewThinletTabController tabController;
 
+	private AccountDao accountDao;
+
 	/**
 	 * @see net.frontlinesms.plugins.PluginController#deinit()
 	 */
@@ -122,10 +124,6 @@ public class PaymentViewPluginController extends BasePluginController implements
 		
 		//Just after setting the DAOs
 		tabController.initTabs();
-		
-		ConnectedDeviceThinletTabController cdtController = new ConnectedDeviceThinletTabController(uiController);
-		uiController.add(mainPane, cdtController.getTab());
-		
 		return tabController.getPaymentViewTab();
 	}
 }

@@ -59,6 +59,7 @@ public class PaymentViewThinletTabController extends
 	private ServiceItemDao serviceItemDao;
 	private TargetDao targetDao;
 	private IncomingPaymentDao incomingPaymentDao;
+	private ConnectedDeviceThinletTabController cdtController;
 
 	/**
 	 * 
@@ -100,6 +101,9 @@ public class PaymentViewThinletTabController extends
 		settingsTab = new SettingsTabHandler(ui, this);
 		settingsTab.refresh();
 		ui.add(mainPane, settingsTab.getTab());
+		
+		cdtController = new ConnectedDeviceThinletTabController(ui);
+		ui.add(mainPane, cdtController.getTab());
 	}
 
 	/**

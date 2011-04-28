@@ -6,7 +6,6 @@ package org.creditsms.plugins.paymentview.ui;
 
 import net.frontlinesms.messaging.sms.SmsService;
 import net.frontlinesms.messaging.sms.SmsServiceManager;
-import net.frontlinesms.messaging.sms.modem.SmsModem;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
