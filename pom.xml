@@ -24,7 +24,7 @@
 			<url>ftp://dev.frontlinesms.com</url>
 		</repository>
 	</distributionManagement>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>net.frontlinesms.core</groupId>
