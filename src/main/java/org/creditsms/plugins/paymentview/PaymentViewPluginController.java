@@ -26,12 +26,6 @@ import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.ui.ConnectedDeviceThinletTabController;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
-import org.creditsms.plugins.paymentview.ui.handler.IncomingPaymentsTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.AnalyticsTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.tabexport.ExportTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.OutgoingPaymentsTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.tabsettings.SettingsTabHandler;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -43,57 +37,33 @@ import org.springframework.context.ApplicationContext;
  * 
  * @author Emmanuel Kala
  */
-@PluginControllerProperties(name = "Payment View", 
-		iconPath = "/icons/creditsms.png", 
-		i18nKey = "plugins.paymentview", 
-		springConfigLocation = "classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml", 
-		hibernateConfigPath = "classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml")
+@PluginControllerProperties(name = "Payment View", iconPath = "/icons/creditsms.png", i18nKey = "plugins.paymentview", springConfigLocation = "classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml", hibernateConfigPath = "classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml")
 public class PaymentViewPluginController extends BasePluginController implements
 		IncomingMessageListener, ThinletUiEventHandler {
 
-	private static final String TABP_MAIN_PANE = "tabP_mainPane";
 	// > CONSTANTS
 	/** Filename and path of the XML for the PaymentView tab */
-	private static final String XML_PAYMENT_VIEW_TAB = "/ui/plugins/paymentview/paymentViewTab.xml";
 	
-	/** DAO for accounts */
-	private AccountDao accountDao;
-	private AnalyticsTabHandler analyticsTab;
-	// > INSTANCE PROPERTIES
-	/** DAO for clients */
-	private ClientDao clientDao;
-	// > THE OFFICIAL TABS FOR PAYMENTVIEW
-	private ClientsTabHandler clientsTab;
-	/** DAO for custom fields */
-	private CustomFieldDao customFieldDao;
-	/** DAO for quick dial codes (USSD requests) */
-	private CustomValueDao customValueDao;
 
-	private ExportTabHandler exportTab;
+	/** DAO for accounts */
 	private FrontlineSMS frontlineController;
 
-	/** DAO for incoming payments */
+	private ClientDao clientDao;
+	private CustomValueDao customValueDao;
+	private CustomFieldDao customFieldDao;
 	private IncomingPaymentDao incomingPaymentDao;
-	private IncomingPaymentsTabHandler incomingPayTab;
-	private Object mainPane;
-
-	/** DAO for payment view errors */
 	private OutgoingPaymentDao outgoingPaymentDao;
-	private OutgoingPaymentsTabHandler outgoingPayTab;
-	Object paymentViewTab;
-	/** DAO for payment view errors */
 	private ServiceItemDao serviceItemDao;
-	private SettingsTabHandler settingsTab;
-	private PaymentViewThinletTabController tabController;
-	/** DAO for payment view errors */
 	private TargetDao targetDao;
 	private ConnectedDeviceThinletTabController connectedDeviceThinletTabController;
+
+	private PaymentViewThinletTabController tabController;
 
 	/**
 	 * @see net.frontlinesms.plugins.PluginController#deinit()
 	 */
 	public void deinit() {
-		// this.frontlineController.removeIncomingMessageListener(this);
+		this.frontlineController.removeIncomingMessageListener(this);
 	}
 
 	/**
@@ -130,57 +100,32 @@ public class PaymentViewPluginController extends BasePluginController implements
 				.getBean("serviceItemDao");
 		targetDao = (TargetDao) applicationContext.getBean("targetDao");
 		accountDao = (AccountDao) applicationContext.getBean("accountDao");
-		
-		//new DummyData(accountDao, clientDao, customFieldDao, incomingPaymentDao, outgoingPaymentDao); 
+
+		// new DummyData(accountDao, clientDao, customFieldDao,
+		// incomingPaymentDao, outgoingPaymentDao);
 	}
 
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
 	@Override
 	public Object initThinletTab(UiGeneratorController uiController) {
 		tabController = new PaymentViewThinletTabController(this, uiController);
-		paymentViewTab = uiController.loadComponentFromFile(
-				XML_PAYMENT_VIEW_TAB, tabController);
+		tabController.setClientDao(clientDao);
+		tabController.setIncomingPaymentDao(incomingPaymentDao);
+		tabController.setOutgoingPaymentDao(outgoingPaymentDao);
+		tabController.setServiceItemDao(serviceItemDao);
+		tabController.setCustomValueDao(customValueDao);
+		tabController.setAccountDao(accountDao);
+		tabController.setCustomFieldDao(customFieldDao);
+		tabController.setTabComponent(targetDao);
 
-		tabController.setTabComponent(paymentViewTab);
 		tabController.refresh();
-
-		mainPane = uiController.find(paymentViewTab, TABP_MAIN_PANE);
-
-		clientsTab = new ClientsTabHandler(uiController, clientDao, accountDao,
-				customFieldDao, customValueDao);
-		clientsTab.refresh();
-		uiController.add(mainPane, clientsTab.getTab());
-
-		incomingPayTab = new IncomingPaymentsTabHandler(uiController,
-				incomingPaymentDao);
-		incomingPayTab.refresh();
-		uiController.add(mainPane, incomingPayTab.getTab());
-
-		outgoingPayTab = new OutgoingPaymentsTabHandler(uiController,
-				outgoingPaymentDao, clientDao);
-		outgoingPayTab.refresh();
-		uiController.add(mainPane, outgoingPayTab.getTab());
-
-		exportTab = new ExportTabHandler(uiController, clientDao,
-				incomingPaymentDao, outgoingPaymentDao);
-		exportTab.refresh();
-		uiController.add(mainPane, exportTab.getTab());
-
-		analyticsTab = new AnalyticsTabHandler(uiController, clientDao,
-				accountDao, incomingPaymentDao, outgoingPaymentDao,
-				serviceItemDao, targetDao);
-
-		analyticsTab.refresh();
-		uiController.add(mainPane, analyticsTab.getTab());
-
-		settingsTab = new SettingsTabHandler(uiController, incomingPaymentDao,
-				outgoingPaymentDao, accountDao, clientDao);
-		settingsTab.refresh();
-		uiController.add(mainPane, settingsTab.getTab());
+		
+		//Just after setting the DAOs
+		tabController.initTabs();
 		
 		ConnectedDeviceThinletTabController cdtController = new ConnectedDeviceThinletTabController(uiController);
 		uiController.add(mainPane, cdtController.getTab());
-
-		return paymentViewTab;
+		
+		return tabController.getPaymentViewTab();
 	}
 }
