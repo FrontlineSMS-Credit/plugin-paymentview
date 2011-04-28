@@ -16,21 +16,22 @@ import javax.persistence.Table;
 @Table(name = Account.TABLE_NAME)
 public class Account {
 	public static final String TABLE_NAME = "Account";
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
-	
+
 	@Column(name = "accountNumber", nullable = false, unique = true)
 	private String accountNumber;
- 
+
 	@ManyToOne
 	@JoinColumn(name = "clientId", nullable = true)
 	private Client client;
 
 	/* Needed by Hibernate */
-	public Account() {}
+	public Account() {
+	}
 
 	public Account(String accountNumber) {
 		this.accountNumber = accountNumber;
@@ -40,7 +41,7 @@ public class Account {
 		this.accountNumber = accountNumber;
 		this.client = client;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -16,6 +16,7 @@ import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
+import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
@@ -100,8 +101,8 @@ public class PaymentViewPluginController extends BasePluginController implements
 		targetDao = (TargetDao) applicationContext.getBean("targetDao");
 		accountDao = (AccountDao) applicationContext.getBean("accountDao");
 
-		// new DummyData(accountDao, clientDao, customFieldDao,
-		// incomingPaymentDao, outgoingPaymentDao);
+		new DummyData(accountDao, clientDao, customFieldDao,
+		incomingPaymentDao, outgoingPaymentDao);
 	}
 
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
