@@ -24,6 +24,7 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
+import org.creditsms.plugins.paymentview.ui.ConnectedDeviceThinletTabController;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.IncomingPaymentsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.AnalyticsTabHandler;
@@ -54,6 +55,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 	// > CONSTANTS
 	/** Filename and path of the XML for the PaymentView tab */
 	private static final String XML_PAYMENT_VIEW_TAB = "/ui/plugins/paymentview/paymentViewTab.xml";
+	
 	/** DAO for accounts */
 	private AccountDao accountDao;
 	private AnalyticsTabHandler analyticsTab;
@@ -85,6 +87,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 	private PaymentViewThinletTabController tabController;
 	/** DAO for payment view errors */
 	private TargetDao targetDao;
+	private ConnectedDeviceThinletTabController connectedDeviceThinletTabController;
 
 	/**
 	 * @see net.frontlinesms.plugins.PluginController#deinit()
@@ -174,6 +177,9 @@ public class PaymentViewPluginController extends BasePluginController implements
 				outgoingPaymentDao, accountDao, clientDao);
 		settingsTab.refresh();
 		uiController.add(mainPane, settingsTab.getTab());
+		
+		ConnectedDeviceThinletTabController cdtController = new ConnectedDeviceThinletTabController(uiController);
+		uiController.add(mainPane, cdtController.getTab());
 
 		return paymentViewTab;
 	}

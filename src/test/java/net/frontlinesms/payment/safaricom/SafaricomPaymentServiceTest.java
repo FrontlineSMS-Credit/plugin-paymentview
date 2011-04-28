@@ -141,7 +141,7 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 		IncomingPaymentProcessor incomingPaymentProcessor = mock(IncomingPaymentProcessor.class);
 		
 		// when
-		s.notify(mockMessageNotification("0798765432", "Here is the text to process - this should be valid confirmation text."));
+		s.notify(mockMessageNotification("0798765432", "0712345678 sent payment of 500 KES"));
 		
 		// then
 		WaitingJob.waitForEvent();
