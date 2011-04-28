@@ -42,7 +42,6 @@ public class PaymentViewPluginController extends BasePluginController implements
 
 	// > CONSTANTS
 	/** Filename and path of the XML for the PaymentView tab */
-	
 
 	/** DAO for accounts */
 	private FrontlineSMS frontlineController;
@@ -119,8 +118,8 @@ public class PaymentViewPluginController extends BasePluginController implements
 		tabController.setTabComponent(targetDao);
 
 		tabController.refresh();
-		
-		//Just after setting the DAOs
+
+		// Just after setting the DAOs
 		tabController.initTabs();
 		return tabController.getPaymentViewTab();
 	}

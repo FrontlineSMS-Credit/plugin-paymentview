@@ -4,7 +4,7 @@
 		<panel weightx="1" weighty="1" columns="1" gap="5" left="5"
 			name="pnl_tbl_clientList" right="5" top="5" width="100">			
 			<panel weightx="1" gap="5">
-				<label text="Client Database" font="20 Bold" weightx="1"/>
+				<label text="i18n.plugins.paymentview.tab.clients.title" font="20 Bold" weightx="1"/>
 				<panel weightx="1"/>
 				<panel weightx="1"/>
 				<panel weightx="1"/>
@@ -25,9 +25,9 @@
 					<menuitem action="editClient" icon="/icons/edit.png" name="miEditClient"
 						text="Edit Client" />
 					<menuitem action="showConfirmationDialog('deleteClient')"
-						icon="/icons/delete.png" name="miDeleteClient" text="Delete Client" />
+						icon="/icons/delete.png" name="miDeleteClient" text="i18n.plugins.paymentview.action.deleteclient" />
 					<menuitem action="exportClient"
-						icon="/icons/export.png" name="miExportClient" text="Export Client" />
+						icon="/icons/export.png" name="miExportClient" text="i18n.plugins.paymentview.action.exportclient" />
 				</popupmenu>
 			</table>
 		</panel>
@@ -35,14 +35,14 @@
 			weightx="1">
 			<panel halign="left">
 				<button icon="/icons/keyword.png" action="customizeClientDB"
-					name="btn_customizeClientDB" text="Customize Client Database" />
+					name="btn_customizeClientDB" text="i18n.plugins.paymentview.action.customizeclientdb" />
 			</panel>
 			<panel weightx="1" />
 			<panel columns="2" halign="left" gap="2" weightx="1">
 				<button icon="/icons/user_add.png" action="addClient" name="btn_add"
 					text="Add Client" weightx="1" weighty="1" />
 				<button icon="/icons/importContacts.png" action="importClient"
-					name="btn_import" text="Import Client" />
+					name="btn_import" text="i18n.plugins.paymentview.action.importclient" />
 			</panel>
 			<panel weightx="1" />
 			<panel weightx="1" />
@@ -51,8 +51,8 @@
 			<panel weightx="1" />
 			<panel weightx="1" />
 			<panel>
-				<button action="exportClient" icon="/icons/export.png" name="btn_tab_clientList_export"
-					text="Export" />
+				<button action="exportClient" icon="/icons/export.png" name="btn_export"
+					text="i18n.action.export" />
 			</panel>
 		</panel>
 	</panel>

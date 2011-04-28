@@ -18,7 +18,7 @@ public class SelectClientsHandler extends BasePanelHandler implements
 	private static final String ICONS_CHECKBOX_SELECTED_PNG = "/icons/checkbox-selected.png";
 	private static final String ICONS_CHECKBOX_UNSELECTED_PNG = "/icons/checkbox-unselected.png";
 	private static final String COMPONENT_CLIENT_TABLE = "tbl_clients";
-	private static final String XML_STEP_SELECT_CLIENT = "/ui/plugins/paymentview/analytics/createdashboard/stepselectclients.xml";
+	private static final String XML_STEP_SELECT_CLIENT = "/ui/plugins/paymentview/analytics/addclient/stepselectclients.xml";
 	private static final String COMPONENT_PANEL_CLIENT_LIST = "pnl_clients";
 	private Object clientsTableComponent;
 	private String clientFilter = "";
