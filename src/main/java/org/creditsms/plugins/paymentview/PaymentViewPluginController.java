@@ -24,7 +24,6 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
-import org.creditsms.plugins.paymentview.ui.ConnectedDeviceThinletTabController;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.springframework.context.ApplicationContext;
 
@@ -55,7 +54,6 @@ public class PaymentViewPluginController extends BasePluginController implements
 	private OutgoingPaymentDao outgoingPaymentDao;
 	private ServiceItemDao serviceItemDao;
 	private TargetDao targetDao;
-	private ConnectedDeviceThinletTabController connectedDeviceThinletTabController;
 
 	private PaymentViewThinletTabController tabController;
 

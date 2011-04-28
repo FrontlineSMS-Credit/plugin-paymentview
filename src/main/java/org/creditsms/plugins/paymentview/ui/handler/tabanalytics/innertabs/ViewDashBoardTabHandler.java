@@ -4,6 +4,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard.StepSelectTargetSavingsHandler;
 
 public class ViewDashBoardTabHandler extends BaseTabHandler {
@@ -14,9 +15,9 @@ public class ViewDashBoardTabHandler extends BaseTabHandler {
 	private Object viewDashboardTab;
 
 	public ViewDashBoardTabHandler(UiGeneratorController ui,
-			Object tabAnalytics, ClientDao clientDao) {
-		super(ui);
-		this.clientDao = clientDao;
+			Object tabAnalytics, PaymentViewThinletTabController paymentViewThinletTabController) {
+		super(ui); 
+		this.clientDao = paymentViewThinletTabController.getClientDao();
 		viewDashboardTab = ui.find(tabAnalytics, TAB_VIEW_DASHBOARD);
 		this.init();
 	}
