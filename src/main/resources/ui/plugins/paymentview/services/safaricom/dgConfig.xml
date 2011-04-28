@@ -1,0 +1,9 @@
+<dialog bottom="8" top="8" left="8" right="8" gap="8" close="removeDialog" columns="2">
+	<label text="Select device"/>
+	<list name="cbDevices"/>
+	
+	<label text="PIN"/>
+	<textfield name="tfPin"/>
+	
+	<button colspan="2" action="createService" text="create service!!!"/>
+</dialog>
