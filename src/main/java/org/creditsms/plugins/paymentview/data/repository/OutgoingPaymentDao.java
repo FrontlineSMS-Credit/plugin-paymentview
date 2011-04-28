@@ -32,7 +32,7 @@ public interface OutgoingPaymentDao {
 	/**
 	 * returns OutgoingPayment(s) by clientId
 	 * */
-	public List<OutgoingPayment> getOutgoingPaymentByClientId(long clientId);
+	public List<OutgoingPayment> getOutgoingPaymentsByClientId(long clientId);
 
 	/**
 	 * get and return an OutgoingPayment with a specific id

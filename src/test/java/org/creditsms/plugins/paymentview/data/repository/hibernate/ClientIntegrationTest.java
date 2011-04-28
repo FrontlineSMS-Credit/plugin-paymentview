@@ -1,5 +1,7 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
 
+import java.util.List;
+
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -68,7 +70,8 @@ public class ClientIntegrationTest extends HibernateTestCase {
 	}
 	
 	private Client getClient(){
-		return this.hibernateClientDao.getAllClients().get(0);
+		List<Client> clientLst = this.hibernateClientDao.getAllClients();
+		return this.hibernateClientDao.getClientById(clientLst.get(0).getId());
 	}
 	
 	private Client createClientWithPhoneNumber(String phoneNumber) {

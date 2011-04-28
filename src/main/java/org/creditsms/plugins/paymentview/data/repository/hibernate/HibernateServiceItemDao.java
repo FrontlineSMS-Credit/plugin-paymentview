@@ -24,11 +24,11 @@ public class HibernateServiceItemDao extends BaseHibernateDao<ServiceItem>
 		super.delete(serviceItem);
 	}
 
-	public List<ServiceItem> getAllServiceItem() {
+	public List<ServiceItem> getAllServiceItems() {
 		return super.getAll();
 	}
 
-	public List<ServiceItem> getAllServiceItem(int startIndex, int limit) {
+	public List<ServiceItem> getAllServiceItems(int startIndex, int limit) {
 		return super.getAll(startIndex, limit);
 	}
 
@@ -38,13 +38,13 @@ public class HibernateServiceItemDao extends BaseHibernateDao<ServiceItem>
 		return super.getUnique(criteria);
 	}
 
-	public List<ServiceItem> getServiceItemByName(String serviceItemName) {
+	public List<ServiceItem> getServiceItemsByName(String serviceItemName) {
 		DetachedCriteria criteria = super.getCriterion();
 		criteria.add(Restrictions.eq("targetName", serviceItemName));
 		return super.getList(criteria);
 	}
 
-	public List<ServiceItem> getServiceItemByName(String serviceItemName,
+	public List<ServiceItem> getServiceItemsByName(String serviceItemName,
 			int startIndex, int limit) {
 		DetachedCriteria criteria = super.getCriterion();
 		criteria.add(Restrictions.eq("targetName", serviceItemName));

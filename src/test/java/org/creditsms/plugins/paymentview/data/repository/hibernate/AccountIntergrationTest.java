@@ -1,4 +1,6 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
+import java.util.List;
+
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,11 +56,11 @@ public class AccountIntergrationTest extends HibernateTestCase {
 	public void testGetAccountById() throws DuplicateKeyException{
 		assertNoAccountsInDatabase();
 		createAndSaveAccount("104", null, 1);
-		assertEquals("104", getExistingAccount(0).getAccountNumber());
+		assertEquals("104", getAccount().getAccountNumber());
 	}
 	
 	public void testGetAccountByAccountNumber() throws DuplicateKeyException {
-		Account acc = createAndSaveAccount("123456", null, 1);
+		createAndSaveAccount("123456", null, 1);
 		assertEquals("123456", this.hibernateAccountDao.getAccountByAccountNumber("123456").getAccountNumber());
 	}
 	
@@ -106,8 +108,9 @@ public class AccountIntergrationTest extends HibernateTestCase {
 		return c;
 	}
 	
-	private Account getExistingAccount(int clientPoz){
-		return this.hibernateAccountDao.getAllAcounts().get(clientPoz);
+	private Account getAccount(){
+		List<Account> lstAccount = hibernateAccountDao.getAllAcounts();
+		return this.hibernateAccountDao.getAccountById(lstAccount.get(0).getAccountId());
 	}
 	
 	private Client getExistingClient(int clientPoz){
