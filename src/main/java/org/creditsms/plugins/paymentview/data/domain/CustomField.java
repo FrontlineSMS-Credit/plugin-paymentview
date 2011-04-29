@@ -4,6 +4,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,7 +38,7 @@ public class CustomField {
 	@Column(name = FIELD_STR_NAME, nullable = true, unique = false)
 	private String strName;
 
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER)
 	private Set<CustomValue> customValue;
 	
 	@Column(name = FIELD_USED, unique = false)
@@ -135,5 +136,49 @@ public class CustomField {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (active ? 1231 : 1237);
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((strName == null) ? 0 : strName.hashCode());
+		result = prime * result + (used ? 1231 : 1237);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CustomField other = (CustomField) obj;
+		if (active != other.active)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (strName == null) {
+			if (other.strName != null)
+				return false;
+		} else if (!strName.equals(other.strName))
+			return false;
+		if (used != other.used)
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "CustomField [id=" + id + ", name=" + name + ", strName="
+				+ strName + ", used=" + used
+				+ ", active=" + active + "]";
 	}
 }

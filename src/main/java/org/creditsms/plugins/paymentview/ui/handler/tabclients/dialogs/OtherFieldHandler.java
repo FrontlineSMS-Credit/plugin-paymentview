@@ -18,7 +18,7 @@ public class OtherFieldHandler implements ThinletUiEventHandler {
 
 	public OtherFieldHandler(UiGeneratorController ui,
 			CustomFieldDao customFieldDao,
-			CustomizeClientDBHandler customizeClientDBHandler) {
+			CustomizeClientDBHandler customizeClientDBHandler, Object comboBox) {
 		this.ui = ui;
 		this.customFieldDao = customFieldDao;
 		this.customizeClientDBHandler = customizeClientDBHandler;
@@ -35,6 +35,8 @@ public class OtherFieldHandler implements ThinletUiEventHandler {
 		}
 
 		this.removeDialog();
+		this.customizeClientDBHandler.refreshChoices();
+		customizeClientDBHandler.setSelectedItemOnCombo(customField);
 		ui.infoMessage("You have succesfully created the field '" + fieldName
 				+ "'!");
 	}

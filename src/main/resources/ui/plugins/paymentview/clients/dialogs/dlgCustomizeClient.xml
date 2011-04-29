@@ -10,5 +10,7 @@
 	
 	<panel weightx="1">
 		<button icon="/icons/tick.png" action="addField" name="btAddField" text="Add Field" />
+		<panel weightx="1"/>
+		<button icon="/icons/cross.png" action="removeDialog" name="btClose" text="Close" />
 	</panel>
 </dialog>

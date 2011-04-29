@@ -27,6 +27,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 
 	private Object dialogComponent;
 	private UiGeneratorController ui;
+	private Object combobox;
 
 	public CustomizeClientDBHandler(UiGeneratorController ui,
 			CustomFieldDao customFieldDao) {
@@ -74,25 +75,19 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		ui.setColspan(txtfield, 2);
 		ui.setColumns(txtfield, 50);
 		ui.setEditable(txtfield, false);
-
+		
 		ui.add(compPanelFields, label);
 		ui.add(compPanelFields, txtfield);
+		
+		ui.setHeight(this.dialogComponent, ui.getHeight(this.dialogComponent) + 30);
 	}
 
 	public void addField() {
 		Object label = ui.createLabel("Field " + ++c);
 		String fieldName = "fld" + c;
-		Object cmbfield = ui.createCombobox(fieldName, "Select Field Name");
-
-		for (CustomField cf : customFieldDao.getAllCustomFields()) {
-			if (cf.isActive() & !cf.isUsed()) {
-				Object cmbchoice = ui.createComboboxChoice(cf.getStrName(), cf);
-				ui.add(cmbfield, cmbchoice);
-			}
-		}
-
-		Object cmbchoice = ui.createComboboxChoice(ENTER_NEW_FIELD, null);
-		ui.add(cmbfield, cmbchoice);
+		Object cmbfield = this.combobox = ui.createCombobox(fieldName, "Select Field Name");
+				
+		this.refreshChoices(cmbfield);
 
 		ui.setColspan(cmbfield, 2);
 		ui.setColumns(cmbfield, 50);
@@ -102,6 +97,24 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 
 		ui.setAction(cmbfield, "addNewField(" + fieldName + ")",
 				compPanelFields, this);
+	}
+	
+	public void refreshChoices(){
+		refreshChoices(this.combobox);
+	}
+	
+	public void refreshChoices(Object cmbfield){
+		ui.removeAll(cmbfield);
+		
+		for (CustomField cf : customFieldDao.getAllCustomFields()) {
+			if (cf.isActive() & !cf.isUsed()) {
+				Object cmbchoice = ui.createComboboxChoice(cf.getStrName(), cf);
+				ui.add(cmbfield, cmbchoice);
+			}
+		}
+		
+		Object cmbchoice = ui.createComboboxChoice(ENTER_NEW_FIELD, null);
+		ui.add(cmbfield, cmbchoice);
 	}
 
 	public void addNewField(Object fieldCombo) {
@@ -113,7 +126,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 			CustomField cf = (CustomField) ui.getAttachedObject(ui
 					.getSelectedItem(fieldCombo));
 			Object txtField = ui.createTextfield(ui.getName(fieldCombo),
-					cf.getName());
+					cf.getStrName());
 
 			cf.setUsed(true);
 
@@ -145,6 +158,11 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 	}
 
 	public void showOtherFieldDialog(Object comboBox) {
-		ui.add(new OtherFieldHandler(ui, customFieldDao, this).getDialog());
+		this.combobox = comboBox;
+		ui.add(new OtherFieldHandler(ui, customFieldDao, this, comboBox).getDialog());
+	}
+
+	void setSelectedItemOnCombo(Object customField) {
+		ui.setSelectedIndex(this.combobox, ui.getIndex(this.combobox, customField));
 	}
 }
