@@ -22,13 +22,25 @@
 			<id>frontlinesms.repo</id>
 			<name>FrontlineSMS Maven repository</name>
 			<url>ftp://dev.frontlinesms.com</url>
-		</repository>
+		</repository>		
 	</distributionManagement>
+	<repositories>
+		<repository>
+			<id>apache.commons.lang.repo</id>
+			<name>Apache Commons Lang repository</name>
+			<url>http://repo2.maven.org/maven2/</url>
+		</repository>
+	</repositories>
 	
 	<dependencies>
 		<dependency>
 			<groupId>net.frontlinesms.core</groupId>
 			<artifactId>frontlinesms</artifactId>
 		</dependency>
+		<dependency>
+    <groupId>commons-lang</groupId>
+    <artifactId>commons-lang</artifactId>
+    <version>2.4</version>
+</dependency>
 	</dependencies>
 </project>

@@ -4,54 +4,37 @@ import java.lang.reflect.Field;
 
 import javax.persistence.Column;
 
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
+import org.creditsms.plugins.paymentview.utils.StringUtil;
 
 public class CustomizeClientDBHandler implements ThinletUiEventHandler {
+	private static final String ENTER_NEW_FIELD = "Enter New Field";
 	private static final String COMPONENT_PARENT_PNL_FIELDS = "parentPnlFields";
-
 	private static final String COMPONENT_PNL_FIELDS = "pnlFields";
+
 	private static final String XML_CUSTOMIZE_CLIENT_DB = "/ui/plugins/paymentview/clients/dialogs/dlgCustomizeClient.xml";
 
 	private int c;
 	private Object compPanelFields;
-
 	private Object compParentPanelFields;
-
 	private CustomFieldDao customFieldDao;
-
-	private CustomValueDao customValueDao;
 
 	private Object dialogComponent;
 	private UiGeneratorController ui;
 
 	public CustomizeClientDBHandler(UiGeneratorController ui,
-			CustomFieldDao customFieldDao, CustomValueDao customValueDao) {
+			CustomFieldDao customFieldDao) {
 		this.ui = ui;
 		this.customFieldDao = customFieldDao;
-		this.customValueDao = customValueDao;
+
 		init();
 		refresh();
-	}
-
-	public void addField(String name) {
-		this.addField(name, false);
-	}
-
-	public void addField(String name, boolean refresh) {
-		Object label = ui.createLabel("Field " + ++c);
-		Object txtfield = ui.createTextfield("fld" + name, name);
-		ui.setColspan(txtfield, 2);
-		ui.setColumns(txtfield, 50);
-		ui.add(compPanelFields, label);
-		ui.add(compPanelFields, txtfield);
-		if (refresh) {
-			this.refresh();
-		}
 	}
 
 	/**
@@ -71,10 +54,79 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		c = 0;
 		for (Field field : Client.class.getDeclaredFields()) {
 			if (field.isAnnotationPresent(Column.class)) {
-				addField(field.getName());
+				addField(StringUtil.getReadableFieldName(field.getName()));
 			}
 		}
+
+		for (CustomField cf : customFieldDao.getAllCustomFields()) {
+			if (cf.isActive() & cf.isUsed()) {
+				addField(cf.getStrName());
+			}
+		}
+
 		refresh();
+	}
+
+	public void addField(String name) {
+		Object label = ui.createLabel("Field " + ++c);
+		Object txtfield = ui.createTextfield("fld" + name, name);
+
+		ui.setColspan(txtfield, 2);
+		ui.setColumns(txtfield, 50);
+		ui.setEditable(txtfield, false);
+
+		ui.add(compPanelFields, label);
+		ui.add(compPanelFields, txtfield);
+	}
+
+	public void addField() {
+		Object label = ui.createLabel("Field " + ++c);
+		String fieldName = "fld" + c;
+		Object cmbfield = ui.createCombobox(fieldName, "Select Field Name");
+
+		for (CustomField cf : customFieldDao.getAllCustomFields()) {
+			if (cf.isActive() & !cf.isUsed()) {
+				Object cmbchoice = ui.createComboboxChoice(cf.getStrName(), cf);
+				ui.add(cmbfield, cmbchoice);
+			}
+		}
+
+		Object cmbchoice = ui.createComboboxChoice(ENTER_NEW_FIELD, null);
+		ui.add(cmbfield, cmbchoice);
+
+		ui.setColspan(cmbfield, 2);
+		ui.setColumns(cmbfield, 50);
+
+		ui.add(compPanelFields, label);
+		ui.add(compPanelFields, cmbfield);
+
+		ui.setAction(cmbfield, "addNewField(" + fieldName + ")",
+				compPanelFields, this);
+	}
+
+	public void addNewField(Object fieldCombo) {
+		if (ui.getText(fieldCombo).equals(ENTER_NEW_FIELD)) {
+			showOtherFieldDialog(fieldCombo);
+		} else {
+			int index = ui.getIndex(compPanelFields, fieldCombo);
+			ui.remove(fieldCombo);
+			CustomField cf = (CustomField) ui.getAttachedObject(ui
+					.getSelectedItem(fieldCombo));
+			Object txtField = ui.createTextfield(ui.getName(fieldCombo),
+					cf.getName());
+
+			cf.setUsed(true);
+
+			try {
+				customFieldDao.updateCustomField(cf);
+			} catch (DuplicateKeyException e) {
+				new RuntimeException(e);
+			}
+			ui.add(compPanelFields, txtField, index);
+			ui.setColspan(txtField, 2);
+			ui.setColumns(txtField, 50);
+			ui.setEditable(txtField, false);
+		}
 	}
 
 	public void refresh() {
@@ -92,9 +144,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		this.ui.removeDialog(dialog);
 	}
 
-	public void showOtherFieldDialog() {
-		ui.add(new OtherFieldHandler(ui, this, customFieldDao, customValueDao)
-				.getDialog());
+	public void showOtherFieldDialog(Object comboBox) {
+		ui.add(new OtherFieldHandler(ui, customFieldDao, this).getDialog());
 	}
-
 }

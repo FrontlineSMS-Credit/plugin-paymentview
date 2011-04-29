@@ -34,7 +34,6 @@ public class ClientsTabHandler extends BaseTabHandler implements
 	private Object clientsTableComponent;
 	private ComponentPagingHandler clientsTablePager;
 	private CustomFieldDao customFieldDao;
-	private CustomValueDao customValueDao;
 	private Object pnlClientsList;
 	private PaymentViewThinletTabController paymentViewThinletTabController; 
 
@@ -44,7 +43,6 @@ public class ClientsTabHandler extends BaseTabHandler implements
 		this.clientFilter = "";		
 		this.clientDao = paymentViewThinletTabController.getClientDao();
 		this.customFieldDao = paymentViewThinletTabController.getCustomFieldDao();
-		this.customValueDao = paymentViewThinletTabController.getCustomValueDao();
 		init();
 	}
 	
@@ -74,7 +72,7 @@ public class ClientsTabHandler extends BaseTabHandler implements
 
 	// > EVENTS...
 	public void customizeClientDB() {
-		ui.add(new CustomizeClientDBHandler(ui, customFieldDao, customValueDao)
+		ui.add(new CustomizeClientDBHandler(ui, customFieldDao)
 				.getDialog());
 	}
 
