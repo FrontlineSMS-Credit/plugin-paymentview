@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabexport;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.frontlinesms.ui.UiGeneratorController;
@@ -22,6 +23,8 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 	private static final String COMPONENT_PANEL_CLIENTS = "pnl_clients";
 	private ClientDao clientDao;
 	private Object clientsTab;
+	
+	List<Client> selectedUsers;
 
 	private Object tblClients;
 	private String clientFilter = "";
@@ -31,12 +34,9 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 	public ExportClientsTabHandler(UiGeneratorController ui, ClientDao clientDao) {
 		super(ui);
 		this.clientDao = clientDao;
+		selectedUsers = new ArrayList<Client>();
 		init();
 		refresh();
-	}
-
-	public void exportSelectedClients() {
-		ui.add(new ExportByClientXticsStep1Handler(ui, clientDao).getDialog());
 	}
 
 	@Override 
@@ -93,6 +93,15 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 		ui.setAttachedObject(row, client);
 		return row;
 	}
+	
+	public PagedListDetails getListDetails(Object list, int startIndex,
+			int limit) {
+		if (list == this.tblClients) {
+			return getClientListDetails(startIndex, limit);
+		} else {
+			throw new IllegalStateException();
+		}
+	}
 
 	public void refresh() {
 		this.updateClientList();
@@ -130,22 +139,18 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 		Client attachedClient = (Client) ui.getAttachedObject(row);
 		if (attachedClient.isSelected()) {
 			attachedClient.setSelected(false);
+			selectedUsers.remove(attachedClient);
 			ui.setIcon(cell, ICONS_CHECKBOX_UNSELECTED_PNG);
 		} else {
 			attachedClient.setSelected(true);
+			selectedUsers.add(attachedClient);
 			ui.setIcon(cell, ICONS_CHECKBOX_SELECTED_PNG);
 		}
 
 		ui.add(row, cell, 0);
 	}
-
-	public PagedListDetails getListDetails(Object list, int startIndex,
-			int limit) {
-		if (list == this.tblClients) {
-			return getClientListDetails(startIndex, limit);
-		} else {
-			throw new IllegalStateException();
-		}
+	
+	public void exportSelectedClients() {
+		ui.add(new ExportByClientXticsStep1Handler(ui, clientDao, selectedUsers).getDialog());
 	}
-
 }

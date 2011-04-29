@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import net.frontlinesms.data.EntityField;
+
 /**
  * @Author Roy
  * @author ian
@@ -19,17 +21,33 @@ import javax.persistence.Table;
 @Table(name = CustomField.TABLE_NAME)
 public class CustomField {
 	public static final String TABLE_NAME = "CustomField";
+
+	public static final String FIELD_STR_NAME = "name";
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
 	
-	@Column(name = "name", nullable = true, unique = false)
+	@Column(name = FIELD_STR_NAME, nullable = true, unique = false)
 	private String strName;
 
 	@OneToMany
 	private Set<CustomValue> customValue;
+	
+	public enum Field implements EntityField<CustomField> {
+		STR_NAME(FIELD_STR_NAME);
+		
+		/** name of a field */
+		private final String fieldName;
+		/**
+		 * Creates a new {@link Field}
+		 * @param fieldName name of the field
+		 */
+		Field(String fieldName) { this.fieldName = fieldName; }
+		/** @see EntityField#getFieldName() */
+		public String getFieldName() { return this.fieldName; }
+	}
 	
 	/** Empty constructor required for hibernate. */
 	CustomField() {}

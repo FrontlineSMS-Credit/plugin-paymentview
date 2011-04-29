@@ -13,6 +13,7 @@ import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.importexport.PaymentViewCsvExporter;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.utils.PaymentType;
 
 public class ExportByClientXticsStep2Handler extends
 		ExportDialogHandler<Client> {
@@ -30,16 +31,21 @@ public class ExportByClientXticsStep2Handler extends
 
 	private String exportfilepath;
 
+	private List<Client> selectedUsers;
+
+	private PaymentType paymentType;
+
 	public ExportByClientXticsStep2Handler(UiGeneratorController ui,
-			ClientDao clientDao) {
+			final List<Client> selectedUsers, final PaymentType paymentType) {
 		super(Client.class, ui);
-		this.clientDao = clientDao;
+		this.selectedUsers = selectedUsers;
+		this.paymentType = paymentType;
 	}
 
 	@Override
 	public void doSpecialExport(String dataPath) throws IOException {
-		log.debug("Exporting all contacts..");
-		exportClients(this.clientDao.getAllClients(), dataPath);
+		log.debug("Exporting selected clients..");
+		exportClients(selectedUsers, dataPath);
 	}
 
 	@Override
@@ -119,8 +125,8 @@ public class ExportByClientXticsStep2Handler extends
 
 	public void next(String exportfilepath) {
 		this.exportfilepath = exportfilepath;
-		uiController.add(new ExportByClientXticsStep3Handler(uiController)
-				.getDialog());
+		uiController.add(new ExportByClientXticsStep3Handler(uiController,
+				this, exportfilepath, selectedUsers).getDialog());
 		removeDialog();
 	}
 

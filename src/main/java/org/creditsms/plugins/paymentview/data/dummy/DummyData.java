@@ -33,7 +33,7 @@ public class DummyData {
 		this.outgoingPaymentDao = outgoingPaymentDao;
 				
 //		if (clientDao.getAllClients().isEmpty()) {
-			createDummyData();
+			//createDummyData();
 //		}
 	}
 

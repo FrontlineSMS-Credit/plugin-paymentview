@@ -104,7 +104,10 @@ public class EditClientHandler implements ThinletUiEventHandler {
 	public void saveClient() {
 		if (editMode) {
 			try {
-				this.clientDao.saveClient(getClientObj());
+				this.client.setFirstName(ui.getText(fieldFirstName));
+				this.client.setOtherName(ui.getText(fieldOtherName));
+				this.client.setPhoneNumber(ui.getText(fieldPhoneNumber));
+				this.clientDao.updateClient(this.client);
 			} catch (DuplicateKeyException e) {
 				throw new RuntimeException(e);
 			}

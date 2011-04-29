@@ -6,9 +6,9 @@
 	<panel columns="2" gap="5">
 		<label colspan="2" font="bold" text="Choose the kind of payment to export:" />
 		<panel weightx="1" />
-		<checkbox group="payType" text="Incoming Payments (from clients)" />
+		<checkbox group="payType" name="radIncomingPay" action="paymentTypeChanged(radIncomingPay)" text="Incoming Payments (from clients)" />
 		<panel weightx="1" />
-		<checkbox group="payType" text="Outgoing Payments (to clients)" />
+		<checkbox group="payType" name="radOutgoingPay" action="paymentTypeChanged(radOutgoingPay)" text="Outgoing Payments (to clients)" />
 		<panel weightx="1" />
 		<panel weightx="1" />
 		<label colspan="2" font="bold" text="Choose the date range for export:" />
@@ -22,10 +22,10 @@
 		<checkbox group="range" text="Date Range:" />
 		<panel weightx="1" />
 		<panel weightx="1">
-			<textfield columns="10" name="txt_FromDate" />
+			<textfield columns="10" editable="false" name="txt_FromDate" />
 			<button action="showDateSelecter(txt_FromDate)" icon="/icons/date.png" />
 			<panel weightx="1" />
-			<textfield columns="10" name="txt_ToDate" />
+			<textfield columns="10" editable="false" name="txt_ToDate" />
 			<button action="showDateSelecter(txt_ToDate)" icon="/icons/date.png" />
 		</panel>
 		<label colspan="2" font="bold" text="Select the file format you wish to export to:"

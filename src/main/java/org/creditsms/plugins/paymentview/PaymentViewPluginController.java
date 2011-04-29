@@ -36,6 +36,7 @@ import org.springframework.context.ApplicationContext;
  * or system such as Mifos - http://www.mifos.org
  * 
  * @author Emmanuel Kala
+ * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
  */
 @PluginControllerProperties(name = "Payment View", iconPath = "/icons/creditsms.png", i18nKey = "plugins.paymentview", springConfigLocation = "classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml", hibernateConfigPath = "classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml")
 public class PaymentViewPluginController extends BasePluginController implements

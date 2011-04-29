@@ -9,6 +9,7 @@ import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 
 /**
  * @author Roy
+ * @author Ian
  * */
 public interface IncomingPaymentDao {
 	/**
@@ -71,8 +72,14 @@ public interface IncomingPaymentDao {
 	/**
 	 * returns IncomingPayment(s) by time range
 	 * */
-	public List<IncomingPayment> getIncomingPaymentsByTimeRange(Date startTime,
+	public List<IncomingPayment> getIncomingPaymentsByDateRange(Date startTime,
 			Date endtime);
+	
+	/**
+	 * @param date
+	 * @return
+	 */
+	public List<IncomingPayment> getIncomingPaymentsByDate(Date date);
 
 	/**
 	 * saves an IncomingPayment payment to the system
