@@ -5,7 +5,7 @@
 		name="cbName" selected="true" text="i18n.plugins.paymentview.common.name" />
 	<checkbox action="columnCheckboxChanged" icon="/icons/phone.png"
 		name="cbPhone" selected="true" text="i18n.common.phone.number" />
-	<checkbox action="columnCheckboxChanged" colspan="2"
+	<checkbox action="columnCheckboxChanged"
 		icon="/icons/email.png" name="cbAccounts" selected="true"
 		text="i18n.plugins.paymentview.common.accounts" />
 </panel>

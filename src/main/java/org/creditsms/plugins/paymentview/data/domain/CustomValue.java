@@ -20,10 +20,10 @@ import net.frontlinesms.data.EntityField;
 public class CustomValue {
 	public static final String TABLE_NAME = "CustomValue";
 
+	private static final String FIELD_ID = "id";
 	private static final String FIELD_STR_VALUE = "strValue";
 	private static final String FIELD_CUSTOM_FIELD = "customFieldId";
 	private static final String FIELD_CLIENT = "clientId";
-	private static final String FIELD_ID = "id";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,7 @@ public class CustomValue {
 	private long id;
 
 	@Column(name = FIELD_STR_VALUE, nullable = true, unique = false)
-	private String strValue;
+	private String strValue = "";//Have a default value, for the sake of Export
 
 	@ManyToOne
 	@JoinColumn(name = FIELD_CUSTOM_FIELD, nullable = false)
@@ -40,28 +40,36 @@ public class CustomValue {
 	@ManyToOne
 	@JoinColumn(name = FIELD_CLIENT, nullable = true)
 	private Client client;
-	
+
 	public enum Field implements EntityField<CustomValue> {
 		ID(FIELD_ID),
 		STR_VALUE(FIELD_STR_VALUE),
 		CUSTOM_FIELD(FIELD_CUSTOM_FIELD),
 		CLIENT(FIELD_CLIENT);
-		
+
 		/** name of a field */
 		private final String fieldName;
+
 		/**
 		 * Creates a new {@link Field}
-		 * @param fieldName name of the field
+		 * 
+		 * @param fieldName
+		 *            name of the field
 		 */
-		Field(String fieldName) { this.fieldName = fieldName; }
+		Field(String fieldName) {
+			this.fieldName = fieldName;
+		}
+
 		/** @see EntityField#getFieldName() */
-		public String getFieldName() { return this.fieldName; }
+		public String getFieldName() {
+			return this.fieldName;
+		}
 	}
 
 	/** Empty constructor required for hibernate. */
 	public CustomValue() {
 	}
-	
+
 	public CustomValue(String strValue, CustomField customField, Client client) {
 		this.strValue = strValue;
 		this.customField = customField;

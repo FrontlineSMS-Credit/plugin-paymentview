@@ -11,9 +11,12 @@ import net.frontlinesms.ui.handler.PagedListDetails;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
 
-public class SelectClientsHandler extends BasePanelHandler implements PagedComponentItemProvider {
+public class SelectClientsHandler extends BasePanelHandler implements
+		PagedComponentItemProvider {
 	private static final String ICONS_CHECKBOX_SELECTED_PNG = "/icons/checkbox-selected.png";
 	private static final String ICONS_CHECKBOX_UNSELECTED_PNG = "/icons/checkbox-unselected.png";
 	private static final String COMPONENT_TABLE_CLIENTS = "tbl_clients";
@@ -25,11 +28,17 @@ public class SelectClientsHandler extends BasePanelHandler implements PagedCompo
 	private Object pnlClients;
 	private ComponentPagingHandler clientsTablePager;
 	private String clientFilter = "";
+	private CustomFieldDao customFieldDao;
+	private CustomValueDao customDataDao;
 
 	protected SelectClientsHandler(UiGeneratorController ui,
-			ClientDao clientDao, ViewDashBoardTabHandler viewDashBoardTabHandler) {
+			ClientDao clientDao, CustomFieldDao customFieldDao,
+			CustomValueDao customDataDao,
+			ViewDashBoardTabHandler viewDashBoardTabHandler) {
 		super(ui);
 		this.clientDao = clientDao;
+		this.customFieldDao = customFieldDao;
+		this.customDataDao = customDataDao;
 		this.viewDashBoardTabHandler = viewDashBoardTabHandler;
 		this.loadPanel(XML_STEP_SELECT_CLIENT);
 		this.init();
@@ -39,8 +48,9 @@ public class SelectClientsHandler extends BasePanelHandler implements PagedCompo
 	private void init() {
 		pnlClients = ui.find(this.getPanelComponent(), COMPONENT_PANEL_CLIENTS);
 		tblClients = ui.find(this.getPanelComponent(), COMPONENT_TABLE_CLIENTS);
-		clientsTablePager = new ComponentPagingHandler((UiGeneratorController)ui, this, tblClients);		
-		
+		clientsTablePager = new ComponentPagingHandler(
+				(UiGeneratorController) ui, this, tblClients);
+
 		this.ui.add(pnlClients, this.clientsTablePager.getPanel());
 	}
 
@@ -64,18 +74,21 @@ public class SelectClientsHandler extends BasePanelHandler implements PagedCompo
 
 	public void next() {
 		viewDashBoardTabHandler.setCurrentStepPanel(new CreateSettingsHandler(
-				(UiGeneratorController) ui, clientDao, viewDashBoardTabHandler).getPanelComponent());
+				(UiGeneratorController) ui, clientDao, viewDashBoardTabHandler,
+				customFieldDao, customDataDao).getPanelComponent());
 	}
 
 	public void previous() {
-		viewDashBoardTabHandler.setCurrentStepPanel(new SelectTargetSavingsHandler(
-				(UiGeneratorController) ui, clientDao, viewDashBoardTabHandler).getPanelComponent());
+		viewDashBoardTabHandler
+				.setCurrentStepPanel(new SelectTargetSavingsHandler(
+						(UiGeneratorController) ui, clientDao, customFieldDao,
+						customDataDao, viewDashBoardTabHandler).getPanelComponent());
 	}
-	
+
 	public void refresh() {
 		this.updateClientList();
 	}
-	
+
 	private Object getRow(Client client) {
 		Object row = ui.createTableRow(client);
 
@@ -100,8 +113,8 @@ public class SelectClientsHandler extends BasePanelHandler implements PagedCompo
 		Object row = ui.getSelectedItem(tbl_clients);
 
 		// TODO: Only Working partially with single selection;
-		//Algo is not worth cracking the head
-		
+		// Algo is not worth cracking the head
+
 		Object cell = ui.getItem(row, 0);
 		ui.remove(cell);
 		Client attachedClient = (Client) ui.getAttachedObject(row);
@@ -120,7 +133,7 @@ public class SelectClientsHandler extends BasePanelHandler implements PagedCompo
 		this.clientsTablePager.setCurrentPage(0);
 		this.clientsTablePager.refresh();
 	}
-	
+
 	public PagedListDetails getListDetails(Object list, int startIndex,
 			int limit) {
 		if (list == this.tblClients) {
@@ -129,7 +142,7 @@ public class SelectClientsHandler extends BasePanelHandler implements PagedCompo
 			throw new IllegalStateException();
 		}
 	}
-	
+
 	private PagedListDetails getClientListDetails(int startIndex, int limit) {
 		List<Client> clients = null;
 		if (this.clientFilter.equals("")) {
@@ -143,7 +156,7 @@ public class SelectClientsHandler extends BasePanelHandler implements PagedCompo
 
 		return new PagedListDetails(totalItemCount, listItems);
 	}
-	
+
 	private Object[] toThinletComponents(List<Client> clients) {
 		Object[] components = new Object[clients.size()];
 		for (int i = 0; i < components.length; i++) {

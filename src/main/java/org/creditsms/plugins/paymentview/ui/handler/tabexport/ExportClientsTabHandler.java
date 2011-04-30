@@ -12,6 +12,8 @@ import net.frontlinesms.ui.handler.PagedListDetails;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabexport.dialogs.ExportByClientXticsStep1Handler;
 
 public class ExportClientsTabHandler extends BaseTabHandler implements
@@ -23,15 +25,19 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 	private static final String COMPONENT_PANEL_CLIENTS = "pnl_clients";
 	private ClientDao clientDao;
 	private Object clientsTab;
-	
+
 	List<Client> selectedUsers;
 
 	private Object tblClients;
 	private String clientFilter = "";
 	private ComponentPagingHandler clientsTablePager;
 	private Object pnlClients;
+	private CustomFieldDao customFieldDao;
+	private CustomValueDao customValueDao;
 
-	public ExportClientsTabHandler(UiGeneratorController ui, ClientDao clientDao) {
+	public ExportClientsTabHandler(UiGeneratorController ui,
+			ClientDao clientDao, CustomFieldDao customFieldDao,
+			CustomValueDao customValueDao) {
 		super(ui);
 		this.clientDao = clientDao;
 		selectedUsers = new ArrayList<Client>();
@@ -39,15 +45,15 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 		refresh();
 	}
 
-	@Override 
+	@Override
 	protected Object initialiseTab() {
 		clientsTab = ui.loadComponentFromFile(XML_EXPORT_CLIENTS_TAB, this);
-		
+
 		pnlClients = ui.find(clientsTab, COMPONENT_PANEL_CLIENTS);
 		tblClients = ui.find(clientsTab, COMPONENT_TABLE_CLIENTS);
-		clientsTablePager = new ComponentPagingHandler(ui, this, tblClients);		
-		
-		this.ui.add(pnlClients, this.clientsTablePager.getPanel());		
+		clientsTablePager = new ComponentPagingHandler(ui, this, tblClients);
+
+		this.ui.add(pnlClients, this.clientsTablePager.getPanel());
 		return clientsTab;
 	}
 
@@ -93,7 +99,7 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 		ui.setAttachedObject(row, client);
 		return row;
 	}
-	
+
 	public PagedListDetails getListDetails(Object list, int startIndex,
 			int limit) {
 		if (list == this.tblClients) {
@@ -111,11 +117,11 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 		this.clientsTablePager.setCurrentPage(0);
 		this.clientsTablePager.refresh();
 	}
-	
-	public void selectAll(Object tbl_clients){
+
+	public void selectAll(Object tbl_clients) {
 		Object[] rows = ui.getItems(tbl_clients);
-		
-		for (Object row : rows){
+
+		for (Object row : rows) {
 			Object cell = ui.getItem(row, 0);
 			ui.remove(cell);
 			Client attachedClient = (Client) ui.getAttachedObject(row);
@@ -132,8 +138,8 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 		Object row = ui.getSelectedItem(tbl_clients);
 
 		// TODO: Only Working partially with single selection;
-		//Algo is not worth cracking the head
-		
+		// Algo is not worth cracking the head
+
 		Object cell = ui.getItem(row, 0);
 		ui.remove(cell);
 		Client attachedClient = (Client) ui.getAttachedObject(row);
@@ -149,8 +155,9 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 
 		ui.add(row, cell, 0);
 	}
-	
+
 	public void exportSelectedClients() {
-		ui.add(new ExportByClientXticsStep1Handler(ui, clientDao, selectedUsers).getDialog());
+		ui.add(new ExportByClientXticsStep1Handler(ui, clientDao,
+				customFieldDao, customValueDao, selectedUsers).getDialog());
 	}
 }

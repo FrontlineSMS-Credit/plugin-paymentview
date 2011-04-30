@@ -171,5 +171,4 @@ public class ClientImportHandler extends ImportDialogHandler {
 	protected void setImporter(String filename) throws CsvParseException {
 		this.importer = new ClientCsvImporter(new File(filename));
 	}
-
 }

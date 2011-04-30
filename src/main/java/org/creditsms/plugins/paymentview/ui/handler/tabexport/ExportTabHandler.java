@@ -4,6 +4,8 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
@@ -20,13 +22,16 @@ public class ExportTabHandler extends BaseTabHandler {
 	private Object mainTabbedPane;
 	private OutgoingPaymentDao outgoingPaymentDao;
 	private ExportPaymentsTabHandler exportpaymentsTab;
+	private CustomFieldDao customFieldDao;
+	private CustomValueDao customValueDao;
 
 	public ExportTabHandler(UiGeneratorController ui, PaymentViewThinletTabController paymentViewThinletTabController) {
 		super(ui);
 		this.clientDao = paymentViewThinletTabController.getClientDao();
 		this.incomingPaymentDao = paymentViewThinletTabController.getIncomingPaymentDao();
 		this.outgoingPaymentDao = paymentViewThinletTabController.getOutgoingPaymentDao();
-
+		this.customFieldDao = paymentViewThinletTabController.getCustomFieldDao();
+		this.customValueDao = paymentViewThinletTabController.getCustomValueDao();
 		init();
 	}
 
@@ -45,7 +50,7 @@ public class ExportTabHandler extends BaseTabHandler {
 		exportTab = ui.loadComponentFromFile(XML_EXPORT_TAB, this);
 		mainTabbedPane = ui.find(exportTab, TABBED_PANE_MAIN);
 
-		exportclientsTab = new ExportClientsTabHandler(ui, clientDao);
+		exportclientsTab = new ExportClientsTabHandler(ui, clientDao, customFieldDao, customValueDao);
 		ui.add(mainTabbedPane, exportclientsTab.getTab());
 		exportclientHistoryTab = new ExportClientHistoryTabHandler(ui);
 		ui.add(mainTabbedPane, exportclientHistoryTab.getTab());

@@ -13,6 +13,8 @@ import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.importexport.PaymentViewCsvExporter;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.utils.PaymentType;
 
 public class ExportByClientXticsStep2Handler extends
@@ -28,14 +30,16 @@ public class ExportByClientXticsStep2Handler extends
 	private static final String UI_FILE_OPTIONS_PANEL_CLIENT = "/ui/plugins/paymentview/importexport/pnClientDetails.xml";
 
 	private ClientDao clientDao;
-
 	private String exportfilepath;
-
 	private List<Client> selectedUsers;
 
 	private PaymentType paymentType;
 
+	private CustomValueDao customValueDao;
+	private CustomFieldDao customFieldDao;
+
 	public ExportByClientXticsStep2Handler(UiGeneratorController ui,
+			CustomValueDao customValueDao, CustomFieldDao customFieldDao,
 			final List<Client> selectedUsers, final PaymentType paymentType) {
 		super(Client.class, ui);
 		this.selectedUsers = selectedUsers;
@@ -77,7 +81,7 @@ public class ExportByClientXticsStep2Handler extends
 		log.debug("Row Format [" + rowFormat + "]");
 
 		PaymentViewCsvExporter.exportClients(new File(filename), clients,
-				rowFormat);
+				customFieldDao, customValueDao, rowFormat);
 		uiController.setStatus(InternationalisationUtils
 				.getI18nString(MESSAGE_EXPORT_TASK_SUCCESSFUL));
 		this.uiController.infoMessage(InternationalisationUtils

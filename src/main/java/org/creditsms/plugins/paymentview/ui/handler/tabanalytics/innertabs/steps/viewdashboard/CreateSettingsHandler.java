@@ -4,6 +4,8 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateAlertHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
@@ -12,13 +14,18 @@ public class CreateSettingsHandler extends BasePanelHandler {
 	private static final String XML_STEP_VIEW_CLIENTS = "/ui/plugins/paymentview/analytics/viewdashboard/stepviewclients.xml";
 	private ClientDao clientDao;
 	private ViewDashBoardTabHandler viewDashBoardTabHandler;
+	private CustomFieldDao customFieldDao;
+	private CustomValueDao customDataDao;
 
 	protected CreateSettingsHandler(UiGeneratorController ui,
 			ClientDao clientDao,
-			ViewDashBoardTabHandler viewDashBoardTabHandler) {
+			ViewDashBoardTabHandler viewDashBoardTabHandler,
+			CustomFieldDao customFieldDao, CustomValueDao customDataDao) {
 		super(ui);
 		this.clientDao = clientDao;
+		this.customFieldDao = customFieldDao;
 		this.viewDashBoardTabHandler = viewDashBoardTabHandler;
+		this.customDataDao = customDataDao;
 		this.loadPanel(XML_STEP_VIEW_CLIENTS);
 	}
 
@@ -27,8 +34,8 @@ public class CreateSettingsHandler extends BasePanelHandler {
 	}
 
 	public void export() {
-		new ClientExportHandler((UiGeneratorController) ui, clientDao)
-				.showWizard();
+		new ClientExportHandler((UiGeneratorController) ui, clientDao,
+				customFieldDao, customDataDao).showWizard();
 	}
 
 	public Object getPanelComponent() {
@@ -36,10 +43,9 @@ public class CreateSettingsHandler extends BasePanelHandler {
 	}
 
 	public void previous() {
-		viewDashBoardTabHandler
-				.setCurrentStepPanel(new SelectClientsHandler(
-						(UiGeneratorController) ui, clientDao,
-						viewDashBoardTabHandler).getPanelComponent());
+		viewDashBoardTabHandler.setCurrentStepPanel(new SelectClientsHandler(
+				(UiGeneratorController) ui, clientDao, customFieldDao, customDataDao, viewDashBoardTabHandler)
+				.getPanelComponent());
 	}
 
 	public void showDateSelecter(Object textField) {

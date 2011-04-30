@@ -2,7 +2,9 @@ package org.creditsms.plugins.paymentview.ui.handler.importexport;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.frontlinesms.csv.CsvRowFormat;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -11,8 +13,12 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.importexport.PaymentViewCsvExporter;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
+import org.creditsms.plugins.paymentview.utils.StringUtil;
 
 public class ClientExportHandler extends ExportDialogHandler<Client> {
 	private static final String COMPONENT_ACCOUNTS = "cbAccounts";
@@ -23,10 +29,17 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 	private static final String UI_FILE_OPTIONS_PANEL_CLIENT = "/ui/plugins/paymentview/importexport/pnClientDetails.xml";
 
 	private ClientDao clientDao;
+	private CustomFieldDao customFieldDao;
 
-	public ClientExportHandler(UiGeneratorController ui, ClientDao clientDao) {
+	private Map<CustomField, Object> customComponents;
+	private CustomValueDao customValueDao;
+
+	public ClientExportHandler(UiGeneratorController ui, ClientDao clientDao,
+			CustomFieldDao customFieldDao, CustomValueDao customValueDao) {
 		super(Client.class, ui);
 		this.clientDao = clientDao;
+		this.customFieldDao = customFieldDao;
+		this.customValueDao = customValueDao;
 	}
 
 	@Override
@@ -64,7 +77,7 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 		log.debug("Row Format [" + rowFormat + "]");
 
 		PaymentViewCsvExporter.exportClients(new File(filename), clients,
-				rowFormat);
+				customFieldDao, customValueDao, rowFormat);
 		uiController.setStatus(InternationalisationUtils
 				.getI18nString(MESSAGE_EXPORT_TASK_SUCCESSFUL));
 		this.uiController.infoMessage(InternationalisationUtils
@@ -74,6 +87,24 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 	@Override
 	protected String getOptionsFilePath() {
 		return UI_FILE_OPTIONS_PANEL_CLIENT;
+	}
+
+	public void showWizard() {
+		List<CustomField> allCustomFields = this.customFieldDao
+				.getAllActiveCustomFields();
+		customComponents = new HashMap<CustomField, Object>(
+				allCustomFields.size());
+		if (!allCustomFields.isEmpty()) {
+			for (CustomField cf : allCustomFields) {
+				if (cf.isActive() & cf.isUsed()) {
+					Object checkbox = uiController.createCheckbox(cf.getName(),
+							cf.getReadableName(), true);
+					uiController.add(optionsPanel, checkbox);
+					customComponents.put(cf, checkbox);
+				}
+			}
+		}
+		super.showWizard();
 	}
 
 	protected CsvRowFormat getRowFormatForClient() {
@@ -86,6 +117,11 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 				COMPONENT_CB_PHONE);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS,
 				COMPONENT_ACCOUNTS);
+		
+		for(CustomField cf : customFieldDao.getAllActiveUsedCustomFields()){
+			addMarker(rowFormat, StringUtil.getMarkerFromString(cf.getReadableName()),
+					cf.getName());
+		}
 		return rowFormat;
 	}
 

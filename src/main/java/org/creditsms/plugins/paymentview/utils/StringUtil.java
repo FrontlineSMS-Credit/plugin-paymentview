@@ -6,14 +6,14 @@ import java.util.List;
 import org.springframework.util.StringUtils;
 
 public final class StringUtil {
-	
-	public static final Object SPACE = " ";
+
+	public static final String SPACE = " ";
 	public static final String EMPTY = "";
 
 	public static String toCamelCase(String str) {
 		if (str != null) {
-			String[] strings = str.split(" ");
-			str = "";
+			String[] strings = str.split(SPACE);
+			str = EMPTY;
 			for (int i = 0; i < strings.length; i++) {
 				strings[i] = strings[i].toLowerCase();
 				if (i != 0) {
@@ -106,5 +106,15 @@ public final class StringUtil {
 
 	public static String getFormLabel(String fieldName) {
 		return getReadableFieldName(fieldName) + ":";
+	}
+
+	public static String getMarkerFromString(String readableName) {
+		if (readableName != null) {
+			readableName = readableName.toLowerCase();
+			readableName = StringUtils.replace(readableName, SPACE, "_");
+			readableName = "${" + readableName + "}";
+			return readableName;
+		}
+		return EMPTY;
 	}
 }

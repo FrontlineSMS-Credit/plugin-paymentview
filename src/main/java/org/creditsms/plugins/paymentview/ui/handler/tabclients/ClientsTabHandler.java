@@ -84,7 +84,8 @@ public class ClientsTabHandler extends BaseTabHandler implements
 
 	// > EVENTS...
 	public void customizeClientDB() {
-		ui.add(new CustomizeClientDBHandler(ui, customFieldDao, this).getDialog());
+		ui.add(new CustomizeClientDBHandler(ui, customFieldDao, this)
+				.getDialog());
 	}
 
 	public void deleteClient() {
@@ -112,7 +113,7 @@ public class ClientsTabHandler extends BaseTabHandler implements
 	}
 
 	public void exportClient() {
-		new ClientExportHandler(ui, clientDao).showWizard();
+		new ClientExportHandler(ui, clientDao, customFieldDao, customValueDao).showWizard();
 		this.refresh();
 	}
 
@@ -170,8 +171,8 @@ public class ClientsTabHandler extends BaseTabHandler implements
 				.arrayToCommaDelimitedString(accountNumbers.toArray())));
 		return addCustomData(client, row);
 	}
-	
-	public void revalidateTable(){
+
+	public void revalidateTable() {
 		createHeader();
 		refresh();
 	}
@@ -179,7 +180,7 @@ public class ClientsTabHandler extends BaseTabHandler implements
 	// > CUSTOM DATA
 	private void createHeader() {
 		ui.removeAll(clientsTableComponent);
-		
+
 		Object header = ui.createTableHeader();
 
 		Object name = ui.createColumn("Name", "name");

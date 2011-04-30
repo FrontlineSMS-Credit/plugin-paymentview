@@ -7,6 +7,8 @@ import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.utils.PaymentType;
 
 public class ExportByClientXticsStep1Handler implements ThinletUiEventHandler {
@@ -21,11 +23,16 @@ public class ExportByClientXticsStep1Handler implements ThinletUiEventHandler {
 	private UiGeneratorController ui;
 	private List<Client> selectedUsers;
 	private PaymentType paymentType;
+	private CustomValueDao customValueDao;
+	private CustomFieldDao customFieldDao;
 
 	public ExportByClientXticsStep1Handler(UiGeneratorController ui,
-			ClientDao clientDao, List<Client> selectedUsers) {
+			ClientDao clientDao, CustomFieldDao customFieldDao,
+			CustomValueDao customValueDao, List<Client> selectedUsers) {
 		this.ui = ui;
 		this.clientDao = clientDao;
+		this.customFieldDao = customFieldDao;
+		this.customValueDao = customValueDao;
 		this.selectedUsers = selectedUsers;
 		init();
 		refresh();
@@ -44,7 +51,8 @@ public class ExportByClientXticsStep1Handler implements ThinletUiEventHandler {
 	}
 
 	public void next() {
-		new ExportByClientXticsStep2Handler(ui, selectedUsers, paymentType).showWizard();
+		new ExportByClientXticsStep2Handler(ui, customValueDao, customFieldDao,
+				selectedUsers, paymentType).showWizard();
 		removeDialog();
 	}
 

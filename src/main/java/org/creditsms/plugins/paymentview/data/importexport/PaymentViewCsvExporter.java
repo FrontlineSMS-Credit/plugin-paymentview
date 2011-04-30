@@ -13,7 +13,9 @@ import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COM
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import net.frontlinesms.csv.CsvRowFormat;
 import net.frontlinesms.csv.Utf8FileWriter;
@@ -21,9 +23,14 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.CustomField;
+import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
+import org.creditsms.plugins.paymentview.utils.StringUtil;
 
 public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 	/**
@@ -33,43 +40,77 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 	 * @throws IOException
 	 */
 	public static void exportClients(File exportFile,
-			Collection<Client> clients, CsvRowFormat clientFormat)
+			Collection<Client> clients, CustomFieldDao customFieldDao,
+			CustomValueDao customValueDao, CsvRowFormat clientFormat)
 			throws IOException {
 		LOG.trace("ENTER");
 		LOG.debug("Client format [" + clientFormat + "]");
 		LOG.debug("Filename [" + exportFile.getAbsolutePath() + "]");
 
-		Utf8FileWriter out = null;
+		Utf8FileWriter out = null;		
 
 		try {
 			out = new Utf8FileWriter(exportFile);
-			PaymentViewCsvUtils.writeLine(out, clientFormat,
-					PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME,
-					InternationalisationUtils.getI18nString(COMMON_FIRST_NAME),
-					PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME,
-					InternationalisationUtils.getI18nString(COMMON_OTHER_NAME),
-					PaymentViewCsvUtils.MARKER_CLIENT_PHONE,
-					InternationalisationUtils.getI18nString(COMMON_PHONE),
-					PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS,
-					InternationalisationUtils.getI18nString(COMMON_ACCOUNTS));
+			List<CustomField> usedCustomFields = customFieldDao
+					.getAllActiveUsedCustomFields();
+			List<String> items = new ArrayList<String>(
+					(usedCustomFields.size() * 2) + 8);
+
+			items.add(PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME);
+			items.add(InternationalisationUtils
+					.getI18nString(COMMON_FIRST_NAME));
+			items.add(PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME);
+			items.add(InternationalisationUtils
+					.getI18nString(COMMON_OTHER_NAME));
+			items.add(PaymentViewCsvUtils.MARKER_CLIENT_PHONE);
+			items.add(InternationalisationUtils.getI18nString(COMMON_PHONE));
+			items.add(PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS);
+			items.add(InternationalisationUtils.getI18nString(COMMON_ACCOUNTS));
+			
+			for (CustomField cf : usedCustomFields) {
+				items.add(StringUtil.getMarkerFromString(cf.getReadableName()));
+				items.add(cf.getReadableName());
+			}
+			String[] str = new String[items.size()];
+			PaymentViewCsvUtils._writeLine(out, clientFormat,
+					items.toArray(str));
+
 			for (Client client : clients) {
-				PaymentViewCsvUtils.writeLine(out, clientFormat,
-						PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME, client
-								.getFirstName(),
-						PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME, client
-								.getOtherName(),
-						PaymentViewCsvUtils.MARKER_CLIENT_PHONE, client
-								.getPhoneNumber(),
-						PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS,
-						PaymentViewUtils.accountsAsString(client.getAccounts(),
-								ACCOUNTS_DELIMITER));
+				List<CustomValue> allCustomValues = customValueDao
+						.getCustomValuesByClientId(client.getId());
+
+				items = new ArrayList<String>();
+				
+				items.add(PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME);
+				items.add(client.getFirstName());
+				items.add(PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME);
+				items.add(client.getOtherName());
+				items.add(PaymentViewCsvUtils.MARKER_CLIENT_PHONE);
+				items.add(client.getPhoneNumber());
+				items.add(PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS);
+				items.add(PaymentViewUtils.accountsAsString(client.getAccounts(),
+						ACCOUNTS_DELIMITER));
+				
+				if (!usedCustomFields.isEmpty()) {
+					for (CustomField cf : usedCustomFields) {
+						for (CustomValue cv : allCustomValues) {
+							if (cv.getCustomField().equals(cf)) {
+								items.add(StringUtil.getMarkerFromString(cf.getReadableName()));
+								items.add(cv.getStrValue());
+							}
+						}
+					}
+				}
+				str = new String[items.size()];
+				PaymentViewCsvUtils._writeLine(out, clientFormat,
+						items.toArray(str));
 			}
 		} finally {
 			if (out != null)
 				out.close();
 			LOG.trace("EXIT");
 		}
-
+		
 	}
 
 	public static void exportIncomingPayment(File exportFile,
