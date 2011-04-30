@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs;
 
+import java.awt.Rectangle;
 import java.lang.reflect.Field;
 
 import javax.persistence.Column;
@@ -35,7 +36,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		this.customFieldDao = customFieldDao;
 
 		init();
-		refresh();
+		//refresh();
 	}
 
 	/**
@@ -61,11 +62,9 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 
 		for (CustomField cf : customFieldDao.getAllCustomFields()) {
 			if (cf.isActive() & cf.isUsed()) {
-				addField(cf.getStrName());
+				addField(cf.getReadableName());
 			}
 		}
-
-		refresh();
 	}
 
 	public void addField(String name) {
@@ -78,11 +77,9 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		
 		ui.add(compPanelFields, label);
 		ui.add(compPanelFields, txtfield);
-		
-		ui.setHeight(this.dialogComponent, ui.getHeight(this.dialogComponent) + 30);
 	}
 
-	public void addField() {
+	public void addComboFieldChooser() {
 		Object label = ui.createLabel("Field " + ++c);
 		String fieldName = "fld" + c;
 		Object cmbfield = this.combobox = ui.createCombobox(fieldName, "Select Field Name");
@@ -91,12 +88,30 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 
 		ui.setColspan(cmbfield, 2);
 		ui.setColumns(cmbfield, 50);
-
+		
 		ui.add(compPanelFields, label);
 		ui.add(compPanelFields, cmbfield);
-
 		ui.setAction(cmbfield, "addNewField(" + fieldName + ")",
 				compPanelFields, this);
+		
+		this.refresh();		
+		
+	}
+	
+	public void refresh() {
+		ui.remove(compPanelFields);
+		int index = ui.getIndex(this.dialogComponent, compParentPanelFields);
+		ui.remove(compParentPanelFields);
+		
+		ui.add(compParentPanelFields, compPanelFields);
+		ui.add(this.dialogComponent, compParentPanelFields, index);
+		
+//		Rectangle pnlFieldsbounds = ui.getBounds(compPanelFields);
+//		
+//		Rectangle bounds = ui.getBounds(this.dialogComponent);
+//		ui.repaint(this.dialogComponent, bounds.x, bounds.y,
+//				bounds.width + bounds.x + pnlFieldsbounds.width, bounds.height + bounds.y + pnlFieldsbounds.height);
+		
 	}
 	
 	public void refreshChoices(){
@@ -108,7 +123,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		
 		for (CustomField cf : customFieldDao.getAllCustomFields()) {
 			if (cf.isActive() & !cf.isUsed()) {
-				Object cmbchoice = ui.createComboboxChoice(cf.getStrName(), cf);
+				Object cmbchoice = ui.createComboboxChoice(cf.getReadableName(), cf);
 				ui.add(cmbfield, cmbchoice);
 			}
 		}
@@ -126,7 +141,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 			CustomField cf = (CustomField) ui.getAttachedObject(ui
 					.getSelectedItem(fieldCombo));
 			Object txtField = ui.createTextfield(ui.getName(fieldCombo),
-					cf.getStrName());
+					cf.getReadableName());
 
 			cf.setUsed(true);
 
@@ -142,11 +157,6 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		}
 	}
 
-	public void refresh() {
-		ui.remove(compPanelFields);
-		ui.add(compParentPanelFields, compPanelFields);
-	}
-
 	/** Remove the dialog from view. */
 	public void removeDialog() {
 		this.removeDialog(this.dialogComponent);
@@ -155,6 +165,16 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 	/** Remove a dialog from view. */
 	public void removeDialog(Object dialog) {
 		this.ui.removeDialog(dialog);
+	}
+	
+	/** Add a dialog from view. */
+	public void addDialog() {
+		this.addDialog(this.dialogComponent);
+	}
+	
+	/** Add a dialog from view. */
+	public void addDialog(Object dialog) {
+		this.ui.add(dialog);
 	}
 
 	public void showOtherFieldDialog(Object comboBox) {

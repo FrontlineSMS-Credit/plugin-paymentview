@@ -13,7 +13,6 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientImportHandler;

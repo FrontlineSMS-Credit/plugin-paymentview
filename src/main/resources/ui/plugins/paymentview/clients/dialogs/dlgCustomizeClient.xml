@@ -7,9 +7,10 @@
 	<panel weightx="1" weighty="1" name="parentPnlFields">
 		<panel name="pnlFields" weightx="1" weighty="1" columns="3" gap="15"/>
 	</panel>
-	
+	<panel weightx="1" weighty="1">		
+	</panel>
 	<panel weightx="1">
-		<button icon="/icons/tick.png" action="addField" name="btAddField" text="Add Field" />
+		<button icon="/icons/tick.png" action="addComboFieldChooser" name="btAddField" text="Add Field" />
 		<panel weightx="1"/>
 		<button icon="/icons/cross.png" action="removeDialog" name="btClose" text="Close" />
 	</panel>

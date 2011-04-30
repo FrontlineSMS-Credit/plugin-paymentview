@@ -22,7 +22,7 @@ import net.frontlinesms.data.EntityField;
 @Table(name = CustomField.TABLE_NAME)
 public class CustomField {
 	public static final String TABLE_NAME = "CustomField";
-	private static final String FIELD_STR_NAME = "strname";
+	private static final String FIELD_READABLE_NAME = "strname";
 	private static final String FIELD_NAME = "name";
 	private static final String FIELD_USED = "used";
 	private static final String FIELD_ACTIVE = "active";
@@ -35,8 +35,8 @@ public class CustomField {
 	@Column(name = FIELD_NAME, nullable = false, unique = true)
 	private String name;
 	
-	@Column(name = FIELD_STR_NAME, nullable = true, unique = false)
-	private String strName;
+	@Column(name = FIELD_READABLE_NAME, nullable = true, unique = false)
+	private String readableName;
 
 	@OneToMany(fetch = FetchType.EAGER)
 	private Set<CustomValue> customValue;
@@ -48,7 +48,7 @@ public class CustomField {
 	private boolean active = false;
 	
 	public enum Field implements EntityField<CustomField> {
-		STR_NAME(FIELD_STR_NAME),
+		STR_NAME(FIELD_READABLE_NAME),
 		USED(FIELD_USED),
 		ACTIVE(FIELD_ACTIVE),
 		NAME(FIELD_NAME);
@@ -69,7 +69,7 @@ public class CustomField {
 	
 	public CustomField(String name, String strName) {
 		this.name = name;
-		this.strName = strName;
+		this.readableName = strName;
 	}
 	
 
@@ -80,7 +80,7 @@ public class CustomField {
 	}
 
 	public CustomField(String strName, Set<CustomValue> customValue) {
-		this.strName = strName;
+		this.readableName = strName;
 		this.customValue = customValue;
 	}
 
@@ -92,8 +92,8 @@ public class CustomField {
 		return id;
 	}
 
-	public String getStrName() {
-		return strName;
+	public String getReadableName() {
+		return readableName;
 	}
 
 	public void setCustomValue(Set<CustomValue> customValue) {
@@ -105,7 +105,7 @@ public class CustomField {
 	}
 
 	public void setStrName(String strName) {
-		this.strName = strName;
+		this.readableName = strName;
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class CustomField {
 		int result = 1;
 		result = prime * result + (active ? 1231 : 1237);
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((strName == null) ? 0 : strName.hashCode());
+		result = prime * result + ((readableName == null) ? 0 : readableName.hashCode());
 		result = prime * result + (used ? 1231 : 1237);
 		return result;
 	}
@@ -165,10 +165,10 @@ public class CustomField {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (strName == null) {
-			if (other.strName != null)
+		if (readableName == null) {
+			if (other.readableName != null)
 				return false;
-		} else if (!strName.equals(other.strName))
+		} else if (!readableName.equals(other.readableName))
 			return false;
 		if (used != other.used)
 			return false;
@@ -178,7 +178,7 @@ public class CustomField {
 	@Override
 	public String toString() {
 		return "CustomField [id=" + id + ", name=" + name + ", strName="
-				+ strName + ", used=" + used
+				+ readableName + ", used=" + used
 				+ ", active=" + active + "]";
 	}
 }
