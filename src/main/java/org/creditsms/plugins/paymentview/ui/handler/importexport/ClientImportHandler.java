@@ -31,7 +31,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 	private static final String UI_FILE_OPTIONS_PANEL_CLIENT = "/ui/plugins/paymentview/importexport/pnClientDetails.xml";
 
 	private ClientDao clientDao;
-	// > INSTANCE PROPERTIES
+// > INSTANCE PROPERTIES
 	private final ClientsTabHandler clientsTabHandler;
 	private int columnCount;
 	private ClientCsvImporter importer;

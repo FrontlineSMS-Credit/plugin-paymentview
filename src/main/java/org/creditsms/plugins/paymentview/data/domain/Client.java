@@ -24,14 +24,15 @@ import org.hibernate.annotations.IndexColumn;
 public class Client {
 	public static final String TABLE_NAME = "Client";
 
-	public static final String FIELD_FIRST_NAME = "firstName";
-	public static final String FIELD_OTHER_NAME = "otherName";
-	public static final String FIELD_PHONE_NUMBER = "phoneNumber";
+	private static final String FIELD_ID = "id";
+	private static final String FIELD_FIRST_NAME = "firstName";
+	private static final String FIELD_OTHER_NAME = "otherName";
+	private static final String FIELD_PHONE_NUMBER = "phoneNumber";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@IndexColumn(name = "id")
-	@Column(name = "id", nullable = false, unique = true)
+	@IndexColumn(name = FIELD_ID)
+	@Column(name = FIELD_ID, nullable = false, unique = true)
 	private long id;
 
 	@Column(name = FIELD_FIRST_NAME)

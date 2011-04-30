@@ -1,6 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs;
 
-import java.awt.Rectangle;
 import java.lang.reflect.Field;
 
 import javax.persistence.Column;

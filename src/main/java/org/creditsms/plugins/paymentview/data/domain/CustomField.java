@@ -48,7 +48,7 @@ public class CustomField {
 	private boolean active = false;
 	
 	public enum Field implements EntityField<CustomField> {
-		STR_NAME(FIELD_READABLE_NAME),
+		READABLE_NAME(FIELD_READABLE_NAME),
 		USED(FIELD_USED),
 		ACTIVE(FIELD_ACTIVE),
 		NAME(FIELD_NAME);

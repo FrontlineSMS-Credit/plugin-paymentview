@@ -64,6 +64,11 @@ public interface CustomFieldDao {
 	 */
 	public List<CustomField> getCustomFieldsByName(String strName,
 			int startIndex, int limit);
+	
+	public List<CustomField> getCustomFieldsByReadableName(String strName);
+	
+	public List<CustomField> getCustomFieldsByReadableName(String strName,
+			int startIndex, int limit);
 
 	/**
 	 * Saves a CustomField to the system
