@@ -40,7 +40,7 @@ public class ClientsTabHandler extends BaseTabHandler implements
 	private CustomFieldDao customFieldDao;
 	private Object pnlClientsList;
 	private PaymentViewThinletTabController paymentViewThinletTabController;
-	private CustomValueDao customDataDao;
+	private CustomValueDao customValueDao;
 
 	public ClientsTabHandler(
 			UiGeneratorController ui,
@@ -51,7 +51,7 @@ public class ClientsTabHandler extends BaseTabHandler implements
 		this.clientDao = this.paymentViewThinletTabController.getClientDao();
 		this.customFieldDao = this.paymentViewThinletTabController
 				.getCustomFieldDao();
-		this.customDataDao = this.paymentViewThinletTabController
+		this.customValueDao = this.paymentViewThinletTabController
 				.getCustomValueDao();
 		init();
 	}
@@ -74,7 +74,8 @@ public class ClientsTabHandler extends BaseTabHandler implements
 	}
 
 	public void addClient() {
-		ui.add(new EditClientHandler(ui, clientDao, this).getDialog());
+		ui.add(new EditClientHandler(ui, clientDao, this, customValueDao,
+				customFieldDao).getDialog());
 	}
 
 	public void analyseClient() {
@@ -90,7 +91,7 @@ public class ClientsTabHandler extends BaseTabHandler implements
 		Object[] selectedClients = this.ui
 				.getSelectedItems(clientsTableComponent);
 		for (Object selectedClient : selectedClients) {
-			Client c = (Client) ui.getAttachedObject(selectedClient);
+			Client c = ui.getAttachedObject(selectedClient, Client.class);
 			clientDao.deleteClient(c);
 		}
 
@@ -105,7 +106,8 @@ public class ClientsTabHandler extends BaseTabHandler implements
 				.getSelectedItems(clientsTableComponent);
 		for (Object selectedClient : selectedClients) {
 			Client c = (Client) ui.getAttachedObject(selectedClient);
-			ui.add(new EditClientHandler(ui, c, clientDao, this).getDialog());
+			ui.add(new EditClientHandler(ui, c, clientDao, this,
+					customValueDao, customFieldDao).getDialog());
 		}
 	}
 
@@ -188,12 +190,15 @@ public class ClientsTabHandler extends BaseTabHandler implements
 		ui.add(header, accounts);
 
 		List<CustomField> allCustomFields = this.customFieldDao
-				.getAllCustomFields();
+				.getAllActiveCustomFields();
 		if (!allCustomFields.isEmpty()) {
 			for (CustomField cf : allCustomFields) {
-				Object column = ui.createColumn(cf.getReadableName(), cf.getName());
-				ui.setWidth(column, 110);
-				ui.add(header, column);
+				if (cf.isActive() & cf.isUsed()) {
+					Object column = ui.createColumn(cf.getReadableName(),
+							cf.getName());
+					ui.setWidth(column, 110);
+					ui.add(header, column);
+				}
 			}
 		}
 		ui.add(this.clientsTableComponent, header);
@@ -202,7 +207,7 @@ public class ClientsTabHandler extends BaseTabHandler implements
 	private Object addCustomData(Client client, Object row) {
 		List<CustomField> allCustomFields = this.customFieldDao
 				.getAllCustomFields();
-		List<CustomValue> allCustomValues = this.customDataDao
+		List<CustomValue> allCustomValues = this.customValueDao
 				.getCustomValuesByClientId(client.getId());
 
 		if (!allCustomFields.isEmpty()) {
@@ -219,7 +224,8 @@ public class ClientsTabHandler extends BaseTabHandler implements
 
 	// > ACTION HANDLERS
 	public void importClient() {
-		new ClientImportHandler(ui, this, clientDao).showWizard();
+		new ClientImportHandler(ui, this, clientDao, this.customFieldDao,
+				this.customValueDao).showWizard();
 		this.refresh();
 	}
 

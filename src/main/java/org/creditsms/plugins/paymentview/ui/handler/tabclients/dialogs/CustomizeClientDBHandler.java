@@ -35,7 +35,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		this.customFieldDao = customFieldDao;
 
 		init();
-		//refresh();
+		// refresh();
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 			}
 		}
 
-		for (CustomField cf : customFieldDao.getAllCustomFields()) {
+		for (CustomField cf : customFieldDao.getAllActiveUsedCustomFields()) {
 			if (cf.isActive() & cf.isUsed()) {
 				addField(cf.getReadableName());
 			}
@@ -73,7 +73,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		ui.setColspan(txtfield, 2);
 		ui.setColumns(txtfield, 50);
 		ui.setEditable(txtfield, false);
-		
+
 		ui.add(compPanelFields, label);
 		ui.add(compPanelFields, txtfield);
 	}
@@ -81,52 +81,55 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 	public void addComboFieldChooser() {
 		Object label = ui.createLabel("Field " + ++c);
 		String fieldName = "fld" + c;
-		Object cmbfield = this.combobox = ui.createCombobox(fieldName, "Select Field Name");
-				
+		Object cmbfield = this.combobox = ui.createCombobox(fieldName,
+				"Select Field Name");
+
 		this.refreshChoices(cmbfield);
 
 		ui.setColspan(cmbfield, 2);
 		ui.setColumns(cmbfield, 50);
-		
+
 		ui.add(compPanelFields, label);
 		ui.add(compPanelFields, cmbfield);
 		ui.setAction(cmbfield, "addNewField(" + fieldName + ")",
 				compPanelFields, this);
-		
-		this.refresh();		
-		
+
+		this.refresh();
+
 	}
-	
+
 	public void refresh() {
 		ui.remove(compPanelFields);
 		int index = ui.getIndex(this.dialogComponent, compParentPanelFields);
 		ui.remove(compParentPanelFields);
-		
+
 		ui.add(compParentPanelFields, compPanelFields);
 		ui.add(this.dialogComponent, compParentPanelFields, index);
-		
-//		Rectangle pnlFieldsbounds = ui.getBounds(compPanelFields);
-//		
-//		Rectangle bounds = ui.getBounds(this.dialogComponent);
-//		ui.repaint(this.dialogComponent, bounds.x, bounds.y,
-//				bounds.width + bounds.x + pnlFieldsbounds.width, bounds.height + bounds.y + pnlFieldsbounds.height);
-		
+
+		// Rectangle pnlFieldsbounds = ui.getBounds(compPanelFields);
+		//
+		// Rectangle bounds = ui.getBounds(this.dialogComponent);
+		// ui.repaint(this.dialogComponent, bounds.x, bounds.y,
+		// bounds.width + bounds.x + pnlFieldsbounds.width, bounds.height +
+		// bounds.y + pnlFieldsbounds.height);
+
 	}
-	
-	public void refreshChoices(){
+
+	public void refreshChoices() {
 		refreshChoices(this.combobox);
 	}
-	
-	public void refreshChoices(Object cmbfield){
+
+	public void refreshChoices(Object cmbfield) {
 		ui.removeAll(cmbfield);
-		
-		for (CustomField cf : customFieldDao.getAllCustomFields()) {
+
+		for (CustomField cf : customFieldDao.getAllActiveUnusedCustomFields()) {
 			if (cf.isActive() & !cf.isUsed()) {
-				Object cmbchoice = ui.createComboboxChoice(cf.getReadableName(), cf);
+				Object cmbchoice = ui.createComboboxChoice(
+						cf.getReadableName(), cf);
 				ui.add(cmbfield, cmbchoice);
 			}
 		}
-		
+
 		Object cmbchoice = ui.createComboboxChoice(ENTER_NEW_FIELD, null);
 		ui.add(cmbfield, cmbchoice);
 	}
@@ -165,12 +168,12 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 	public void removeDialog(Object dialog) {
 		this.ui.removeDialog(dialog);
 	}
-	
+
 	/** Add a dialog from view. */
 	public void addDialog() {
 		this.addDialog(this.dialogComponent);
 	}
-	
+
 	/** Add a dialog from view. */
 	public void addDialog(Object dialog) {
 		this.ui.add(dialog);
@@ -178,10 +181,12 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 
 	public void showOtherFieldDialog(Object comboBox) {
 		this.combobox = comboBox;
-		ui.add(new OtherFieldHandler(ui, customFieldDao, this, comboBox).getDialog());
+		ui.add(new OtherFieldHandler(ui, customFieldDao, this, comboBox)
+				.getDialog());
 	}
 
 	void setSelectedItemOnCombo(Object customField) {
-		ui.setSelectedIndex(this.combobox, ui.getIndex(this.combobox, customField));
+		ui.setSelectedIndex(this.combobox,
+				ui.getIndex(this.combobox, customField));
 	}
 }

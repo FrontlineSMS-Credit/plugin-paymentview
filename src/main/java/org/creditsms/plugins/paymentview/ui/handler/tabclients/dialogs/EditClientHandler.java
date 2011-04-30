@@ -1,12 +1,18 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
 
 public class EditClientHandler implements ThinletUiEventHandler {
@@ -30,20 +36,38 @@ public class EditClientHandler implements ThinletUiEventHandler {
 
 	private ClientsTabHandler clientsTabHandler;
 
+	private CustomValueDao customValueDao;
+	private CustomFieldDao customFieldDao;
+
+	private Object compPanelFields;
+
+	private int c = 0;
+
+	private List<Object> customComponents;
+
 	public EditClientHandler(UiGeneratorController ui, ClientDao clientDao,
-			final ClientsTabHandler clientsTabHandler) {
+			final ClientsTabHandler clientsTabHandler,
+			final CustomValueDao customValueDao,
+			final CustomFieldDao customFieldDao) {
+
 		this.ui = ui;
 		this.clientDao = clientDao;
 		this.clientsTabHandler = clientsTabHandler;
+		this.customValueDao = customValueDao;
+		this.customFieldDao = customFieldDao;
 		this.editMode = false;
 		init();
 		refresh();
 	}
 
 	public EditClientHandler(UiGeneratorController ui, Client client,
-			ClientDao clientDao, final ClientsTabHandler clientsTabHandler) {
+			ClientDao clientDao, final ClientsTabHandler clientsTabHandler,
+			final CustomValueDao customValueDao,
+			final CustomFieldDao customFieldDao) {
 		this.client = client;
-		this.clientsTabHandler = clientsTabHandler; 
+		this.clientsTabHandler = clientsTabHandler;
+		this.customValueDao = customValueDao;
+		this.customFieldDao = customFieldDao;
 		this.editMode = true;
 		this.clientDao = clientDao;
 		this.ui = ui;
@@ -71,19 +95,48 @@ public class EditClientHandler implements ThinletUiEventHandler {
 
 	public void init() {
 		dialogComponent = ui.loadComponentFromFile(XML_EDIT_CLIENT, this);
+		compPanelFields = ui.find(dialogComponent, "pnlFields");
 
 		fieldFirstName = ui.find(dialogComponent, COMPONENT_TEXT_FIRST_NAME);
 		fieldPhoneNumber = ui
 				.find(dialogComponent, COMPONENT_TEXT_PHONE_NUMBER);
 		fieldOtherName = ui.find(dialogComponent, COMPONENT_TEXT_OTHER_NAME);
 		fieldListAccounts = ui.find(dialogComponent, COMPONENT_LIST_ACCOUNTS);
+
+		System.out.println(customFieldDao);
+
+		List<CustomField> allCustomFields = customFieldDao
+				.getAllActiveUsedCustomFields();
+
+		customComponents = new ArrayList<Object>(allCustomFields.size());
+
+		for (CustomField cf : allCustomFields) {
+			if (cf.isActive() & cf.isUsed()) {
+				addField(cf.getName(), cf.getReadableName());
+			}
+		}
+
+	}
+
+	public void addField(String name, String readableName) {
+		Object label = ui.createLabel(readableName);
+
+		Object txtfield = ui.createTextfield(name, "");
+		customComponents.add(txtfield);
+
+		ui.setColspan(txtfield, 2);
+		ui.setColumns(txtfield, 50);
+
+		ui.add(compPanelFields, label);
+		ui.add(compPanelFields, txtfield);
 	}
 
 	public void refresh() {
 		if (editMode) {
 			ui.setText(fieldFirstName, this.getClientObj().getFirstName());
-			ui.setText(this.fieldOtherName, this.getClientObj().getOtherName());
+			ui.setText(fieldOtherName, this.getClientObj().getOtherName());
 			ui.setText(fieldPhoneNumber, this.getClientObj().getPhoneNumber());
+			
 
 			for (Account acc : this.getClientObj().getAccounts()) {
 				ui.add(fieldListAccounts, createListItem(acc));
@@ -116,9 +169,9 @@ public class EditClientHandler implements ThinletUiEventHandler {
 			String on = ui.getText(fieldOtherName);
 			String phone = ui.getText(fieldPhoneNumber);
 			Client c = new Client(fn, on, phone);
-			try{
+			try {
 				this.clientDao.saveClient(c);
-			}catch(DuplicateKeyException e){
+			} catch (DuplicateKeyException e) {
 				throw new RuntimeException(e);
 			}
 		}

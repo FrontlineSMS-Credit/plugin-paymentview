@@ -11,6 +11,10 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
+/**
+ * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
+ * @author Roy
+ */
 public class HibernateCustomFieldDao extends BaseHibernateDao<CustomField>
 		implements CustomFieldDao {
 	protected HibernateCustomFieldDao() {
@@ -42,25 +46,28 @@ public class HibernateCustomFieldDao extends BaseHibernateDao<CustomField>
 	public List<CustomField> getCustomFieldsByName(String name) {
 		DetachedCriteria criteria = super.getCriterion().add(
 				Restrictions.disjunction().add(
-						Restrictions.ilike(CustomField.Field.NAME.getFieldName(), name.trim(),
-								MatchMode.ANYWHERE)));
+						Restrictions.ilike(
+								CustomField.Field.NAME.getFieldName(),
+								name.trim(), MatchMode.ANYWHERE)));
 		return super.getList(criteria);
 	}
 
-	public List<CustomField> getCustomFieldsByName(String name,
-			int startIndex, int limit) {
+	public List<CustomField> getCustomFieldsByName(String name, int startIndex,
+			int limit) {
 		DetachedCriteria criteria = super.getCriterion().add(
 				Restrictions.disjunction().add(
-						Restrictions.ilike(CustomField.Field.NAME.getFieldName(), name.trim(),
-								MatchMode.ANYWHERE)));
+						Restrictions.ilike(
+								CustomField.Field.NAME.getFieldName(),
+								name.trim(), MatchMode.ANYWHERE)));
 		return super.getList(criteria, startIndex, limit);
 	}
-	
+
 	public List<CustomField> getCustomFieldsByReadableName(String strName) {
 		DetachedCriteria criteria = super.getCriterion().add(
 				Restrictions.disjunction().add(
-						Restrictions.ilike(CustomField.Field.READABLE_NAME.getFieldName(), strName.trim(),
-								MatchMode.ANYWHERE)));
+						Restrictions.ilike(
+								CustomField.Field.READABLE_NAME.getFieldName(),
+								strName.trim(), MatchMode.ANYWHERE)));
 		return super.getList(criteria);
 	}
 
@@ -68,9 +75,41 @@ public class HibernateCustomFieldDao extends BaseHibernateDao<CustomField>
 			int startIndex, int limit) {
 		DetachedCriteria criteria = super.getCriterion().add(
 				Restrictions.disjunction().add(
-						Restrictions.ilike(CustomField.Field.READABLE_NAME.getFieldName(), strName.trim(),
-								MatchMode.ANYWHERE)));
+						Restrictions.ilike(
+								CustomField.Field.READABLE_NAME.getFieldName(),
+								strName.trim(), MatchMode.ANYWHERE)));
 		return super.getList(criteria, startIndex, limit);
+	}
+
+	public List<CustomField> getAllActiveUnusedCustomFields() {
+		DetachedCriteria criteria = super.getCriterion().add(
+				Restrictions
+						.disjunction()
+						.add(Restrictions.eq(
+								CustomField.Field.ACTIVE.getFieldName(), true))
+						.add(Restrictions.eq(
+								CustomField.Field.USED.getFieldName(), false)));
+		return super.getList(criteria);
+	}
+
+	public List<CustomField> getAllActiveUsedCustomFields() {
+		DetachedCriteria criteria = super.getCriterion().add(
+				Restrictions
+						.disjunction()
+						.add(Restrictions.eq(
+								CustomField.Field.ACTIVE.getFieldName(), true))
+						.add(Restrictions.eq(
+								CustomField.Field.USED.getFieldName(), true)));
+		return super.getList(criteria);
+	}
+
+	public List<CustomField> getAllActiveCustomFields() {
+		DetachedCriteria criteria = super
+				.getCriterion()
+				.add(Restrictions.disjunction().add(
+						Restrictions.eq(
+								CustomField.Field.ACTIVE.getFieldName(), true)));
+		return super.getList(criteria);
 	}
 
 	public void saveCustomField(CustomField customField)

@@ -15,7 +15,7 @@ import net.frontlinesms.data.EntityField;
 
 /**
  * @Author Roy
- * @author ian
+ * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
  * */
 
 @Entity
@@ -26,52 +26,60 @@ public class CustomField {
 	private static final String FIELD_NAME = "name";
 	private static final String FIELD_USED = "used";
 	private static final String FIELD_ACTIVE = "active";
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
-	
+
 	@Column(name = FIELD_NAME, nullable = false, unique = true)
 	private String name;
-	
+
 	@Column(name = FIELD_READABLE_NAME, nullable = true, unique = false)
 	private String readableName;
 
 	@OneToMany(fetch = FetchType.EAGER)
 	private Set<CustomValue> customValue;
-	
+
 	@Column(name = FIELD_USED, unique = false)
-	private boolean used  = false;
-	
+	private boolean used;
+
 	@Column(name = FIELD_ACTIVE, unique = false)
-	private boolean active = false;
-	
+	private boolean active;
+
 	public enum Field implements EntityField<CustomField> {
-		READABLE_NAME(FIELD_READABLE_NAME),
-		USED(FIELD_USED),
-		ACTIVE(FIELD_ACTIVE),
+		READABLE_NAME(FIELD_READABLE_NAME), 
+		USED(FIELD_USED), 
+		ACTIVE(FIELD_ACTIVE), 
 		NAME(FIELD_NAME);
-		
+
 		/** name of a field */
 		private final String fieldName;
+
 		/**
 		 * Creates a new {@link Field}
-		 * @param fieldName name of the field
+		 * 
+		 * @param fieldName
+		 *            name of the field
 		 */
-		Field(String fieldName) { this.fieldName = fieldName; }
+		Field(String fieldName) {
+			this.fieldName = fieldName;
+		}
+
 		/** @see EntityField#getFieldName() */
-		public String getFieldName() { return this.fieldName; }
+		public String getFieldName() {
+			return this.fieldName;
+		}
 	}
-	
+
 	/** Empty constructor required for hibernate. */
-	CustomField() {}
-	
+	CustomField() {
+	}
+
 	public CustomField(String name, String strName) {
 		this.name = name;
 		this.readableName = strName;
 	}
-	
 
 	public CustomField(String name, String strName, boolean used, boolean active) {
 		this(name, strName);
@@ -109,7 +117,8 @@ public class CustomField {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -123,7 +132,7 @@ public class CustomField {
 	}
 
 	public void setUsed(boolean used) {
-		this.used = used;		
+		this.used = used;
 	}
 
 	public boolean isUsed() {
@@ -144,7 +153,8 @@ public class CustomField {
 		int result = 1;
 		result = prime * result + (active ? 1231 : 1237);
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((readableName == null) ? 0 : readableName.hashCode());
+		result = prime * result
+				+ ((readableName == null) ? 0 : readableName.hashCode());
 		result = prime * result + (used ? 1231 : 1237);
 		return result;
 	}
@@ -178,7 +188,6 @@ public class CustomField {
 	@Override
 	public String toString() {
 		return "CustomField [id=" + id + ", name=" + name + ", strName="
-				+ readableName + ", used=" + used
-				+ ", active=" + active + "]";
+				+ readableName + ", used=" + used + ", active=" + active + "]";
 	}
 }

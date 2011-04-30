@@ -20,6 +20,21 @@ public interface CustomFieldDao {
 	public List<CustomField> getAllCustomFields();
 
 	/**
+	 * @return
+	 */
+	public List<CustomField> getAllActiveCustomFields();
+
+	/**
+	 * @return
+	 */
+	public List<CustomField> getAllActiveUsedCustomFields();
+	
+	/**
+	 * @return
+	 */
+	public List<CustomField> getAllActiveUnusedCustomFields();
+
+	/**
 	 * Returns all CustomFields from a particular start index with a maximum
 	 * number of returned CustomFields set.
 	 * 
@@ -64,9 +79,9 @@ public interface CustomFieldDao {
 	 */
 	public List<CustomField> getCustomFieldsByName(String strName,
 			int startIndex, int limit);
-	
+
 	public List<CustomField> getCustomFieldsByReadableName(String strName);
-	
+
 	public List<CustomField> getCustomFieldsByReadableName(String strName,
 			int startIndex, int limit);
 
@@ -82,7 +97,7 @@ public interface CustomFieldDao {
 	 * Update a CustomField to the system
 	 * 
 	 * @param CustomField
-	 */
+	 */ 
 	public void updateCustomField(CustomField customField)
 			throws DuplicateKeyException;
 

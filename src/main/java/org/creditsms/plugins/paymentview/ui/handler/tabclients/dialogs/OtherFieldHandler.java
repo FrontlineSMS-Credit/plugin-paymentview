@@ -27,7 +27,8 @@ public class OtherFieldHandler implements ThinletUiEventHandler {
 	}
 
 	public void createField(String fieldName) {
-		CustomField customField = new CustomField(StringUtil.toCamelCase(fieldName), fieldName, false, true);
+		CustomField customField = new CustomField(
+				StringUtil.toCamelCase(fieldName), fieldName, false, true);
 		try {
 			this.customFieldDao.saveCustomField(customField);
 		} catch (DuplicateKeyException e) {

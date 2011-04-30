@@ -18,6 +18,8 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.importexport.ClientCsvImporter;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
 import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
 
@@ -35,12 +37,17 @@ public class ClientImportHandler extends ImportDialogHandler {
 	private final ClientsTabHandler clientsTabHandler;
 	private int columnCount;
 	private ClientCsvImporter importer;
+	private CustomValueDao customDataDao;
+	private CustomFieldDao customFieldDao;
 
 	public ClientImportHandler(UiGeneratorController ui,
-			ClientsTabHandler clientsTabHandler, ClientDao clientDao) {
+			ClientsTabHandler clientsTabHandler, ClientDao clientDao,
+			CustomFieldDao customFieldDao, CustomValueDao customDataDao) {
 		super(ui);
 		this.clientDao = clientDao;
 		this.clientsTabHandler = clientsTabHandler;
+		this.customFieldDao = customFieldDao;
+		this.customDataDao = customDataDao;
 	}
 
 	private void addClientCells(Object row, String[] lineValues) {
