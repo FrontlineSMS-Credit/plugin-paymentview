@@ -48,9 +48,10 @@ public class Client {
 	private Set<Account> accounts;
 
 	@OneToMany
-	private Set<CustomValue> customData;
+	private Set<CustomValue> customValue;
 	
 	public enum Field implements EntityField<Client> {
+		ID(FIELD_ID),
 		FIRST_NAME(FIELD_FIRST_NAME),
 		OTHER_NAME(FIELD_OTHER_NAME),
 		PHONE_NUMBER(FIELD_PHONE_NUMBER);
@@ -101,8 +102,8 @@ public class Client {
 		return accounts;
 	}
 
-	public Set<CustomValue> getCustomData() {
-		return customData;
+	public Set<CustomValue> getCustomValue() {
+		return customValue;
 	}
 
 	public String getFirstName() {
@@ -134,8 +135,8 @@ public class Client {
 		this.accounts = accounts;
 	}
 
-	public void setCustomData(Set<CustomValue> customData) {
-		this.customData = customData;
+	public void setCustomValue(Set<CustomValue> customValue) {
+		this.customValue = customValue;
 	}
 
 	public void setFirstName(String firstName) {

@@ -20,13 +20,14 @@ import net.frontlinesms.data.EntityField;
 public class CustomValue {
 	public static final String TABLE_NAME = "CustomValue";
 
-	public static final String FIELD_STR_VALUE = "strValue";
-	public static final String FIELD_CUSTOM_FIELD = "customFieldId";
-	public static final String FIELD_CLIENT = "clientId";
+	private static final String FIELD_STR_VALUE = "strValue";
+	private static final String FIELD_CUSTOM_FIELD = "customFieldId";
+	private static final String FIELD_CLIENT = "clientId";
+	private static final String FIELD_ID = "id";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", nullable = false, unique = true)
+	@Column(name = FIELD_ID, nullable = false, unique = true)
 	private long id;
 
 	@Column(name = FIELD_STR_VALUE, nullable = true, unique = false)
@@ -41,6 +42,7 @@ public class CustomValue {
 	private Client client;
 	
 	public enum Field implements EntityField<CustomValue> {
+		ID(FIELD_ID),
 		STR_VALUE(FIELD_STR_VALUE),
 		CUSTOM_FIELD(FIELD_CUSTOM_FIELD),
 		CLIENT(FIELD_CLIENT);
@@ -58,6 +60,12 @@ public class CustomValue {
 
 	/** Empty constructor required for hibernate. */
 	public CustomValue() {
+	}
+	
+	public CustomValue(String strValue, CustomField customField, Client client) {
+		this.strValue = strValue;
+		this.customField = customField;
+		this.client = client;
 	}
 
 	public Client getClient() {

@@ -11,6 +11,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
+import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
 import org.creditsms.plugins.paymentview.utils.StringUtil;
 
 public class CustomizeClientDBHandler implements ThinletUiEventHandler {
@@ -28,10 +29,12 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 	private Object dialogComponent;
 	private UiGeneratorController ui;
 	private Object combobox;
+	private ClientsTabHandler clientsTabHandler;
 
 	public CustomizeClientDBHandler(UiGeneratorController ui,
-			CustomFieldDao customFieldDao) {
+			CustomFieldDao customFieldDao, ClientsTabHandler clientsTabHandler) {
 		this.ui = ui;
+		this.clientsTabHandler = clientsTabHandler;
 		this.customFieldDao = customFieldDao;
 
 		init();
@@ -162,6 +165,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 	/** Remove the dialog from view. */
 	public void removeDialog() {
 		this.removeDialog(this.dialogComponent);
+		clientsTabHandler.revalidateTable();
 	}
 
 	/** Remove a dialog from view. */

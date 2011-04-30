@@ -8,6 +8,7 @@ import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 
 /**
  * @author Roy
+ * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
  * */
 
 public interface CustomValueDao {

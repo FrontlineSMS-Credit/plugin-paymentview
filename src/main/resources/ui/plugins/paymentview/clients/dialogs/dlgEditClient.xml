@@ -15,12 +15,9 @@
 		<textfield name="fldPhoneNumber" colspan="2" />
 	</panel>
 
-	<panel weightx="1" weighty="1" columns="3" gap="2">
-		<label text="Accounts" colspan="3"/>
-		<list name="fldAccounts" selection="multiple" colspan="3" weightx="1" weighty="1"/>
-		<button text="Add Account" icon="/icons/helper_add.png"/>
-		<panel weightx="1"/>
-		<button text="Remove Account" icon="/icons/delete.png"/>
+	<panel weightx="1" weighty="1" columns="1" gap="2">
+		<label text="Accounts"/>
+		<list name="fldAccounts" selection="multiple" weightx="1" weighty="1"/>
 	</panel>
 
 	<panel colspan="3" weightx="1">
