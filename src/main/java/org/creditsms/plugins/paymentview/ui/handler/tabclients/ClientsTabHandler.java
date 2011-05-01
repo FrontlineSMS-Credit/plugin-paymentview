@@ -113,7 +113,8 @@ public class ClientsTabHandler extends BaseTabHandler implements
 	}
 
 	public void exportClient() {
-		new ClientExportHandler(ui, clientDao, customFieldDao, customValueDao).showWizard();
+		new ClientExportHandler(ui, clientDao, customFieldDao, customValueDao)
+				.showWizard();
 		this.refresh();
 	}
 
@@ -198,15 +199,13 @@ public class ClientsTabHandler extends BaseTabHandler implements
 		ui.add(header, accounts);
 
 		List<CustomField> allCustomFields = this.customFieldDao
-				.getAllActiveCustomFields();
+				.getAllActiveUsedCustomFields();
 		if (!allCustomFields.isEmpty()) {
 			for (CustomField cf : allCustomFields) {
-				if (cf.isActive() & cf.isUsed()) {
-					Object column = ui.createColumn(cf.getReadableName(),
-							cf.getName());
-					ui.setWidth(column, 110);
-					ui.add(header, column);
-				}
+				Object column = ui.createColumn(cf.getReadableName(),
+						cf.getName());
+				ui.setWidth(column, 110);
+				ui.add(header, column);
 			}
 		}
 		ui.add(this.clientsTableComponent, header);

@@ -5,23 +5,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.frontlinesms.FrontlineSMSConstants;
-import net.frontlinesms.csv.CsvExporter;
 import net.frontlinesms.csv.CsvImporter;
 import net.frontlinesms.csv.CsvParseException;
 import net.frontlinesms.csv.CsvRowFormat;
-import net.frontlinesms.ui.Icon;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.importexport.ImportDialogHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
+import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.importexport.ClientCsvImporter;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
 import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
+import org.creditsms.plugins.paymentview.utils.StringUtil;
 
 public class ClientImportHandler extends ImportDialogHandler {
 	private static final String COMPONENT_ACCOUNTS = "cbAccounts";
@@ -50,37 +49,32 @@ public class ClientImportHandler extends ImportDialogHandler {
 		this.customDataDao = customDataDao;
 	}
 
+	public void showWizard() {
+		List<CustomField> allCustomFields = this.customFieldDao
+				.getAllActiveUsedCustomFields();
+		if (!allCustomFields.isEmpty()) {
+			for (CustomField cf : allCustomFields) {
+					Object checkbox = uiController.createCheckbox(cf.getName(),
+							cf.getReadableName(), true);
+					uiController.add(optionsPanel, checkbox);
+			}
+		}
+		super.showWizard();
+	}
+	
 	private void addClientCells(Object row, String[] lineValues) {
-		Object iconCell = this.uiController.createTableCell("");
-		this.uiController.setIcon(iconCell, Icon.CONTACT);
-		this.uiController.add(row, iconCell);
-
 		for (int i = 0; i < columnCount && i < lineValues.length; ++i) {
-			Object cell = this.uiController.createTableCell(lineValues[i]
-					.replace(CsvExporter.GROUPS_DELIMITER, ", "));
+			Object cell = this.uiController.createTableCell(lineValues[i]);
 
 			if (lineValues[i].equals(InternationalisationUtils
 					.getI18nString(PaymentPluginConstants.COMMON_FIRST_NAME))
 					|| lineValues[i]
 							.equals(InternationalisationUtils
 									.getI18nString(PaymentPluginConstants.COMMON_OTHER_NAME))) {
-				this.uiController.setIcon(cell, Icon.USER_STATUS_ACTIVE);
 			}
 
 			if (lineValues[i].equals(InternationalisationUtils
 					.getI18nString(PaymentPluginConstants.COMMON_PHONE))) {
-				this.uiController.setIcon(cell, Icon.PHONE_NUMBER);
-			}
-
-			if (lineValues[i].equals(InternationalisationUtils
-					.getI18nString(FrontlineSMSConstants.COMMON_ACTIVE))) {
-				lineValues[i] = lineValues[i].toLowerCase();
-				if (!lineValues[i].equalsIgnoreCase("false")
-						&& !lineValues[i].equals("dormant")) {
-					this.uiController.setIcon(cell, Icon.CIRLCE_TICK);
-				} else {
-					this.uiController.setIcon(cell, Icon.CANCEL);
-				}
 			}
 
 			this.uiController.add(row, cell);
@@ -92,12 +86,13 @@ public class ClientImportHandler extends ImportDialogHandler {
 		int columnCount = 0;
 		for (Object checkbox : getCheckboxes()) {
 			if (this.uiController.isSelected(checkbox)) {
-				String attributeName = this.uiController.getText(checkbox);
-
+				String attributeName = this.uiController.getText(checkbox);				
 				if (uiController.getName(checkbox).equals(COMPONENT_CB_NAME)) {
 					//TODO: take care of this hack... Separate names?
-					this.uiController.add(header, this.uiController.createColumn("First Name", "First Name"));
-					this.uiController.add(header, this.uiController.createColumn("Second Name", "Second Name"));
+					this.uiController.add(header, this.uiController.createColumn(InternationalisationUtils
+							.getI18nString(PaymentPluginConstants.COMMON_FIRST_NAME), ""));
+					this.uiController.add(header, this.uiController.createColumn(InternationalisationUtils
+							.getI18nString(PaymentPluginConstants.COMMON_OTHER_NAME), ""));
 				}else{
 					this.uiController.add(header, this.uiController.createColumn(attributeName, attributeName));
 				}
@@ -111,7 +106,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 	@Override
 	protected void doSpecialImport(String dataPath) {
 		CsvRowFormat rowFormat = getRowFormatForClient();
-		this.importer.importClients(this.clientDao, rowFormat);
+		this.importer.importClients(this.clientDao, rowFormat, customFieldDao, customDataDao);
 
 		this.clientsTabHandler.refresh();
 		this.uiController.infoMessage(InternationalisationUtils
@@ -159,6 +154,12 @@ public class ClientImportHandler extends ImportDialogHandler {
 				COMPONENT_ACCOUNTS);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS,
 				COMPONENT_CB_PHONE);
+		
+		for(CustomField cf : customFieldDao.getAllActiveUsedCustomFields()){
+			addMarker(rowFormat, StringUtil.getMarkerFromString(cf.getReadableName()),
+					cf.getName());
+		}
+		
 		return rowFormat;
 	}
 

@@ -82,33 +82,27 @@ public class HibernateCustomFieldDao extends BaseHibernateDao<CustomField>
 	}
 
 	public List<CustomField> getAllActiveUnusedCustomFields() {
-		DetachedCriteria criteria = super.getCriterion().add(
-				Restrictions
-						.disjunction()
-						.add(Restrictions.eq(
-								CustomField.Field.ACTIVE.getFieldName(), true))
-						.add(Restrictions.eq(
-								CustomField.Field.USED.getFieldName(), false)));
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq(CustomField.Field.ACTIVE.getFieldName(),
+				Boolean.TRUE));
+		criteria.add(Restrictions.eq(CustomField.Field.USED.getFieldName(),
+				Boolean.FALSE));
 		return super.getList(criteria);
 	}
 
 	public List<CustomField> getAllActiveUsedCustomFields() {
-		DetachedCriteria criteria = super.getCriterion().add(
-				Restrictions
-						.disjunction()
-						.add(Restrictions.eq(
-								CustomField.Field.ACTIVE.getFieldName(), true))
-						.add(Restrictions.eq(
-								CustomField.Field.USED.getFieldName(), true)));
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq(CustomField.Field.ACTIVE.getFieldName(),
+				Boolean.TRUE));
+		criteria.add(Restrictions.eq(CustomField.Field.USED.getFieldName(),
+				Boolean.TRUE));
 		return super.getList(criteria);
 	}
 
 	public List<CustomField> getAllActiveCustomFields() {
-		DetachedCriteria criteria = super
-				.getCriterion()
-				.add(Restrictions.disjunction().add(
-						Restrictions.eq(
-								CustomField.Field.ACTIVE.getFieldName(), true)));
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq(CustomField.Field.ACTIVE.getFieldName(),
+				Boolean.TRUE));
 		return super.getList(criteria);
 	}
 

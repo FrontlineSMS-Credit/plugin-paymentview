@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import net.frontlinesms.csv.CsvRowFormat;
@@ -47,7 +48,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 		LOG.debug("Client format [" + clientFormat + "]");
 		LOG.debug("Filename [" + exportFile.getAbsolutePath() + "]");
 
-		Utf8FileWriter out = null;		
+		Utf8FileWriter out = null;
 
 		try {
 			out = new Utf8FileWriter(exportFile);
@@ -66,21 +67,21 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 			items.add(InternationalisationUtils.getI18nString(COMMON_PHONE));
 			items.add(PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS);
 			items.add(InternationalisationUtils.getI18nString(COMMON_ACCOUNTS));
-			
+
 			for (CustomField cf : usedCustomFields) {
 				items.add(StringUtil.getMarkerFromString(cf.getReadableName()));
 				items.add(cf.getReadableName());
 			}
 			String[] str = new String[items.size()];
-			PaymentViewCsvUtils._writeLine(out, clientFormat,
-					items.toArray(str));
+			PaymentViewCsvUtils
+					.writeLine(out, clientFormat, items.toArray(str));
 
 			for (Client client : clients) {
 				List<CustomValue> allCustomValues = customValueDao
 						.getCustomValuesByClientId(client.getId());
 
 				items = new ArrayList<String>();
-				
+
 				items.add(PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME);
 				items.add(client.getFirstName());
 				items.add(PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME);
@@ -88,21 +89,31 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 				items.add(PaymentViewCsvUtils.MARKER_CLIENT_PHONE);
 				items.add(client.getPhoneNumber());
 				items.add(PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS);
-				items.add(PaymentViewUtils.accountsAsString(client.getAccounts(),
-						ACCOUNTS_DELIMITER));
-				
+				items.add(PaymentViewUtils.accountsAsString(
+						client.getAccounts(), ACCOUNTS_DELIMITER));
+
 				if (!usedCustomFields.isEmpty()) {
-					for (CustomField cf : usedCustomFields) {
+					CustomField curr = null;
+					Iterator<CustomField> cfi = usedCustomFields.iterator();
+
+					for (boolean markerReplaced = false; cfi.hasNext(); markerReplaced = false) {
+						curr = cfi.next();
 						for (CustomValue cv : allCustomValues) {
-							if (cv.getCustomField().equals(cf)) {
-								items.add(StringUtil.getMarkerFromString(cf.getReadableName()));
+							if (cv.getCustomField().equals(curr)) {
+								items.add(StringUtil.getMarkerFromString(curr.getReadableName()));
 								items.add(cv.getStrValue());
+								markerReplaced = true;
 							}
+						}
+						if (!markerReplaced) {
+							items.add(StringUtil.getMarkerFromString(curr.getReadableName()));
+							items.add(StringUtil.EMPTY);
 						}
 					}
 				}
+
 				str = new String[items.size()];
-				PaymentViewCsvUtils._writeLine(out, clientFormat,
+				PaymentViewCsvUtils.writeLine(out, clientFormat,
 						items.toArray(str));
 			}
 		} finally {
@@ -110,7 +121,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 				out.close();
 			LOG.trace("EXIT");
 		}
-		
+
 	}
 
 	public static void exportIncomingPayment(File exportFile,

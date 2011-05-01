@@ -2,9 +2,7 @@ package org.creditsms.plugins.paymentview.ui.handler.importexport;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.frontlinesms.csv.CsvRowFormat;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -31,7 +29,6 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 	private ClientDao clientDao;
 	private CustomFieldDao customFieldDao;
 
-	private Map<CustomField, Object> customComponents;
 	private CustomValueDao customValueDao;
 
 	public ClientExportHandler(UiGeneratorController ui, ClientDao clientDao,
@@ -44,7 +41,7 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 
 	@Override
 	public void doSpecialExport(String dataPath) throws IOException {
-		log.debug("Exporting all contacts..");
+		log.debug("Exporting all clients..");
 		exportClients(this.clientDao.getAllClients(), dataPath);
 	}
 
@@ -91,17 +88,12 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 
 	public void showWizard() {
 		List<CustomField> allCustomFields = this.customFieldDao
-				.getAllActiveCustomFields();
-		customComponents = new HashMap<CustomField, Object>(
-				allCustomFields.size());
+				.getAllActiveUsedCustomFields();
 		if (!allCustomFields.isEmpty()) {
 			for (CustomField cf : allCustomFields) {
-				if (cf.isActive() & cf.isUsed()) {
 					Object checkbox = uiController.createCheckbox(cf.getName(),
 							cf.getReadableName(), true);
 					uiController.add(optionsPanel, checkbox);
-					customComponents.put(cf, checkbox);
-				}
 			}
 		}
 		super.showWizard();

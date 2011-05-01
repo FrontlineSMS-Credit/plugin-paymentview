@@ -42,9 +42,6 @@ public class EditClientHandler implements ThinletUiEventHandler {
 	private CustomFieldDao customFieldDao;
 
 	private Object compPanelFields;
-
-	private int counter = 0;
-
 	private Map<CustomField, Object> customComponents;
 
 	public EditClientHandler(UiGeneratorController ui, ClientDao clientDao,
@@ -105,16 +102,14 @@ public class EditClientHandler implements ThinletUiEventHandler {
 		fieldOtherName = ui.find(dialogComponent, COMPONENT_TEXT_OTHER_NAME);
 		fieldListAccounts = ui.find(dialogComponent, COMPONENT_LIST_ACCOUNTS);
 
-		List<CustomField> allCustomFields = customFieldDao
+		List<CustomField> allUsedCustomFields = customFieldDao
 				.getAllActiveUsedCustomFields();
 
 		customComponents = new HashMap<CustomField, Object>(
-				allCustomFields.size());
+				allUsedCustomFields.size());
 
-		for (CustomField cf : allCustomFields) {
-			if (cf.isActive() & cf.isUsed()) {
-				addField(cf, cf.getName(), cf.getReadableName());
-			}
+		for (CustomField cf : allUsedCustomFields) {
+			addField(cf, cf.getName(), cf.getReadableName());
 		}
 
 	}
@@ -139,7 +134,7 @@ public class EditClientHandler implements ThinletUiEventHandler {
 			ui.setText(fieldPhoneNumber, this.getClientObj().getPhoneNumber());
 
 			List<CustomField> allCustomFields = this.customFieldDao
-					.getAllCustomFields();
+					.getAllActiveUsedCustomFields();
 			List<CustomValue> allCustomValues = this.customValueDao
 					.getCustomValuesByClientId(client.getId());
 
@@ -179,7 +174,7 @@ public class EditClientHandler implements ThinletUiEventHandler {
 				this.clientDao.updateClient(this.client);
 
 				List<CustomField> allCustomFields = this.customFieldDao
-						.getAllCustomFields();
+						.getAllActiveUsedCustomFields();
 
 				if (!allCustomFields.isEmpty()) {
 					for (CustomField cf : allCustomFields) {
@@ -194,9 +189,8 @@ public class EditClientHandler implements ThinletUiEventHandler {
 
 						}
 						if (cv == null) {
-							cv = new CustomValue(
-									ui.getText(customComponents.get(cf)), cf,
-									client);
+							cv = new CustomValue(ui.getText(customComponents
+									.get(cf)), cf, client);
 							try {
 								customValueDao.saveCustomValue(cv);
 							} catch (DuplicateKeyException e) {
@@ -227,11 +221,11 @@ public class EditClientHandler implements ThinletUiEventHandler {
 				throw new RuntimeException(e);
 			}
 
-			List<CustomField> allCustomFields = this.customFieldDao
-					.getAllCustomFields();
+			List<CustomField> allUsedCustomFields = this.customFieldDao
+					.getAllActiveUsedCustomFields();
 
-			if (!allCustomFields.isEmpty()) {
-				for (CustomField cf : allCustomFields) {
+			if (!allUsedCustomFields.isEmpty()) {
+				for (CustomField cf : allUsedCustomFields) {
 					CustomValue cv = new CustomValue(
 							ui.getText(customComponents.get(cf)), cf, client);
 					try {

@@ -13,18 +13,21 @@ import net.frontlinesms.data.EntityField;
 
 /**
  * @Author Roy
+ * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
+ * 
  * */
 @Entity
 @Table(name = Account.TABLE_NAME)
 public class Account {
 	public static final String TABLE_NAME = "Account";
 
-	public static final String FIELD_ACCOUNT_NUMBER = "accountNumber";
-	public static final String FIELD_CLIENT = "clientId";
+	private static final String FIELD_ACCOUNT_NUMBER = "accountNumber";
+	private static final String FIELD_CLIENT = "clientId";
+	private static final String FIELD_ID = "id";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", nullable = false, unique = true)
+	@Column(name = FIELD_ID, nullable = false, unique = true)
 	private long id;
 
 	@Column(name = FIELD_ACCOUNT_NUMBER, nullable = false, unique = true)
@@ -39,6 +42,7 @@ public class Account {
 	}
 
 	public enum Field implements EntityField<Account> {
+		ID(FIELD_ID),
 		ACCOUNT_NUMBER(FIELD_ACCOUNT_NUMBER),
 		CLIENT(FIELD_CLIENT);
 		

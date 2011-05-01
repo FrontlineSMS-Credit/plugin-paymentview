@@ -38,7 +38,6 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		this.customFieldDao = customFieldDao;
 
 		init();
-		// refresh();
 	}
 
 	/**
@@ -63,9 +62,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		}
 
 		for (CustomField cf : customFieldDao.getAllActiveUsedCustomFields()) {
-			if (cf.isActive() & cf.isUsed()) {
-				addField(cf.getReadableName());
-			}
+			addField(cf.getReadableName());
 		}
 	}
 
@@ -126,11 +123,9 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		ui.removeAll(cmbfield);
 
 		for (CustomField cf : customFieldDao.getAllActiveUnusedCustomFields()) {
-			if (cf.isActive() & !cf.isUsed()) {
-				Object cmbchoice = ui.createComboboxChoice(
-						cf.getReadableName(), cf);
-				ui.add(cmbfield, cmbchoice);
-			}
+			Object cmbchoice = ui
+					.createComboboxChoice(cf.getReadableName(), cf);
+			ui.add(cmbfield, cmbchoice);
 		}
 
 		Object cmbchoice = ui.createComboboxChoice(ENTER_NEW_FIELD, null);
