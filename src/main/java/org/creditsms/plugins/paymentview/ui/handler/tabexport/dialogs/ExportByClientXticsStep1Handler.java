@@ -227,4 +227,12 @@ public class ExportByClientXticsStep1Handler implements ThinletUiEventHandler {
 	public void setCustomFieldDao(CustomFieldDao customFieldDao) {
 		this.customFieldDao = customFieldDao;
 	}
+
+	public List<Object> getPayments() {
+		return payments;
+	}
+
+	public void setPayments(List<Object> payments) {
+		this.payments = payments;
+	}	
 }

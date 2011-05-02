@@ -25,13 +25,18 @@ public class ExportTabHandler extends BaseTabHandler {
 	private CustomFieldDao customFieldDao;
 	private CustomValueDao customValueDao;
 
-	public ExportTabHandler(UiGeneratorController ui, PaymentViewThinletTabController paymentViewThinletTabController) {
+	public ExportTabHandler(UiGeneratorController ui,
+			PaymentViewThinletTabController paymentViewThinletTabController) {
 		super(ui);
 		this.clientDao = paymentViewThinletTabController.getClientDao();
-		this.incomingPaymentDao = paymentViewThinletTabController.getIncomingPaymentDao();
-		this.outgoingPaymentDao = paymentViewThinletTabController.getOutgoingPaymentDao();
-		this.customFieldDao = paymentViewThinletTabController.getCustomFieldDao();
-		this.customValueDao = paymentViewThinletTabController.getCustomValueDao();
+		this.incomingPaymentDao = paymentViewThinletTabController
+				.getIncomingPaymentDao();
+		this.outgoingPaymentDao = paymentViewThinletTabController
+				.getOutgoingPaymentDao();
+		this.customFieldDao = paymentViewThinletTabController
+				.getCustomFieldDao();
+		this.customValueDao = paymentViewThinletTabController
+				.getCustomValueDao();
 		init();
 	}
 
@@ -50,7 +55,9 @@ public class ExportTabHandler extends BaseTabHandler {
 		exportTab = ui.loadComponentFromFile(XML_EXPORT_TAB, this);
 		mainTabbedPane = ui.find(exportTab, TABBED_PANE_MAIN);
 
-		exportclientsTab = new ExportClientsTabHandler(ui, clientDao, customFieldDao, customValueDao);
+		exportclientsTab = new ExportClientsTabHandler(ui, clientDao,
+				customFieldDao, customValueDao, outgoingPaymentDao,
+				incomingPaymentDao);
 		ui.add(mainTabbedPane, exportclientsTab.getTab());
 		exportclientHistoryTab = new ExportClientHistoryTabHandler(ui);
 		ui.add(mainTabbedPane, exportclientHistoryTab.getTab());
