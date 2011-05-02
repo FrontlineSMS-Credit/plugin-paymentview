@@ -4,7 +4,6 @@
  */
 package org.creditsms.plugins.paymentview.ui;
 
-import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.plugins.BasePluginThinletTabController;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -28,7 +27,7 @@ import org.creditsms.plugins.paymentview.ui.handler.tabsettings.SettingsTabHandl
 /**
  * 
  * @author Emmanuel Kala
- * @author Ian Mukewa
+ * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
  */
 public class PaymentViewThinletTabController extends
 		BasePluginThinletTabController<PaymentViewPluginController> implements
@@ -37,8 +36,6 @@ public class PaymentViewThinletTabController extends
 	private static final String TABP_MAIN_PANE = "tabP_mainPane";
 	private static final String XML_PAYMENT_VIEW_TAB = "/ui/plugins/paymentview/paymentViewTab.xml";
 
-	private PaymentViewPluginController controller;
-
 	private SettingsTabHandler settingsTab;
 	private OutgoingPaymentsTabHandler outgoingPayTab;
 	private IncomingPaymentsTabHandler incomingPayTab;
@@ -46,7 +43,6 @@ public class PaymentViewThinletTabController extends
 	private ExportTabHandler exportTab;
 	private AnalyticsTabHandler analyticsTab;
 
-	private FrontlineSMS frontlineController;
 	private Object mainPane;
 
 	private Object paymentViewTab;
@@ -71,7 +67,6 @@ public class PaymentViewThinletTabController extends
 	public PaymentViewThinletTabController(
 			PaymentViewPluginController controller, UiGeneratorController ui) {
 		super(controller, ui);
-		this.controller = controller;
 	}
 
 	public void initTabs() {	

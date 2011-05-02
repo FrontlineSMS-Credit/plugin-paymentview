@@ -47,7 +47,7 @@ public class ExportClientsTabHandler extends BaseTabHandler {
 
 	@Override
 	public void refresh() {
-		this.clientsTableHandler.updateClientsList();
+		this.clientsTableHandler.refresh();
 	}
 
 	public void exportSelectedClients() {

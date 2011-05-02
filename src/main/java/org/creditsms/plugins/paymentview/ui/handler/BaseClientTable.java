@@ -3,6 +3,7 @@ package org.creditsms.plugins.paymentview.ui.handler;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.frontlinesms.ui.Icon;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
@@ -16,6 +17,7 @@ import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
+import org.creditsms.plugins.paymentview.utils.StringUtil;
 import org.springframework.util.StringUtils;
 
 public abstract class BaseClientTable implements PagedComponentItemProvider,
@@ -23,7 +25,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	protected ComponentPagingHandler clientsTablePager;
 	protected UiGeneratorController ui;
 	protected Object tableClients;
-	protected String clientFilter = "";
+	protected String clientFilter = StringUtil.EMPTY;
 	protected ClientDao clientDao;
 	protected CustomFieldDao customFieldDao;
 	protected CustomValueDao customValueDao;
@@ -63,7 +65,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 
 	protected PagedListDetails getClientListDetails(int startIndex, int limit) {
 		List<Client> clients = null;
-		if (this.clientFilter.equals("")) {
+		if (this.clientFilter.equals(StringUtil.EMPTY)) {
 			clients = this.clientDao.getAllClients();
 		} else {
 			clients = this.clientDao.getClientsByName(clientFilter);
@@ -93,7 +95,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 		Object row = ui.createTableRow(client);
 
 		ui.add(row,
-				ui.createTableCell(client.getFirstName() + " "
+				ui.createTableCell(client.getFirstName() + StringUtil.SPACE
 						+ client.getOtherName()));
 		ui.add(row, ui.createTableCell(client.getPhoneNumber()));
 
@@ -147,12 +149,12 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 
 		Object name = ui.createColumn("Name", "name");
 		ui.setWidth(name, 200);
-		ui.setIcon(name, "/icons/user.png");
+		ui.setIcon(name, Icon.CONTACT);
 		ui.add(header, name);
 
 		Object phone = ui.createColumn("Phone", "phone");
 		ui.setWidth(phone, 150);
-		ui.setIcon(phone, "/icons/phone.png");
+		ui.setIcon(phone, Icon.PHONE_NUMBER);
 		ui.add(header, phone);
 
 		Object accounts = ui.createColumn("Account(s)", "accounts");

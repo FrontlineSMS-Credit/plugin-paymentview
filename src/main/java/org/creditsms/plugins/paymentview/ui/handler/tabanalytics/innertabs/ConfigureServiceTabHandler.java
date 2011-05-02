@@ -11,7 +11,6 @@ public class ConfigureServiceTabHandler extends BaseTabHandler {
 	private static final String XML_CONFIGURE_SERVICE = "/ui/plugins/paymentview/analytics/configureservice/configurelayaway.xml";
 
 	private Object configureServiceTab;
-	private PaymentViewThinletTabController paymentViewThinletTabController;
 
 	public ConfigureServiceTabHandler(
 			UiGeneratorController ui,
@@ -19,7 +18,6 @@ public class ConfigureServiceTabHandler extends BaseTabHandler {
 			final PaymentViewThinletTabController paymentViewThinletTabController) {
 		
 		super(ui);
-		this.paymentViewThinletTabController = paymentViewThinletTabController;
 		configureServiceTab = ui.find(tabAnalytics, TAB_CONFIGURE_SERVICE);
 		this.init();
 	}

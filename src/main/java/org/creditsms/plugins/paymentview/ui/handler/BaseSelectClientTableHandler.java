@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.frontlinesms.ui.UiGeneratorController;
@@ -14,14 +15,15 @@ import org.creditsms.plugins.paymentview.utils.StringUtil;
 
 public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 
-	private static final String ICONS_CHECKBOX_SELECTED_PNG = "/icons/checkbox-selected.png";
-	private static final String ICONS_CHECKBOX_UNSELECTED_PNG = "/icons/checkbox-unselected.png";
+	protected static final String ICONS_CHECKBOX_SELECTED_PNG = "/icons/checkbox-selected.png";
+	protected static final String ICONS_CHECKBOX_UNSELECTED_PNG = "/icons/checkbox-unselected.png";
 	protected List<Client> selectedUsers;
 
 	public BaseSelectClientTableHandler(UiGeneratorController ui,
 			ClientDao clientDao, CustomFieldDao customFieldDao,
 			CustomValueDao customValueDao) {
 		super(ui, clientDao, customFieldDao, customValueDao);
+		selectedUsers = new ArrayList<Client>();
 	}
 
 	@Override
@@ -66,7 +68,7 @@ public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 		Object row = ui.createTableRow(client);
 	
 		Object cell = ui.createTableCell(StringUtil.EMPTY);
-		ui.setIcon(cell, ICONS_CHECKBOX_UNSELECTED_PNG);
+		markCell(cell, false);
 		ui.add(row, cell);
 	
 		ui.add(row,
@@ -81,8 +83,16 @@ public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 		ui.setAttachedObject(row, client);
 		return addCustomData(client, row);
 	}
+	
+	public void selectAll(){
+		markAllCells(true);
+	}
+	
+	public void unSelectAll() {
+		markAllCells(false);
+	}
 
-	public void selectAll() {
+	private void markAllCells(boolean choice) {
 		Object[] rows = ui.getItems(this.tableClients);
 	
 		for (Object row : rows) {
@@ -90,14 +100,22 @@ public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 			ui.remove(cell);
 			Client attachedClient = (Client) ui.getAttachedObject(row);
 			if (!attachedClient.isSelected()) {
-				attachedClient.setSelected(true);
-				ui.setIcon(cell, ICONS_CHECKBOX_SELECTED_PNG);
+				attachedClient.setSelected(choice);
+				markCell(cell, choice);
 			}
 	
 			ui.add(row, cell, 0);
 		}
 	}
-
+	
+	protected void markCell(Object cell, boolean choice){
+		if(choice){
+			ui.setIcon(cell, ICONS_CHECKBOX_SELECTED_PNG);
+		}else{
+			ui.setIcon(cell, ICONS_CHECKBOX_UNSELECTED_PNG);
+		}
+	}
+		
 	public void selectUsers(Object tbl_clients) {
 		Object row = ui.getSelectedItem(tbl_clients);
 	
@@ -110,11 +128,11 @@ public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 		if (attachedClient.isSelected()) {
 			attachedClient.setSelected(false);
 			selectedUsers.remove(attachedClient);
-			ui.setIcon(cell, ICONS_CHECKBOX_UNSELECTED_PNG);
+			markCell(cell, false);
 		} else {
 			attachedClient.setSelected(true);
 			selectedUsers.add(attachedClient);
-			ui.setIcon(cell, ICONS_CHECKBOX_SELECTED_PNG);
+			markCell(cell, true);
 		}
 	
 		ui.add(row, cell, 0);

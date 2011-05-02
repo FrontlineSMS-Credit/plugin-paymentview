@@ -17,7 +17,7 @@ public class CreateSettingsHandler extends BasePanelHandler {
 	private CustomFieldDao customFieldDao;
 	private CustomValueDao customDataDao;
 
-	protected CreateSettingsHandler(UiGeneratorController ui,
+	CreateSettingsHandler(UiGeneratorController ui,
 			ClientDao clientDao,
 			ViewDashBoardTabHandler viewDashBoardTabHandler,
 			CustomFieldDao customFieldDao, CustomValueDao customDataDao) {

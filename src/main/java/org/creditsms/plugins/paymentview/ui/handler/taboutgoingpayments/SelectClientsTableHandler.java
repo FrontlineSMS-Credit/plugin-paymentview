@@ -1,4 +1,4 @@
-package org.creditsms.plugins.paymentview.ui.handler.tabexport;
+package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments;
 
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -7,11 +7,11 @@ import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.BaseSelectClientTableHandler;
 
-public class ExportClientsTable extends BaseSelectClientTableHandler {
+public class SelectClientsTableHandler extends BaseSelectClientTableHandler {
 	private static final String TBL_CLIENTS = "tbl_clients";
-	private static final String XML_CLIENTS_TABLE = "/ui/plugins/paymentview/export/innertabs/clientsTable.xml";
+	private static final String XML_CLIENTS_TABLE = "/ui/plugins/paymentview/outgoingpayments/innertabs/clientsTable.xml";
 	
-	public ExportClientsTable(UiGeneratorController ui, ClientDao clientDao,
+	public SelectClientsTableHandler(UiGeneratorController ui, ClientDao clientDao,
 			CustomFieldDao customFieldDao, CustomValueDao customValueDao) {
 		super(ui, clientDao, customFieldDao, customValueDao);		
 	}
@@ -24,5 +24,5 @@ public class ExportClientsTable extends BaseSelectClientTableHandler {
 	@Override
 	protected String getClientsPanelFilePath() {
 		return XML_CLIENTS_TABLE;
-	}
+	}	
 }
