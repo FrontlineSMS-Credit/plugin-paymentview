@@ -107,7 +107,6 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		ui.add(this.dialogComponent, compParentPanelFields, index);
 
 		// Rectangle pnlFieldsbounds = ui.getBounds(compPanelFields);
-		//
 		// Rectangle bounds = ui.getBounds(this.dialogComponent);
 		// ui.repaint(this.dialogComponent, bounds.x, bounds.y,
 		// bounds.width + bounds.x + pnlFieldsbounds.width, bounds.height +
@@ -134,26 +133,29 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 
 	public void addNewField(Object fieldCombo) {
 		if (ui.getText(fieldCombo).equals(ENTER_NEW_FIELD)) {
+			ui.setSelectedIndex(fieldCombo, -1);
 			showOtherFieldDialog(fieldCombo);
 		} else {
-			int index = ui.getIndex(compPanelFields, fieldCombo);
-			ui.remove(fieldCombo);
 			CustomField cf = (CustomField) ui.getAttachedObject(ui
 					.getSelectedItem(fieldCombo));
-			Object txtField = ui.createTextfield(ui.getName(fieldCombo),
-					cf.getReadableName());
+			if (cf != null) {
+				int index = ui.getIndex(compPanelFields, fieldCombo);
+				ui.remove(fieldCombo);
+				Object txtField = ui.createTextfield(ui.getName(fieldCombo),
+						cf.getReadableName());
 
-			cf.setUsed(true);
+				cf.setUsed(true);
 
-			try {
-				customFieldDao.updateCustomField(cf);
-			} catch (DuplicateKeyException e) {
-				new RuntimeException(e);
+				try {
+					customFieldDao.updateCustomField(cf);
+				} catch (DuplicateKeyException e) {
+					new RuntimeException(e);
+				}
+				ui.add(compPanelFields, txtField, index);
+				ui.setColspan(txtField, 2);
+				ui.setColumns(txtField, 50);
+				ui.setEditable(txtField, false);
 			}
-			ui.add(compPanelFields, txtField, index);
-			ui.setColspan(txtField, 2);
-			ui.setColumns(txtField, 50);
-			ui.setEditable(txtField, false);
 		}
 	}
 

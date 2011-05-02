@@ -51,7 +51,7 @@ public class ExportByClientXticsStep1Handler implements ThinletUiEventHandler {
 	}
 
 	public void next() {
-		new ExportByClientXticsStep2Handler(ui, customValueDao, customFieldDao,
+		new ExportByClientXticsStep2Handler(ui, clientDao, customValueDao, customFieldDao,
 				selectedUsers, paymentType).showWizard();
 		removeDialog();
 	}

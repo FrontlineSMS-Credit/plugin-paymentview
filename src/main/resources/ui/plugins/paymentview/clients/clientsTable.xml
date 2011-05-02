@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel weightx="1" weighty="1" columns="1" gap="5" left="5"
+	name="pnl_tbl_clientList" right="5" top="5" width="100">
+	<panel weightx="1" gap="5">
+		<label text="i18n.plugins.paymentview.tab.clients.title" font="20 Bold"
+			weightx="1" />
+		<panel weightx="1" />
+		<panel weightx="1" />
+		<panel weightx="1" />
+		<textfield action="setClientFilter(clientsFilter.text)"
+			name="clientsFilter" tooltip="i18n.tooltip.search.here" weightx="1" />
+		<button icon="/icons/search.png" text="i18n.common.search"
+			action="filterClients" />
+	</panel>
+	<table delete="showConfirmationDialog('deleteClient')" colspan="10"
+		name="tbl_clientList" width="1000" weightx="1" weighty="1">
+		<popupmenu name="menu">
+			<menuitem action="analyseClient" icon="/icons/search.png"
+				name="miAnalyseClient" text="Analyse Client" />
+			<menuitem action="editClient" icon="/icons/edit.png" name="miEditClient"
+				text="Edit Client" />
+			<menuitem action="showConfirmationDialog('deleteClient')"
+				icon="/icons/delete.png" name="miDeleteClient"
+				text="i18n.plugins.paymentview.action.deleteclient" />
+			<menuitem action="exportClient" icon="/icons/export.png"
+				name="miExportClient" text="i18n.plugins.paymentview.action.exportclient" />
+		</popupmenu>
+	</table>
+</panel>

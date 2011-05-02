@@ -121,4 +121,14 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 	protected String getWizardTitleI18nKey() {
 		return MESSAGE_EXPORTING_SELECTED_CONTACTS;
 	}
+	
+	/** Remove the dialog from view. */
+	public void removeDialog() {
+		this.removeDialog(this.wizardDialog);
+	}
+
+	/** Remove a dialog from view. */
+	public void removeDialog(Object dialog) {
+		this.uiController.removeDialog(dialog);
+	}
 }

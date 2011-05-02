@@ -11,6 +11,8 @@ import net.frontlinesms.ui.handler.PagedListDetails;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.CustomField;
+import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
@@ -40,6 +42,8 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 			CustomValueDao customValueDao) {
 		super(ui);
 		this.clientDao = clientDao;
+		this.customFieldDao = customFieldDao;
+		this.customValueDao = customValueDao;
 		selectedUsers = new ArrayList<Client>();
 		init();
 		refresh();
@@ -52,6 +56,7 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 		pnlClients = ui.find(clientsTab, COMPONENT_PANEL_CLIENTS);
 		tblClients = ui.find(clientsTab, COMPONENT_TABLE_CLIENTS);
 		clientsTablePager = new ComponentPagingHandler(ui, this, tblClients);
+		this.createHeader();
 
 		this.ui.add(pnlClients, this.clientsTablePager.getPanel());
 		return clientsTab;
@@ -79,6 +84,42 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 		}
 		return components;
 	}
+	
+	private void createHeader() {
+		ui.removeAll(tblClients);
+
+		Object header = ui.createTableHeader();
+
+		Object select = ui.createColumn("Name", "name");
+		ui.setWidth(select, 50);
+		ui.add(header, select);
+		
+		Object name = ui.createColumn("Name", "name");
+		ui.setWidth(name, 200);
+		ui.setIcon(name, "/icons/user.png");
+		ui.add(header, name);
+
+		Object phone = ui.createColumn("Phone", "phone");
+		ui.setWidth(phone, 150);
+		ui.setIcon(phone, "/icons/phone.png");
+		ui.add(header, phone);
+
+		Object accounts = ui.createColumn("Account(s)", "accounts");
+		ui.setWidth(accounts, 100);
+		ui.add(header, accounts);
+
+		List<CustomField> allCustomFields = this.customFieldDao
+				.getAllActiveUsedCustomFields();
+		if (!allCustomFields.isEmpty()) {
+			for (CustomField cf : allCustomFields) {
+				Object column = ui.createColumn(cf.getReadableName(),
+						cf.getName());
+				ui.setWidth(column, 110);
+				ui.add(header, column);
+			}
+		}
+		ui.add(this.tblClients, header);
+	}
 
 	private Object getRow(Client client) {
 		Object row = ui.createTableRow(client);
@@ -97,6 +138,24 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 		}
 		ui.add(row, ui.createTableCell(accountStr));
 		ui.setAttachedObject(row, client);
+		return addCustomData(client, row);
+	}
+	
+	private Object addCustomData(Client client, Object row) {
+		List<CustomField> allCustomFields = this.customFieldDao
+				.getAllCustomFields();
+		List<CustomValue> allCustomValues = this.customValueDao
+				.getCustomValuesByClientId(client.getId());
+
+		if (!allCustomFields.isEmpty()) {
+			for (CustomField cf : allCustomFields) {
+				for (CustomValue cv : allCustomValues) {
+					if (cv.getCustomField().equals(cf)) {
+						ui.add(row, ui.createTableCell(cv.getStrValue()));
+					}
+				}
+			}
+		}
 		return row;
 	}
 
