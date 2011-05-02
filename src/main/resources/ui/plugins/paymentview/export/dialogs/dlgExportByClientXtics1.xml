@@ -10,7 +10,7 @@
         <button action="showSaveModeFileChooser(tfFilename)" icon="/icons/browse.png" text="i18n.action.browse" weightx="1"/>
     </panel>
     <panel gap="5" weightx="1">
-    	<button type="cancel" action="removeDialog(exportWizardDialog)" halign="left" icon="/icons/cross.png" text="i18n.action.cancel"/>
+    	<button action="previous" halign="left" icon="/icons/cross.png" text="Previous"/>
     	<panel weightx="1"/>
     	<button type="default" action="next(tfFilename.text)" halign="right" icon="/icons/right.png" text="Next" name="btDoExport" enabled="false"/>
     </panel>

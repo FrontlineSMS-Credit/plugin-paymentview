@@ -19,18 +19,18 @@ public class ExportByClientXticsStep2Handler extends ClientExportHandler {
 
 	private String exportfilepath;
 	private List<Client> selectedUsers;
+	private final ExportByClientXticsStep1Handler exportByClientXticsStep1Handler;
 
-	private PaymentType paymentType;
-
-	public ExportByClientXticsStep2Handler(UiGeneratorController ui,
-			ClientDao clientDao, CustomValueDao customValueDao,
-			CustomFieldDao customFieldDao, final List<Client> selectedUsers,
-			final PaymentType paymentType) {
-		super(ui, clientDao, customFieldDao, customValueDao);
-		this.selectedUsers = selectedUsers;		
-		this.paymentType = paymentType;
+	public ExportByClientXticsStep2Handler(
+			final ExportByClientXticsStep1Handler exportByClientXticsStep1Handler) {
+		super(exportByClientXticsStep1Handler.getUi(),
+				exportByClientXticsStep1Handler.getClientDao(),
+				exportByClientXticsStep1Handler.getCustomFieldDao(),
+				exportByClientXticsStep1Handler.getCustomValueDao());
+		
+		this.exportByClientXticsStep1Handler = exportByClientXticsStep1Handler;
 	}
-	
+
 	@Override
 	protected String getDialogFile() {
 		return UI_FILE_EXPORT_WIZARD_FORM;
@@ -40,7 +40,7 @@ public class ExportByClientXticsStep2Handler extends ClientExportHandler {
 	protected String getOptionsFilePath() {
 		return UI_FILE_OPTIONS_PANEL_CLIENT;
 	}
-	
+
 	@Override
 	protected String getWizardTitleI18nKey() {
 		return MESSAGE_EXPORTING_SELECTED_CONTACTS;
@@ -54,6 +54,11 @@ public class ExportByClientXticsStep2Handler extends ClientExportHandler {
 		this.exportfilepath = exportfilepath;
 		uiController.add(new ExportByClientXticsStep3Handler(uiController,
 				this, exportfilepath, selectedUsers).getDialog());
+		removeDialog();
+	}
+	
+	public void previous(){
+		uiController.add(exportByClientXticsStep1Handler.getDialog());
 		removeDialog();
 	}
 }

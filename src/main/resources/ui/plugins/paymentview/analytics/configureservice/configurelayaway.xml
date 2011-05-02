@@ -13,7 +13,7 @@
 		</table>
 	</panel>
 	<panel gap="5" weightx="1">
-		<button action="createNew" icon="/icons/task_next_execution.png" text="Create New" />
+		<button action="createNew" icon="/icons/helper_add.png" text="Create New" />
 		<panel weightx="1"/>
 	</panel>
 </panel>

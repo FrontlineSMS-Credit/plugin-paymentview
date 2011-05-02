@@ -37,7 +37,7 @@
 		<button action="previous" icon="/icons/left.png" name="btnPrevious"
 			text="Previous" />
 		<panel weightx="1" />
-		<button action="create" icon="/icons/add.png" name="btnCreate"
+		<button action="create" icon="/icons/helper_add.png" name="btnCreate"
 			text="Create" />
 	</panel>
 </panel>

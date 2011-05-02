@@ -1,41 +1,45 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<dialog bottom="9" close="removeDialog(this)" columns="1" gap="15"
+<dialog bottom="9" close="removeDialog(this)" columns="2" gap="5"
 	left="9" modal="true" name="exportByCharacteristic1" resizable="true"
 	right="9" text="Export By Client Characteristic" top="9">
 
-	<panel columns="2" gap="5">
-		<label colspan="2" font="bold" text="Choose the kind of payment to export:" />
+	<label colspan="2" font="bold" text="Choose the kind of payment to export:" />
+	<panel weightx="1" />
+	<checkbox group="payType" name="radIncomingPay"
+		action="paymentTypeChanged(radIncomingPay)" text="Incoming Payments (from clients)" />
+	<panel weightx="1" />
+	<checkbox group="payType" name="radOutgoingPay"
+		action="paymentTypeChanged(radOutgoingPay)" text="Outgoing Payments (to clients)" />
+	<panel weightx="1" />
+	<panel weightx="1" />
+	<label colspan="2" font="bold" text="Choose the date range for export:" />
+	<panel weightx="1" />
+	<checkbox name="cmbToday" action="enable(this)" group="range"
+		text="Today" />
+	<panel weightx="1" />
+	<checkbox name="cmbPastWeek" action="enable(this)" group="range"
+		text="Past Week" />
+	<panel weightx="1" />
+	<checkbox name="cmbAll" action="enable(this)" group="range"
+		text="All" />
+	<panel weightx="1" />
+	<checkbox name="cmbDateRange" group="range" action="enable(this)"
+		text="Date Range:" />
+	<panel weightx="1" />
+	<panel name="pnlDateRange" weightx="1">
+		<textfield columns="10" editable="false" name="txt_FromDate" />
+		<button action="showDateSelecter(txt_FromDate)" icon="/icons/date.png" />
 		<panel weightx="1" />
-		<checkbox group="payType" name="radIncomingPay" action="paymentTypeChanged(radIncomingPay)" text="Incoming Payments (from clients)" />
-		<panel weightx="1" />
-		<checkbox group="payType" name="radOutgoingPay" action="paymentTypeChanged(radOutgoingPay)" text="Outgoing Payments (to clients)" />
-		<panel weightx="1" />
-		<panel weightx="1" />
-		<label colspan="2" font="bold" text="Choose the date range for export:" />
-		<panel weightx="1" />
-		<checkbox group="range" text="Today" />
-		<panel weightx="1" />
-		<checkbox group="range" text="Past Week" />
-		<panel weightx="1" />
-		<checkbox group="range" text="All" /> 
-		<panel weightx="1" />
-		<checkbox group="range" text="Date Range:" />
-		<panel weightx="1" />
-		<panel weightx="1">
-			<textfield columns="10" editable="false" name="txt_FromDate" />
-			<button action="showDateSelecter(txt_FromDate)" icon="/icons/date.png" />
-			<panel weightx="1" />
-			<textfield columns="10" editable="false" name="txt_ToDate" />
-			<button action="showDateSelecter(txt_ToDate)" icon="/icons/date.png" />
-		</panel>
-		<label colspan="2" font="bold" text="Select the file format you wish to export to:"
-			rowspan="2" />
-		<panel weightx="1" />
-		<checkbox group="filetype" text="CSV" />
-		<panel weightx="1" />
-		<checkbox group="filetype" text="PDF" />
+		<textfield columns="10" editable="false" name="txt_ToDate" />
+		<button action="showDateSelecter(txt_ToDate)" icon="/icons/date.png" />
 	</panel>
-	<panel gap="5" weightx="1">
+	<label colspan="2" font="bold"
+		text="Select the file format you wish to export to:" rowspan="2" />
+	<panel weightx="1" />
+	<checkbox group="filetype" text="CSV" />
+	<panel weightx="1" />
+	<checkbox group="filetype" text="PDF" />
+	<panel gap="5" weightx="1" colspan="2">
 		<button action="removeDialog" icon="/icons/cross.png" text="Cancel" />
 		<panel weightx="1" />
 		<button text="Next" action="next" icon="/icons/right.png" />

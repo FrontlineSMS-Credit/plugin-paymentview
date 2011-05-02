@@ -18,8 +18,6 @@ import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.CreateNe
 
 public class SettingsTabHandler extends BaseTabHandler implements
 		PagedComponentItemProvider {
-	private static final String COMPONENT_PANEL_SETTINGS_TABLE = "pnl_accounts";
-
 	private static final String COMPONENT_SETTINGS_TABLE = "tbl_accounts";
 	private static final String XML_SETTINGS_TAB = "/ui/plugins/paymentview/settings/settingsTab.xml";
 
@@ -29,7 +27,6 @@ public class SettingsTabHandler extends BaseTabHandler implements
 	private IncomingPaymentDao incomingPaymentDao;
 	private OutgoingPaymentDao outgoingPaymentDao;
 
-	private Object pnlSettingsTableComponent;
 	private Object settingsTab;
 	private Object settingsTableComponent;
 	private ComponentPagingHandler settingsTablePager;
@@ -90,12 +87,6 @@ public class SettingsTabHandler extends BaseTabHandler implements
 	protected Object initialiseTab() {
 		settingsTab = ui.loadComponentFromFile(XML_SETTINGS_TAB, this);
 		settingsTableComponent = ui.find(settingsTab, COMPONENT_SETTINGS_TABLE);
-		// settingsTablePager = new ComponentPagingHandler(ui, this,
-		// settingsTableComponent);
-		// pnlSettingsTableComponent = ui.find(settingsTab,
-		// COMPONENT_PANEL_SETTINGS_TABLE);
-		// this.ui.add(pnlSettingsTableComponent,
-		// this.settingsTablePager.getPanel());
 		return settingsTab;
 	}
 
