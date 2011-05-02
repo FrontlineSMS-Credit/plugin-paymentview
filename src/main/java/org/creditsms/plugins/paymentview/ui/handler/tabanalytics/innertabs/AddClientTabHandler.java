@@ -38,6 +38,7 @@ public class AddClientTabHandler extends BaseTabHandler {
 		return createDashboardTab;
 	}
 
+	@Override
 	public void refresh() {
 		paymentViewThinletTabController.refresh();
 	}

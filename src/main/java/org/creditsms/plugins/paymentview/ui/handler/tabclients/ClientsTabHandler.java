@@ -49,7 +49,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 		clientTableHolder = ui.find(clientsTab, PNL_CLIENT_TABLE_HOLDER);
 		clientTableHandler = new ClientTable(ui, this, clientDao, customFieldDao, customValueDao);
 		clientsTableComponent = clientTableHandler.getClientsTable();
-		ui.add(clientTableHolder, clientTableHandler.getTableClientsPanel());
+		ui.add(clientTableHolder, clientTableHandler.getClientsTablePanel());
 	}
 
 	public void refresh() {

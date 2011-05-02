@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.frontlinesms.csv.CsvRowFormat;
+import net.frontlinesms.csv.CsvUtils;
 import net.frontlinesms.csv.Utf8FileWriter;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
@@ -73,7 +74,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 				items.add(cf.getReadableName());
 			}
 			String[] str = new String[items.size()];
-			PaymentViewCsvUtils
+			CsvUtils
 					.writeLine(out, clientFormat, items.toArray(str));
 
 			for (Client client : clients) {
@@ -113,7 +114,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 				}
 
 				str = new String[items.size()];
-				PaymentViewCsvUtils.writeLine(out, clientFormat,
+				CsvUtils.writeLine(out, clientFormat,
 						items.toArray(str));
 			}
 		} finally {
@@ -135,7 +136,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 
 		try {
 			out = new Utf8FileWriter(exportFile);
-			PaymentViewCsvUtils
+			CsvUtils
 					.writeLine(out, incomingPaymentFormat,
 							PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER,
 							InternationalisationUtils
@@ -150,7 +151,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 							InternationalisationUtils
 									.getI18nString(COMMON_ACCOUNT));
 			for (IncomingPayment incomingPayment : incomingPayments) {
-				PaymentViewCsvUtils.writeLine(out, incomingPaymentFormat,
+				CsvUtils.writeLine(out, incomingPaymentFormat,
 						PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER,
 						incomingPayment.getPhoneNumber(),
 						PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
@@ -180,7 +181,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 
 		try {
 			out = new Utf8FileWriter(exportFile);
-			PaymentViewCsvUtils
+			CsvUtils
 					.writeLine(out, outgoingPaymentFormat,
 							PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER,
 							InternationalisationUtils
@@ -201,7 +202,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 							InternationalisationUtils
 									.getI18nString(COMMON_CONFIRMATION));
 			for (OutgoingPayment outgoingPayment : outgoingPayments) {
-				PaymentViewCsvUtils.writeLine(out, outgoingPaymentFormat,
+				CsvUtils.writeLine(out, outgoingPaymentFormat,
 						PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER,
 						outgoingPayment.getPhoneNumber(),
 						PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,

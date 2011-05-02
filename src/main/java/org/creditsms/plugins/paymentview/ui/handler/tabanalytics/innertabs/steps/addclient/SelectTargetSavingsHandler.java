@@ -18,6 +18,7 @@ public class SelectTargetSavingsHandler extends BasePanelHandler {
 		this.loadPanel(XML_STEP_SELECT_TARGET_SAVING);
 	}
 
+	@Override
 	public Object getPanelComponent() {
 		return super.getPanelComponent();
 	}

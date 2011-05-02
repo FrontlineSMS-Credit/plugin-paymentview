@@ -68,6 +68,7 @@ public class SelectClientsHandler extends BasePanelHandler implements
 		return row;
 	}
 
+	@Override
 	public Object getPanelComponent() {
 		return super.getPanelComponent();
 	}

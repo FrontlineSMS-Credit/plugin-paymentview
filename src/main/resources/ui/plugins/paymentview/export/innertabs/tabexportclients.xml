@@ -7,27 +7,9 @@
 				text="Sort by a characteristic to identify the client(s) or group you would like to export" />
 		</panel>
 		<panel columns="1" gap="5" weightx="1" weighty="1">
-			<panel name="pnl_clients" columns="1" weightx="1" weighty="1">
-				<table name="tbl_clients" weightx="1" weighty="1"  selection="single" action="selectUsers(this)">
-					<header>
-						<column width="60" text="Select" />
-						<column width="200" icon="/icons/user.png" sort="descent" text="Name" />
-						<column width="170" icon="/icons/phone.png" sort="none" text="Phone Number" />
-					</header>
-					<!--
-					<popupmenu menushown="populateGroups(this, contactManager_contactList)" name="menu">
-	                    <menuitem action="sendSmsToContacts" icon="/icons/sms_send.png" name="miSendSMS" text="i18n.action.send.sms"/>
-	                    <menuitem action="showMessageHistory(contactManager_contactList)" icon="/icons/history.png" name="msg_history" text="i18n.action.message.history"/>
-	                    <menuitem action="showExportWizard(contactManager_contactList)" icon="/icons/export.png" name="miExportSelected" text="i18n.action.export.selected"/>
-	                    <separator name="sp2"/>
-	                    <menuitem action="showContactDetails(contactManager_contactList)" icon="/icons/user_edit.png" name="viewContact" text="i18n.action.view.edit.contact" tooltip="i18n.tooltip.view.contact.details"/>
-	                    <menuitem action="showConfirmationDialog('deleteSelectedContacts')" icon="/icons/user_delete.png" name="miDelete" text="i18n.action.delete.selected.contacts"/>
-	                </popupmenu>
-	                 -->
-				</table>
-			</panel>
+			<panel name="pnlClientsTableHolder" columns="1" gap="5" weightx="1" weighty="1"/>			
 			<panel weightx="1">
-				<button name="btn_selectAll" action="selectAll(tbl_clients)" text="Select All" />
+				<button name="btn_selectAll" action="selectAll" text="Select All" />
 				<panel weightx="1" />
 				<button icon="/icons/export.png" action="exportSelectedClients" name="btn_exportSelectedClients" text="Export Selected Clients" />
 			</panel>

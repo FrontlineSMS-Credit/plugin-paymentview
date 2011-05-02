@@ -20,14 +20,14 @@ import org.springframework.util.StringUtils;
 
 public abstract class BaseClientTable implements PagedComponentItemProvider,
 		ThinletUiEventHandler {
-	private ComponentPagingHandler clientsTablePager;
-	private UiGeneratorController ui;
-	private Object tableClients;
-	private String clientFilter = "";
-	private ClientDao clientDao;
-	private CustomFieldDao customFieldDao;
-	private CustomValueDao customValueDao;
-	private Object tableClientsPanel;
+	protected ComponentPagingHandler clientsTablePager;
+	protected UiGeneratorController ui;
+	protected Object tableClients;
+	protected String clientFilter = "";
+	protected ClientDao clientDao;
+	protected CustomFieldDao customFieldDao;
+	protected CustomValueDao customValueDao;
+	protected Object tableClientsPanel;
 
 	public BaseClientTable(UiGeneratorController ui, ClientDao clientDao,
 			CustomFieldDao customFieldDao, CustomValueDao customValueDao) {
@@ -81,10 +81,10 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	}
 
 	public void filterClients() {
-		this.updateContactList();
+		this.updateClientsList();
 	}
 
-	protected void updateContactList() {
+	public void updateClientsList() {
 		this.clientsTablePager.setCurrentPage(0);
 		this.clientsTablePager.refresh();
 	}
@@ -133,7 +133,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	}
 
 	public void refresh() {
-		this.updateContactList();
+		this.updateClientsList();
 	}
 
 	protected String getClientFilter() {
@@ -182,7 +182,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 		}
 	}
 
-	public Object getTableClientsPanel() {
+	public Object getClientsTablePanel() {
 		return this.tableClientsPanel;
 	}
 
@@ -199,5 +199,4 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	public Object getClientsTable() {
 		return this.tableClients;
 	}
-
 }

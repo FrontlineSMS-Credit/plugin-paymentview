@@ -38,6 +38,7 @@ public class CreateSettingsHandler extends BasePanelHandler {
 				customFieldDao, customDataDao).showWizard();
 	}
 
+	@Override
 	public Object getPanelComponent() {
 		return super.getPanelComponent();
 	}

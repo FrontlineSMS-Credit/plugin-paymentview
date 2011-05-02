@@ -96,6 +96,7 @@ public class SelectFromClientsTabHandler extends BaseTabHandler implements Paged
 		ui.add(row, cell, 0);
 	}
 	
+	@Override
 	public void refresh() {
 		this.updateClientList();
 	}

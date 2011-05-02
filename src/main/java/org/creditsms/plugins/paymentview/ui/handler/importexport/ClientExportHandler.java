@@ -86,6 +86,7 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 		return UI_FILE_OPTIONS_PANEL_CLIENT;
 	}
 
+	@Override
 	public void showWizard() {
 		List<CustomField> allCustomFields = this.customFieldDao
 				.getAllActiveUsedCustomFields();
@@ -128,6 +129,7 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 	}
 
 	/** Remove a dialog from view. */
+	@Override
 	public void removeDialog(Object dialog) {
 		this.uiController.removeDialog(dialog);
 	}

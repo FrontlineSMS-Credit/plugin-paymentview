@@ -10,6 +10,7 @@ public enum PaymentType {
 		this.paymenttype = paymenttype;
 	}
 	
+	@Override
 	public String toString() {
 		return paymenttype;
 	}

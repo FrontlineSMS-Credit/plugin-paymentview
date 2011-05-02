@@ -43,6 +43,7 @@ public class ViewDashBoardTabHandler extends BaseTabHandler {
 		return viewDashboardTab;
 	}
 
+	@Override
 	public void refresh() {
 
 	}

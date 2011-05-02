@@ -21,6 +21,7 @@ public class ReviewHandler extends BasePanelHandler {
 	public void create() {
 	}
 
+	@Override
 	public Object getPanelComponent() {
 		return super.getPanelComponent();
 	}

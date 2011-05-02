@@ -27,6 +27,7 @@ public class CreateSettingsHandler extends BasePanelHandler {
 		}
 	}
 
+	@Override
 	public Object getPanelComponent() {
 		return super.getPanelComponent();
 	}

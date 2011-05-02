@@ -45,6 +45,7 @@ public class ConnectedDeviceThinletTabController extends BaseTabHandler implemen
 	/**
 	 * Refreshes the tab display
 	 */
+	@Override
 	public void refresh() {
 		Object connectedDevicesList = getConnectedDevicesList();
 		ui.removeAll(connectedDevicesList);

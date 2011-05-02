@@ -49,6 +49,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 		this.customDataDao = customDataDao;
 	}
 
+	@Override
 	public void showWizard() {
 		List<CustomField> allCustomFields = this.customFieldDao
 				.getAllActiveUsedCustomFields();

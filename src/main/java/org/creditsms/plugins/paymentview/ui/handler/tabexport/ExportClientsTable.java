@@ -1,0 +1,32 @@
+package org.creditsms.plugins.paymentview.ui.handler.tabexport;
+
+import java.util.ArrayList;
+
+import net.frontlinesms.ui.UiGeneratorController;
+
+import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
+import org.creditsms.plugins.paymentview.ui.handler.BaseSelectClientTableHandler;
+
+public class ExportClientsTable extends BaseSelectClientTableHandler {
+	private static final String TBL_CLIENTS = "tbl_clients";
+	private static final String XML_CLIENTS_TABLE = "/ui/plugins/paymentview/export/innertabs/clientsTable.xml";
+	
+	public ExportClientsTable(UiGeneratorController ui, ClientDao clientDao,
+			CustomFieldDao customFieldDao, CustomValueDao customValueDao) {
+		super(ui, clientDao, customFieldDao, customValueDao);
+		selectedUsers = new ArrayList<Client>();
+	}
+
+	@Override
+	protected String getClientsTableName() {
+		return TBL_CLIENTS;
+	}
+
+	@Override
+	protected String getClientsPanelFilePath() {
+		return XML_CLIENTS_TABLE;
+	}
+}

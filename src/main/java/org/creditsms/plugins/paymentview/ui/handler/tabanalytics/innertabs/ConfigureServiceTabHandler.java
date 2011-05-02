@@ -25,7 +25,7 @@ public class ConfigureServiceTabHandler extends BaseTabHandler {
 	}
 
 	public void createNew() {
-		ui.add(new CreateNewTargetHandler((UiGeneratorController) ui)
+		ui.add(new CreateNewTargetHandler(ui)
 				.getDialog());
 	}
 
@@ -39,6 +39,7 @@ public class ConfigureServiceTabHandler extends BaseTabHandler {
 		return configureServiceTab;
 	}
 
+	@Override
 	public void refresh() {
 
 	}

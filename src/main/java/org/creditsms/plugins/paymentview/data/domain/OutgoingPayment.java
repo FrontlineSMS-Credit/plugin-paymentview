@@ -99,6 +99,7 @@ public class OutgoingPayment {
 			this.icon = icon;
 		}
 
+		@Override
 		public String toString() {
 			return status;
 		}
