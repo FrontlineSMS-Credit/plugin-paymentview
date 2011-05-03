@@ -6,7 +6,6 @@ import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.utils.StringUtil;
 
 public class OtherFieldHandler implements ThinletUiEventHandler {
 	private static final String XML_OTHER_FIELD = "/ui/plugins/paymentview/clients/dialogs/dlgOtherField.xml";
@@ -27,8 +26,9 @@ public class OtherFieldHandler implements ThinletUiEventHandler {
 	}
 
 	public void createField(String fieldName) {
-		CustomField customField = new CustomField(
-				StringUtil.toCamelCase(fieldName), fieldName, false, true);
+		CustomField customField = new CustomField();
+		customField.setReadableName(fieldName);
+		customField.setActive(true);
 		try {
 			this.customFieldDao.saveCustomField(customField);
 		} catch (DuplicateKeyException e) {

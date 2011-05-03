@@ -55,7 +55,7 @@ public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 		if (!allCustomFields.isEmpty()) {
 			for (CustomField cf : allCustomFields) {
 				Object column = ui.createColumn(cf.getReadableName(),
-						cf.getName());
+						cf.getCamelCaseName());
 				ui.setWidth(column, 110);
 				ui.add(header, column);
 			}
