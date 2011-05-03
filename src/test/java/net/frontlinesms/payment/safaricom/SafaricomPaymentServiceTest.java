@@ -158,6 +158,8 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 	
 	private StkInputRequiremnent mockInputRequirement(String title, int... nums) {
 		StkInputRequiremnent ir = mock(StkInputRequiremnent.class);
+		when(ir.getText()).thenReturn(title);
+		
 		StkRequest mockRequest = mock(StkRequest.class);
 		when(ir.getRequest()).thenReturn(mockRequest);
 		return ir;
