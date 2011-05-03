@@ -3,10 +3,10 @@
  <combobox colspan="2" name="cbDevices" columns="30" text="--SELECT A DEVICE--"/>
 
  <label text="Enter PIN"/>
- <textfield name="tfPin" colspan="2" columns="30"/>
+ <passwordfield  name="tfPin" colspan="2" columns="30"/>
  
  <label text="Verify PIN"/>
- <textfield name="tfVPin" colspan="2" columns="30"/>
+ <passwordfield  name="tfVPin" colspan="2" columns="30"/>
  
  <button name="createService" enabled="false" colspan="2" action="createService" text="create service!!!"/><panel weightx="1"/>
 </dialog>
