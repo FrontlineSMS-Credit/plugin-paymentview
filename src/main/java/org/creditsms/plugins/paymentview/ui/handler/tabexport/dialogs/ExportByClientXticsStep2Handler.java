@@ -2,14 +2,8 @@ package org.creditsms.plugins.paymentview.ui.handler.tabexport.dialogs;
 
 import java.util.List;
 
-import net.frontlinesms.ui.UiGeneratorController;
-
 import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
-import org.creditsms.plugins.paymentview.utils.PaymentType;
 
 public class ExportByClientXticsStep2Handler extends ClientExportHandler {
 	/** I18n Text Key: TODO document */
