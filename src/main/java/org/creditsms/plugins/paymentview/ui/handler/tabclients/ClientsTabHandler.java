@@ -23,7 +23,9 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	private ClientDao clientDao;
 
 	private Object clientsTableComponent;
+	private Object pnlClientsList;
 	private CustomFieldDao customFieldDao;
+	private CustomValueDao customValueDao;
 	private PaymentViewThinletTabController paymentViewThinletTabController;
 	private CustomValueDao customValueDao;
 	private UiGeneratorController ui;
