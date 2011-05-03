@@ -28,7 +28,7 @@ public class IncomingPayment {
 	public static final String FIELD_PAYMENT_BY = "paymentBy";
 	public static final String FIELD_PHONE_NUMBER = "phoneNumber";
 	public static final String FIELD_TIME_PAID = "timePaid";
-	public static final String FIELD_ACCOUNT = "accountId";
+	public static final String FIELD_ACCOUNT = "account";
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
