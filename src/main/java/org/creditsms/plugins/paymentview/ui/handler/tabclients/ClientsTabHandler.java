@@ -15,19 +15,18 @@ import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientImportHan
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.CustomizeClientDBHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.EditClientHandler;
 
-public class ClientsTabHandler implements ThinletUiEventHandler {	
+public class ClientsTabHandler implements ThinletUiEventHandler {
+//> STATIC CONSTANTS
 	private static final String PNL_CLIENT_TABLE_HOLDER = "pnlClientTableHolder";
-	// > STATIC CONSTANTS
 	private static final String XML_CLIENTS_TAB = "/ui/plugins/paymentview/clients/clients.xml";
-	// > INSTANCE PROPERTIES
+	
+//> INSTANCE PROPERTIES
 	private ClientDao clientDao;
-
-	private Object clientsTableComponent;
-	private Object pnlClientsList;
 	private CustomFieldDao customFieldDao;
 	private CustomValueDao customValueDao;
+
+	private Object clientsTableComponent;
 	private PaymentViewThinletTabController paymentViewThinletTabController;
-	private CustomValueDao customValueDao;
 	private UiGeneratorController ui;
 	private Object clientsTab;
 	private Object clientTableHolder;
@@ -62,7 +61,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 		return this.clientsTab;
 	}
 	
-// > ACTION HANDLERS
+//> ACTION HANDLERS
 	
 	public void addClient() {
 		ui.add(new EditClientHandler(ui, clientDao, this, customValueDao,

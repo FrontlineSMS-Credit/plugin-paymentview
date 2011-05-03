@@ -3,6 +3,7 @@ package org.creditsms.plugins.paymentview.data.repository.hibernate;
 import java.util.List;
 
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
+import org.creditsms.plugins.paymentview.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.frontlinesms.data.DuplicateKeyException;
@@ -39,7 +40,7 @@ public class CustomFieldIntergrationTest extends HibernateTestCase{
 		assertDatabaseEmpty();
 		createAndSaveCustomField("Lokichogio", 1);
 		List<CustomField> lstCustomField = hibernateCustomFieldDao.getAllCustomFields();
-		assertEquals("Lokichogio", hibernateCustomFieldDao.getCustomFieldById(lstCustomField.get(0).getId()).getStrName());
+		assertEquals("Lokichogio", hibernateCustomFieldDao.getCustomFieldById(lstCustomField.get(0).getId()).getReadableName());
 	}
 	
 	public void testGetCustomFieldsByName() throws DuplicateKeyException{
@@ -61,7 +62,7 @@ public class CustomFieldIntergrationTest extends HibernateTestCase{
 	}
 
 	private CustomField createCustomField(String strName){
-		CustomField cf = new CustomField(strName);
+		CustomField cf = new CustomField(StringUtil.toCamelCase(strName), strName);
 		return cf;
 	}
 	
