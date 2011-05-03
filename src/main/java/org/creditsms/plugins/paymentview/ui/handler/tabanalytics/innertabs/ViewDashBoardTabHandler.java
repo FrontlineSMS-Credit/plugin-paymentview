@@ -4,7 +4,8 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard.StepSelectTargetSavingsHandler;
+import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
+import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard.SelectTargetSavingsHandler;
 
 public class ViewDashBoardTabHandler extends BaseTabHandler {
 	private static final String TAB_VIEW_DASHBOARD = "tab_viewDashBoard";
@@ -14,9 +15,9 @@ public class ViewDashBoardTabHandler extends BaseTabHandler {
 	private Object viewDashboardTab;
 
 	public ViewDashBoardTabHandler(UiGeneratorController ui,
-			Object tabAnalytics, ClientDao clientDao) {
-		super(ui);
-		this.clientDao = clientDao;
+			Object tabAnalytics, PaymentViewThinletTabController paymentViewThinletTabController) {
+		super(ui); 
+		this.clientDao = paymentViewThinletTabController.getClientDao();
 		viewDashboardTab = ui.find(tabAnalytics, TAB_VIEW_DASHBOARD);
 		this.init();
 	}
@@ -27,7 +28,7 @@ public class ViewDashBoardTabHandler extends BaseTabHandler {
 	@Override
 	public Object initialiseTab() {
 		// ui.add(createDashboardTab, stepCreateSettings.getPanelComponent());
-		setCurrentStepPanel(new StepSelectTargetSavingsHandler(ui, clientDao, this)
+		setCurrentStepPanel(new SelectTargetSavingsHandler(ui, clientDao, this)
 				.getPanelComponent());
 		return viewDashboardTab;
 	}

@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import net.frontlinesms.data.EntityField;
+
 /**
  * @Author Roy
  */
@@ -19,26 +21,47 @@ import javax.persistence.Table;
 @Table(name = Target.TABLE_NAME)
 public class Target {
 	public static final String TABLE_NAME = "Target";
-	@OneToOne
-	// (fetch = FetchType.LAZY)
-	@JoinColumn(name = "accountId")
-	private Account account;
 
-	@Column(name = "endDate", nullable = true, unique = false)
-	private Date endDate;
-
+	public static final String FIELD_START_DATE = "startDate";
+	public static final String FIELD_END_DATE = "endDate";
+	public static final String FIELD_ACCOUNT = "accountId";
+	public static final String FIELD_SERVICE_ITEM = "serviceItemId";
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
 
+	@Column(name = FIELD_START_DATE)
+	private long startDate;
+	
+	@Column(name = FIELD_END_DATE)
+	private long endDate;
+	
+	@OneToOne
+	@JoinColumn(name = FIELD_ACCOUNT)
+	private Account account;
+	
 	@ManyToOne
-	// (fetch = FetchType.LAZY)
-	@JoinColumn(name = "serviceItemId", nullable = true)
+	@JoinColumn(name = FIELD_SERVICE_ITEM)
 	private ServiceItem serviceItem;
-
-	@Column(name = "startDate", nullable = true, unique = false)
-	private Date startDate;
+	
+	public enum Field implements EntityField<Target> {
+		START_DATE(FIELD_START_DATE),
+		END_DATE(FIELD_END_DATE),
+		ACCOUNT(FIELD_ACCOUNT),
+		SERVICE_ITEM(FIELD_SERVICE_ITEM);
+		
+		/** name of a field */
+		private final String fieldName;
+		/**
+		 * Creates a new {@link Field}
+		 * @param fieldName name of the field
+		 */
+		Field(String fieldName) { this.fieldName = fieldName; }
+		/** @see EntityField#getFieldName() */
+		public String getFieldName() { return this.fieldName; }
+	}
 
 	/** Empty constructor required for hibernate. */
 	public Target() {
@@ -49,7 +72,7 @@ public class Target {
 	}
 
 	public Date getEndDate() {
-		return endDate;
+		return new Date(endDate);
 	}
 
 	public long getId() {
@@ -61,7 +84,7 @@ public class Target {
 	}
 
 	public Date getStartDate() {
-		return startDate;
+		return new Date(startDate);
 	}
 
 	public void setAccount(Account account) {
@@ -69,7 +92,7 @@ public class Target {
 	}
 
 	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+		this.endDate = endDate.getTime();
 	}
 
 	public void setId(long id) {
@@ -81,6 +104,6 @@ public class Target {
 	}
 
 	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+		this.startDate = startDate.getTime();
 	}
 }

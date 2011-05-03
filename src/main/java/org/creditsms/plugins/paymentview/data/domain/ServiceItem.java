@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import net.frontlinesms.data.EntityField;
+
 import org.hibernate.annotations.IndexColumn;
 
 /**
@@ -21,6 +23,9 @@ import org.hibernate.annotations.IndexColumn;
 @Table(name = ServiceItem.TABLE_NAME)
 public class ServiceItem {
 	public static final String TABLE_NAME = "ServiceItem";
+
+	public static final String FIELD_AMOUNT = "amount";
+	public static final String FIELD_TARGET_NAME = "targetName";
 	
 	@Id
 	@IndexColumn(name = "id")
@@ -28,14 +33,29 @@ public class ServiceItem {
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
 	
-	@Column(name = "amount", nullable = false, unique = false)
+	@Column(name = FIELD_AMOUNT, nullable = false, unique = false)
 	private BigDecimal amount;
 
 	@OneToMany
 	private Set<Target> target;
 
-	@Column(name = "targetName", nullable = false, unique = false)
+	@Column(name = FIELD_TARGET_NAME, nullable = false, unique = false)
 	private String targetName;
+	
+	public enum Field implements EntityField<ServiceItem> {
+		AMOUNT(FIELD_AMOUNT),
+		TARGET_NAME(FIELD_TARGET_NAME);
+		
+		/** name of a field */
+		private final String fieldName;
+		/**
+		 * Creates a new {@link Field}
+		 * @param fieldName name of the field
+		 */
+		Field(String fieldName) { this.fieldName = fieldName; }
+		/** @see EntityField#getFieldName() */
+		public String getFieldName() { return this.fieldName; }
+	}
 
 	/** Empty constructor required for hibernate. */
 	public ServiceItem() {}

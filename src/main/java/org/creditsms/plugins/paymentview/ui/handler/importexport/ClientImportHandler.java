@@ -23,8 +23,7 @@ import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
 
 public class ClientImportHandler extends ImportDialogHandler {
 	private static final String COMPONENT_ACCOUNTS = "cbAccounts";
-	private static final String COMPONENT_CB_FIRSTNAME = "cbFirstName";
-	private static final String COMPONENT_CB_OTHERNAME = "cbOtherName";
+	private static final String COMPONENT_CB_NAME = "cbName";
 	private static final String COMPONENT_CB_PHONE = "cbPhone";
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_IMPORTING_SELECTED_CLIENTS = "plugins.paymentview.message.importing.selected.client";
@@ -87,8 +86,15 @@ public class ClientImportHandler extends ImportDialogHandler {
 		for (Object checkbox : getCheckboxes()) {
 			if (this.uiController.isSelected(checkbox)) {
 				String attributeName = this.uiController.getText(checkbox);
-				this.uiController.add(header, this.uiController.createColumn(
-						attributeName, attributeName));//
+
+				if (uiController.getName(checkbox).equals(COMPONENT_CB_NAME)) {
+					//TODO: take care of this hack... Separate names?
+					this.uiController.add(header, this.uiController.createColumn("First Name", "First Name"));
+					this.uiController.add(header, this.uiController.createColumn("Second Name", "Second Name"));
+				}else{
+					this.uiController.add(header, this.uiController.createColumn(attributeName, attributeName));
+				}
+				
 				++columnCount;
 			}
 		}
@@ -139,9 +145,9 @@ public class ClientImportHandler extends ImportDialogHandler {
 	protected CsvRowFormat getRowFormatForClient() {
 		CsvRowFormat rowFormat = new CsvRowFormat();
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME,
-				COMPONENT_CB_FIRSTNAME);
+				COMPONENT_CB_NAME);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME,
-				COMPONENT_CB_OTHERNAME);
+				COMPONENT_CB_NAME);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_PHONE,
 				COMPONENT_ACCOUNTS);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS,

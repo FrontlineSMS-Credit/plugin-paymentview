@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tab name="tab_settings" text="Settings" icon="/icons/keyword.png">
+<tab name="tab_settings" text="i18n.plugins.paymentview.tab.settings.text" icon="/icons/keyword.png">
 	<panel weightx="1" weighty="1" top="5" right="5" left="5"
 		columns="1" gap="10">
 		<panel columns="1" gap="5" name="pnl_accounts" weightx="1"
@@ -7,30 +7,30 @@
 			<label text="Mobile Payment Account Settings" font="20 Bold" weightx="1"/>
 			<table name="tbl_accounts" weightx="1" weighty="1" delete="showConfirmationDialog('deleteAccount')">
 				<header>					
-					<column text="Account" width="200" />
-					<column text="Phone" width="200" icon="/icons/phone.png" />
-					<column text="Amount" width="200" icon="/icons/money.png" />
+					<column text="i18n.plugins.paymentview.common.amount" width="200" />
+					<column text="i18n.plugins.paymentview.common.phone" width="200" icon="/icons/phone.png" />
+					<column text="i18n.plugins.paymentview.common.account" width="200" icon="/icons/money.png" />
 				</header>
 				<popupmenu name="menu">
 					<menuitem action="examineAccount" icon="/icons/edit.png" name="miExamineAccount"
-						text="Examine Account" />
+						text="i18n.plugins.paymentview.menuitem.examineaccount" />
 					<menuitem action="configureAccount"
-						icon="/icons/keyword.png" name="miConfigureAccount" text="Configure Account" />
+						icon="/icons/keyword.png" name="miConfigureAccount" text="i18n.plugins.paymentview.menuitem.configureaccount" />
 					<menuitem action="showConfirmationDialog('deleteAccount')"
-						icon="/icons/delete.png" name="miDeleteAccount" text="Delete Account" />
+						icon="/icons/delete.png" name="miDeleteAccount" text="i18n.plugins.paymentview.menuitem.deleteaccount" />
 					<menuitem action="updateAccountBalance"
-						icon="/icons/delete.png" name="miUpdateAccount" text="Update Account Balance" />					
+						icon="/icons/delete.png" name="miUpdateAccount" text="i18n.plugins.paymentview.menuitem.updateaccountbalance" />					
 				</popupmenu>
 			</table>
 		</panel>
 		<panel gap="5" bottom="5" name="pnl_buttons"
 			weightx="1">
-			<button name="btn_analyse" text="Configure" action="configureAccount"/>
-			<button name="btn_analyse" text="Create New" action="createNew" />
+			<button name="btn_analyse" text="i18n.plugins.paymentview.action.configure" action="configureAccount"/>
+			<button name="btn_analyse" text="i18n.plugins.paymentview.action.createnew" action="createNew" />
 			<panel weightx="1"/>
 			<panel weightx="1"/>		
 			<button action="updateAccountBalance" halign="right" name="btn_export"
-				text="Update Account Balance" />
+				text="i18n.plugins.paymentview.action.updateaccountbalance" />
 		</panel>
 	</panel>
 </tab>

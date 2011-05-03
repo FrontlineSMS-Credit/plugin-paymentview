@@ -7,7 +7,7 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
 
 public class ReviewHandler extends BasePanelHandler {
-	private static final String XML_STEP_REVIEW = "/ui/plugins/paymentview/analytics/createdashboard/stepreview.xml";
+	private static final String XML_STEP_REVIEW = "/ui/plugins/paymentview/analytics/addclient/stepreview.xml";
 	private AddClientTabHandler addClientTabHandler;
 	private ClientDao clientDao;
 

@@ -8,12 +8,12 @@ import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHan
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateAlertHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
 
-public class StepCreateSettingsHandler extends BasePanelHandler {
+public class CreateSettingsHandler extends BasePanelHandler {
 	private static final String XML_STEP_VIEW_CLIENTS = "/ui/plugins/paymentview/analytics/viewdashboard/stepviewclients.xml";
 	private ClientDao clientDao;
 	private ViewDashBoardTabHandler viewDashBoardTabHandler;
 
-	protected StepCreateSettingsHandler(UiGeneratorController ui,
+	protected CreateSettingsHandler(UiGeneratorController ui,
 			ClientDao clientDao,
 			ViewDashBoardTabHandler viewDashBoardTabHandler) {
 		super(ui);
@@ -37,7 +37,7 @@ public class StepCreateSettingsHandler extends BasePanelHandler {
 
 	public void previous() {
 		viewDashBoardTabHandler
-				.setCurrentStepPanel(new StepSelectClientsHandler(
+				.setCurrentStepPanel(new SelectClientsHandler(
 						(UiGeneratorController) ui, clientDao,
 						viewDashBoardTabHandler).getPanelComponent());
 	}

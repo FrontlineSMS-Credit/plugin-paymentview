@@ -32,9 +32,9 @@ public class DummyData {
 		this.incomingPaymentDao = incomingPaymentDao;
 		this.outgoingPaymentDao = outgoingPaymentDao;
 				
-		if (clientDao.getAllClients().isEmpty()) {
-			createDummyData();
-		}
+//		if (clientDao.getAllClients().isEmpty()) {
+			//createDummyData();
+//		}
 	}
 
 	private Client createDummyClient(String name, String phoneNumber,
@@ -48,6 +48,8 @@ public class DummyData {
 			try {
 				accountDao.saveAccount(a);
 			} catch (DuplicateKeyException e) {
+				System.out.println(e);
+				System.out.println(a);
 				throw new RuntimeException(e);
 			}
 			c.addAccount(a);
@@ -56,8 +58,11 @@ public class DummyData {
 		try {
 			clientDao.saveClient(c);
 		} catch (DuplicateKeyException e) {
+			System.out.println(e);
+			System.out.println(c);
 			throw new RuntimeException(e);
 		}
+		
 		return c;
 	}
 
@@ -74,6 +79,9 @@ public class DummyData {
 		try {
 			incomingPaymentDao.saveIncomingPayment(i);
 		} catch (Exception e) {// DuplicateKeyException
+			System.out.println(e);
+			System.out.println(i);
+			System.out.println(myAcc);
 			throw new RuntimeException(e);
 		}
 
@@ -92,6 +100,9 @@ public class DummyData {
 		try {
 			outgoingPaymentDao.saveOutgoingPayment(o);
 		} catch (Exception e) {
+			System.out.println(e);
+			System.out.println(o);
+			System.out.println(myAcc);
 			throw new RuntimeException(e);
 		}
 

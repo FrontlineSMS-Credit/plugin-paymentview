@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabexport;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.frontlinesms.ui.UiGeneratorController;
@@ -15,11 +16,15 @@ import org.creditsms.plugins.paymentview.ui.handler.tabexport.dialogs.ExportByCl
 
 public class ExportClientsTabHandler extends BaseTabHandler implements
 		PagedComponentItemProvider {
+	private static final String ICONS_CHECKBOX_SELECTED_PNG = "/icons/checkbox-selected.png";
+	private static final String ICONS_CHECKBOX_UNSELECTED_PNG = "/icons/checkbox-unselected.png";
 	private static final String XML_EXPORT_CLIENTS_TAB = "/ui/plugins/paymentview/export/innertabs/tabexportclients.xml";
 	private static final String COMPONENT_TABLE_CLIENTS = "tbl_clients";
 	private static final String COMPONENT_PANEL_CLIENTS = "pnl_clients";
 	private ClientDao clientDao;
 	private Object clientsTab;
+	
+	List<Client> selectedUsers;
 
 	private Object tblClients;
 	private String clientFilter = "";
@@ -29,12 +34,9 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 	public ExportClientsTabHandler(UiGeneratorController ui, ClientDao clientDao) {
 		super(ui);
 		this.clientDao = clientDao;
+		selectedUsers = new ArrayList<Client>();
 		init();
 		refresh();
-	}
-
-	public void exportSelectedClients() {
-		ui.add(new ExportByClientXticsStep1Handler(ui, clientDao).getDialog());
 	}
 
 	@Override 
@@ -76,7 +78,7 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 		Object row = ui.createTableRow(client);
 
 		Object cell = ui.createTableCell("");
-		ui.setIcon(cell, "/icons/header/checkbox-unselected.png");
+		ui.setIcon(cell, ICONS_CHECKBOX_UNSELECTED_PNG);
 		ui.add(row, cell);
 
 		ui.add(row,
@@ -90,6 +92,15 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 		ui.add(row, ui.createTableCell(accountStr));
 		ui.setAttachedObject(row, client);
 		return row;
+	}
+	
+	public PagedListDetails getListDetails(Object list, int startIndex,
+			int limit) {
+		if (list == this.tblClients) {
+			return getClientListDetails(startIndex, limit);
+		} else {
+			throw new IllegalStateException();
+		}
 	}
 
 	public void refresh() {
@@ -110,7 +121,7 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 			Client attachedClient = (Client) ui.getAttachedObject(row);
 			if (!attachedClient.isSelected()) {
 				attachedClient.setSelected(true);
-				ui.setIcon(cell, "/icons/header/checkbox-selected.png");
+				ui.setIcon(cell, ICONS_CHECKBOX_SELECTED_PNG);
 			}
 
 			ui.add(row, cell, 0);
@@ -128,22 +139,18 @@ public class ExportClientsTabHandler extends BaseTabHandler implements
 		Client attachedClient = (Client) ui.getAttachedObject(row);
 		if (attachedClient.isSelected()) {
 			attachedClient.setSelected(false);
-			ui.setIcon(cell, "/icons/header/checkbox-unselected.png");
+			selectedUsers.remove(attachedClient);
+			ui.setIcon(cell, ICONS_CHECKBOX_UNSELECTED_PNG);
 		} else {
 			attachedClient.setSelected(true);
-			ui.setIcon(cell, "/icons/header/checkbox-selected.png");
+			selectedUsers.add(attachedClient);
+			ui.setIcon(cell, ICONS_CHECKBOX_SELECTED_PNG);
 		}
 
 		ui.add(row, cell, 0);
 	}
-
-	public PagedListDetails getListDetails(Object list, int startIndex,
-			int limit) {
-		if (list == this.tblClients) {
-			return getClientListDetails(startIndex, limit);
-		} else {
-			throw new IllegalStateException();
-		}
+	
+	public void exportSelectedClients() {
+		ui.add(new ExportByClientXticsStep1Handler(ui, clientDao, selectedUsers).getDialog());
 	}
-
 }

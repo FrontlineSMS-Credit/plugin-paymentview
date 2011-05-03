@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import net.frontlinesms.data.EntityField;
+
 /**
  * @Author Roy
  * @author ian
@@ -21,48 +23,61 @@ import javax.persistence.Table;
 @Table(name = IncomingPayment.TABLE_NAME)
 public class IncomingPayment {
 	public static final String TABLE_NAME = "IncomingPayment";
+	public static final String FIELD_AMOUNT_PAID = "amountPaid";
+	public static final String FIELD_CONFIRMATION_CODE = "confirmationCode";
+	public static final String FIELD_PAYMENT_BY = "paymentBy";
+	public static final String FIELD_PHONE_NUMBER = "phoneNumber";
+	public static final String FIELD_TIME_PAID = "timePaid";
+	public static final String FIELD_ACCOUNT = "accountId";
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
 	
-	@Column(name = "amountPaid", nullable = false, unique = false)
+	@Column(name = FIELD_AMOUNT_PAID, nullable = false)
 	private BigDecimal amountPaid;
 
-	@Column(name = "confirmationCode", nullable = true, unique = false)
+	@Column(name = FIELD_CONFIRMATION_CODE)
 	private String confirmationCode;
 
-	@Column(name = "paymentBy", nullable = false, unique = false)
+	@Column(name = FIELD_PAYMENT_BY, nullable = false)
 	private String paymentBy;
 
-	@Column(name = "phoneNumber", nullable = false, unique = false)
+	@Column(name = FIELD_PHONE_NUMBER, nullable = false)
 	private String phoneNumber;
 
-	@Column(name = "timePaid", nullable = true, unique = false)
-	private Date timePaid;
+	@Column(name = FIELD_TIME_PAID)
+	private long timePaid;
 	
 	@ManyToOne
-	@JoinColumn(name = "accountId", nullable = true)
+	@JoinColumn(name = FIELD_ACCOUNT)
 	private Account account;
+	
+	public enum Field implements EntityField<IncomingPayment> {
+		AMOUNT_PAID(FIELD_AMOUNT_PAID),
+		CONFIRMATION_CODE(FIELD_CONFIRMATION_CODE),
+		PAYMENT_BY(FIELD_PAYMENT_BY),
+		PHONE_NUMBER(FIELD_PHONE_NUMBER),
+		TIME_PAID(FIELD_TIME_PAID),
+		ACCOUNT(FIELD_ACCOUNT);
+		
+		/** name of a field */
+		private final String fieldName;
+		/**
+		 * Creates a new {@link Field}
+		 * @param fieldName name of the field
+		 */
+		Field(String fieldName) { this.fieldName = fieldName; }
+		/** @see EntityField#getFieldName() */
+		public String getFieldName() { return this.fieldName; }
+	}
 
 	/** Empty constructor required for hibernate. */
 	public IncomingPayment() {
-	}
-
-	public IncomingPayment(long incomingPaymentId, String paymentBy,
-			String phoneNumber, BigDecimal amountPaid, long timePaid,
-			Account account) {
-		this.id = incomingPaymentId;
-		this.paymentBy = paymentBy;
-		this.phoneNumber = phoneNumber;
-		this.amountPaid = amountPaid;
-		this.timePaid = new Date(timePaid);
-		this.account = account;
-	}
-
+	}	
+	
 	public IncomingPayment(String paymentBy, String phoneNumber,
-			BigDecimal amountPaid, Date timePaid, Account account) {
-		super();
+			BigDecimal amountPaid, long timePaid, Account account) {
 		this.paymentBy = paymentBy;
 		this.phoneNumber = phoneNumber;
 		this.amountPaid = amountPaid;
@@ -71,15 +86,10 @@ public class IncomingPayment {
 	}
 
 	public IncomingPayment(String paymentBy, String phoneNumber,
-			BigDecimal amountPaid, long timePaid, Account account) {
-		super();
-		this.paymentBy = paymentBy;
-		this.phoneNumber = phoneNumber;
-		this.amountPaid = amountPaid;
-		this.timePaid = new Date(timePaid);
-		this.account = account;
+			BigDecimal amountPaid, Date timePaid, Account account) {
+		this(paymentBy,phoneNumber,amountPaid,timePaid.getTime(),account);
 	}
-
+	
 	public Account getAccount() {
 		return account;
 	}
@@ -104,7 +114,7 @@ public class IncomingPayment {
 		return phoneNumber;
 	}
 
-	public Date getTimePaid() {
+	public long getTimePaid() {
 		return timePaid;
 	}
 
@@ -133,7 +143,7 @@ public class IncomingPayment {
 	}
 
 	public void setTimePaid(Date timePaid) {
-		this.timePaid = timePaid;
+		this.timePaid = timePaid.getTime();
 	}
 	
 }

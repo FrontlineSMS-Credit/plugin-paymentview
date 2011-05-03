@@ -6,12 +6,12 @@ import net.frontlinesms.ui.handler.BasePanelHandler;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
 
-public class StepSelectTargetSavingsHandler extends BasePanelHandler {
+public class SelectTargetSavingsHandler extends BasePanelHandler {
 	private static final String XML_STEP_SELECT_TARGET_SAVING = "/ui/plugins/paymentview/analytics/viewdashboard/stepselectservice.xml";
 	private ViewDashBoardTabHandler viewDashBoardTabHandler;
 	private ClientDao clientDao;
 
-	public StepSelectTargetSavingsHandler(UiGeneratorController ui,
+	public SelectTargetSavingsHandler(UiGeneratorController ui,
 			ClientDao clientDao, ViewDashBoardTabHandler viewDashBoardTabHandler) {
 		super(ui);
 		this.clientDao = clientDao;
@@ -24,7 +24,7 @@ public class StepSelectTargetSavingsHandler extends BasePanelHandler {
 	}
 
 	public void next() {
-		viewDashBoardTabHandler.setCurrentStepPanel(new StepSelectClientsHandler(
+		viewDashBoardTabHandler.setCurrentStepPanel(new SelectClientsHandler(
 				(UiGeneratorController) ui, clientDao, viewDashBoardTabHandler).getPanelComponent());
 	}
 }

@@ -13,7 +13,9 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
 
-public class StepSelectClientsHandler extends BasePanelHandler implements PagedComponentItemProvider {
+public class SelectClientsHandler extends BasePanelHandler implements PagedComponentItemProvider {
+	private static final String ICONS_CHECKBOX_SELECTED_PNG = "/icons/checkbox-selected.png";
+	private static final String ICONS_CHECKBOX_UNSELECTED_PNG = "/icons/checkbox-unselected.png";
 	private static final String COMPONENT_TABLE_CLIENTS = "tbl_clients";
 	private static final String XML_STEP_SELECT_CLIENT = "/ui/plugins/paymentview/analytics/viewdashboard/stepselectclients.xml";
 	private static final String COMPONENT_PANEL_CLIENTS = "pnl_clients";
@@ -24,7 +26,7 @@ public class StepSelectClientsHandler extends BasePanelHandler implements PagedC
 	private ComponentPagingHandler clientsTablePager;
 	private String clientFilter = "";
 
-	protected StepSelectClientsHandler(UiGeneratorController ui,
+	protected SelectClientsHandler(UiGeneratorController ui,
 			ClientDao clientDao, ViewDashBoardTabHandler viewDashBoardTabHandler) {
 		super(ui);
 		this.clientDao = clientDao;
@@ -61,12 +63,12 @@ public class StepSelectClientsHandler extends BasePanelHandler implements PagedC
 	}
 
 	public void next() {
-		viewDashBoardTabHandler.setCurrentStepPanel(new StepCreateSettingsHandler(
+		viewDashBoardTabHandler.setCurrentStepPanel(new CreateSettingsHandler(
 				(UiGeneratorController) ui, clientDao, viewDashBoardTabHandler).getPanelComponent());
 	}
 
 	public void previous() {
-		viewDashBoardTabHandler.setCurrentStepPanel(new StepSelectTargetSavingsHandler(
+		viewDashBoardTabHandler.setCurrentStepPanel(new SelectTargetSavingsHandler(
 				(UiGeneratorController) ui, clientDao, viewDashBoardTabHandler).getPanelComponent());
 	}
 	
@@ -78,7 +80,7 @@ public class StepSelectClientsHandler extends BasePanelHandler implements PagedC
 		Object row = ui.createTableRow(client);
 
 		Object cell = ui.createTableCell("");
-		ui.setIcon(cell, "/icons/header/checkbox-unselected.png");
+		ui.setIcon(cell, ICONS_CHECKBOX_UNSELECTED_PNG);
 		ui.add(row, cell);
 
 		ui.add(row,
@@ -105,10 +107,10 @@ public class StepSelectClientsHandler extends BasePanelHandler implements PagedC
 		Client attachedClient = (Client) ui.getAttachedObject(row);
 		if (attachedClient.isSelected()) {
 			attachedClient.setSelected(false);
-			ui.setIcon(cell, "/icons/header/checkbox-unselected.png");
+			ui.setIcon(cell, ICONS_CHECKBOX_UNSELECTED_PNG);
 		} else {
 			attachedClient.setSelected(true);
-			ui.setIcon(cell, "/icons/header/checkbox-selected.png");
+			ui.setIcon(cell, ICONS_CHECKBOX_SELECTED_PNG);
 		}
 
 		ui.add(row, cell, 0);
