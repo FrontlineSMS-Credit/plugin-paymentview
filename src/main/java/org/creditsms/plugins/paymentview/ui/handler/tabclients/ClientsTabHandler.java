@@ -32,10 +32,10 @@ public class ClientsTabHandler extends BaseTabHandler implements
 	private String clientFilter;
 
 	private Object clientsTableComponent;
+	private Object pnlClientsList;
 	private ComponentPagingHandler clientsTablePager;
 	private CustomFieldDao customFieldDao;
 	private CustomValueDao customValueDao;
-	private Object pnlClientsList;
 	private PaymentViewThinletTabController paymentViewThinletTabController; 
 
 	public ClientsTabHandler(UiGeneratorController ui, final PaymentViewThinletTabController paymentViewThinletTabController) {

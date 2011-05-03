@@ -20,14 +20,13 @@ public class SafaricomAccountCreationUiHandler implements ThinletUiEventHandler 
 
 	private void initDialog() {
 		this.dialog = ui.loadComponentFromFile(DIALOG_XML_FILE, this);
-		refreshDeviceList();
+		initDeviceList();
 	}
 
-	private void refreshDeviceList() {
-		Object list = getDeviceList();
-		ui.removeAll(list);
+	private void initDeviceList() {
+		Object combo = getDeviceList();
 		for(SmsService s : ui.getFrontlineController().getSmsServiceManager().getAll()) {
-			ui.add(list, getListItem(s));
+			ui.add(combo, getComboChoice(s));
 		}
 	}
 
@@ -39,8 +38,8 @@ public class SafaricomAccountCreationUiHandler implements ThinletUiEventHandler 
 		return ui.find(this.dialog, componentName);
 	}
 
-	private Object getListItem(SmsService s) {
-		return ui.createListItem(s.toString(), s);
+	private Object getComboChoice(SmsService s) {
+		return ui.createComboboxChoice(s.getServiceName(), s);
 	}
 
 	public Object getDialog() {
@@ -51,17 +50,24 @@ public class SafaricomAccountCreationUiHandler implements ThinletUiEventHandler 
 		return ui.getText(find("tfPin"));
 	}
 	
+	private String getVPin() {
+		return ui.getText(find("tfVPin"));
+	}
+	
 //> PUBLIC UI EVENT METHODS
 	public void createService() {
 		System.out.println("createService()");
+		//ui.alert("aaaaaaaaaaaaaaaaaaaaaaaaagh!!!!!!");
 		SmsService s = ui.getAttachedObject(ui.getSelectedItem(getDeviceList()), SmsService.class);
 		String pin = getPin();
+		String vPin = getVPin();
 		SafaricomPaymentService sps = new SafaricomPaymentService();
 		sps.setPin(pin);
 		CService cService = ((SmsModem) s).getCService();
 		sps.setCService(cService);
 		System.out.println("Created payment service: " + s);
 		System.out.println("With PIN: " + pin);
+		System.out.println("Verify PIN: " + vPin);
 		System.out.println("And CService: " + cService);
 	}
 	
