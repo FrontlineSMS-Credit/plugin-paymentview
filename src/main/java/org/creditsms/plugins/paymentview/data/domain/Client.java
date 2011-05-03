@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.data.domain;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -45,7 +46,7 @@ public class Client {
 	private String phoneNumber;
 
 	@OneToMany(fetch = FetchType.EAGER)
-	private Set<Account> accounts;
+	private Set<Account> accounts = new HashSet<Account>();
 
 	@OneToMany
 	private Set<CustomValue> customValue;

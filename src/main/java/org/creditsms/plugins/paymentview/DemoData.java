@@ -1,113 +1,96 @@
-package org.creditsms.plugins.paymentview.data.dummy;
+package org.creditsms.plugins.paymentview;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 import net.frontlinesms.data.DuplicateKeyException;
 
-import org.creditsms.plugins.paymentview.data.domain.Account;
-import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
-import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
-import org.creditsms.plugins.paymentview.data.repository.AccountDao;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
-import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
+import org.creditsms.plugins.paymentview.data.domain.*;
+import org.creditsms.plugins.paymentview.data.repository.*;
+import org.springframework.context.ApplicationContext;
 
-public class DummyData {
-	private AccountDao accountDao;
-	private ClientDao clientDao;
-	private CustomFieldDao customFieldDao;
-	private IncomingPaymentDao incomingPaymentDao;
-	private OutgoingPaymentDao outgoingPaymentDao;
+public class DemoData {
+	private ApplicationContext ctx;
 
-	public DummyData(AccountDao accountDao, ClientDao clientDao,
-			CustomFieldDao customFieldDao,
-			IncomingPaymentDao incomingPaymentDao,
-			OutgoingPaymentDao outgoingPaymentDao) {
-		this.accountDao = accountDao;
-		this.clientDao = clientDao;
-		this.customFieldDao = customFieldDao;
-		this.incomingPaymentDao = incomingPaymentDao;
-		this.outgoingPaymentDao = outgoingPaymentDao;
-				
-//		if (clientDao.getAllClients().isEmpty()) {
-			//createDummyData();
-//		}
+	private DemoData(ApplicationContext ctx) {
+		this.ctx = ctx;
 	}
-
+	
+//> DUMMY DATA CREATION
+	
 	private Client createDummyClient(String name, String phoneNumber,
-			String[] accountNumbers) {
+		String[] accountNumbers) {
 		String[] names = name.split(" ");
 		
 		Client c = new Client(names[0], names[1], phoneNumber);
 		
 		for (String accountNumber : accountNumbers) { 
-			Account a = new Account(accountNumber);
-			try {
-				accountDao.saveAccount(a);
-			} catch (DuplicateKeyException e) {
-				System.out.println(e);
-				System.out.println(a);
-				throw new RuntimeException(e);
+			Account a = getAccountDao().getAccountByAccountNumber(accountNumber);
+			if(a == null) {
+				try {
+					a = new Account(accountNumber);
+					getAccountDao().saveAccount(a);
+				} catch (DuplicateKeyException e) {
+					System.out.println(a);
+					e.printStackTrace();
+					a = null;
+				}
 			}
-			c.addAccount(a);
+			if(a != null) {
+				c.addAccount(a);	
+			}
 		}
 		
 		try {
-			clientDao.saveClient(c);
+			getClientDao().saveClient(c);
 		} catch (DuplicateKeyException e) {
-			System.out.println(e);
 			System.out.println(c);
-			throw new RuntimeException(e);
+			e.printStackTrace();
 		}
 		
 		return c;
 	}
-
+	
 	private void createDummyIncomingPayment(String paymentBy,
 			String phoneNumber, String timePaid, BigDecimal amountPaid,
 			String accountNumber) {
 		IncomingPayment i = new IncomingPayment();
 		i.setAmountPaid(amountPaid);
-		Account myAcc = accountDao.getAccountByAccountNumber(accountNumber);
+		Account myAcc = getAccountDao().getAccountByAccountNumber(accountNumber);
 		i.setAccount(myAcc);
 		i.setPaymentBy(paymentBy);
 		i.setPhoneNumber(phoneNumber);
 		i.setTimePaid(new Date(Long.parseLong(timePaid)));
 		try {
-			incomingPaymentDao.saveIncomingPayment(i);
+			getIncomingPaymentDao().saveIncomingPayment(i);
 		} catch (Exception e) {// DuplicateKeyException
-			System.out.println(e);
 			System.out.println(i);
 			System.out.println(myAcc);
-			throw new RuntimeException(e);
+			e.printStackTrace();
 		}
-
+	
 	}
-
+	
 	private void createDummyOutgoingPayment(String paymentTo,
 			String phoneNumber, String timePaid, BigDecimal amountPaid,
 			String accountNumber) {
 		OutgoingPayment o = new OutgoingPayment();
 		o.setAmountPaid(amountPaid);
-		Account myAcc = accountDao.getAccountByAccountNumber(accountNumber);
+		Account myAcc = getAccountDao().getAccountByAccountNumber(accountNumber);
 		o.setAccount(myAcc);
 		o.setPhoneNumber(phoneNumber);
-
+	
 		o.setTimePaid(new Date(Long.parseLong(timePaid)));
 		try {
-			outgoingPaymentDao.saveOutgoingPayment(o);
+			getOutgoingPaymentDao().saveOutgoingPayment(o);
 		} catch (Exception e) {
-			System.out.println(e);
 			System.out.println(o);
 			System.out.println(myAcc);
-			throw new RuntimeException(e);
+			e.printStackTrace();
 		}
-
+	
 	}
-
+	
 	private void createDummyData() {
 		// Create dummy clients
 		createDummyClient("Alice Wangare", "+25472457645", new String[] {
@@ -168,7 +151,7 @@ public class DummyData {
 				"42400255", "24343423" });
 		createDummyClient("Justus Matanda", "+25472014545", new String[] {
 				"42547455", "43493444" });
-
+	
 		createDummyIncomingPayment("Isiah Muchene", "+254723312235",
 				"1300560000000", new BigDecimal("4513.20"), "59536723");
 		createDummyIncomingPayment("Ian Mukewa", "+25472762345",
@@ -191,7 +174,7 @@ public class DummyData {
 				"1300560000900", new BigDecimal("1000.00"), "00425425");
 		createDummyIncomingPayment("Lowuya Lamini", "+254720455345",
 				"1300560001000", new BigDecimal("1200.00"), "434147425");
-
+	
 		createDummyIncomingPayment("Angela Koki", "+254720999345",
 				"1300564344000", new BigDecimal("4000.95"), "23278523");
 		createDummyIncomingPayment("Isiah Mwiki", "+254720785345",
@@ -202,7 +185,7 @@ public class DummyData {
 				"1302304299996", new BigDecimal("1780.00"), "232363547");
 		createDummyIncomingPayment("Lavendar Akoth", "+254724666645",
 				"1302304299996", new BigDecimal("2000.00"), "232255000");
-
+	
 		createDummyOutgoingPayment("Isiah Muchene", "+254723312233",
 				"1302560000896", new BigDecimal("3000.00"), "59536723");
 		createDummyOutgoingPayment("Ian Mukewa", "+254727623453",
@@ -236,24 +219,31 @@ public class DummyData {
 		createDummyOutgoingPayment("Lavendar Akoth", "+254724666364",
 				"1302000003896", new BigDecimal("7000.34"), "234327443");
 	}
-
+	
 	public AccountDao getAccountDao() {
-		return this.accountDao;
+		return (AccountDao) ctx.getBean("accountDao");
 	}
-
+	
 	public ClientDao getClientDao() {
-		return clientDao;
+		return (ClientDao) ctx.getBean("clientDao");
 	}
-
+	
 	public CustomFieldDao getCustomFieldDao() {
-		return this.customFieldDao;
+		return (CustomFieldDao) ctx.getBean("customFieldDao");
 	}
-
+	
 	public IncomingPaymentDao getIncomingPaymentDao() {
-		return this.incomingPaymentDao;
+		return (IncomingPaymentDao) ctx.getBean("incomingPaymentDao");
+	}
+	
+	public OutgoingPaymentDao getOutgoingPaymentDao() {
+		return (OutgoingPaymentDao) ctx.getBean("outgoingPaymentDao");
 	}
 
-	public OutgoingPaymentDao getOutgoingPaymentDao() {
-		return this.outgoingPaymentDao;
+	
+//> STATIC METHODS
+	public static void createDemoData(ApplicationContext applicationContext) {
+		DemoData d = new DemoData(applicationContext);
+		d.createDummyData();
 	}
 }

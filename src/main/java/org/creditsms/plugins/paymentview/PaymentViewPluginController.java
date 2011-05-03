@@ -7,6 +7,7 @@
  */
 package org.creditsms.plugins.paymentview;
 
+import net.frontlinesms.BuildProperties;
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.listener.IncomingMessageListener;
@@ -16,7 +17,6 @@ import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
-import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
@@ -101,9 +101,11 @@ public class PaymentViewPluginController extends BasePluginController implements
 				.getBean("serviceItemDao");
 		targetDao = (TargetDao) applicationContext.getBean("targetDao");
 		accountDao = (AccountDao) applicationContext.getBean("accountDao");
-
-		new DummyData(accountDao, clientDao, customFieldDao,
-		incomingPaymentDao, outgoingPaymentDao);
+		
+		// If not a production build, and database is empty, add test data
+		if(BuildProperties.getInstance().isSnapshot()) {
+			DemoData.createDemoData(applicationContext);
+		}
 	}
 
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
