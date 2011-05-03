@@ -104,7 +104,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
 						incomingPayment.getAmountPaid().toString(),
 						PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,
-						Long.toString(incomingPayment.getTimePaid().getTime()),
+						Long.toString(incomingPayment.getTimePaid()),
 						PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT,
 						incomingPayment.getAccount().getAccountNumber());
 
@@ -155,7 +155,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
 						outgoingPayment.getAmountPaid().toString(),
 						PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,
-						Long.toString(outgoingPayment.getTimePaid().getTime()),
+						Long.toString(outgoingPayment.getTimePaid()),
 						PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT,
 						outgoingPayment.getAccount().getAccountNumber(),
 						PaymentViewCsvUtils.MARKER_OUTGOING_NOTES,

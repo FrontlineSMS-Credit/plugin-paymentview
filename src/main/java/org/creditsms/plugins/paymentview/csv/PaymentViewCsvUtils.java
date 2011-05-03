@@ -1,6 +1,8 @@
 package org.creditsms.plugins.paymentview.csv;
 
-public class PaymentViewCsvUtils extends net.frontlinesms.csv.CsvUtils {
+import net.frontlinesms.csv.CsvUtils;
+
+public class PaymentViewCsvUtils extends CsvUtils {
 
 	public static final String MARKER_CLIENT_ACCOUNTS = "${accounts}";
 	public static final String MARKER_CLIENT_FIRST_NAME = "${first_name}";

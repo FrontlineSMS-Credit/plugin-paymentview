@@ -9,7 +9,6 @@
 	</panel>
 	
 	<panel weightx="1">
-		<button action="showOtherFieldDialog" icon="/icons/tick.png"
-			name="btSaveClient" text="Add Field" />
+		<button icon="/icons/tick.png" action="addField" name="btAddField" text="Add Field" />
 	</panel>
 </dialog>

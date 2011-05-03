@@ -6,39 +6,50 @@ import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
+import org.creditsms.plugins.paymentview.utils.StringUtil;
 
 public class OtherFieldHandler implements ThinletUiEventHandler {
 	private static final String XML_OTHER_FIELD = "/ui/plugins/paymentview/clients/dialogs/dlgOtherField.xml";
-	private CustomFieldDao customDataDao;
-	private CustomValueDao customValueDao;
+	private CustomFieldDao customFieldDao;
 
 	private Object dialogComponent;
-	private CustomizeClientDBHandler dlgCustomizeClientDB;
 	private UiGeneratorController ui;
+	private CustomizeClientDBHandler customizeClientDBHandler;
 
 	public OtherFieldHandler(UiGeneratorController ui,
-			CustomizeClientDBHandler dlgCustomizeClientDB,
-			CustomFieldDao customDataDao, CustomValueDao customValueDao) {
+			CustomFieldDao customFieldDao,
+			CustomizeClientDBHandler customizeClientDBHandler) {
 		this.ui = ui;
-		this.customDataDao = customDataDao;
-		this.customValueDao = customValueDao;
+		this.customFieldDao = customFieldDao;
+		this.customizeClientDBHandler = customizeClientDBHandler;
 		init();
 		refresh();
-		this.dlgCustomizeClientDB = dlgCustomizeClientDB;
 	}
 
 	public void createField(String fieldName) {
-		CustomField customField = new CustomField(fieldName);
+		CustomField customField = new CustomField(StringUtil.toCamelCase(fieldName), fieldName, false, true);
 		try {
-			this.customDataDao.saveCustomField(customField);
+			this.customFieldDao.saveCustomField(customField);
 		} catch (DuplicateKeyException e) {
 			throw new RuntimeException(e);
 		}
 
 		this.removeDialog();
-		this.dlgCustomizeClientDB.addField(fieldName);
-		this.dlgCustomizeClientDB.refresh();
+		ui.infoMessage("You have succesfully created the field '" + fieldName
+				+ "'!");
+	}
+
+	public static String camelCase(String string) {
+		String result = "";
+		for (int i = 0; i < string.length(); i++) {
+			String next = string.substring(i, i + 1);
+			if (i == 0) {
+				result += next.toUpperCase();
+			} else {
+				result += next.toLowerCase();
+			}
+		}
+		return result;
 	}
 
 	public Object getDialog() {

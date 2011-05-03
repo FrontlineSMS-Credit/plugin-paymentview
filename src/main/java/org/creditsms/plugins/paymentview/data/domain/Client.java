@@ -12,6 +12,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import net.frontlinesms.data.EntityField;
+
 import org.hibernate.annotations.IndexColumn;
 
 /**
@@ -22,19 +24,23 @@ import org.hibernate.annotations.IndexColumn;
 public class Client {
 	public static final String TABLE_NAME = "Client";
 
+	public static final String FIELD_FIRST_NAME = "firstName";
+	public static final String FIELD_OTHER_NAME = "otherName";
+	public static final String FIELD_PHONE_NUMBER = "phoneNumber";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@IndexColumn(name = "id")
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
 
-	@Column(name = "firstName", nullable = true, unique = false)
+	@Column(name = FIELD_FIRST_NAME)
 	private String firstName;
 
-	@Column(name = "otherName", nullable = true, unique = false)
+	@Column(name = FIELD_OTHER_NAME)
 	private String otherName;
 
-	@Column(name = "phoneNumber", nullable = false, unique = true)
+	@Column(name = FIELD_PHONE_NUMBER, nullable = false, unique = true)
 	private String phoneNumber;
 
 	@OneToMany(fetch = FetchType.EAGER)
@@ -42,6 +48,22 @@ public class Client {
 
 	@OneToMany
 	private Set<CustomValue> customData;
+	
+	public enum Field implements EntityField<Client> {
+		FIRST_NAME(FIELD_FIRST_NAME),
+		OTHER_NAME(FIELD_OTHER_NAME),
+		PHONE_NUMBER(FIELD_PHONE_NUMBER);
+		
+		/** name of a field */
+		private final String fieldName;
+		/**
+		 * Creates a new {@link Field}
+		 * @param fieldName name of the field
+		 */
+		Field(String fieldName) { this.fieldName = fieldName; }
+		/** @see EntityField#getFieldName() */
+		public String getFieldName() { return this.fieldName; }
+	}
 
 	/** Empty constructor required for hibernate. */
 	public Client() {

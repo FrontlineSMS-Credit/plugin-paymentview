@@ -17,12 +17,6 @@ public class ExportByClientXticsStep3Handler implements ThinletUiEventHandler {
 	private ExportByClientXticsStep2Handler previousObj;
 	private UiGeneratorController ui;
 
-	public ExportByClientXticsStep3Handler(UiGeneratorController ui) {
-		this.ui = ui;
-		init();
-		refresh();
-	}
-
 	public ExportByClientXticsStep3Handler(UiGeneratorController ui,
 			ExportByClientXticsStep2Handler previousObj, String dateRange,
 			List<Client> clients) {

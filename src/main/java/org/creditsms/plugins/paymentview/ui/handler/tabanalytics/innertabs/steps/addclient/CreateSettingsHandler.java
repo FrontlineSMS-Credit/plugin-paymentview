@@ -8,7 +8,7 @@ import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateN
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
 
 public class CreateSettingsHandler extends BasePanelHandler {
-	private static final String XML_STEP_CREATE_SETTINGS = "/ui/plugins/paymentview/analytics/createdashboard/stepcreatesettings.xml";
+	private static final String XML_STEP_CREATE_SETTINGS = "/ui/plugins/paymentview/analytics/addclient/stepcreatesettings.xml";
 	private final AddClientTabHandler addClientTabHandler;
 	private ClientDao clientDao;
 

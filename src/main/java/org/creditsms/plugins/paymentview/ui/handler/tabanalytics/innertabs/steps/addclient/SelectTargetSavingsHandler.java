@@ -7,7 +7,7 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
 
 public class SelectTargetSavingsHandler extends BasePanelHandler {
-	private static final String XML_STEP_SELECT_TARGET_SAVING = "/ui/plugins/paymentview/analytics/createdashboard/stepselecttargetsavings.xml";
+	private static final String XML_STEP_SELECT_TARGET_SAVING = "/ui/plugins/paymentview/analytics/addclient/stepselecttargetsavings.xml";
 	private AddClientTabHandler addClientTabHandler;
 	private ClientDao clientDao;
 

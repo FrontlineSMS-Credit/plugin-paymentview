@@ -16,6 +16,7 @@ import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
+import org.creditsms.plugins.paymentview.data.dummy.DummyData;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
@@ -24,7 +25,6 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
-import org.creditsms.plugins.paymentview.ui.ConnectedDeviceThinletTabController;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.springframework.context.ApplicationContext;
 
@@ -36,6 +36,7 @@ import org.springframework.context.ApplicationContext;
  * or system such as Mifos - http://www.mifos.org
  * 
  * @author Emmanuel Kala
+ * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
  */
 @PluginControllerProperties(name = "Payment View", iconPath = "/icons/creditsms.png", i18nKey = "plugins.paymentview", springConfigLocation = "classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml", hibernateConfigPath = "classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml")
 public class PaymentViewPluginController extends BasePluginController implements
@@ -43,7 +44,6 @@ public class PaymentViewPluginController extends BasePluginController implements
 
 	// > CONSTANTS
 	/** Filename and path of the XML for the PaymentView tab */
-	
 
 	/** DAO for accounts */
 	private FrontlineSMS frontlineController;
@@ -55,7 +55,6 @@ public class PaymentViewPluginController extends BasePluginController implements
 	private OutgoingPaymentDao outgoingPaymentDao;
 	private ServiceItemDao serviceItemDao;
 	private TargetDao targetDao;
-	private ConnectedDeviceThinletTabController connectedDeviceThinletTabController;
 
 	private PaymentViewThinletTabController tabController;
 
@@ -103,8 +102,8 @@ public class PaymentViewPluginController extends BasePluginController implements
 		targetDao = (TargetDao) applicationContext.getBean("targetDao");
 		accountDao = (AccountDao) applicationContext.getBean("accountDao");
 
-		// new DummyData(accountDao, clientDao, customFieldDao,
-		// incomingPaymentDao, outgoingPaymentDao);
+		new DummyData(accountDao, clientDao, customFieldDao,
+		incomingPaymentDao, outgoingPaymentDao);
 	}
 
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
@@ -121,8 +120,8 @@ public class PaymentViewPluginController extends BasePluginController implements
 		tabController.setTabComponent(targetDao);
 
 		tabController.refresh();
-		
-		//Just after setting the DAOs
+
+		// Just after setting the DAOs
 		tabController.initTabs();
 		return tabController.getPaymentViewTab();
 	}

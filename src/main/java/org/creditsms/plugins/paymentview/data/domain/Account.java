@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import net.frontlinesms.data.EntityField;
+
 /**
  * @Author Roy
  * */
@@ -16,22 +18,41 @@ import javax.persistence.Table;
 @Table(name = Account.TABLE_NAME)
 public class Account {
 	public static final String TABLE_NAME = "Account";
-	
+
+	public static final String FIELD_ACCOUNT_NUMBER = "accountNumber";
+	public static final String FIELD_CLIENT = "clientId";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
-	
-	@Column(name = "accountNumber", nullable = false, unique = true)
+
+	@Column(name = FIELD_ACCOUNT_NUMBER, nullable = false, unique = true)
 	private String accountNumber;
- 
+
 	@ManyToOne
-	@JoinColumn(name = "clientId", nullable = true)
+	@JoinColumn(name = FIELD_CLIENT, nullable = true)
 	private Client client;
 
 	/* Needed by Hibernate */
-	public Account() {}
+	public Account() {
+	}
 
+	public enum Field implements EntityField<Account> {
+		ACCOUNT_NUMBER(FIELD_ACCOUNT_NUMBER),
+		CLIENT(FIELD_CLIENT);
+		
+		/** name of a field */
+		private final String fieldName;
+		/**
+		 * Creates a new {@link Field}
+		 * @param fieldName name of the field
+		 */
+		Field(String fieldName) { this.fieldName = fieldName; }
+		/** @see EntityField#getFieldName() */
+		public String getFieldName() { return this.fieldName; }
+	}
+	
 	public Account(String accountNumber) {
 		this.accountNumber = accountNumber;
 	}
@@ -40,7 +61,7 @@ public class Account {
 		this.accountNumber = accountNumber;
 		this.client = client;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -101,15 +101,26 @@ public class EditClientHandler implements ThinletUiEventHandler {
 		this.ui.removeDialog(dialog);
 	}
 
-	public void saveClient() throws DuplicateKeyException {
+	public void saveClient() {
 		if (editMode) {
-			this.clientDao.saveClient(getClientObj());
+			try {
+				this.client.setFirstName(ui.getText(fieldFirstName));
+				this.client.setOtherName(ui.getText(fieldOtherName));
+				this.client.setPhoneNumber(ui.getText(fieldPhoneNumber));
+				this.clientDao.updateClient(this.client);
+			} catch (DuplicateKeyException e) {
+				throw new RuntimeException(e);
+			}
 		} else {
 			String fn = ui.getText(fieldFirstName);
 			String on = ui.getText(fieldOtherName);
 			String phone = ui.getText(fieldPhoneNumber);
 			Client c = new Client(fn, on, phone);
-			this.clientDao.saveClient(c);
+			try{
+				this.clientDao.saveClient(c);
+			}catch(DuplicateKeyException e){
+				throw new RuntimeException(e);
+			}
 		}
 		removeDialog();
 		clientsTabHandler.refresh();
