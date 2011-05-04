@@ -1,6 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
-import net.frontlinesms.payment.safaricom.ui.SafaricomAccountCreationUiHandler;
+import net.frontlinesms.payment.safaricom.ui.SafaricomPaymentServiceConfigUiHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.UiGeneratorControllerConstants;
 import net.frontlinesms.ui.handler.BaseTabHandler;
@@ -57,7 +57,7 @@ public class SettingsTabHandler extends BaseTabHandler implements
 
 	public void createNew() {
 //		ui.add(new CreateNewAccountHandler(ui, this.accountDao).getDialog());
-		ui.add(new SafaricomAccountCreationUiHandler(ui).getDialog());
+		ui.add(new SafaricomPaymentServiceConfigUiHandler(ui).getDialog());
 	}
 
 	public void deleteAccount() {

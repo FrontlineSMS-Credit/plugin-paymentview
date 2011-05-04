@@ -11,6 +11,7 @@ import net.frontlinesms.BuildProperties;
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.listener.IncomingMessageListener;
+import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
@@ -48,6 +49,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 	/** DAO for accounts */
 	private FrontlineSMS frontlineController;
 
+	private AccountDao accountDao;
 	private ClientDao clientDao;
 	private CustomValueDao customValueDao;
 	private CustomFieldDao customFieldDao;
@@ -55,10 +57,13 @@ public class PaymentViewPluginController extends BasePluginController implements
 	private OutgoingPaymentDao outgoingPaymentDao;
 	private ServiceItemDao serviceItemDao;
 	private TargetDao targetDao;
+	
+	// TODO currently we have one or no payment services, and this is configured at runtime.  Eventually
+	// this should be persisted to the database and loaded when the controller is initialised
+	private static PaymentService paymentService;
 
 	private PaymentViewThinletTabController tabController;
 
-	private AccountDao accountDao;
 
 	/**
 	 * @see net.frontlinesms.plugins.PluginController#deinit()
@@ -103,7 +108,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 		accountDao = (AccountDao) applicationContext.getBean("accountDao");
 		
 		// If not a production build, and database is empty, add test data
-		if(BuildProperties.getInstance().isSnapshot()) {
+		if(BuildProperties.getInstance().isSnapshot() && clientDao.getClientCount()==0) {
 			DemoData.createDemoData(applicationContext);
 		}
 	}
@@ -126,5 +131,9 @@ public class PaymentViewPluginController extends BasePluginController implements
 		// Just after setting the DAOs
 		tabController.initTabs();
 		return tabController.getPaymentViewTab();
+	}
+	
+	public static void setPaymentService(PaymentService paymentService) {
+		PaymentViewPluginController.paymentService = paymentService;
 	}
 }
