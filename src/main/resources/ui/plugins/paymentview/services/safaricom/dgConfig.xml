@@ -1,12 +1,12 @@
-<dialog closable="true" close="removeDialog" icon="/icons/keyword.png" bottom="8" top="8" left="8" right="8" gap="8" close="removeDialog" columns="3" text="Creating Account">
+<dialog modal="true" closable="true" close="removeDialog" icon="/icons/keyword.png" bottom="8" top="8" left="8" right="8" gap="8" close="removeDialog" columns="3" text="Creating Account">
  <label text="Select device"/>
- <combobox colspan="2" name="cbDevices" columns="30" text="--SELECT A DEVICE--"/>
+ <combobox editable ="false" colspan="2" name="cbDevices" columns="30" text="--SELECT A DEVICE--"/>
 
  <label text="Enter PIN"/>
- <passwordfield  name="tfPin" colspan="2" columns="30"/>
+ <passwordfield  name="tfPin" colspan="2" action="assertMaxLength(this, 4)" columns="8"/>
  
  <label text="Verify PIN"/>
- <passwordfield  name="tfVPin" colspan="2" columns="30"/>
+ <passwordfield  name="tfVPin" colspan="2" action="assertMaxLength(this, 4)" columns="8"/>
  
- <button name="createService" enabled="false" colspan="2" action="createService" text="create service!!!"/><panel weightx="1"/>
+ <button name="createService" colspan="2" action="createService" text="create service!!!"/><panel weightx="1"/>
 </dialog>
