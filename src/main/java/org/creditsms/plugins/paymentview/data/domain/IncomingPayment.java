@@ -114,7 +114,7 @@ public class IncomingPayment {
 		return phoneNumber;
 	}
 
-	public long getTimePaid() {
+	public Long getTimePaid() {
 		return timePaid;
 	}
 
@@ -145,5 +145,63 @@ public class IncomingPayment {
 	public void setTimePaid(Date timePaid) {
 		this.timePaid = timePaid.getTime();
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((amountPaid == null) ? 0 : amountPaid.hashCode());
+		result = prime
+				* result
+				+ ((confirmationCode == null) ? 0 : confirmationCode.hashCode());
+		result = prime * result
+				+ ((paymentBy == null) ? 0 : paymentBy.hashCode());
+		result = prime * result
+				+ ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
+		result = prime * result + (int) (timePaid ^ (timePaid >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		IncomingPayment other = (IncomingPayment) obj;
+		if (amountPaid == null) {
+			if (other.amountPaid != null)
+				return false;
+		} else if (!amountPaid.equals(other.amountPaid))
+			return false;
+		if (confirmationCode == null) {
+			if (other.confirmationCode != null)
+				return false;
+		} else if (!confirmationCode.equals(other.confirmationCode))
+			return false;
+		if (paymentBy == null) {
+			if (other.paymentBy != null)
+				return false;
+		} else if (!paymentBy.equals(other.paymentBy))
+			return false;
+		if (phoneNumber == null) {
+			if (other.phoneNumber != null)
+				return false;
+		} else if (!phoneNumber.equals(other.phoneNumber))
+			return false;
+		if (timePaid != other.timePaid)
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "IncomingPayment [id=" + id + ", amountPaid=" + amountPaid
+				+ ", confirmationCode=" + confirmationCode + ", paymentBy="
+				+ paymentBy + ", phoneNumber=" + phoneNumber + ", timePaid="
+				+ timePaid + "]";
+	}	
 }

@@ -1,6 +1,9 @@
 package net.frontlinesms.payment.safaricom;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.EntitySavedNotification;
@@ -13,6 +16,8 @@ import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
 import org.smslib.stk.StkInputRequiremnent;
@@ -20,10 +25,12 @@ import org.smslib.stk.StkMenu;
 import org.smslib.stk.StkRequest;
 import org.smslib.stk.StkResponse;
 
-public class SafaricomPaymentService implements PaymentService, EventObserver {
+public abstract class MpesaPaymentService implements PaymentService, EventObserver {
 	private CService cService;
 	private IncomingPaymentProcessor incomingPaymentProcessor;
 	private String pin;
+	AccountDao accountDao;
+	ClientDao clientDao;
 	
 	public void setCService(CService cService) {
 		this.cService = cService;
@@ -31,6 +38,14 @@ public class SafaricomPaymentService implements PaymentService, EventObserver {
 	
 	public void setPin(String pin) {
 		this.pin = pin;
+	}
+	
+	public void setAccountDao(AccountDao accountDao) {
+		this.accountDao = accountDao;
+	}
+	
+	public void setClientDao(ClientDao clientDao) {
+		this.clientDao = clientDao;
 	}
 	
 	public void checkBalance() throws PaymentServiceException {
@@ -92,19 +107,30 @@ public class SafaricomPaymentService implements PaymentService, EventObserver {
 			return;
 		}
 		
-		FrontlineMessage message = (FrontlineMessage) entity;
+		final FrontlineMessage message = (FrontlineMessage) entity;
 		if(!message.getSenderMsisdn().equals("MPESA")) {
 			return;
 		}
 		
+		if(!messageIsValid(message)){
+			return;
+		}
+		
 		try {
-			final IncomingPayment payment = new IncomingPayment();
-			payment.setAccount(getAccount(message));
-			payment.setPaymentBy(getPayer(message));
-			payment.setAmountPaid(getAmount(message));
-			new FrontlineUiUpateJob() { // This probably shouldn't be a UI job!
+			new FrontlineUiUpateJob() { // This probably shouldn't be a UI job, but it certainly should be done on a separate thread!
 				public void run() {
-					incomingPaymentProcessor.process(payment);					
+					final IncomingPayment payment = new IncomingPayment();
+					try {
+						payment.setAccount(getAccount(message));
+						payment.setPhoneNumber(getPhoneNumber(message));
+						payment.setAmountPaid(getAmount(message));
+						payment.setConfirmationCode(getConfirmationCode(message));
+						payment.setPaymentBy(getPaymentBy(message));
+						payment.setTimePaid(getTimePaid(message));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					incomingPaymentProcessor.process(payment);
 				}
 			}.execute();
 		} catch(IllegalArgumentException ex) {
@@ -112,31 +138,54 @@ public class SafaricomPaymentService implements PaymentService, EventObserver {
 			return;
 		}
 	}
+	
+	private boolean messageIsValid(FrontlineMessage message) {
+		String txt = message.getTextContent();
+		
+		try{
+			String confirmationCode = getConfirmationCode(message);
+			if (confirmationCode.isEmpty()){
+				return false;
+			}
+		}catch(Exception ae){
+			return false;
+		}		
+		//FIXME: have a more robust way of checking the message.
+		return true;
+	}
+
+	abstract Date getTimePaid(FrontlineMessage message);
 
 	private BigDecimal getAmount(FrontlineMessage message) {
-		String[] s = message.getTextContent().split("\\s");
-		if(s.length < 2 || !s[s.length-1].equals("KES")) {
-			throw new IllegalArgumentException();
-		}
-		String amountString = s[s.length-2];
-		if(!amountString.matches("[0-9]+")) {
-			throw new IllegalArgumentException();
-		}
-		
-		return new BigDecimal(amountString);
+		String amountWithKsh = getFirstMatch(message, "Ksh[0-9,]+");
+		return new BigDecimal(amountWithKsh.substring(3).replaceAll(",", ""));
 	}
 
-	private String getPayer(FrontlineMessage message) {
-		String payerNumber = message.getTextContent().split("\\s", 2)[0];
-		if(payerNumber.matches("07[0-9]{8}")) {
-			return payerNumber;
-		} else {
-			throw new IllegalArgumentException();
-		}
+	String getPhoneNumber(FrontlineMessage message) {
+		return "+" + getFirstMatch(message, "2547[0-9]{8}");
 	}
 
-	private Account getAccount(FrontlineMessage message) {
-		// TODO Auto-generated method stub
-		return null;
+	private String getConfirmationCode(FrontlineMessage message) {
+		String firstMatch = getFirstMatch(message, "[A-Z0-9]+ Confirmed.");
+		return firstMatch.replace(" Confirmed.", "").trim();
+	}
+
+	abstract Account getAccount(FrontlineMessage message);
+
+	protected String getFirstMatch(FrontlineMessage message, String regexMatcher) {
+		String messageText = message.getTextContent();
+		Matcher matcher = Pattern.compile(regexMatcher).matcher(messageText);
+		matcher.find();
+		return matcher.group();
+	}
+
+	private String getPaymentBy(FrontlineMessage message) {
+		try {
+	        String nameAndPhone = getFirstMatch(message, "[A-Z ]+ 2547[0-9]{8}");
+	        String names = nameAndPhone.split("2547[0-9]{8}")[0].trim();
+	        return names;
+		} catch(ArrayIndexOutOfBoundsException ex) {
+		        throw new IllegalArgumentException(ex);
+		}
 	}
 }

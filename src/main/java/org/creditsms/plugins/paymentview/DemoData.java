@@ -5,8 +5,15 @@ import java.util.Date;
 
 import net.frontlinesms.data.DuplicateKeyException;
 
-import org.creditsms.plugins.paymentview.data.domain.*;
-import org.creditsms.plugins.paymentview.data.repository.*;
+import org.creditsms.plugins.paymentview.data.domain.Account;
+import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
+import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.springframework.context.ApplicationContext;
 
 public class DemoData {

@@ -3,9 +3,11 @@ package net.frontlinesms.payment.safaricom.ui;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.smslib.CService;
 
+import net.frontlinesms.events.EventBus;
 import net.frontlinesms.messaging.sms.SmsService;
 import net.frontlinesms.messaging.sms.modem.SmsModem;
-import net.frontlinesms.payment.safaricom.SafaricomPaymentService;
+import net.frontlinesms.payment.safaricom.MpesaPaymentService;
+import net.frontlinesms.payment.safaricom.MpesaStandardService;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -14,9 +16,15 @@ public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHan
 	private UiGeneratorController ui;
 	private Object dialog;
 	private Object combo;
+	
+	/** TODO this should not be referenced here - remove this once we are saving a properties object and allowing
+	 * the payment service manager to manage service lifecycles.
+	 */
+	private final EventBus eventBus;
 
 	public SafaricomPaymentServiceConfigUiHandler(UiGeneratorController ui) {
 		this.ui = ui;
+		this.eventBus = ui.getFrontlineController().getEventBus();
 		initDialog();
 	}
 
@@ -80,16 +88,17 @@ public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHan
 			String vPin = getVPin();			
 			if(checkValidityOfPinFields(pin, vPin)){
 				SmsService s = ui.getAttachedObject(ui.getSelectedItem(getDeviceList()), SmsService.class);
-				SafaricomPaymentService sps = new SafaricomPaymentService();
-				sps.setPin(pin);
+				MpesaPaymentService sPS = new MpesaStandardService();
+				sPS.setPin(pin);
 				CService cService = ((SmsModem) s).getCService();
-				sps.setCService(cService);
+				sPS.setCService(cService);
+				eventBus.registerObserver(sPS);
 				ui.alert("Created payment service: " + s +" With PIN: " + pin +" Verify PIN: " + vPin + " And CService: " + cService);
 	
 				// TODO once we are persisting payment service settings, we will just save new (or update)
 				// settings here.  For now, we only have one, statically accessed PaymentService and so we
 				// can create it directly
-				PaymentViewPluginController.setPaymentService(sps);
+				PaymentViewPluginController.setPaymentService(sPS);
 			} else {
 				ui.alert("The Pins are invalid or do not match");
 				// TODO set focus on pin 1 field

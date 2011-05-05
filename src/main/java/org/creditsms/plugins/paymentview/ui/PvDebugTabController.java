@@ -6,17 +6,20 @@ package org.creditsms.plugins.paymentview.ui;
 
 import org.creditsms.plugins.paymentview.ui.handler.connecteddevices.ConnectedDevicesTabHandler;
 
+import net.frontlinesms.FrontlineSMSConstants;
 import net.frontlinesms.messaging.sms.SmsService;
 import net.frontlinesms.messaging.sms.SmsServiceManager;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
+import net.frontlinesms.data.repository.MessageDao;
+import net.frontlinesms.data.domain.FrontlineMessage;
 
 /**
  * 
  * @author 
  */
-public class ConnectedDeviceThinletTabController extends BaseTabHandler implements
+public class PvDebugTabController extends BaseTabHandler implements
 		ThinletUiEventHandler {
 	
 	private static final String TABP_MAIN_PANE = "tabP_mainPane";
@@ -26,6 +29,15 @@ public class ConnectedDeviceThinletTabController extends BaseTabHandler implemen
 	private final SmsServiceManager smsServiceManager;
 	private ConnectedDevicesTabHandler connectedDevicesTab;
 	private Object mainPane;
+	private MessageDao messageDao;
+
+	public MessageDao getMessageDao() {
+		return messageDao;
+	}
+
+	public void setMessageDao(MessageDao messageDao) {
+		this.messageDao = messageDao;
+	}
 
 	/**
 	 * 
@@ -34,7 +46,7 @@ public class ConnectedDeviceThinletTabController extends BaseTabHandler implemen
 	 * @param uiController
 	 *            value for {@linkplain #ui}
 	 */
-	public ConnectedDeviceThinletTabController(UiGeneratorController ui) {
+	public PvDebugTabController(UiGeneratorController ui) {
 		super(ui);
 		this.smsServiceManager = ui.getFrontlineController().getSmsServiceManager();
 		init();		
@@ -74,6 +86,12 @@ public class ConnectedDeviceThinletTabController extends BaseTabHandler implemen
 	
 	private boolean shouldDisplay(SmsService s) {
 		return true; // eventually this will check if the device is suitable for MPESA
+	}
+	
+	public void saveMessage(String message){
+		ui.alert("The message to be saved is:::"+message);
+		FrontlineMessage msg = FrontlineMessage.createIncomingMessage(System.currentTimeMillis(), "MPESA", FrontlineSMSConstants.EMULATOR_MSISDN, message);
+		messageDao.saveMessage(msg);
 	}
 	
 	public Object getConnectedDevicesViewTab() {

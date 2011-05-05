@@ -1,14 +1,16 @@
 package net.frontlinesms.payment.safaricom;
 
-import java.math.BigDecimal;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import org.creditsms.plugins.paymentview.data.domain.Account;
-import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
-import org.mockito.InOrder;
-import org.smslib.CService;
-import org.smslib.SMSLibDeviceException;
-import org.smslib.stk.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.EntitySavedNotification;
@@ -18,25 +20,50 @@ import net.frontlinesms.payment.IncomingPaymentProcessor;
 import net.frontlinesms.payment.PaymentServiceException;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
-import static org.mockito.Mockito.*;
+import org.creditsms.plugins.paymentview.data.domain.Account;
+import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.mockito.InOrder;
+import org.smslib.CService;
+import org.smslib.SMSLibDeviceException;
+import org.smslib.stk.StkInputRequiremnent;
+import org.smslib.stk.StkMenu;
+import org.smslib.stk.StkMenuItem;
+import org.smslib.stk.StkRequest;
 
-public class SafaricomPaymentServiceTest extends BaseTestCase {
-	private SafaricomPaymentService s;
+/** Unit tests for {@link MpesaPaymentService} */
+public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> extends BaseTestCase {
+	private static final String PHONENUMBER_0 = "+254723908000";
+	protected static final String PHONENUMBER_1 = "+254723908001";
+	protected static final String PHONENUMBER_2 = "+254723908002";
+	protected static final String ACCOUNTNUMBER_1_1 = "0700000011";
+	protected static final String ACCOUNTNUMBER_2_1 = "0700000021";
+	protected static final String ACCOUNTNUMBER_2_2 = "0700000022";
+	
+	private E safaricomPaymentService;
 	private CService c;
 	private IncomingPaymentProcessor incomingPaymentProcessor;
 	
 	private StkMenuItem myAccountMenuItem;
 	private StkRequest mpesaMenuItemRequest;
 	private StkMenuItem sendMoneyMenuItem;
+	private ClientDao clientDao;
+	private AccountDao accountDao;
+	
 	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		this.s = new SafaricomPaymentService();
+		
+		this.safaricomPaymentService = createNewTestClass();
 		this.c = mock(CService.class);
-		s.setCService(c);
+		safaricomPaymentService.setCService(c);
 		incomingPaymentProcessor = mock(IncomingPaymentProcessor.class);
-		s.setIncomingPaymentProcessor(incomingPaymentProcessor);
+		safaricomPaymentService.setIncomingPaymentProcessor(incomingPaymentProcessor);
+		
+		setUpDaos();
 
 		StkMenuItem mpesaMenuItem = mockMenuItem("M-PESA", 129, 21);
 		when(c.stkRequest(StkRequest.GET_ROOT_MENU)).thenReturn(
@@ -50,6 +77,31 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 				"Pay Bill", "Buy Goods", "ATM Withdrawal", myAccountMenuItem));
 	}
 	
+	protected abstract E createNewTestClass();
+
+	@SuppressWarnings("unchecked")
+	private void setUpDaos() {
+		clientDao = mock(ClientDao.class);
+		accountDao = mock(AccountDao.class);
+
+		List<Account> accounts1 = mockAccounts(ACCOUNTNUMBER_1_1);
+		List<Account> accounts2 = mockAccounts(ACCOUNTNUMBER_2_1, ACCOUNTNUMBER_2_2);
+		
+		mockClient(0, PHONENUMBER_0, Collections.EMPTY_LIST);
+		mockClient(1, PHONENUMBER_1, accounts1);
+		mockClient(2, PHONENUMBER_2, accounts2);
+		
+		this.safaricomPaymentService.setClientDao(clientDao);
+		this.safaricomPaymentService.setAccountDao(accountDao);
+	}
+	
+	private void mockClient(long id, String phoneNumber, List<Account> accounts) {
+		Client c = mock(Client.class);
+		when(c.getId()).thenReturn(id);
+		when(clientDao.getClientByPhoneNumber(phoneNumber)).thenReturn(c);
+		when(accountDao.getAccountsByClientId(id)).thenReturn(accounts);
+	}
+
 	public void testCheckBalance() throws PaymentServiceException, SMSLibDeviceException {
 		// setup
 		StkRequest myAccountMenuItemRequest = myAccountMenuItem.getRequest();
@@ -63,10 +115,10 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 		when(c.stkRequest(showBalanceMenuItemRequest)).thenReturn(pinRequired);
 		
 		// given
-		s.setPin("1234");
+		safaricomPaymentService.setPin("1234");
 		
 		// when
-		s.checkBalance();
+		safaricomPaymentService.checkBalance();
 		
 		// then
 		InOrder inOrder = inOrder(c);
@@ -91,10 +143,10 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 		StkRequest pinRequiredRequest = pinRequired.getRequest();
 		
 		// given
-		s.setPin("1234");
+		safaricomPaymentService.setPin("1234");
 		
 		// when
-		s.makePayment(mockAccount(), new BigDecimal("500"));
+		safaricomPaymentService.makePayment(mockAccount(), new BigDecimal("500"));
 		
 		// then
 		InOrder inOrder = inOrder(c);
@@ -105,30 +157,45 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 		inOrder.verify(c).stkRequest(amountRequest , "500");
 		inOrder.verify(c).stkRequest(pinRequiredRequest , "1234");
 	}
-
-	public void testIncomingPaymentProcessing() {
+	
+	protected void testIncomingPaymentProcessing(String messageText,
+			final String phoneNo, final String accountNumber, final String amount,
+			final String confirmationCode, final String payedBy, final long datetime) {
 		// then
-		assertTrue(s instanceof EventObserver);
+		assertTrue(safaricomPaymentService instanceof EventObserver);
 		
 		// when
-		s.notify(mockMessageNotification("MPESA", "0712345678 sent payment of 500 KES"));
+		safaricomPaymentService.notify(mockMessageNotification("MPESA", messageText));
 		
 		// then
 		WaitingJob.waitForEvent();
 		verify(incomingPaymentProcessor).process(new IncomingPayment() {
 			@Override
 			public boolean equals(Object that) {
-				return that instanceof IncomingPayment &&
-						((IncomingPayment) that).getPaymentBy().equals("0712345678") &&
-						((IncomingPayment) that).getAmountPaid().equals(new BigDecimal("500"));
+				
+				if(!(that instanceof IncomingPayment)) return false;
+				IncomingPayment other = (IncomingPayment) that;
+				
+				
+				return other.getPhoneNumber().equals(phoneNo) &&
+						other.getAmountPaid().equals(new BigDecimal(amount)) &&
+						other.getAccount().getAccountNumber().equals(accountNumber) &&
+						other.getConfirmationCode().equals(confirmationCode) &&
+						other.getTimePaid().equals(datetime) &&
+						other.getPaymentBy().equals(payedBy);
+						
 			}
 		});
 	}
 
 	public void testIncomingPaymentProcessorIgnoresIrrelevantMessages() {
 		// when
-		s.notify(mockMessageNotification("MPESA", "Some random text..."));
-		s.notify(mockMessageNotification("0798765432", "... and some more random text."));
+		testIncomingPaymentProcessorIgnoresMessage("MPESA", "Some random text...");
+		testIncomingPaymentProcessorIgnoresMessage("0798765432", "... and some more random text.");
+	}
+	
+	protected void testIncomingPaymentProcessorIgnoresMessage(String fromNumber, String messageText) {
+		safaricomPaymentService.notify(mockMessageNotification(fromNumber, messageText));
 		
 		// then
 		WaitingJob.waitForEvent();
@@ -136,12 +203,30 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 	}
 	
 	public void testFakedIncomingPayment() {
+		// Message text which looks reasonable, but is wrong format
+		testFakedIncomingPayment("0798765432", "0712345678 sent payment of 500 KES");
+		
+		// Genuine MPESA message text, with bad number
+		testFakedIncomingPayment("0798765432", "BI94HR849 Confirmed.\n" +
+				"You have received Ksh1,235 JOHN KIU 254723908653 on 3/5/11 at 10:35 PM\n" +
+				"New M-PESA balance Ksh1,236");
+		
+		// Genuine PayBill message text, with bad number
+		testFakedIncomingPayment("0798765432", "BH45UU225 Confirmed.\n" +
+				"on 5/4/11 at 2:45 PM\n" +
+				"Ksh950 received from ELLY ASAKHULU 254713698227.\n" +
+				"Account Number 0713698227\n" +
+				"New Utility balance is Ksh50,802\n" +
+				"Time: 05/04/2011 14:45:34");
+	}
+	
+	private void testFakedIncomingPayment(String from, String messageText) {
 		// setup
-		SafaricomPaymentService s = this.s;
+		MpesaPaymentService s = this.safaricomPaymentService;
 		IncomingPaymentProcessor incomingPaymentProcessor = mock(IncomingPaymentProcessor.class);
 		
 		// when
-		s.notify(mockMessageNotification("0798765432", "0712345678 sent payment of 500 KES"));
+		s.notify(mockMessageNotification(from, messageText));
 		
 		// then
 		WaitingJob.waitForEvent();
@@ -182,6 +267,17 @@ public class SafaricomPaymentServiceTest extends BaseTestCase {
 		when(m.getSenderMsisdn()).thenReturn(from);
 		when(m.getTextContent()).thenReturn(text);
 		return new EntitySavedNotification<FrontlineMessage>(m);
+	}
+	
+	private List<Account> mockAccounts(String... accountNumbers) {
+		ArrayList<Account> accounts = new ArrayList<Account>();
+		for(String accountNumber : accountNumbers) {
+			Account account = mock(Account.class);
+			when(account.getAccountNumber()).thenReturn(accountNumber);
+			accounts.add(account);
+			when(accountDao.getAccountByAccountNumber(accountNumber)).thenReturn(account);
+		}
+		return accounts;
 	}
 }
 
