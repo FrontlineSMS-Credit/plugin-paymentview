@@ -92,7 +92,7 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 				.getAllActiveUsedCustomFields();
 		if (!allCustomFields.isEmpty()) {
 			for (CustomField cf : allCustomFields) {
-					Object checkbox = uiController.createCheckbox(cf.getName(),
+					Object checkbox = uiController.createCheckbox(cf.getCamelCaseName(),
 							cf.getReadableName(), true);
 					uiController.add(optionsPanel, checkbox);
 			}
@@ -113,7 +113,7 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 		
 		for(CustomField cf : customFieldDao.getAllActiveUsedCustomFields()){
 			addMarker(rowFormat, StringUtil.getMarkerFromString(cf.getReadableName()),
-					cf.getName());
+					cf.getCamelCaseName());
 		}
 		return rowFormat;
 	}

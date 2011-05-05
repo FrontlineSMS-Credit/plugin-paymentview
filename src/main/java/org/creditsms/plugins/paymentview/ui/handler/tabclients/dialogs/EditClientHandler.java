@@ -109,7 +109,7 @@ public class EditClientHandler implements ThinletUiEventHandler {
 				allUsedCustomFields.size());
 
 		for (CustomField cf : allUsedCustomFields) {
-			addField(cf, cf.getName(), cf.getReadableName());
+			addField(cf, cf.getCamelCaseName(), cf.getReadableName());
 		}
 
 	}

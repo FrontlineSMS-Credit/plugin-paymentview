@@ -28,7 +28,7 @@ public interface CustomFieldDao {
 	 * @return
 	 */
 	public List<CustomField> getAllActiveUsedCustomFields();
-	
+
 	/**
 	 * @return
 	 */
@@ -65,7 +65,7 @@ public interface CustomFieldDao {
 	 *            string to be used to match the names
 	 * @return
 	 */
-	public List<CustomField> getCustomFieldsByName(String strName);
+	public List<CustomField> getCustomFieldsByReadableName(String strName);
 
 	/**
 	 * Returns a list of CustomFields whose name is similar to the specified
@@ -77,11 +77,6 @@ public interface CustomFieldDao {
 	 * @param limit
 	 * @return
 	 */
-	public List<CustomField> getCustomFieldsByName(String strName,
-			int startIndex, int limit);
-
-	public List<CustomField> getCustomFieldsByReadableName(String strName);
-
 	public List<CustomField> getCustomFieldsByReadableName(String strName,
 			int startIndex, int limit);
 
@@ -97,7 +92,7 @@ public interface CustomFieldDao {
 	 * Update a CustomField to the system
 	 * 
 	 * @param CustomField
-	 */ 
+	 */
 	public void updateCustomField(CustomField customField)
 			throws DuplicateKeyException;
 

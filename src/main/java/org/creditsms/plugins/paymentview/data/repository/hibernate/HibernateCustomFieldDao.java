@@ -43,25 +43,6 @@ public class HibernateCustomFieldDao extends BaseHibernateDao<CustomField>
 		return super.countAll();
 	}
 
-	public List<CustomField> getCustomFieldsByName(String name) {
-		DetachedCriteria criteria = super.getCriterion().add(
-				Restrictions.disjunction().add(
-						Restrictions.ilike(
-								CustomField.Field.NAME.getFieldName(),
-								name.trim(), MatchMode.ANYWHERE)));
-		return super.getList(criteria);
-	}
-
-	public List<CustomField> getCustomFieldsByName(String name, int startIndex,
-			int limit) {
-		DetachedCriteria criteria = super.getCriterion().add(
-				Restrictions.disjunction().add(
-						Restrictions.ilike(
-								CustomField.Field.NAME.getFieldName(),
-								name.trim(), MatchMode.ANYWHERE)));
-		return super.getList(criteria, startIndex, limit);
-	}
-
 	public List<CustomField> getCustomFieldsByReadableName(String strName) {
 		DetachedCriteria criteria = super.getCriterion().add(
 				Restrictions.disjunction().add(
