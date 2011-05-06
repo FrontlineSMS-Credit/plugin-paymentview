@@ -1,13 +1,8 @@
 package org.creditsms.plugins.paymentview.ui.handler.connecteddevices;
 
-import java.util.List;
-
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.UiGeneratorControllerConstants;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
-import net.frontlinesms.ui.handler.PagedComponentItemProvider;
-import net.frontlinesms.ui.handler.PagedListDetails;
 
 import org.creditsms.plugins.paymentview.ui.PvDebugTabController;
 

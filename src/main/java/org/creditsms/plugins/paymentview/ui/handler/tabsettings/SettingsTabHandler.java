@@ -15,7 +15,6 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.ConfigureAccountHandler;
-import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.CreateNewAccountHandler;
 
 public class SettingsTabHandler extends BaseTabHandler implements
 		PagedComponentItemProvider {

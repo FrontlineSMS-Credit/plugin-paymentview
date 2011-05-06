@@ -32,6 +32,15 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	AccountDao accountDao;
 	ClientDao clientDao;
 	
+//> CONSTANTS
+	protected static final String AMOUNT_PATTERN = "Ksh[,|[0-9]]+";
+	protected static final String DATETIME_PATTERN = "d/M/yy hh:mm a";
+	protected static final String PHONE_PATTERN = "2547[0-9]{8}";
+	protected static final String CONFIRMATION_CODE_PATTERN = "[A-Z0-9]+ Confirmed.";
+	protected static final String PAID_BY_PATTERN = "([A-Za-z ]+)";
+	protected static final String ACCOUNT_NUMBER_PATTERN = "Account Number [0-9]+";
+	protected static final String RECEIVED_FROM = "received from";
+	
 	public void setCService(CService cService) {
 		this.cService = cService;
 	}
@@ -108,9 +117,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}
 		
 		final FrontlineMessage message = (FrontlineMessage) entity;
-		if(!message.getSenderMsisdn().equals("MPESA")) {
-			return;
-		}
 		
 		if(!messageIsValid(message)){
 			return;
@@ -140,44 +146,39 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	}
 	
 	private boolean messageIsValid(FrontlineMessage message) {
-		String txt = message.getTextContent();
-		
-		try{
-			String confirmationCode = getConfirmationCode(message);
-			if (confirmationCode.isEmpty()){
-				return false;
-			}
-		}catch(Exception ae){
+		if(!message.getSenderMsisdn().equals("MPESA")) {
 			return false;
 		}		
-		//FIXME: have a more robust way of checking the message.
-		return true;
+		return isMessageTextValid(message.getTextContent());
 	}
 
 	abstract Date getTimePaid(FrontlineMessage message);
 	abstract boolean isMessageTextValid(String messageText);
 	
 	private BigDecimal getAmount(FrontlineMessage message) {
-		String amountWithKsh = getFirstMatch(message, "Ksh[0-9,]+");
+		String amountWithKsh = getFirstMatch(message, AMOUNT_PATTERN);
 		return new BigDecimal(amountWithKsh.substring(3).replaceAll(",", ""));
 	}
-
+	
 	String getPhoneNumber(FrontlineMessage message) {
-		return "+" + getFirstMatch(message, "2547[0-9]{8}");
+		return "+" + getFirstMatch(message, PHONE_PATTERN);
 	}
 
 	private String getConfirmationCode(FrontlineMessage message) {
-		String firstMatch = getFirstMatch(message, "[A-Z0-9]+ Confirmed.");
+		String firstMatch = getFirstMatch(message, CONFIRMATION_CODE_PATTERN);
 		return firstMatch.replace(" Confirmed.", "").trim();
 	}
 
 	abstract Account getAccount(FrontlineMessage message);
 
-	protected String getFirstMatch(FrontlineMessage message, String regexMatcher) {
-		String messageText = message.getTextContent();
-		Matcher matcher = Pattern.compile(regexMatcher).matcher(messageText);
+	protected String getFirstMatch(String string, String regexMatcher) {
+		Matcher matcher = Pattern.compile(regexMatcher).matcher(string);
 		matcher.find();
 		return matcher.group();
+	}
+	
+	protected String getFirstMatch(FrontlineMessage message, String regexMatcher) {
+		return getFirstMatch(message.getTextContent(), regexMatcher);
 	}
 
 	abstract String getPaymentBy(FrontlineMessage message);

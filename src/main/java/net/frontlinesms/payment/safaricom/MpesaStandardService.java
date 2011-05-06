@@ -11,6 +11,11 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 
 public class MpesaStandardService extends MpesaPaymentService {
+	private static final String STANDARD_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n" +
+					"You have received Ksh[,|[0-9]]+ ([A-Za-z ]+) 2547[0-9]{8} on " +
+					"(([1-2]?[1-9]|3[0-1])/([1-9]|1[0-2])/(1[1-2]))\\s(at)\\s([1]?\\d:[0-5]\\d)\\s(AM|PM)" +
+					"\nNew M-PESA balance Ksh[,|[0-9]]+";
+
 	@Override
 	Account getAccount(FrontlineMessage message) {
 		Client client = clientDao.getClientByPhoneNumber(getPhoneNumber(message));
@@ -25,45 +30,32 @@ public class MpesaStandardService extends MpesaPaymentService {
 	@Override
 	String getPaymentBy(FrontlineMessage message) {
 		try {
-	        String nameAndPhone = getFirstMatch(message, "from ([A-Za-z ]+) 2547[0-9]{8}");
-	        String names = nameAndPhone.split("2547[0-9]{8}")[0].trim();
+	        String nameAndPhone = getFirstMatch(message, "Ksh[,|[0-9]]+ ([A-Za-z ]+) 2547[0-9]{8}");
+	        String nameWKsh = nameAndPhone.split(AMOUNT_PATTERN)[1];
+	        String names = getFirstMatch(nameWKsh,PAID_BY_PATTERN).trim();
 	        return names;
 		} catch(ArrayIndexOutOfBoundsException ex) {
 		        throw new IllegalArgumentException(ex);
 		}
-	}
-	
+	}	
+
 	@Override
 	Date getTimePaid(FrontlineMessage message) {
-        /*  "BH45UU225 Confirmed.\n"
-			+ "on 5/4/11 at 2:45 PM\n"
-			+ "Ksh950 received from BORIS BECKER 254723908002.\n"
-			+ "Account Number 0700000021\n"
-			+ "New Utility balance is Ksh50,802\n"
-			+ "Time: 05/04/2011 14:45:34"
-         */
         String section1 = message.getTextContent().split(" on ")[1];
         String datetimesection = section1.split("New M-PESA balance")[0];
         String datetime = datetimesection.replace(" at ", " ");
         
         Date date = null;
         try {
-			date = new SimpleDateFormat("d/M/yy hh:mm a").parse(datetime);
+			date = new SimpleDateFormat(DATETIME_PATTERN).parse(datetime);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		return date;
 	}
-
+    	
 	@Override
 	boolean isMessageTextValid(String messageText) {
-
-//		"BI94HR849 Confirmed.\n" +
-//				"You have received Ksh1,235 JOHN KIU 254723908001 on 3/5/11 at 10:35 PM\n" +
-//				"New M-PESA balance Ksh1,236",
-		return messageText.matches("[A-Z0-9]+ Confirmed.\n" +
-				"You have received Ksh[,|[0-9]]+ [A-Z]+ [A-Z]+ 2547[0-9]{8} on " +
-				"(([1-2]?[1-9]|3[0-1])/([1-9]|1[0-2])/(1[1-2]))\\s(at)\\s([1]?[1-9]:[0-5]\\d)\\s(AM|PM)" +
-				"\nNew M-PESA balance Ksh[,|[0-9]]+");
+		return messageText.matches(STANDARD_REGEX_PATTERN);
 	}
 }

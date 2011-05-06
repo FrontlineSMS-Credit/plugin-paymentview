@@ -1,13 +1,12 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
 import java.util.List;
 
+import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.junit.HibernateTestCase;
+
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.springframework.beans.factory.annotation.Autowired;
-
-
-import net.frontlinesms.data.DuplicateKeyException;
-import net.frontlinesms.junit.HibernateTestCase;
 
 /**
  * 

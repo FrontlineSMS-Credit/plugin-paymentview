@@ -4,16 +4,16 @@
  */
 package org.creditsms.plugins.paymentview.ui;
 
-import org.creditsms.plugins.paymentview.ui.handler.connecteddevices.ConnectedDevicesTabHandler;
-
 import net.frontlinesms.FrontlineSMSConstants;
+import net.frontlinesms.data.domain.FrontlineMessage;
+import net.frontlinesms.data.repository.MessageDao;
 import net.frontlinesms.messaging.sms.SmsService;
 import net.frontlinesms.messaging.sms.SmsServiceManager;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
-import net.frontlinesms.data.repository.MessageDao;
-import net.frontlinesms.data.domain.FrontlineMessage;
+
+import org.creditsms.plugins.paymentview.ui.handler.connecteddevices.ConnectedDevicesTabHandler;
 
 /**
  * 
