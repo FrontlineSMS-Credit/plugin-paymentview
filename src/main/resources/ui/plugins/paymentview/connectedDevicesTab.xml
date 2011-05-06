@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tab name=":connectedDevicesView" text="Connected Devices" icon="/icons/connectedDevice.jpg">
+<tab name=":connectedDevicesView" text="Debug" icon="/icons/connectedDevice.jpg">
 	<panel  bottom="9" columns="2" gap="9" left="9" top="9" weightx="1" weighty="1">
 		<panel columns="1" gap="9" right="4" top="9" weighty="1">
 	    	<label icon="" valign="top"/>
@@ -8,6 +8,9 @@
 		<panel columns="1" gap="9" right="9" weighty="1" weightx="1">
 			<list name="lstConnectedDevices" weighty="1" weightx="1"/>
 			<button name="refresh" text="Refresh panel" action="refresh"/>
+			<label text="Messages"/>
+			<textarea  rowspan="6"  colspan="2" name="tfMeassages" rows="9" columns="15"/>
+			<button name="saveMessages" action="saveMessage(tfMeassages.text)" text="Save Messages"/>
 		</panel>
 	</panel>
 </tab>

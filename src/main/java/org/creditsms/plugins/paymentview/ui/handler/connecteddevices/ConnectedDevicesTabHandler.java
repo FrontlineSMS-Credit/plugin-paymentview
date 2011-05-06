@@ -9,7 +9,7 @@ import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
 
-import org.creditsms.plugins.paymentview.ui.ConnectedDeviceThinletTabController;
+import org.creditsms.plugins.paymentview.ui.PvDebugTabController;
 
 public class ConnectedDevicesTabHandler extends BaseTabHandler{
 	private static final String COMPONENT_CONNECTEDDEVICES_TABLE = "tbl_connectedDevicesList";
@@ -22,9 +22,9 @@ public class ConnectedDevicesTabHandler extends BaseTabHandler{
 	private Object connectedDevicesTableComponent;
 	private ComponentPagingHandler connectedDevicesTablePager;
 	
-	private ConnectedDeviceThinletTabController connectedDevicesViewThinletTabController; 
+	private PvDebugTabController connectedDevicesViewThinletTabController; 
 
-	public ConnectedDevicesTabHandler(UiGeneratorController ui, final ConnectedDeviceThinletTabController connectedDevicesViewThinletTabController) {
+	public ConnectedDevicesTabHandler(UiGeneratorController ui, final PvDebugTabController connectedDevicesViewThinletTabController) {
 		super(ui);
 		this.connectedDevicesViewThinletTabController = connectedDevicesViewThinletTabController;
 		init();
