@@ -8,6 +8,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +44,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	protected static final String ACCOUNTNUMBER_2_1 = "0700000021";
 	protected static final String ACCOUNTNUMBER_2_2 = "0700000022";
 	
-	private E safaricomPaymentService;
+	private E mpesaPaymentService;
 	private CService c;
 	private IncomingPaymentProcessor incomingPaymentProcessor;
 	
@@ -57,11 +59,11 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		this.safaricomPaymentService = createNewTestClass();
+		this.mpesaPaymentService = createNewTestClass();
 		this.c = mock(CService.class);
-		safaricomPaymentService.setCService(c);
+		mpesaPaymentService.setCService(c);
 		incomingPaymentProcessor = mock(IncomingPaymentProcessor.class);
-		safaricomPaymentService.setIncomingPaymentProcessor(incomingPaymentProcessor);
+		mpesaPaymentService.setIncomingPaymentProcessor(incomingPaymentProcessor);
 		
 		setUpDaos();
 
@@ -79,6 +81,27 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	
 	protected abstract E createNewTestClass();
 
+	abstract String[] getValidMessagesText();
+	abstract String[] getInvalidMessagesText();
+	
+	public void testValidMessageText() {
+		String[] validMessagesText = getValidMessagesText();
+		for(int i=0; i<validMessagesText.length; i+=2) {
+			String testDescription = validMessagesText[i];
+			String messageText = validMessagesText[i+1];
+			assertTrue(testDescription, mpesaPaymentService.isMessageTextValid(messageText));
+		}
+	}
+
+	public void testInvalidMessageText() {
+		String[] invalidMessagesText = getInvalidMessagesText();
+		for(int i=0; i<invalidMessagesText.length; i+=2) {
+			String testDescription = invalidMessagesText[i];
+			String messageText = invalidMessagesText[i+1];
+			assertFalse(testDescription, mpesaPaymentService.isMessageTextValid(messageText));
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	private void setUpDaos() {
 		clientDao = mock(ClientDao.class);
@@ -91,8 +114,8 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		mockClient(1, PHONENUMBER_1, accounts1);
 		mockClient(2, PHONENUMBER_2, accounts2);
 		
-		this.safaricomPaymentService.setClientDao(clientDao);
-		this.safaricomPaymentService.setAccountDao(accountDao);
+		this.mpesaPaymentService.setClientDao(clientDao);
+		this.mpesaPaymentService.setAccountDao(accountDao);
 	}
 	
 	private void mockClient(long id, String phoneNumber, List<Account> accounts) {
@@ -115,10 +138,10 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		when(c.stkRequest(showBalanceMenuItemRequest)).thenReturn(pinRequired);
 		
 		// given
-		safaricomPaymentService.setPin("1234");
+		mpesaPaymentService.setPin("1234");
 		
 		// when
-		safaricomPaymentService.checkBalance();
+		mpesaPaymentService.checkBalance();
 		
 		// then
 		InOrder inOrder = inOrder(c);
@@ -143,10 +166,10 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		StkRequest pinRequiredRequest = pinRequired.getRequest();
 		
 		// given
-		safaricomPaymentService.setPin("1234");
+		mpesaPaymentService.setPin("1234");
 		
 		// when
-		safaricomPaymentService.makePayment(mockAccount(), new BigDecimal("500"));
+		mpesaPaymentService.makePayment(mockAccount(), new BigDecimal("500"));
 		
 		// then
 		InOrder inOrder = inOrder(c);
@@ -160,12 +183,12 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	
 	protected void testIncomingPaymentProcessing(String messageText,
 			final String phoneNo, final String accountNumber, final String amount,
-			final String confirmationCode, final String payedBy, final long datetime) {
+			final String confirmationCode, final String payedBy, final String datetime) {
 		// then
-		assertTrue(safaricomPaymentService instanceof EventObserver);
+		assertTrue(mpesaPaymentService instanceof EventObserver);
 		
 		// when
-		safaricomPaymentService.notify(mockMessageNotification("MPESA", messageText));
+		mpesaPaymentService.notify(mockMessageNotification("MPESA", messageText));
 		
 		// then
 		WaitingJob.waitForEvent();
@@ -176,16 +199,23 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 				if(!(that instanceof IncomingPayment)) return false;
 				IncomingPayment other = (IncomingPayment) that;
 				
-				
 				return other.getPhoneNumber().equals(phoneNo) &&
 						other.getAmountPaid().equals(new BigDecimal(amount)) &&
 						other.getAccount().getAccountNumber().equals(accountNumber) &&
 						other.getConfirmationCode().equals(confirmationCode) &&
-						other.getTimePaid().equals(datetime) &&
+						other.getTimePaid().equals(getTimestamp(datetime)) &&
 						other.getPaymentBy().equals(payedBy);
 						
 			}
 		});
+	}
+	
+	private long getTimestamp(String dateString) {
+		try {
+			return new SimpleDateFormat("HH:mm dd MMM yyyy").parse(dateString).getTime();
+		} catch (ParseException e) {
+			throw new IllegalArgumentException("Test date supplied in incorrect format: " + dateString);
+		}
 	}
 
 	public void testIncomingPaymentProcessorIgnoresIrrelevantMessages() {
@@ -195,7 +225,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	}
 	
 	protected void testIncomingPaymentProcessorIgnoresMessage(String fromNumber, String messageText) {
-		safaricomPaymentService.notify(mockMessageNotification(fromNumber, messageText));
+		mpesaPaymentService.notify(mockMessageNotification(fromNumber, messageText));
 		
 		// then
 		WaitingJob.waitForEvent();
@@ -222,7 +252,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	
 	private void testFakedIncomingPayment(String from, String messageText) {
 		// setup
-		MpesaPaymentService s = this.safaricomPaymentService;
+		MpesaPaymentService s = this.mpesaPaymentService;
 		IncomingPaymentProcessor incomingPaymentProcessor = mock(IncomingPaymentProcessor.class);
 		
 		// when

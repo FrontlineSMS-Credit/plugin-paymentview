@@ -155,7 +155,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	}
 
 	abstract Date getTimePaid(FrontlineMessage message);
-
+	abstract boolean isMessageTextValid(String messageText);
+	
 	private BigDecimal getAmount(FrontlineMessage message) {
 		String amountWithKsh = getFirstMatch(message, "Ksh[0-9,]+");
 		return new BigDecimal(amountWithKsh.substring(3).replaceAll(",", ""));

@@ -5,10 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.payment.PaymentServiceException;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
-import org.creditsms.plugins.paymentview.events.IncomingPaymentProcessor;
 
 public class MpesaPayBillService extends MpesaPaymentService {
 	@Override
@@ -33,6 +31,10 @@ public class MpesaPayBillService extends MpesaPaymentService {
 			e.printStackTrace();
 		}
 		return date;
-
+	}
+	
+	@Override
+	boolean isMessageTextValid(String messageText) {
+		return false;
 	}
 }
