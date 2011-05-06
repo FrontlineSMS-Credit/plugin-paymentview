@@ -8,6 +8,7 @@ import net.frontlinesms.messaging.sms.modem.SmsModem;
 import net.frontlinesms.payment.safaricom.SafaricomPaymentService;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHandler {
 	private static final String DIALOG_XML_FILE = "/ui/plugins/paymentview/services/safaricom/dgConfig.xml";

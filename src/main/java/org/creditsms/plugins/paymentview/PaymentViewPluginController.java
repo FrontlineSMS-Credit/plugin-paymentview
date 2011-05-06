@@ -26,6 +26,7 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
+import org.creditsms.plugins.paymentview.events.IncomingPaymentProcessorImpl;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.springframework.context.ApplicationContext;
 
@@ -57,6 +58,8 @@ public class PaymentViewPluginController extends BasePluginController implements
 	private OutgoingPaymentDao outgoingPaymentDao;
 	private ServiceItemDao serviceItemDao;
 	private TargetDao targetDao;
+	
+	private IncomingPaymentProcessorImpl incomingPaymentProcessor;
 	
 	// TODO currently we have one or no payment services, and this is configured at runtime.  Eventually
 	// this should be persisted to the database and loaded when the controller is initialised
@@ -104,6 +107,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 				.getBean("outgoingPaymentDao");
 		serviceItemDao = (ServiceItemDao) applicationContext
 				.getBean("serviceItemDao");
+		
 		targetDao = (TargetDao) applicationContext.getBean("targetDao");
 		accountDao = (AccountDao) applicationContext.getBean("accountDao");
 		
