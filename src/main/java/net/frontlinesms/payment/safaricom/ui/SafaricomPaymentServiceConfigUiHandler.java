@@ -1,8 +1,5 @@
 package net.frontlinesms.payment.safaricom.ui;
 
-import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.smslib.CService;
-
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.messaging.sms.SmsService;
 import net.frontlinesms.messaging.sms.modem.SmsModem;
@@ -10,7 +7,9 @@ import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.payment.safaricom.MpesaStandardService;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.i18n.InternationalisationUtils;
+
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.smslib.CService;
 
 public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHandler {
 	private static final String DIALOG_XML_FILE = "/ui/plugins/paymentview/services/safaricom/dgConfig.xml";
