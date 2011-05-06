@@ -15,7 +15,17 @@ public class MpesaPayBillService extends MpesaPaymentService {
 		return accountDao.getAccountByAccountNumber(accNumber
 				.substring("Account Number ".length()));
 	}
-
+	@Override
+	String getPaymentBy(FrontlineMessage message) {
+		try {
+	        String nameAndPhone = getFirstMatch(message, "from ([A-Za-z ]+) 2547[0-9]{8}");
+	        String names = nameAndPhone.split("2547[0-9]{8}")[0].trim();
+	        return names;
+		} catch(ArrayIndexOutOfBoundsException ex) {
+		        throw new IllegalArgumentException(ex);
+		}
+	}
+	
 	@Override
 	Date getTimePaid(FrontlineMessage message) {
 		String longtext = message.getTextContent().replace("\\s", " ");

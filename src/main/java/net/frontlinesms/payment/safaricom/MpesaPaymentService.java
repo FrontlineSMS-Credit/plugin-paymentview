@@ -180,13 +180,5 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		return matcher.group();
 	}
 
-	private String getPaymentBy(FrontlineMessage message) {
-		try {
-	        String nameAndPhone = getFirstMatch(message, "[A-Z ]+ 2547[0-9]{8}");
-	        String names = nameAndPhone.split("2547[0-9]{8}")[0].trim();
-	        return names;
-		} catch(ArrayIndexOutOfBoundsException ex) {
-		        throw new IllegalArgumentException(ex);
-		}
-	}
+	abstract String getPaymentBy(FrontlineMessage message);
 }
