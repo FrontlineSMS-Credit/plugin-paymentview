@@ -50,6 +50,9 @@ public class MpesaStandardService extends MpesaPaymentService {
 //		"BI94HR849 Confirmed.\n" +
 //				"You have received Ksh1,235 JOHN KIU 254723908001 on 3/5/11 at 10:35 PM\n" +
 //				"New M-PESA balance Ksh1,236",
-		return messageText.matches("[A-Z0-9]{9} Confirmed.\nYou have received Ksh[,|[0-9]]+ [A-Z]+ [A-Z]+ 2547[0-9]{8} on [0-9]/[0-9]/[0-9]{2} at [0-9]{2}:[0-9]{2} PM\nNew M-PESA balance Ksh[,|[0-9]]+");
+		return messageText.matches("[A-Z0-9]+ Confirmed.\n" +
+				"You have received Ksh[,|[0-9]]+ [A-Z]+ [A-Z]+ 2547[0-9]{8} on " +
+				"(([1-2]?[1-9]|3[0-1])/([1-9]|1[0-2])/(1[1-2]))\\s(at)\\s([1]?[1-9]:[0-5]\\d)\\s(AM|PM)" +
+				"\nNew M-PESA balance Ksh[,|[0-9]]+");
 	}
 }

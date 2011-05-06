@@ -36,15 +36,26 @@ public class MpesaPayBillServiceTest extends
 	@Override
 	String[] getValidMessagesText() {
 		return new String[] {
+				"Real text from a MPESA confirmation",
 				"BH45UU225 Confirmed.\n"
 						+ "on 5/4/11 at 2:45 PM\n"
 						+ "Ksh950 received from BORIS BECKER 254723908002.\n"
 						+ "Account Number 0700000021\n"
 						+ "New Utility balance is Ksh50,802\n"
 						+ "Time: 05/04/2011 14:45:34",
+						
+				"Test in case someone has only one name",
 				"BHT57U225 Confirmed.\n"
 						+ "on 5/4/11 at 1:45 PM\n"
-						+ "Ksh123 received from ELLY ASAKHULU 254723908002.\n"
+						+ "Ksh123 received from ELLY 254723908002.\n"
+						+ "Account Number 0700000022\n"
+						+ "New Utility balance is Ksh50,802\n"
+						+ "Time: 05/04/2011 16:45:34",
+						
+				"Test in case confirmation codes are made longer",
+				"BHT57U225XXX Confirmed.\n"
+						+ "on 5/4/11 at 1:45 PM\n"
+						+ "Ksh123 received from ELLY 254723908002.\n"
 						+ "Account Number 0700000022\n"
 						+ "New Utility balance is Ksh50,802\n"
 						+ "Time: 05/04/2011 16:45:34",
@@ -54,18 +65,21 @@ public class MpesaPayBillServiceTest extends
 	@Override
 	String[] getInvalidMessagesText() {
 		return new String[] {
-				"BH45UU225 Confirmed." // No newline here!
+				"No newline after 'Confirmed.'",
+				"BH45UU225 Confirmed."
 						+ "on 5/4/11 at 2:45 PM\n"
 						+ "Ksh950 received from BORIS BECKER 254723908002.\n"
 						+ "Account Number 0700000021\n"
 						+ "New Utility balance is Ksh50,802\n"
 						+ "Time: 05/04/2011 14:45:34",
+						
+				"American Christmas",
 				"BHT57U225 Confirmed.\n"
 						+ "on 5/4/11 at 1:45 PM\n"
 						+ "Ksh123 received from ELLY ASAKHULU 254723908002.\n"
 						+ "Account Number 0700000022\n"
 						+ "New Utility balance is Ksh50,802\n"
-						+ "Time: 12/25/2011 16:45:34", // American Christmas
+						+ "Time: 12/25/2011 16:45:34",
 		};
 	}
 }
