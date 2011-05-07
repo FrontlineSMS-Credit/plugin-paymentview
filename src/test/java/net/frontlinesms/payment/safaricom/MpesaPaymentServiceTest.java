@@ -253,7 +253,6 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	private void testFakedIncomingPayment(String from, String messageText) {
 		// setup
 		MpesaPaymentService s = this.mpesaPaymentService;
-		IncomingPaymentProcessor incomingPaymentProcessor = mock(IncomingPaymentProcessor.class);
 		
 		// when
 		s.notify(mockMessageNotification(from, messageText));
