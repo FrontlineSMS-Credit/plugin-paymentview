@@ -54,7 +54,11 @@ public class MpesaPayBillService extends MpesaPaymentService {
 
 	@Override
 	boolean isMessageTextValid(String messageText) {
-		return messageText.matches(PAYBILL_REGEX_PATTERN);
-
+		if(!messageText.matches(PAYBILL_REGEX_PATTERN)) {
+			return false;
+		} else {
+			// TODO Check if the date is valid.
+			return true;
+		}
 	}
 }
