@@ -88,17 +88,17 @@ public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHan
 			String vPin = getVPin();			
 			if(checkValidityOfPinFields(pin, vPin)){
 				SmsService s = ui.getAttachedObject(ui.getSelectedItem(getDeviceList()), SmsService.class);
-				MpesaPaymentService sPS = new MpesaStandardService();
-				sPS.setPin(pin);
+				MpesaPaymentService mpesaPaymentService = new MpesaStandardService();
+				mpesaPaymentService.setPin(pin);
 				CService cService = ((SmsModem) s).getCService();
-				sPS.setCService(cService);
-				eventBus.registerObserver(sPS);
+				mpesaPaymentService.setCService(cService);
+				eventBus.registerObserver(mpesaPaymentService);
 				ui.alert("Created payment service: " + s +" With PIN: " + pin +" Verify PIN: " + vPin + " And CService: " + cService);
 	
 				// TODO once we are persisting payment service settings, we will just save new (or update)
 				// settings here.  For now, we only have one, statically accessed PaymentService and so we
 				// can create it directly
-				PaymentViewPluginController.setPaymentService(sPS);
+				PaymentViewPluginController.setPaymentService(mpesaPaymentService);
 				ui.remove(this.dialog);
 			} else {
 				ui.alert("The Pins are invalid or do not match");

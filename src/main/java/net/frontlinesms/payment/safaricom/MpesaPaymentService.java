@@ -126,8 +126,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			return;
 		}
 		
-		new FrontlineUiUpateJob() { // This probably shouldn't be a UI job, but it certainly should be done on a separate thread!
-			public void run() {
+//		new FrontlineUiUpateJob() { // This probably shouldn't be a UI job, but it certainly should be done on a separate thread!
+//			public void run() {
 				try {
 					final IncomingPayment payment = new IncomingPayment();
 					payment.setAccount(getAccount(message));
@@ -142,8 +142,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 				} catch(Exception ex) {
 					log.error("Unexpected exception parsing incoming payment SMS.", ex);
 				}
-			}
-		}.execute();
+//			}
+//		}.execute();
 	}
 	
 	private boolean messageIsValid(FrontlineMessage message) {
