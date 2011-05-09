@@ -248,12 +248,19 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 				"Account Number 0713698227\n" +
 				"New Utility balance is Ksh50,802\n" +
 				"Time: 05/04/2011 14:45:34");
+		
+		// Genuinie PayBill message from correct number, but with bad date (29 Undecimber)
+		testFakedIncomingPayment("MPESA", "BHT57U225XXX Confirmed.\n"
+				+ "on 29/13/11 at 1:45 PM\n"
+				+ "Ksh123 received from ELLY 254723908002.\n"
+				+ "Account Number 0700000022\n"
+				+ "New Utility balance is Ksh50,802\n"
+				+ "Time: 29/13/2011 16:45:34");
 	}
 	
 	private void testFakedIncomingPayment(String from, String messageText) {
 		// setup
 		MpesaPaymentService s = this.mpesaPaymentService;
-		IncomingPaymentProcessor incomingPaymentProcessor = mock(IncomingPaymentProcessor.class);
 		
 		// when
 		s.notify(mockMessageNotification(from, messageText));

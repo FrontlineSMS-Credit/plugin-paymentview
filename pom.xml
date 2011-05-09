@@ -12,11 +12,9 @@
 		<version>1.7.00-beta-6-SNAPSHOT</version>
 		<relativePath>../pom-parent</relativePath>
 	</parent>
-
 	<scm>
 		<developerConnection>scm:git:git@github.com:${github.projectOwner}/${github.projectName}.git</developerConnection>
 	</scm>
-
 	<distributionManagement>
 		<repository>
 			<id>frontlinesms.repo</id>
@@ -30,10 +28,5 @@
 			<groupId>net.frontlinesms.core</groupId>
 			<artifactId>frontlinesms</artifactId>
 		</dependency>
-		<dependency>
-    <groupId>commons-lang</groupId>
-    <artifactId>commons-lang</artifactId>
-    <version>2.4</version>
-</dependency>
 	</dependencies>
 </project>

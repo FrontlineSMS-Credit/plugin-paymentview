@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
@@ -13,6 +14,7 @@ import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
+import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
@@ -26,12 +28,6 @@ import org.smslib.stk.StkRequest;
 import org.smslib.stk.StkResponse;
 
 public abstract class MpesaPaymentService implements PaymentService, EventObserver {
-	private CService cService;
-	private IncomingPaymentProcessor incomingPaymentProcessor;
-	private String pin;
-	AccountDao accountDao;
-	ClientDao clientDao;
-	
 //> CONSTANTS
 	protected static final String AMOUNT_PATTERN = "Ksh[,|[0-9]]+";
 	protected static final String DATETIME_PATTERN = "d/M/yy hh:mm a";
@@ -40,6 +36,14 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	protected static final String PAID_BY_PATTERN = "([A-Za-z ]+)";
 	protected static final String ACCOUNT_NUMBER_PATTERN = "Account Number [0-9]+";
 	protected static final String RECEIVED_FROM = "received from";
+
+//> INSTANCE PROPERTIES
+	private final Logger log = FrontlineUtils.getLogger(this.getClass());
+	private CService cService;
+	private IncomingPaymentProcessor incomingPaymentProcessor;
+	private String pin;
+	AccountDao accountDao;
+	ClientDao clientDao;
 	
 	public void setCService(CService cService) {
 		this.cService = cService;
@@ -122,27 +126,24 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			return;
 		}
 		
-		try {
-			new FrontlineUiUpateJob() { // This probably shouldn't be a UI job, but it certainly should be done on a separate thread!
-				public void run() {
+		new FrontlineUiUpateJob() { // This probably shouldn't be a UI job, but it certainly should be done on a separate thread!
+			public void run() {
+				try {
 					final IncomingPayment payment = new IncomingPayment();
-					try {
-						payment.setAccount(getAccount(message));
-						payment.setPhoneNumber(getPhoneNumber(message));
-						payment.setAmountPaid(getAmount(message));
-						payment.setConfirmationCode(getConfirmationCode(message));
-						payment.setPaymentBy(getPaymentBy(message));
-						payment.setTimePaid(getTimePaid(message));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+					payment.setAccount(getAccount(message));
+					payment.setPhoneNumber(getPhoneNumber(message));
+					payment.setAmountPaid(getAmount(message));
+					payment.setConfirmationCode(getConfirmationCode(message));
+					payment.setPaymentBy(getPaymentBy(message));
+					payment.setTimePaid(getTimePaid(message));
 					incomingPaymentProcessor.process(payment);
+				} catch(IllegalArgumentException ex) {
+					log.warn("Message failed to parse; likely incorrect format", ex);
+				} catch(Exception ex) {
+					log.error("Unexpected exception parsing incoming payment SMS.", ex);
 				}
-			}.execute();
-		} catch(IllegalArgumentException ex) {
-			// Message failed to parse; likely incorrect format
-			return;
-		}
+			}
+		}.execute();
 	}
 	
 	private boolean messageIsValid(FrontlineMessage message) {
@@ -153,7 +154,12 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	}
 
 	abstract Date getTimePaid(FrontlineMessage message);
+	
 	abstract boolean isMessageTextValid(String messageText);
+
+	abstract Account getAccount(FrontlineMessage message);
+	
+	abstract String getPaymentBy(FrontlineMessage message);
 	
 	private BigDecimal getAmount(FrontlineMessage message) {
 		String amountWithKsh = getFirstMatch(message, AMOUNT_PATTERN);
@@ -169,8 +175,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		return firstMatch.replace(" Confirmed.", "").trim();
 	}
 
-	abstract Account getAccount(FrontlineMessage message);
-
 	protected String getFirstMatch(String string, String regexMatcher) {
 		Matcher matcher = Pattern.compile(regexMatcher).matcher(string);
 		matcher.find();
@@ -180,6 +184,4 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	protected String getFirstMatch(FrontlineMessage message, String regexMatcher) {
 		return getFirstMatch(message.getTextContent(), regexMatcher);
 	}
-
-	abstract String getPaymentBy(FrontlineMessage message);
 }

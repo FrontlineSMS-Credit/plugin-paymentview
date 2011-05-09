@@ -99,6 +99,7 @@ public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHan
 				// settings here.  For now, we only have one, statically accessed PaymentService and so we
 				// can create it directly
 				PaymentViewPluginController.setPaymentService(sPS);
+				ui.remove(this.dialog);
 			} else {
 				ui.alert("The Pins are invalid or do not match");
 				// TODO set focus on pin 1 field
