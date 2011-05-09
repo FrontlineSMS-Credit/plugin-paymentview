@@ -26,7 +26,6 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
-import org.creditsms.plugins.paymentview.events.IncomingPaymentProcessorImpl;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.springframework.context.ApplicationContext;
 
@@ -41,8 +40,8 @@ import org.springframework.context.ApplicationContext;
  * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
  */
 @PluginControllerProperties(name = "Payment View", iconPath = "/icons/creditsms.png", i18nKey = "plugins.paymentview", springConfigLocation = "classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml", hibernateConfigPath = "classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml")
-public class PaymentViewPluginController extends BasePluginController implements
-		IncomingMessageListener, ThinletUiEventHandler {
+public class PaymentViewPluginController extends BasePluginController implements IncomingMessageListener,
+		ThinletUiEventHandler {
 
 	// > CONSTANTS
 	/** Filename and path of the XML for the PaymentView tab */
@@ -59,7 +58,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 	private ServiceItemDao serviceItemDao;
 	private TargetDao targetDao;
 	
-	private IncomingPaymentProcessorImpl incomingPaymentProcessor;
+	
 	
 	// TODO currently we have one or no payment services, and this is configured at runtime.  Eventually
 	// this should be persisted to the database and loaded when the controller is initialised
@@ -72,16 +71,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 	 * @see net.frontlinesms.plugins.PluginController#deinit()
 	 */
 	public void deinit() {
-		this.frontlineController.removeIncomingMessageListener(this);
-	}
-
-	/**
-	 * Ensures that the incoming message is trapped and the necessary
-	 * information is extracted i.e. transaction type, amount, sender and
-	 * transaction code (if any) The above parameters may vary amongst service
-	 * providers
-	 */
-	public void incomingMessageEvent(FrontlineMessage message) {
+		tabController.deinit();
 	}
 
 	// > CONFIG METHODS
@@ -93,7 +83,6 @@ public class PaymentViewPluginController extends BasePluginController implements
 			ApplicationContext applicationContext)
 			throws PluginInitialisationException {
 		this.frontlineController = frontlineController;
-		this.frontlineController.addIncomingMessageListener(this);
 
 		// Initialize the DAO for the domain objects
 		clientDao = (ClientDao) applicationContext.getBean("clientDao");
@@ -139,5 +128,9 @@ public class PaymentViewPluginController extends BasePluginController implements
 	
 	public static void setPaymentService(PaymentService paymentService) {
 		PaymentViewPluginController.paymentService = paymentService;
+	}
+
+	public void incomingMessageEvent(FrontlineMessage message) {
+		
 	}
 }

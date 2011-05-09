@@ -7,7 +7,7 @@ import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 public class IncomingPaymentProcessorImpl implements IncomingPaymentProcessor {
 	private EventListenerList incomingPaymentListeners = new EventListenerList();
 	
-	public IncomingPaymentProcessorImpl (){	
+	public IncomingPaymentProcessorImpl (){
 	}
 	
 	public void addIncomingMessageListener(IncomingPaymentListener incomingMessageListener) {
@@ -21,6 +21,13 @@ public class IncomingPaymentProcessorImpl implements IncomingPaymentProcessor {
 	public void process(IncomingPayment payment) {
 		for(IncomingPaymentListener listener : this.incomingPaymentListeners.getListeners(IncomingPaymentListener.class)) {
 			listener.incomingPaymentReceived(payment);
+		}
+	}
+
+	public void removeAllIncomingMessageListeners() {
+		IncomingPaymentListener[] listeners = incomingPaymentListeners.getListeners(IncomingPaymentListener.class);
+		for (IncomingPaymentListener listener : listeners){
+			incomingPaymentListeners.remove(IncomingPaymentListener.class, listener);
 		}
 	}
 }

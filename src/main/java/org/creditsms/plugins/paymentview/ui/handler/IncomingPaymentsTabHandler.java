@@ -14,12 +14,13 @@ import net.frontlinesms.ui.handler.PagedListDetails;
 
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.events.IncomingPaymentListener;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsImportHandler;
 
 public class IncomingPaymentsTabHandler extends BaseTabHandler implements
-		PagedComponentItemProvider {
+		PagedComponentItemProvider, IncomingPaymentListener {
 	private static final String COMPONENT_INCOMING_PAYMENTS_TABLE = "tbl_clients";
 	private static final String COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE = "pnl_clients";
 	private static final String XML_INCOMING_PAYMENTS_TAB = "/ui/plugins/paymentview/incomingpayments/tabincomingpayments.xml";
@@ -30,7 +31,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private IncomingPaymentDao incomingPaymentDao;
 	
 	private String incomingPaymentsFilter = "";
-	
 	private Object incomingPaymentsTab;
 
 	private Object incomingPaymentsTableComponent;
@@ -42,7 +42,8 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			PaymentViewThinletTabController paymentViewThinletTabController) {
 		super(ui);
 		this.paymentViewThinletTabController = paymentViewThinletTabController;
-		this.incomingPaymentDao = paymentViewThinletTabController.getIncomingPaymentDao(); 
+		this.incomingPaymentDao = paymentViewThinletTabController.getIncomingPaymentDao();
+		paymentViewThinletTabController.getIncomingPaymentProcessor().addIncomingMessageListener(this);
 		init();
 	}
 
@@ -53,33 +54,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	public void exportPayments() {
 		new IncomingPaymentsExportHandler(ui, incomingPaymentDao).showWizard();
 		this.refresh();
-	}
-
-	private PagedListDetails getIncomingPaymentsListDetails(int startIndex,
-			int limit) {
-		List<IncomingPayment> incomingPayments = new ArrayList<IncomingPayment>();
-		
-		if (this.incomingPaymentsFilter.equals("")) {
-			incomingPayments = this.incomingPaymentDao.getAllIncomingPayments(startIndex, limit);
-		} else {
-			//TODO: change this to add more columns to be filtered.
-			incomingPayments = this.incomingPaymentDao
-					.getIncomingPaymentsByPhoneNo(this.incomingPaymentsFilter);
-		}
-
-		int totalItemCount = incomingPaymentDao.getIncomingPaymentsCount();
-		Object[] listItems = toThinletComponents(incomingPayments);
-
-		return new PagedListDetails(totalItemCount, listItems);
-	}
-
-	public PagedListDetails getListDetails(Object list, int startIndex,
-			int limit) {
-		if (list == this.incomingPaymentsTableComponent) {
-			return getIncomingPaymentsListDetails(startIndex, limit);
-		} else {
-			throw new IllegalStateException();
-		}
 	}
 
 	public Object getRow(IncomingPayment incomingPayment) {
@@ -114,6 +88,38 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	@Override
 	public void refresh() {
 		this.updateIncomingPaymentsList();
+	}
+//>INCOMING PAYMENT EVENT HANDLER
+	public void incomingPaymentReceived(IncomingPayment i) {
+		
+	}
+	
+//>PAGING METHODS
+	private PagedListDetails getIncomingPaymentsListDetails(int startIndex,
+			int limit) {
+		List<IncomingPayment> incomingPayments = new ArrayList<IncomingPayment>();
+		
+		if (this.incomingPaymentsFilter.equals("")) {
+			incomingPayments = this.incomingPaymentDao.getAllIncomingPayments(startIndex, limit);
+		} else {
+			//TODO: change this to add more columns to be filtered.
+			incomingPayments = this.incomingPaymentDao
+					.getIncomingPaymentsByPhoneNo(this.incomingPaymentsFilter);
+		}
+
+		int totalItemCount = incomingPaymentDao.getIncomingPaymentsCount();
+		Object[] listItems = toThinletComponents(incomingPayments);
+
+		return new PagedListDetails(totalItemCount, listItems);
+	}
+
+	public PagedListDetails getListDetails(Object list, int startIndex,
+			int limit) {
+		if (list == this.incomingPaymentsTableComponent) {
+			return getIncomingPaymentsListDetails(startIndex, limit);
+		} else {
+			throw new IllegalStateException();
+		}
 	}
 
 	private Object[] toThinletComponents(List<IncomingPayment> incomingPayments) {

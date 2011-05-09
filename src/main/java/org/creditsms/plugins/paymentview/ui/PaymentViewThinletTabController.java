@@ -17,6 +17,7 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
+import org.creditsms.plugins.paymentview.events.IncomingPaymentProcessorImpl;
 import org.creditsms.plugins.paymentview.ui.handler.IncomingPaymentsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.AnalyticsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
@@ -42,9 +43,10 @@ public class PaymentViewThinletTabController extends
 	private ClientsTabHandler clientsTab;
 	private ExportTabHandler exportTab;
 	private AnalyticsTabHandler analyticsTab;
+	
+	private IncomingPaymentProcessorImpl incomingPaymentProcessor;
 
 	private Object mainPane;
-
 	private Object paymentViewTab;
 
 	private AccountDao accountDao;
@@ -67,6 +69,7 @@ public class PaymentViewThinletTabController extends
 	public PaymentViewThinletTabController(
 			PaymentViewPluginController controller, UiGeneratorController ui) {
 		super(controller, ui);
+		incomingPaymentProcessor = new IncomingPaymentProcessorImpl();
 	}
 
 	public void initTabs() {	
@@ -184,5 +187,23 @@ public class PaymentViewThinletTabController extends
 	 */
 	public Object getPaymentViewTab() {
 		return paymentViewTab;
+	}
+
+	public void deinit() {
+		this.incomingPaymentProcessor.removeAllIncomingMessageListeners();
+	}
+	
+	/**
+	 * @param incomingPaymentProcessor the incomingPaymentProcessor to set
+	 */
+	public void setIncomingPaymentProcessor(IncomingPaymentProcessorImpl incomingPaymentProcessor) {
+		this.incomingPaymentProcessor = incomingPaymentProcessor;
+	}
+
+	/**
+	 * @return the incomingPaymentProcessor
+	 */
+	public IncomingPaymentProcessorImpl getIncomingPaymentProcessor() {
+		return incomingPaymentProcessor;
 	}
 }
