@@ -4,6 +4,8 @@
  */
 package org.creditsms.plugins.paymentview.ui;
 
+import net.frontlinesms.data.domain.FrontlineMessage;
+import net.frontlinesms.listener.IncomingMessageListener;
 import net.frontlinesms.plugins.BasePluginThinletTabController;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -17,6 +19,7 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
+import org.creditsms.plugins.paymentview.events.IncomingPaymentProcessor;
 import org.creditsms.plugins.paymentview.events.IncomingPaymentProcessorImpl;
 import org.creditsms.plugins.paymentview.ui.handler.IncomingPaymentsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.AnalyticsTabHandler;
@@ -32,7 +35,7 @@ import org.creditsms.plugins.paymentview.ui.handler.tabsettings.SettingsTabHandl
  */
 public class PaymentViewThinletTabController extends
 		BasePluginThinletTabController<PaymentViewPluginController> implements
-		ThinletUiEventHandler {
+		ThinletUiEventHandler, IncomingMessageListener {
 
 	private static final String TABP_MAIN_PANE = "tabP_mainPane";
 	private static final String XML_PAYMENT_VIEW_TAB = "/ui/plugins/paymentview/paymentViewTab.xml";
@@ -44,7 +47,7 @@ public class PaymentViewThinletTabController extends
 	private ExportTabHandler exportTab;
 	private AnalyticsTabHandler analyticsTab;
 	
-	private IncomingPaymentProcessorImpl incomingPaymentProcessor;
+	private IncomingPaymentProcessorImpl incomingPaymentProcessor = new IncomingPaymentProcessorImpl();
 
 	private Object mainPane;
 	private Object paymentViewTab;
@@ -69,7 +72,6 @@ public class PaymentViewThinletTabController extends
 	public PaymentViewThinletTabController(
 			PaymentViewPluginController controller, UiGeneratorController ui) {
 		super(controller, ui);
-		incomingPaymentProcessor = new IncomingPaymentProcessorImpl();
 	}
 
 	public void initTabs() {	
@@ -190,7 +192,7 @@ public class PaymentViewThinletTabController extends
 	}
 
 	public void deinit() {
-		this.incomingPaymentProcessor.removeAllIncomingMessageListeners();
+		incomingPaymentProcessor.removeAllIncomingPaymentListeners();
 	}
 	
 	/**
@@ -205,5 +207,16 @@ public class PaymentViewThinletTabController extends
 	 */
 	public IncomingPaymentProcessorImpl getIncomingPaymentProcessor() {
 		return incomingPaymentProcessor;
+	}
+
+	/**
+	 * @return the incomingpaymentprocessor
+	 */
+	public IncomingPaymentProcessor getIncomingpaymentprocessor() {
+		return incomingPaymentProcessor;
+	}
+
+	public void incomingMessageEvent(FrontlineMessage message) {
+		System.out.println(message);
 	}
 }

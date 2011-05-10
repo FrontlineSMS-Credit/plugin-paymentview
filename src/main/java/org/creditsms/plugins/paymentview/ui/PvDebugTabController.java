@@ -22,6 +22,7 @@ import org.creditsms.plugins.paymentview.ui.handler.connecteddevices.ConnectedDe
 public class PvDebugTabController extends BaseTabHandler implements
 		ThinletUiEventHandler {
 	
+	private static final String COMPONENT_LST_CONNECTED_DEVICES = "lstConnectedDevices";
 	private static final String TABP_MAIN_PANE = "tabP_mainPane";
 	private static final String XML_CONNECTED_DEVICE_VIEW_TAB = "/ui/plugins/paymentview/connectedDevicesTab.xml";
 	private Object connectedDevicesViewTab;
@@ -66,7 +67,7 @@ public class PvDebugTabController extends BaseTabHandler implements
 	@Override
 	public void refresh() {
 		System.out.println("refresh()");
-		
+
 		Object connectedDevicesList = getConnectedDevicesList();
 		ui.removeAll(connectedDevicesList);
 		for(SmsService s : this.smsServiceManager.getAll()) {
@@ -77,7 +78,7 @@ public class PvDebugTabController extends BaseTabHandler implements
 	}
 	
 	private Object getConnectedDevicesList() {
-		return find("lstConnectedDevices");
+		return find(COMPONENT_LST_CONNECTED_DEVICES);
 	}
 	
 	private Object getListItem(SmsService s) {

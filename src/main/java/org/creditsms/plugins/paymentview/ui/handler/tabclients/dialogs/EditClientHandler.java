@@ -78,10 +78,10 @@ public class EditClientHandler implements ThinletUiEventHandler {
 		return ui.createListItem(acc.getAccountNumber(), acc, true);
 	}
 
-	/**
+	/** 
 	 * @return the clientObj
 	 */
-	public Client getClientObj() {
+	public Client getClientObj() { 
 		return client;
 	}
 
