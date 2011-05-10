@@ -197,4 +197,8 @@ public abstract class MpesaPaymentService implements PaymentService,
 	protected String getFirstMatch(FrontlineMessage message, String regexMatcher) {
 		return getFirstMatch(message.getTextContent(), regexMatcher);
 	}
+	
+	public String toString(){
+		return "MPesa Safaricom - Kenya: Abstract Payment Service";
+	}
 }

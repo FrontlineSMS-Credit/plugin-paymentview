@@ -61,4 +61,8 @@ public class MpesaPayBillService extends MpesaPaymentService {
 			return true;
 		}
 	}
+	
+	public String toString(){
+		return "MPesa Safaricom - Kenya: PayBill Payment Service";
+	}
 }

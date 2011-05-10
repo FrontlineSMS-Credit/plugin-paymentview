@@ -4,7 +4,7 @@ import net.frontlinesms.events.EventBus;
 import net.frontlinesms.messaging.sms.SmsService;
 import net.frontlinesms.messaging.sms.modem.SmsModem;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
-import net.frontlinesms.payment.safaricom.MpesaStandardService;
+import net.frontlinesms.payment.safaricom.MpesaPersonalService;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -96,7 +96,7 @@ public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHan
 			String vPin = getVPin();			
 			if(checkValidityOfPinFields(pin, vPin)){
 				SmsService s = ui.getAttachedObject(ui.getSelectedItem(getDeviceList()), SmsService.class);
-				MpesaPaymentService mpesaPaymentService = new MpesaStandardService();
+				MpesaPaymentService mpesaPaymentService = new MpesaPersonalService();
 				mpesaPaymentService.setPin(pin);
 				CService cService = ((SmsModem) s).getCService();
 				mpesaPaymentService.setCService(cService);

@@ -59,6 +59,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		ui.add(row, ui.createTableCell(incomingPayment.getPaymentBy()));
 		ui.add(row, ui.createTableCell(incomingPayment.getPhoneNumber()));
 		ui.add(row, ui.createTableCell(getAccount(incomingPayment)));
+		ui.add(row, ui.createTableCell(incomingPayment.getAmountPaid().toPlainString()));
 		ui.add(row, ui.createTableCell(InternationalisationUtils.getDatetimeFormat().format(new Date(incomingPayment.getTimePaid()))));
 		return row;
 	}
