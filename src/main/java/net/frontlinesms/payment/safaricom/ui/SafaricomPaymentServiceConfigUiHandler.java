@@ -9,6 +9,12 @@ import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
+import org.creditsms.plugins.paymentview.events.IncomingPaymentProcessor;
+import org.creditsms.plugins.paymentview.events.IncomingPaymentProcessorImpl;
+import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.smslib.CService;
 
 public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHandler {
@@ -21,10 +27,16 @@ public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHan
 	 * the payment service manager to manage service lifecycles.
 	 */
 	private final EventBus eventBus;
+	private IncomingPaymentDao incomingPaymentDao;
+	private ClientDao clientDao;
+	private AccountDao accountDao;
 
-	public SafaricomPaymentServiceConfigUiHandler(UiGeneratorController ui) {
+	public SafaricomPaymentServiceConfigUiHandler(UiGeneratorController ui, IncomingPaymentDao incomingPaymentDao, ClientDao clientDao, AccountDao accountDao) {
 		this.ui = ui;
 		this.eventBus = ui.getFrontlineController().getEventBus();
+		this.incomingPaymentDao = incomingPaymentDao;
+		this.clientDao = clientDao;
+		this.accountDao = accountDao;
 		initDialog();
 	}
 
@@ -92,6 +104,14 @@ public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHan
 				mpesaPaymentService.setPin(pin);
 				CService cService = ((SmsModem) s).getCService();
 				mpesaPaymentService.setCService(cService);
+
+				mpesaPaymentService.setClientDao(clientDao);
+				mpesaPaymentService.setIncomingPaymentDao(incomingPaymentDao);	
+				mpesaPaymentService.setAccountDao(accountDao);
+				
+				IncomingPaymentProcessor incomingPaymentProcessor = new IncomingPaymentProcessorImpl();
+				mpesaPaymentService.setIncomingPaymentProcessor(incomingPaymentProcessor);
+				
 				eventBus.registerObserver(mpesaPaymentService);
 				ui.alert("Created payment service: " + s +" With PIN: " + pin +" Verify PIN: " + vPin + " And CService: " + cService);
 	

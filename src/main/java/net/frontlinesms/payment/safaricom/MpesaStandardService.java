@@ -19,7 +19,6 @@ public class MpesaStandardService extends MpesaPaymentService {
 	@Override
 	Account getAccount(FrontlineMessage message) {
 		Client client = clientDao.getClientByPhoneNumber(getPhoneNumber(message));
-
 		List<Account> accountsByClientId = accountDao.getAccountsByClientId(client.getId());
 		if(!accountsByClientId.isEmpty()){
 			return accountsByClientId.get(0);
