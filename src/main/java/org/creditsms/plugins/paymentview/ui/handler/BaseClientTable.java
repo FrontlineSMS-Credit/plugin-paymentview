@@ -17,7 +17,6 @@ import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
-import org.creditsms.plugins.paymentview.utils.StringUtil;
 import org.springframework.util.StringUtils;
 
 public abstract class BaseClientTable implements PagedComponentItemProvider,
@@ -25,7 +24,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	protected ComponentPagingHandler clientsTablePager;
 	protected UiGeneratorController ui;
 	protected Object tableClients;
-	protected String clientFilter = StringUtil.EMPTY;
+	protected String clientFilter = "";
 	protected ClientDao clientDao;
 	protected CustomFieldDao customFieldDao;
 	protected CustomValueDao customValueDao;
@@ -65,7 +64,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 
 	protected PagedListDetails getClientListDetails(int startIndex, int limit) {
 		List<Client> clients = null;
-		if (this.clientFilter.equals(StringUtil.EMPTY)) {
+		if (this.clientFilter.equals("")) {
 			clients = this.clientDao.getAllClients();
 		} else {
 			clients = this.clientDao.getClientsByName(clientFilter);
@@ -95,7 +94,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 		Object row = ui.createTableRow(client);
 
 		ui.add(row,
-				ui.createTableCell(client.getFirstName() + StringUtil.SPACE
+				ui.createTableCell(client.getFirstName() + " "
 						+ client.getOtherName()));
 		ui.add(row, ui.createTableCell(client.getPhoneNumber()));
 

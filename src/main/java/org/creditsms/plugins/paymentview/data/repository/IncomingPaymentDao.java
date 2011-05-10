@@ -3,8 +3,6 @@ package org.creditsms.plugins.paymentview.data.repository;
 import java.util.Date;
 import java.util.List;
 
-import net.frontlinesms.data.DuplicateKeyException;
-
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 
 /**
@@ -84,12 +82,10 @@ public interface IncomingPaymentDao {
 	/**
 	 * saves an IncomingPayment payment to the system
 	 * */
-	public void saveIncomingPayment(IncomingPayment incomingPayment)
-			throws DuplicateKeyException;
+	public void saveIncomingPayment(IncomingPayment incomingPayment);
 
 	/**
 	 * updates an IncomingPayment payment to the system
 	 * */
-	public void updateIncomingPayment(IncomingPayment incomingPayment)
-			throws DuplicateKeyException;
+	public void updateIncomingPayment(IncomingPayment incomingPayment);
 }

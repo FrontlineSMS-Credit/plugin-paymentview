@@ -1,8 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,22 +9,18 @@ import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
-import org.creditsms.plugins.paymentview.events.IncomingPaymentListener;
-import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsImportHandler;
 
 public class IncomingPaymentsTabHandler extends BaseTabHandler implements
-		PagedComponentItemProvider, IncomingPaymentListener {
+		PagedComponentItemProvider {
 	private static final String COMPONENT_INCOMING_PAYMENTS_TABLE = "tbl_clients";
 	private static final String COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE = "pnl_clients";
 	private static final String XML_INCOMING_PAYMENTS_TAB = "/ui/plugins/paymentview/incomingpayments/tabincomingpayments.xml";
 	
-	private SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
-	private NumberFormat formatter = new DecimalFormat("#,000.00");
-	private SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss a");
 	private IncomingPaymentDao incomingPaymentDao;
 	
 	private String incomingPaymentsFilter = "";
@@ -36,14 +29,11 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private Object incomingPaymentsTableComponent;
 	private ComponentPagingHandler incomingPaymentsTablePager;
 	private Object pnlIncomingPaymentsTableComponent;
-	private final PaymentViewThinletTabController paymentViewThinletTabController;
 
 	public IncomingPaymentsTabHandler(UiGeneratorController ui,
-			PaymentViewThinletTabController paymentViewThinletTabController) {
+			PaymentViewPluginController pluginController) {
 		super(ui);
-		this.paymentViewThinletTabController = paymentViewThinletTabController;
-		this.incomingPaymentDao = paymentViewThinletTabController.getIncomingPaymentDao();
-		paymentViewThinletTabController.getIncomingPaymentProcessor().addIncomingMessageListener(this);
+		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		init();
 	}
 

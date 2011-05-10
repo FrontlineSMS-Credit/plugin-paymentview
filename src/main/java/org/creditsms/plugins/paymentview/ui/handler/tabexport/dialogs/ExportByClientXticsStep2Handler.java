@@ -1,8 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabexport.dialogs;
 
-import java.util.List;
-
-import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
 
 public class ExportByClientXticsStep2Handler extends ClientExportHandler {
@@ -12,7 +9,6 @@ public class ExportByClientXticsStep2Handler extends ClientExportHandler {
 	private static final String UI_FILE_OPTIONS_PANEL_CLIENT = "/ui/plugins/paymentview/importexport/pnClientDetails.xml";
 
 	private String exportfilepath;
-	private List<Client> selectedUsers;
 	private final ExportByClientXticsStep1Handler exportByClientXticsStep1Handler;
 
 	public ExportByClientXticsStep2Handler(
@@ -46,8 +42,8 @@ public class ExportByClientXticsStep2Handler extends ClientExportHandler {
 
 	public void next(String exportfilepath) {
 		this.exportfilepath = exportfilepath;
-		uiController.add(new ExportByClientXticsStep3Handler(uiController,
-				this, exportfilepath, selectedUsers).getDialog());
+		ExportByClientXticsStep3Handler step3Handler = new ExportByClientXticsStep3Handler(uiController, this);
+		uiController.add(step3Handler.getDialog());
 		removeDialog();
 	}
 	

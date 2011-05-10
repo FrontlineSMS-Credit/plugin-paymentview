@@ -108,7 +108,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						}
 						if (!markerReplaced) {
 							items.add(StringUtil.getMarkerFromString(curr.getReadableName()));
-							items.add(StringUtil.EMPTY);
+							items.add("");
 						}
 					}
 				}

@@ -3,12 +3,12 @@ package org.creditsms.plugins.paymentview.ui.handler.tabexport;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
-import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 
 public class ExportTabHandler extends BaseTabHandler {
 	private static final String TABBED_PANE_MAIN = "tabP_MainPane";
@@ -26,17 +26,13 @@ public class ExportTabHandler extends BaseTabHandler {
 	private CustomValueDao customValueDao;
 
 	public ExportTabHandler(UiGeneratorController ui,
-			PaymentViewThinletTabController paymentViewThinletTabController) {
+			PaymentViewPluginController pluginController) {
 		super(ui);
-		this.clientDao = paymentViewThinletTabController.getClientDao();
-		this.incomingPaymentDao = paymentViewThinletTabController
-				.getIncomingPaymentDao();
-		this.outgoingPaymentDao = paymentViewThinletTabController
-				.getOutgoingPaymentDao();
-		this.customFieldDao = paymentViewThinletTabController
-				.getCustomFieldDao();
-		this.customValueDao = paymentViewThinletTabController
-				.getCustomValueDao();
+		this.clientDao = pluginController.getClientDao();
+		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
+		this.outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
+		this.customFieldDao = pluginController.getCustomFieldDao();
+		this.customValueDao = pluginController.getCustomValueDao();
 		init();
 	}
 

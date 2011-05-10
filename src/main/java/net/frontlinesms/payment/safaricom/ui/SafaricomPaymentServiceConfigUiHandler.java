@@ -12,9 +12,6 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
-import org.creditsms.plugins.paymentview.events.IncomingPaymentProcessor;
-import org.creditsms.plugins.paymentview.events.IncomingPaymentProcessorImpl;
-import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.smslib.CService;
 
 public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHandler {
@@ -108,9 +105,6 @@ public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHan
 				mpesaPaymentService.setClientDao(clientDao);
 				mpesaPaymentService.setIncomingPaymentDao(incomingPaymentDao);	
 				mpesaPaymentService.setAccountDao(accountDao);
-				
-				IncomingPaymentProcessor incomingPaymentProcessor = new IncomingPaymentProcessorImpl();
-				mpesaPaymentService.setIncomingPaymentProcessor(incomingPaymentProcessor);
 				
 				eventBus.registerObserver(mpesaPaymentService);
 				ui.alert("Created payment service: " + s +" With PIN: " + pin +" Verify PIN: " + vPin + " And CService: " + cService);

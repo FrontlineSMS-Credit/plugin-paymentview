@@ -6,7 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.frontlinesms.FrontlineUtils;
-import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
@@ -21,7 +20,6 @@ import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
-import org.creditsms.plugins.paymentview.events.IncomingPaymentProcessor;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
 import org.smslib.stk.StkInputRequiremnent;
@@ -43,7 +41,6 @@ public abstract class MpesaPaymentService implements PaymentService,
 	// > INSTANCE PROPERTIES
 	private final Logger log = FrontlineUtils.getLogger(this.getClass());
 	private CService cService;
-	private IncomingPaymentProcessor incomingPaymentProcessor;
 	private String pin;
 	AccountDao accountDao;
 	ClientDao clientDao;
@@ -117,12 +114,7 @@ public abstract class MpesaPaymentService implements PaymentService,
 			throw new PaymentServiceException(ex);
 		}
 	}
-
-	public void setIncomingPaymentProcessor(
-			IncomingPaymentProcessor incomingPaymentProcessor) {
-		this.incomingPaymentProcessor = incomingPaymentProcessor;
-	}
-
+	
 	@SuppressWarnings("unchecked")
 	public void notify(FrontlineEventNotification notification) {
 		if (!(notification instanceof EntitySavedNotification)) {
@@ -141,31 +133,28 @@ public abstract class MpesaPaymentService implements PaymentService,
 			return;
 		}
 
-		new FrontlineUiUpateJob() { // This probably shouldn't be a UI job,
-		//but it certainly should be done on a separate thread!
-		public void run() {
-			try {
-				final IncomingPayment payment = new IncomingPayment();
-				payment.setAccount(getAccount(message));
-				payment.setPhoneNumber(getPhoneNumber(message));
-				payment.setAmountPaid(getAmount(message));
-				payment.setConfirmationCode(getConfirmationCode(message));
-				payment.setPaymentBy(getPaymentBy(message));
-				payment.setTimePaid(getTimePaid(message));
-	
-				incomingPaymentDao.saveIncomingPayment(payment);
-				incomingPaymentProcessor.process(payment);
-			} catch (IllegalArgumentException ex) {
-				log.warn("Message failed to parse; likely incorrect format", ex);
-				throw new RuntimeException(ex);
-			} catch (DuplicateKeyException ex) {
-				log.warn("Message failed to parse; Duplicate Incoming payment", ex);
-				throw new RuntimeException(ex);
-			} catch (Exception ex) {
-				log.error("Unexpected exception parsing incoming payment SMS.", ex);
-				throw new RuntimeException(ex);
+		new FrontlineUiUpateJob() {
+			// This probably shouldn't be a UI job,
+			// but it certainly should be done on a separate thread!
+			public void run() {
+				try {
+					final IncomingPayment payment = new IncomingPayment();
+					payment.setAccount(getAccount(message));
+					payment.setPhoneNumber(getPhoneNumber(message));
+					payment.setAmountPaid(getAmount(message));
+					payment.setConfirmationCode(getConfirmationCode(message));
+					payment.setPaymentBy(getPaymentBy(message));
+					payment.setTimePaid(getTimePaid(message));
+		
+					incomingPaymentDao.saveIncomingPayment(payment);
+				} catch (IllegalArgumentException ex) {
+					log.warn("Message failed to parse; likely incorrect format", ex);
+					throw new RuntimeException(ex);
+				} catch (Exception ex) {
+					log.error("Unexpected exception parsing incoming payment SMS.", ex);
+					throw new RuntimeException(ex);
+				}
 			}
-		}
 		}.execute();
 
 	}

@@ -18,7 +18,6 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.importexport.IncomingPaymentCsvImporter;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 
 /**
@@ -39,7 +38,6 @@ public class IncomingPaymentsImportHandler extends ImportDialogHandler {
 	private static final String UI_FILE_OPTIONS_PANEL_INCOMING_PAYMENT = "Import Clients";
 
 	private AccountDao accountDao;
-	private ClientDao clientDao;
 	private int columnCount;
 	// > INSTANCE PROPERTIES
 	private IncomingPaymentCsvImporter importer;

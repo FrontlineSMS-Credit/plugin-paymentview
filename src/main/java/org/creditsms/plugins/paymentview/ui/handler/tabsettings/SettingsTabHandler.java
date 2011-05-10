@@ -4,16 +4,14 @@ import net.frontlinesms.payment.safaricom.ui.SafaricomPaymentServiceConfigUiHand
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.UiGeneratorControllerConstants;
 import net.frontlinesms.ui.handler.BaseTabHandler;
-import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
-import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
-import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.ConfigureAccountHandler;
 
 public class SettingsTabHandler extends BaseTabHandler implements
@@ -25,22 +23,16 @@ public class SettingsTabHandler extends BaseTabHandler implements
 
 	private ClientDao clientDao;
 	private IncomingPaymentDao incomingPaymentDao;
-	private OutgoingPaymentDao outgoingPaymentDao;
 
 	private Object settingsTab;
 	private Object settingsTableComponent;
-	private ComponentPagingHandler settingsTablePager;
 
-	private final PaymentViewThinletTabController paymentViewThinletTabController;
-
-	public SettingsTabHandler(UiGeneratorController ui, PaymentViewThinletTabController paymentViewThinletTabController) {
+	public SettingsTabHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui);
 		
-		this.paymentViewThinletTabController = paymentViewThinletTabController;
-		this.incomingPaymentDao = paymentViewThinletTabController.getIncomingPaymentDao();
-		this.outgoingPaymentDao = paymentViewThinletTabController.getOutgoingPaymentDao();
-		this.accountDao = paymentViewThinletTabController.getAccountDao();
-		this.clientDao = paymentViewThinletTabController.getClientDao();
+		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
+		this.accountDao = pluginController.getAccountDao();
+		this.clientDao = pluginController.getClientDao();
 		init();
 	}
 
@@ -48,9 +40,7 @@ public class SettingsTabHandler extends BaseTabHandler implements
 		Object[] selectedClients = this.ui
 				.getSelectedItems(settingsTableComponent);
 		for (Object selectedNetworkOperator : selectedClients) {
-			Account a = (Account) ui.getAttachedObject(selectedNetworkOperator);
-			ui.add(new ConfigureAccountHandler(ui, a, this.accountDao)
-					.getDialog());
+			ui.add(new ConfigureAccountHandler(ui).getDialog());
 		}
 	}
 

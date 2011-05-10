@@ -11,7 +11,6 @@ import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
-import org.creditsms.plugins.paymentview.utils.StringUtil;
 
 public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 
@@ -67,17 +66,17 @@ public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 	protected Object getRow(Client client) {
 		Object row = ui.createTableRow(client);
 	
-		Object cell = ui.createTableCell(StringUtil.EMPTY);
+		Object cell = ui.createTableCell("");
 		markCell(cell, false);
 		ui.add(row, cell);
 	
 		ui.add(row,
-				ui.createTableCell(client.getFirstName() + StringUtil.SPACE
+				ui.createTableCell(client.getFirstName() + " "
 						+ client.getOtherName()));
 		ui.add(row, ui.createTableCell(client.getPhoneNumber()));
 		String accountStr = "";
 		for (Account a : client.getAccounts()) {
-			accountStr += a.getAccountNumber() + StringUtil.SPACE;
+			accountStr += a.getAccountNumber() + " ";
 		}
 		ui.add(row, ui.createTableCell(accountStr));
 		ui.setAttachedObject(row, client);

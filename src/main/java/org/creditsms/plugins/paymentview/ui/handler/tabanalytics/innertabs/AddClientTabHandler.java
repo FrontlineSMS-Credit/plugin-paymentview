@@ -3,10 +3,10 @@ package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
-import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.addclient.SelectTargetSavingsHandler;
 
 public class AddClientTabHandler extends BaseTabHandler {
@@ -20,16 +20,14 @@ public class AddClientTabHandler extends BaseTabHandler {
 	private ClientDao clientDao;
 
 
-	private PaymentViewThinletTabController paymentViewThinletTabController;
-	private CustomValueDao customValueDao;
-	private CustomFieldDao customFieldDao;
+	private final CustomValueDao customValueDao;
+	private final CustomFieldDao customFieldDao;
 
-	public AddClientTabHandler(UiGeneratorController ui, Object tabAnalytics, final PaymentViewThinletTabController paymentViewThinletTabController) {
+	public AddClientTabHandler(UiGeneratorController ui, Object tabAnalytics, final PaymentViewPluginController pluginController) {
 		super(ui);
-		this.paymentViewThinletTabController = paymentViewThinletTabController;
-		this.clientDao = paymentViewThinletTabController.getClientDao();
-		this.customValueDao = paymentViewThinletTabController.getCustomValueDao();
-		this.customFieldDao = paymentViewThinletTabController.getCustomFieldDao();
+		this.clientDao = pluginController.getClientDao();
+		this.customValueDao = pluginController.getCustomValueDao();
+		this.customFieldDao = pluginController.getCustomFieldDao();
 		createDashboardTab = ui.find(tabAnalytics, TAB_CREATE_DASHBOARD);
 		this.init();
 	}
@@ -46,7 +44,6 @@ public class AddClientTabHandler extends BaseTabHandler {
 
 	@Override
 	public void refresh() {
-		paymentViewThinletTabController.refresh();
 	}
 
 	public void setCurrentStepPanel(Object panel) {

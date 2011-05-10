@@ -3,7 +3,7 @@ package org.creditsms.plugins.paymentview.ui.handler.tabanalytics;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
-import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ConfigureServiceTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
@@ -17,11 +17,11 @@ public class AnalyticsTabHandler implements ThinletUiEventHandler {
 
 	private UiGeneratorController ui;
 	private ViewDashBoardTabHandler viewDashBoardHandler;
-	private PaymentViewThinletTabController paymentViewThinletTabController;
+	private final PaymentViewPluginController pluginController;
 
-	public AnalyticsTabHandler(UiGeneratorController ui, final PaymentViewThinletTabController paymentViewThinletTabController) {
+	public AnalyticsTabHandler(UiGeneratorController ui, final PaymentViewPluginController pluginController) {
 		this.ui = ui;
-		this.paymentViewThinletTabController = paymentViewThinletTabController;
+		this.pluginController = pluginController;
 
 		init();
 	}
@@ -32,9 +32,9 @@ public class AnalyticsTabHandler implements ThinletUiEventHandler {
 
 	protected Object init() {
 		analyticsTab = ui.loadComponentFromFile(XML_ANALYTICS_TAB, this);
-		createDashBoardHandler = new AddClientTabHandler(ui, analyticsTab, paymentViewThinletTabController);
-		viewDashBoardHandler = new ViewDashBoardTabHandler(ui, analyticsTab, paymentViewThinletTabController);
-		configureServiceTabHandler = new ConfigureServiceTabHandler(ui,	analyticsTab, paymentViewThinletTabController);
+		createDashBoardHandler = new AddClientTabHandler(ui, analyticsTab, pluginController);
+		viewDashBoardHandler = new ViewDashBoardTabHandler(ui, analyticsTab, pluginController);
+		configureServiceTabHandler = new ConfigureServiceTabHandler(ui,	analyticsTab);
 		return analyticsTab;
 	}
 

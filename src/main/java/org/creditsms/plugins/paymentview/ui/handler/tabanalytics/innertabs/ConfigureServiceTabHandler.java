@@ -3,7 +3,6 @@ package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
-import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateNewTargetHandler;
 
 public class ConfigureServiceTabHandler extends BaseTabHandler {
@@ -12,11 +11,7 @@ public class ConfigureServiceTabHandler extends BaseTabHandler {
 
 	private Object configureServiceTab;
 
-	public ConfigureServiceTabHandler(
-			UiGeneratorController ui,
-			Object tabAnalytics,
-			final PaymentViewThinletTabController paymentViewThinletTabController) {
-		
+	public ConfigureServiceTabHandler(UiGeneratorController ui, Object tabAnalytics) {
 		super(ui);
 		configureServiceTab = ui.find(tabAnalytics, TAB_CONFIGURE_SERVICE);
 		this.init();
