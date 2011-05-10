@@ -6,14 +6,14 @@
 
 	<label text="Enter Account PIN" />
 	<textfield colspan="2" columns="15" text="" />
-	<label text="Verify Account PIN" />
-	<textfield colspan="2" columns="15" text="" />
+	<label text="Verify Account PIN"/>
+	<textfield colspan="2" columns="15" text="" perform="next"/>
 
 	<panel colspan="3" weightx="1">
 		<button icon="/icons/tick.png" text="Previous"
-			action="removeDialog" />
+			action="previous" />
 		<panel weightx="1" />
 		<button icon="/icons/tick.png" text="Next"
-			action="removeDialog" />
+			action="next" />
 	</panel>
 </dialog>

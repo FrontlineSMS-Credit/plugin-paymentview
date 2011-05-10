@@ -1,6 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
-import net.frontlinesms.payment.safaricom.ui.SafaricomPaymentServiceConfigUiHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.UiGeneratorControllerConstants;
 import net.frontlinesms.ui.handler.BaseTabHandler;
@@ -12,7 +11,7 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
-import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.ConfigureAccountHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings.MobilePaymentService;
 
 public class SettingsTabHandler extends BaseTabHandler implements
 		PagedComponentItemProvider {
@@ -26,9 +25,11 @@ public class SettingsTabHandler extends BaseTabHandler implements
 
 	private Object settingsTab;
 	private Object settingsTableComponent;
+	private final PaymentViewPluginController pluginController;
 
 	public SettingsTabHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui);
+		this.pluginController = pluginController;
 		
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.accountDao = pluginController.getAccountDao();
@@ -37,15 +38,11 @@ public class SettingsTabHandler extends BaseTabHandler implements
 	}
 
 	public void configureAccount() {
-		Object[] selectedClients = this.ui
-				.getSelectedItems(settingsTableComponent);
-		for (Object selectedNetworkOperator : selectedClients) {
-			ui.add(new ConfigureAccountHandler(ui).getDialog());
-		}
 	}
 
 	public void createNew() {
-		ui.add(new SafaricomPaymentServiceConfigUiHandler(ui, incomingPaymentDao, clientDao, accountDao).getDialog());
+//		ui.add(new SafaricomPaymentServiceConfigUiHandler(ui, incomingPaymentDao, clientDao, accountDao).getDialog());
+		new MobilePaymentService(ui, pluginController).showDialog();
 	}
 
 	public void deleteAccount() {
