@@ -3,9 +3,10 @@ package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
-import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard.SelectTargetSavingsHandler;
 
 public class ViewDashBoardTabHandler extends BaseTabHandler {
@@ -15,18 +16,15 @@ public class ViewDashBoardTabHandler extends BaseTabHandler {
 	private Object currentPanel;
 	private Object viewDashboardTab;
 
-	private PaymentViewThinletTabController paymentViewThinletTabController;
-
-	private CustomValueDao customDataDao;
+	private final CustomValueDao customDataDao;
+	private final CustomFieldDao customFieldDao;
 
 	public ViewDashBoardTabHandler(UiGeneratorController ui,
-			Object tabAnalytics,
-			PaymentViewThinletTabController paymentViewThinletTabController) {
+			Object tabAnalytics, PaymentViewPluginController pluginController) {
 		super(ui);
-		this.paymentViewThinletTabController = paymentViewThinletTabController;
-		this.clientDao = paymentViewThinletTabController.getClientDao();
-		this.customDataDao = paymentViewThinletTabController
-				.getCustomValueDao();
+		this.clientDao = pluginController.getClientDao();
+		this.customDataDao = pluginController.getCustomValueDao();
+		this.customFieldDao = pluginController.getCustomFieldDao();
 		viewDashboardTab = ui.find(tabAnalytics, TAB_VIEW_DASHBOARD);
 		this.init();
 	}
@@ -38,8 +36,7 @@ public class ViewDashBoardTabHandler extends BaseTabHandler {
 	public Object initialiseTab() {
 		// ui.add(createDashboardTab, stepCreateSettings.getPanelComponent());
 		setCurrentStepPanel(new SelectTargetSavingsHandler(ui, clientDao,
-				paymentViewThinletTabController.getCustomFieldDao(),
-				customDataDao, this).getPanelComponent());
+				customFieldDao, customDataDao, this).getPanelComponent());
 		return viewDashboardTab;
 	}
 

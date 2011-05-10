@@ -11,16 +11,7 @@ import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.repository.AccountDao;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
-import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
-import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
-import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
-import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.events.IncomingPaymentProcessor;
-import org.creditsms.plugins.paymentview.events.IncomingPaymentProcessorImpl;
 import org.creditsms.plugins.paymentview.ui.handler.IncomingPaymentsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.AnalyticsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
@@ -47,19 +38,9 @@ public class PaymentViewThinletTabController extends
 	private ExportTabHandler exportTab;
 	private AnalyticsTabHandler analyticsTab;
 	
-	private IncomingPaymentProcessorImpl incomingPaymentProcessor = new IncomingPaymentProcessorImpl();
-
 	private Object mainPane;
 	private Object paymentViewTab;
 
-	private AccountDao accountDao;
-	private ClientDao clientDao;
-	private OutgoingPaymentDao outgoingPaymentDao;
-	private CustomFieldDao customFieldDao;
-	private CustomValueDao customValueDao;
-	private ServiceItemDao serviceItemDao;
-	private TargetDao targetDao;
-	private IncomingPaymentDao incomingPaymentDao;
 	private PvDebugTabController cdtController;
 
 	/**
@@ -75,30 +56,30 @@ public class PaymentViewThinletTabController extends
 	}
 
 	public void initTabs() {	
-		this.setPaymentViewTab(ui.loadComponentFromFile(XML_PAYMENT_VIEW_TAB, this));
+		this.paymentViewTab = ui.loadComponentFromFile(XML_PAYMENT_VIEW_TAB, this);
 		
 		mainPane = ui.find(getPaymentViewTab(), TABP_MAIN_PANE);
-		clientsTab = new ClientsTabHandler(ui, this);
+		clientsTab = new ClientsTabHandler(ui, getPluginController());
 		clientsTab.refresh();
 		ui.add(mainPane, clientsTab.getTab());
 
-		incomingPayTab = new IncomingPaymentsTabHandler(ui, this);
+		incomingPayTab = new IncomingPaymentsTabHandler(ui, getPluginController());
 		incomingPayTab.refresh();
 		ui.add(mainPane, incomingPayTab.getTab());
 
-		outgoingPayTab = new OutgoingPaymentsTabHandler(ui, this);
+		outgoingPayTab = new OutgoingPaymentsTabHandler(ui, getPluginController());
 		outgoingPayTab.refresh();
 		ui.add(mainPane, outgoingPayTab.getTab());
 
-		exportTab = new ExportTabHandler(ui, this);
+		exportTab = new ExportTabHandler(ui, getPluginController());
 		exportTab.refresh();
 		ui.add(mainPane, exportTab.getTab());
 
-		analyticsTab = new AnalyticsTabHandler(ui, this);
+		analyticsTab = new AnalyticsTabHandler(ui, getPluginController());
 		analyticsTab.refresh();
 		ui.add(mainPane, analyticsTab.getTab());
 
-		settingsTab = new SettingsTabHandler(ui, this);
+		settingsTab = new SettingsTabHandler(ui, getPluginController());
 		settingsTab.refresh();
 		ui.add(mainPane, settingsTab.getTab());
 		
@@ -113,77 +94,6 @@ public class PaymentViewThinletTabController extends
 	public void refresh() {
 	}
 
-	public AccountDao getAccountDao() {
-		return accountDao;
-	}
-
-	public void setAccountDao(AccountDao accountDao) {
-		this.accountDao = accountDao;
-	}
-
-	public ClientDao getClientDao() {
-		return clientDao;
-	}
-
-	public void setClientDao(ClientDao clientDao) {
-		this.clientDao = clientDao;
-	}
-
-	public OutgoingPaymentDao getOutgoingPaymentDao() {
-		return outgoingPaymentDao;
-	}
-
-	public void setOutgoingPaymentDao(OutgoingPaymentDao outgoingPaymentDao) {
-		this.outgoingPaymentDao = outgoingPaymentDao;
-	}
-
-	public CustomFieldDao getCustomFieldDao() {
-		return customFieldDao;
-	}
-
-	public void setCustomFieldDao(CustomFieldDao customFieldDao) {
-		this.customFieldDao = customFieldDao;
-	}
-
-	public CustomValueDao getCustomValueDao() {
-		return customValueDao;
-	}
-
-	public void setCustomValueDao(CustomValueDao customValueDao) {
-		this.customValueDao = customValueDao;
-	}
-
-	public ServiceItemDao getServiceItemDao() {
-		return serviceItemDao;
-	}
-
-	public void setServiceItemDao(ServiceItemDao serviceItemDao) {
-		this.serviceItemDao = serviceItemDao;
-	}
-
-	public TargetDao getTargetDao() {
-		return targetDao;
-	}
-
-	public void setTargetDao(TargetDao targetDao) {
-		this.targetDao = targetDao;
-	}
-
-	public IncomingPaymentDao getIncomingPaymentDao() {
-		return incomingPaymentDao;
-	}
-
-	public void setIncomingPaymentDao(IncomingPaymentDao incomingPaymentDao) {
-		this.incomingPaymentDao = incomingPaymentDao;
-	}
-
-	/**
-	 * @param paymentViewTab the paymentViewTab to set
-	 */
-	public void setPaymentViewTab(Object paymentViewTab) {
-		this.paymentViewTab = paymentViewTab;
-	}
-
 	/**
 	 * @return the paymentViewTab
 	 */
@@ -192,31 +102,7 @@ public class PaymentViewThinletTabController extends
 	}
 
 	public void deinit() {
-		incomingPaymentProcessor.removeAllIncomingPaymentListeners();
-	}
-	
-	/**
-	 * @param incomingPaymentProcessor the incomingPaymentProcessor to set
-	 */
-	public void setIncomingPaymentProcessor(IncomingPaymentProcessorImpl incomingPaymentProcessor) {
-		this.incomingPaymentProcessor = incomingPaymentProcessor;
+		// TODO de-register with EventBus
 	}
 
-	/**
-	 * @return the incomingPaymentProcessor
-	 */
-	public IncomingPaymentProcessorImpl getIncomingPaymentProcessor() {
-		return incomingPaymentProcessor;
-	}
-
-	/**
-	 * @return the incomingpaymentprocessor
-	 */
-	public IncomingPaymentProcessor getIncomingpaymentprocessor() {
-		return incomingPaymentProcessor;
-	}
-
-	public void incomingMessageEvent(FrontlineMessage message) {
-		System.out.println(message);
-	}
 }

@@ -13,8 +13,6 @@ import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
-import org.creditsms.plugins.paymentview.ui.handler.connecteddevices.ConnectedDevicesTabHandler;
-
 /**
  * 
  * @author 
@@ -23,13 +21,10 @@ public class PvDebugTabController extends BaseTabHandler implements
 		ThinletUiEventHandler {
 	
 	private static final String COMPONENT_LST_CONNECTED_DEVICES = "lstConnectedDevices";
-	private static final String TABP_MAIN_PANE = "tabP_mainPane";
 	private static final String XML_CONNECTED_DEVICE_VIEW_TAB = "/ui/plugins/paymentview/connectedDevicesTab.xml";
 	private Object connectedDevicesViewTab;
 
 	private final SmsServiceManager smsServiceManager;
-	private ConnectedDevicesTabHandler connectedDevicesTab;
-	private Object mainPane;
 	private MessageDao messageDao;
 
 	public MessageDao getMessageDao() {

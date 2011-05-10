@@ -9,6 +9,9 @@ import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.smslib.CService;
 
 public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHandler {
@@ -21,10 +24,16 @@ public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHan
 	 * the payment service manager to manage service lifecycles.
 	 */
 	private final EventBus eventBus;
+	private IncomingPaymentDao incomingPaymentDao;
+	private ClientDao clientDao;
+	private AccountDao accountDao;
 
-	public SafaricomPaymentServiceConfigUiHandler(UiGeneratorController ui) {
+	public SafaricomPaymentServiceConfigUiHandler(UiGeneratorController ui, IncomingPaymentDao incomingPaymentDao, ClientDao clientDao, AccountDao accountDao) {
 		this.ui = ui;
 		this.eventBus = ui.getFrontlineController().getEventBus();
+		this.incomingPaymentDao = incomingPaymentDao;
+		this.clientDao = clientDao;
+		this.accountDao = accountDao;
 		initDialog();
 	}
 
@@ -88,17 +97,22 @@ public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHan
 			String vPin = getVPin();			
 			if(checkValidityOfPinFields(pin, vPin)){
 				SmsService s = ui.getAttachedObject(ui.getSelectedItem(getDeviceList()), SmsService.class);
-				MpesaPaymentService sPS = new MpesaStandardService();
-				sPS.setPin(pin);
+				MpesaPaymentService mpesaPaymentService = new MpesaStandardService();
+				mpesaPaymentService.setPin(pin);
 				CService cService = ((SmsModem) s).getCService();
-				sPS.setCService(cService);
-				eventBus.registerObserver(sPS);
+				mpesaPaymentService.setCService(cService);
+
+				mpesaPaymentService.setClientDao(clientDao);
+				mpesaPaymentService.setIncomingPaymentDao(incomingPaymentDao);	
+				mpesaPaymentService.setAccountDao(accountDao);
+				
+				eventBus.registerObserver(mpesaPaymentService);
 				ui.alert("Created payment service: " + s +" With PIN: " + pin +" Verify PIN: " + vPin + " And CService: " + cService);
 	
 				// TODO once we are persisting payment service settings, we will just save new (or update)
 				// settings here.  For now, we only have one, statically accessed PaymentService and so we
 				// can create it directly
-				PaymentViewPluginController.setPaymentService(sPS);
+				PaymentViewPluginController.setPaymentService(mpesaPaymentService);
 				ui.remove(this.dialog);
 			} else {
 				ui.alert("The Pins are invalid or do not match");

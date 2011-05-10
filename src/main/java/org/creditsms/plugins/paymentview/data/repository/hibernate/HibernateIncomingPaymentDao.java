@@ -4,7 +4,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
@@ -85,14 +84,12 @@ public class HibernateIncomingPaymentDao extends
 		return super.getList(criteria);
 	}
 
-	public void saveIncomingPayment(IncomingPayment incomingPayment)
-			throws DuplicateKeyException {
-		super.save(incomingPayment);
+	public void saveIncomingPayment(IncomingPayment incomingPayment) {
+		super.saveWithoutDuplicateHandling(incomingPayment);
 	}
 
-	public void updateIncomingPayment(IncomingPayment incomingPayment)
-			throws DuplicateKeyException {
-		super.update(incomingPayment);
+	public void updateIncomingPayment(IncomingPayment incomingPayment)  {
+		super.updateWithoutDuplicateHandling(incomingPayment);
 	}
 
 	public int getIncomingPaymentsCount() {
@@ -114,20 +111,5 @@ public class HibernateIncomingPaymentDao extends
 	public List<IncomingPayment> getIncomingPaymentsByDate(Date date) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	
-	/**
-	 * Augments the supplied criteria with that required to match a date range.
-	 * @param criteria
-	 * @param start
-	 * @param end
-	 */
-	private void addDateCriteria(DetachedCriteria criteria, Long start, Long end) {
-		if(start != null) {
-			criteria.add(Restrictions.ge("", start));
-		}
-		if(end != null) {
-			criteria.add(Restrictions.le("", end));
-		}
 	}
 }

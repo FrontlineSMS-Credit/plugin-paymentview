@@ -16,7 +16,6 @@ public class MpesaStandardServiceTest extends MpesaPaymentServiceTest<MpesaStand
 	}
 	
 	public void testIncomingPaymentProcessing() {
-		
 		testIncomingPaymentProcessing("BI94HR849 Confirmed.\n" +
 				"You have received Ksh1,235 JOHN KIU 254723908001 on 3/5/11 at 10:35 PM\n" +
 				"New M-PESA balance Ksh1,236",

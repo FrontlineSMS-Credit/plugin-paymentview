@@ -3,14 +3,9 @@ package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
-import org.creditsms.plugins.paymentview.data.domain.Account;
-import org.creditsms.plugins.paymentview.data.repository.AccountDao;
-
 public class ConfigureAccountHandler implements ThinletUiEventHandler {
 	private static final String XML_CONFIGURE_ACCOUNT = "/ui/plugins/paymentview/settings/dialogs/dlgConfigureAccount.xml";
 
-	private Account account;
-	private AccountDao accountDao;
 	private Object dialogComponent;
 	private UiGeneratorController ui;
 
@@ -20,16 +15,8 @@ public class ConfigureAccountHandler implements ThinletUiEventHandler {
 		refresh();
 	}
 
-	public ConfigureAccountHandler(UiGeneratorController ui, Account account,
-			AccountDao accountDao) {
-		this(ui);
-		this.account = account;
-		this.accountDao = accountDao;
-	}
-
 	public void deteteAccount() {
 		// TODO Auto-generated method stub
-
 	}
 
 	/**

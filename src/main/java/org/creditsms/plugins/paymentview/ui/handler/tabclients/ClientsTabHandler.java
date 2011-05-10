@@ -4,11 +4,11 @@ import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.UiGeneratorControllerConstants;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
-import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.BaseClientTable;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientImportHandler;
@@ -21,27 +21,22 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	private static final String XML_CLIENTS_TAB = "/ui/plugins/paymentview/clients/clients.xml";
 	
 //> INSTANCE PROPERTIES
-	private ClientDao clientDao;
-	private CustomFieldDao customFieldDao;
-	private CustomValueDao customValueDao;
+	private final ClientDao clientDao;
+	private final CustomFieldDao customFieldDao;
+	private final CustomValueDao customValueDao;
 
 	private Object clientsTableComponent;
-	private PaymentViewThinletTabController paymentViewThinletTabController;
 	private UiGeneratorController ui;
 	private Object clientsTab;
 	private Object clientTableHolder;
 	private BaseClientTable clientTableHandler;
 
-	public ClientsTabHandler(
-			UiGeneratorController ui,
-			final PaymentViewThinletTabController paymentViewThinletTabController) {
+	public ClientsTabHandler(UiGeneratorController ui,
+			final PaymentViewPluginController pluginController) {
 		this.ui = ui;
-		this.paymentViewThinletTabController = paymentViewThinletTabController;
-		this.clientDao = this.paymentViewThinletTabController.getClientDao();
-		this.customFieldDao = this.paymentViewThinletTabController
-				.getCustomFieldDao();
-		this.customValueDao = this.paymentViewThinletTabController
-				.getCustomValueDao();
+		this.clientDao = pluginController.getClientDao();
+		this.customFieldDao = pluginController.getCustomFieldDao();
+		this.customValueDao = pluginController.getCustomValueDao();
 		init();
 	}
 	

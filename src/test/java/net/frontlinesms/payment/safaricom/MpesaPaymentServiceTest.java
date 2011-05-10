@@ -26,7 +26,7 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.events.IncomingPaymentProcessor;
+import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.mockito.InOrder;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
@@ -46,13 +46,13 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	
 	private E mpesaPaymentService;
 	private CService c;
-	private IncomingPaymentProcessor incomingPaymentProcessor;
 	
 	private StkMenuItem myAccountMenuItem;
 	private StkRequest mpesaMenuItemRequest;
 	private StkMenuItem sendMoneyMenuItem;
 	private ClientDao clientDao;
 	private AccountDao accountDao;
+	private IncomingPaymentDao incomingPaymentDao;
 	
 	
 	@Override
@@ -62,8 +62,8 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		this.mpesaPaymentService = createNewTestClass();
 		this.c = mock(CService.class);
 		mpesaPaymentService.setCService(c);
-		incomingPaymentProcessor = mock(IncomingPaymentProcessor.class);
-		mpesaPaymentService.setIncomingPaymentProcessor(incomingPaymentProcessor);
+		incomingPaymentDao = mock(IncomingPaymentDao.class);
+		mpesaPaymentService.setIncomingPaymentDao(incomingPaymentDao);
 		
 		setUpDaos();
 
@@ -192,7 +192,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		
 		// then
 		WaitingJob.waitForEvent();
-		verify(incomingPaymentProcessor).process(new IncomingPayment() {
+		verify(incomingPaymentDao).saveIncomingPayment(new IncomingPayment() {
 			@Override
 			public boolean equals(Object that) {
 				
@@ -229,7 +229,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		
 		// then
 		WaitingJob.waitForEvent();
-		verify(incomingPaymentProcessor, never()).process(any(IncomingPayment.class));
+		verify(incomingPaymentDao, never()).saveIncomingPayment(any(IncomingPayment.class));
 	}
 	
 	public void testFakedIncomingPayment() {
@@ -267,7 +267,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		
 		// then
 		WaitingJob.waitForEvent();
-		verify(incomingPaymentProcessor, never()).process(any(IncomingPayment.class));
+		verify(incomingPaymentDao, never()).saveIncomingPayment(any(IncomingPayment.class));
 	}
 	
 	private StkMenuItem mockMenuItem(String title, int... numbers) {
