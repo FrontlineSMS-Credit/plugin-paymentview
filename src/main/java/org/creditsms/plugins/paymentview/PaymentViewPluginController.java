@@ -96,13 +96,7 @@ public class PaymentViewPluginController extends BasePluginController
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
 	@Override
 	public Object initThinletTab(UiGeneratorController uiController) {
-		tabController = new PaymentViewThinletTabController(this, uiController);
-		tabController.setTabComponent(targetDao);
-
-		tabController.refresh();
-
-		// Just after setting the DAOs
-		tabController.initTabs();
+		tabController = new PaymentViewThinletTabController(this, uiController);		
 		return tabController.getPaymentViewTab();
 	}
 	
