@@ -4,14 +4,11 @@
  */
 package org.creditsms.plugins.paymentview.ui;
 
-import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.listener.IncomingMessageListener;
 import net.frontlinesms.plugins.BasePluginThinletTabController;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.events.IncomingPaymentProcessor;
 import org.creditsms.plugins.paymentview.ui.handler.IncomingPaymentsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.AnalyticsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
@@ -26,7 +23,7 @@ import org.creditsms.plugins.paymentview.ui.handler.tabsettings.SettingsTabHandl
  */
 public class PaymentViewThinletTabController extends
 		BasePluginThinletTabController<PaymentViewPluginController> implements
-		ThinletUiEventHandler, IncomingMessageListener {
+		ThinletUiEventHandler {
 
 	private static final String TABP_MAIN_PANE = "tabP_mainPane";
 	private static final String XML_PAYMENT_VIEW_TAB = "/ui/plugins/paymentview/paymentViewTab.xml";

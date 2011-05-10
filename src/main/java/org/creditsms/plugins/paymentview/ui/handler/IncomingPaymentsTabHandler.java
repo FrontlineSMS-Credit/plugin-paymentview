@@ -3,6 +3,10 @@ package org.creditsms.plugins.paymentview.ui.handler;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.frontlinesms.data.domain.FrontlineMessage;
+import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.events.EventObserver;
+import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
@@ -16,7 +20,7 @@ import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPayment
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsImportHandler;
 
 public class IncomingPaymentsTabHandler extends BaseTabHandler implements
-		PagedComponentItemProvider {
+		PagedComponentItemProvider, EventObserver{
 	private static final String COMPONENT_INCOMING_PAYMENTS_TABLE = "tbl_clients";
 	private static final String COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE = "pnl_clients";
 	private static final String XML_INCOMING_PAYMENTS_TAB = "/ui/plugins/paymentview/incomingpayments/tabincomingpayments.xml";
@@ -34,6 +38,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			PaymentViewPluginController pluginController) {
 		super(ui);
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
+		ui.getFrontlineController().getEventBus().registerObserver(this);
 		init();
 	}
 
@@ -124,5 +129,20 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	public void updateIncomingPaymentsList() {
 		this.incomingPaymentsTablePager.setCurrentPage(0);
 		this.incomingPaymentsTablePager.refresh();
+	}
+//> INCOMING PAYMENT NOTIFICATION...
+	public void notify(FrontlineEventNotification notification) {
+		if (!(notification instanceof EntitySavedNotification)) {
+			return;
+		}
+
+		Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
+		if (!(entity instanceof IncomingPayment)) {
+			return;
+		}
+
+		final IncomingPayment incomingPayment = (IncomingPayment) entity;
+		
+		ui.alert(incomingPayment.toString());
 	}
 }

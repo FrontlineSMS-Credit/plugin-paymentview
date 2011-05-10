@@ -45,7 +45,6 @@ public class SettingsTabHandler extends BaseTabHandler implements
 	}
 
 	public void createNew() {
-//		ui.add(new CreateNewAccountHandler(ui, this.accountDao).getDialog());
 		ui.add(new SafaricomPaymentServiceConfigUiHandler(ui, incomingPaymentDao, clientDao, accountDao).getDialog());
 	}
 
