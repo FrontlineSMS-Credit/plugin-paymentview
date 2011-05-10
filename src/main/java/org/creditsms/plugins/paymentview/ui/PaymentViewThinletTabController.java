@@ -50,12 +50,14 @@ public class PaymentViewThinletTabController extends
 	public PaymentViewThinletTabController(
 			PaymentViewPluginController controller, UiGeneratorController ui) {
 		super(controller, ui);
+		this.initTabs();
+		this.refresh();
 	}
 
 	public void initTabs() {	
 		this.paymentViewTab = ui.loadComponentFromFile(XML_PAYMENT_VIEW_TAB, this);
-		
-		mainPane = ui.find(getPaymentViewTab(), TABP_MAIN_PANE);
+			
+		mainPane = ui.find(this.paymentViewTab, TABP_MAIN_PANE);
 		clientsTab = new ClientsTabHandler(ui, getPluginController());
 		clientsTab.refresh();
 		ui.add(mainPane, clientsTab.getTab());
