@@ -1,9 +1,9 @@
 package org.creditsms.plugins.paymentview.ui.handler;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
@@ -12,8 +12,10 @@ import net.frontlinesms.ui.handler.BaseTabHandler;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
+import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
@@ -56,8 +58,15 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 
 		ui.add(row, ui.createTableCell(incomingPayment.getPaymentBy()));
 		ui.add(row, ui.createTableCell(incomingPayment.getPhoneNumber()));
-		ui.add(row, ui.createTableCell(incomingPayment.getAccount().getAccountNumber()));
+		ui.add(row, ui.createTableCell(getAccount(incomingPayment)));
+		ui.add(row, ui.createTableCell(InternationalisationUtils.getDatetimeFormat().format(new Date(incomingPayment.getTimePaid()))));
 		return row;
+	}
+
+	private String getAccount(IncomingPayment incomingPayment) {
+		Account account = incomingPayment.getAccount();
+		String accountNumber = account.getAccountNumber();
+		return accountNumber;
 	}
 
 	public void importPayments() {
@@ -67,16 +76,11 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 
 	@Override
 	protected Object initialiseTab() {
-		incomingPaymentsTab = ui.loadComponentFromFile(
-				XML_INCOMING_PAYMENTS_TAB, this);
-		incomingPaymentsTableComponent = ui.find(incomingPaymentsTab,
-				COMPONENT_INCOMING_PAYMENTS_TABLE);
-		incomingPaymentsTablePager = new ComponentPagingHandler(ui, this,
-				incomingPaymentsTableComponent);
-		pnlIncomingPaymentsTableComponent = ui.find(incomingPaymentsTab,
-				COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE);
-		this.ui.add(pnlIncomingPaymentsTableComponent,
-				this.incomingPaymentsTablePager.getPanel());
+		incomingPaymentsTab = ui.loadComponentFromFile(XML_INCOMING_PAYMENTS_TAB, this);
+		incomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_INCOMING_PAYMENTS_TABLE);
+		incomingPaymentsTablePager = new ComponentPagingHandler(ui, this, incomingPaymentsTableComponent);
+		pnlIncomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE);
+		this.ui.add(pnlIncomingPaymentsTableComponent, this.incomingPaymentsTablePager.getPanel());
 		return incomingPaymentsTab;
 	}
 
@@ -98,8 +102,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			incomingPayments = this.incomingPaymentDao.getAllIncomingPayments(startIndex, limit);
 		} else {
 			//TODO: change this to add more columns to be filtered.
-			incomingPayments = this.incomingPaymentDao
-					.getIncomingPaymentsByPhoneNo(this.incomingPaymentsFilter);
+			incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByPhoneNo(this.incomingPaymentsFilter);
 		}
 
 		int totalItemCount = incomingPaymentDao.getIncomingPaymentsCount();
@@ -140,9 +143,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		if (!(entity instanceof IncomingPayment)) {
 			return;
 		}
-
 		final IncomingPayment incomingPayment = (IncomingPayment) entity;
-		
-		ui.alert(incomingPayment.toString());
+		this.refresh();
 	}
 }

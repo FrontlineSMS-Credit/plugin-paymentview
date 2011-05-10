@@ -2,6 +2,7 @@ package net.frontlinesms.payment.safaricom;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,11 +20,12 @@ public class MpesaStandardService extends MpesaPaymentService {
 	@Override
 	Account getAccount(FrontlineMessage message) {
 		Client client = clientDao.getClientByPhoneNumber(getPhoneNumber(message));
-		List<Account> accountsByClientId = accountDao.getAccountsByClientId(client.getId());
+		List<Account> accountsByClientId = new ArrayList<Account>(client.getAccounts());
 		if(!accountsByClientId.isEmpty()){
 			return accountsByClientId.get(0);
 		}
-		return null;
+		throw new RuntimeException("Account Not Found");
+		
 	}
 	
 	@Override

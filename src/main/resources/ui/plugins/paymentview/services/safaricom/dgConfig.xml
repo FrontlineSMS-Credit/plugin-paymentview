@@ -6,7 +6,7 @@
  <passwordfield  name="tfPin" colspan="2" action="assertMaxLength(this, 4)" columns="8"/>
  
  <label text="Verify PIN"/>
- <passwordfield  name="tfVPin" colspan="2" action="assertMaxLength(this, 4)" columns="8"/>
+ <passwordfield  name="tfVPin" colspan="2" action="assertMaxLength(this, 4)" perform="createService" columns="8"/>
  
  <button name="createService" colspan="2" action="createService" text="create service!!!"/><panel weightx="1"/>
 </dialog>

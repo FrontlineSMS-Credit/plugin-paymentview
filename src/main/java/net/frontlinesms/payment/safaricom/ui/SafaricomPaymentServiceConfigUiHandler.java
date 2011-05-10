@@ -8,10 +8,9 @@ import net.frontlinesms.payment.safaricom.MpesaStandardService;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
-import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.smslib.CService;
 
 public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHandler {
@@ -108,11 +107,7 @@ public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHan
 				
 				eventBus.registerObserver(mpesaPaymentService);
 				ui.alert("Created payment service: " + s +" With PIN: " + pin +" Verify PIN: " + vPin + " And CService: " + cService);
-	
-				// TODO once we are persisting payment service settings, we will just save new (or update)
-				// settings here.  For now, we only have one, statically accessed PaymentService and so we
-				// can create it directly
-				PaymentViewPluginController.setPaymentService(mpesaPaymentService);
+				
 				ui.remove(this.dialog);
 			} else {
 				ui.alert("The Pins are invalid or do not match");
