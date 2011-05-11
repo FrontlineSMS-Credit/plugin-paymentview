@@ -1,10 +1,13 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import net.frontlinesms.messaging.sms.SmsService;
+import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.UiGeneratorControllerConstants;
 import net.frontlinesms.ui.handler.BaseTabHandler;
-import net.frontlinesms.ui.handler.PagedComponentItemProvider;
-import net.frontlinesms.ui.handler.PagedListDetails;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Account;
@@ -13,8 +16,7 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings.MobilePaymentService;
 
-public class SettingsTabHandler extends BaseTabHandler implements
-		PagedComponentItemProvider {
+public class SettingsTabHandler extends BaseTabHandler {
 	private static final String COMPONENT_SETTINGS_TABLE = "tbl_accounts";
 	private static final String XML_SETTINGS_TAB = "/ui/plugins/paymentview/settings/settingsTab.xml";
 
@@ -22,6 +24,8 @@ public class SettingsTabHandler extends BaseTabHandler implements
 
 	private ClientDao clientDao;
 	private IncomingPaymentDao incomingPaymentDao;
+	
+	private List<PaymentService> paymentServices;
 
 	private Object settingsTab;
 	private Object settingsTableComponent;
@@ -34,6 +38,7 @@ public class SettingsTabHandler extends BaseTabHandler implements
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.accountDao = pluginController.getAccountDao();
 		this.clientDao = pluginController.getClientDao();
+		paymentServices = new ArrayList<PaymentService>(0);
 		init();
 	}
 
@@ -42,7 +47,7 @@ public class SettingsTabHandler extends BaseTabHandler implements
 
 	public void createNew() {
 //		ui.add(new SafaricomPaymentServiceConfigUiHandler(ui, incomingPaymentDao, clientDao, accountDao).getDialog());
-		new MobilePaymentService(ui, pluginController).showDialog();
+		new MobilePaymentService(ui, pluginController, this).showDialog();
 	}
 
 	public void deleteAccount() {
@@ -64,28 +69,44 @@ public class SettingsTabHandler extends BaseTabHandler implements
 
 	}
 
-	public PagedListDetails getListDetails(Object list, int startIndex,
-			int limit) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	protected Object initialiseTab() {
 		settingsTab = ui.loadComponentFromFile(XML_SETTINGS_TAB, this);
 		settingsTableComponent = ui.find(settingsTab, COMPONENT_SETTINGS_TABLE);
 		return settingsTab;
 	}
+	
+	public void addPaymentService(PaymentService paymentService) {
+		paymentServices.add(paymentService);
+		refresh();
+	}
+	
+	public Object getRow(SmsService smsService){
+		Object cellServiceName = ui.createTableCell(smsService.getServiceName());
+		Object cellMsisdn = ui.createTableCell(smsService.getMsisdn());
+		Object cellStatus = ui.createTableCell(smsService.getStatus().getI18nKey());
+		Object cellDisplayPort = ui.createTableCell(smsService.getDisplayPort());
+		Object cellStatusDetail = ui.createTableCell(smsService.getStatusDetail());
+		
+		Object row = ui.createTableRow(smsService);
+		ui.add(row, cellServiceName);
+		ui.add(row, cellMsisdn);
+		ui.add(row, cellStatus);
+		ui.add(row, cellDisplayPort);
+		ui.add(row, cellStatusDetail);
+		
+		return row;
+	}
 
 	@Override
 	public void refresh() {
-		// TODO Auto-generated method stub
-
+		ui.removeAll(settingsTableComponent);
+		for(PaymentService paymentService : paymentServices){
+			ui.add(settingsTableComponent, getRow(paymentService.getSmsService()));
+		}
 	}
 
 	public void updateAccountBalance() {
 		// TODO Auto-generated method stub
-
 	}
-
 }

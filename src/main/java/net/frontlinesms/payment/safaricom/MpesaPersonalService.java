@@ -24,8 +24,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 		if(!accountsByClientId.isEmpty()){
 			return accountsByClientId.get(0);
 		}
-		throw new RuntimeException("Account Not Found");
-		
+		return null;
 	}
 	
 	@Override
@@ -61,6 +60,6 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	}
 	
 	public String toString(){
-		return "MPesa Safaricom - Kenya: Personal Payment Service";
+		return "MPesa Safaricom - Kenya: Personal Service";
 	}
 }

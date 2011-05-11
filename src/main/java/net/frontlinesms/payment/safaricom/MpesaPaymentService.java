@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.EntitySavedNotification;
-import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
+import net.frontlinesms.messaging.sms.SmsService;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
@@ -27,8 +27,7 @@ import org.smslib.stk.StkMenu;
 import org.smslib.stk.StkRequest;
 import org.smslib.stk.StkResponse;
 
-public abstract class MpesaPaymentService implements PaymentService,
-		EventObserver {
+public abstract class MpesaPaymentService implements PaymentService {
 	// > CONSTANTS
 	protected static final String AMOUNT_PATTERN = "Ksh[,|[0-9]]+";
 	protected static final String DATETIME_PATTERN = "d/M/yy hh:mm a";
@@ -40,16 +39,30 @@ public abstract class MpesaPaymentService implements PaymentService,
 
 	// > INSTANCE PROPERTIES
 	private final Logger log = FrontlineUtils.getLogger(this.getClass());
+	private SmsService smsService;
 	private CService cService;
+	
 	private String pin;
 	AccountDao accountDao;
 	ClientDao clientDao;
 	IncomingPaymentDao incomingPaymentDao;
 
+	public void setSmsService(SmsService smsService) {
+		this.smsService = smsService;
+	}
+
+	public SmsService getSmsService(){
+		return smsService;
+	}
+	
 	public void setCService(CService cService) {
 		this.cService = cService;
 	}
 
+	public CService getCService(){
+		return cService;
+	}
+	
 	public void setPin(String pin) {
 		this.pin = pin;
 	}

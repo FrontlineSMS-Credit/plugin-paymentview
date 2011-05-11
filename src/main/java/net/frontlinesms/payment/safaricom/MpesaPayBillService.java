@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
+import net.frontlinesms.messaging.sms.modem.SmsModem;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 
@@ -63,6 +64,6 @@ public class MpesaPayBillService extends MpesaPaymentService {
 	}
 	
 	public String toString(){
-		return "MPesa Safaricom - Kenya: PayBill Payment Service";
+		return "MPesa Safaricom - Kenya: PayBill Service";
 	}
 }

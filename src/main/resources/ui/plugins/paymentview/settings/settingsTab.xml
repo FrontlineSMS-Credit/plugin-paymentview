@@ -7,9 +7,11 @@
 			<label text="Mobile Payment Account Settings" font="20 Bold" weightx="1"/>
 			<table name="tbl_accounts" weightx="1" weighty="1" delete="showConfirmationDialog('deleteAccount')">
 				<header>					
-					<column text="i18n.plugins.paymentview.common.amount" width="200" />
-					<column text="i18n.plugins.paymentview.common.phone" width="200" icon="/icons/phone.png" />
-					<column text="i18n.plugins.paymentview.common.account" width="200" icon="/icons/money.png" />
+					<column text="Service Name" width="200" />
+					<column text="MSIDN" width="200" />
+					<column text="Status" width="200" />
+					<column text="Display Port" width="200" />
+					<column text="Status Detail" width="200" />
 				</header>
 				<popupmenu name="menu">
 					<menuitem action="examineAccount" icon="/icons/edit.png" name="miExamineAccount"
