@@ -12,10 +12,10 @@
 	<textfield colspan="2" columns="15" text="" />
 
 	<panel colspan="3" weightx="1">
-		<button icon="/icons/tick.png" text="Previous"
-			action="removeDialog" />
+		<button icon="/icons/left.png" text="Previous"
+			action="previous" />
 		<panel weightx="1" />
-		<button icon="/icons/tick.png" text="Create"
-			action="removeDialog" />
+		<button icon="/icons/right.png" text="Create"
+			action="create" />
 	</panel>
 </dialog>

@@ -11,6 +11,13 @@ public class BaseDialog implements ThinletUiEventHandler{
 	public BaseDialog(UiGeneratorController ui) {
 		this.ui = ui;
 	}
+	
+	/**
+	 * @return the customizeClientDialog
+	 */
+	public Object getDialog() {
+		return dialogComponent;
+	}
 
 	/** Remove the dialog from view. */
 	public void removeDialog() {

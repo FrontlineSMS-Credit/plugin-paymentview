@@ -7,9 +7,11 @@ import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
 
 public class AuthorizationCode extends BaseDialog {
 	private static final String XML_ENTER_AUTHORIZATION_CODE = "/ui/plugins/paymentview/settings/dialogs/createnewpaymentsteps/dlgCreateNewAccountStep4.xml";
+	private final EnterPin previousEnterPin;
 	
-	public AuthorizationCode(UiGeneratorController ui, PaymentViewPluginController pluginController){
+	public AuthorizationCode(UiGeneratorController ui, PaymentViewPluginController pluginController, EnterPin previousEnterPin){
 		super(ui);
+		this.previousEnterPin = previousEnterPin;
 		init();
 	}
 
@@ -18,7 +20,8 @@ public class AuthorizationCode extends BaseDialog {
 	}
 	
 	public void previous() {
-
+		previousEnterPin.showDialog();
+		removeDialog();
 	}
 	
 	public void create() {

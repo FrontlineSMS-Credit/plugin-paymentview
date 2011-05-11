@@ -11,10 +11,10 @@
 	</combobox>
 
 	<panel colspan="3" weightx="1">
-		<button icon="/icons/tick.png" text="Previous"
-			action="removeDialog" />
+		<button icon="/icons/left.png" text="Previous"
+			action="previous" />
 		<panel weightx="1" />
-		<button icon="/icons/tick.png" text="Next"
-			action="removeDialog" />
+		<button icon="/icons/right.png" text="Next"
+			action="next" />
 	</panel>
 </dialog>

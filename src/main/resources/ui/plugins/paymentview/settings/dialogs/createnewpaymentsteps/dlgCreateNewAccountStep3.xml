@@ -10,10 +10,10 @@
 	<textfield colspan="2" columns="15" text="" perform="next"/>
 
 	<panel colspan="3" weightx="1">
-		<button icon="/icons/tick.png" text="Previous"
+		<button icon="/icons/left.png" text="Previous"
 			action="previous" />
 		<panel weightx="1" />
-		<button icon="/icons/tick.png" text="Next"
+		<button icon="/icons/right.png" text="Next"
 			action="next" />
 	</panel>
 </dialog>
