@@ -4,20 +4,17 @@ import net.frontlinesms.events.EventBus;
 import net.frontlinesms.messaging.sms.SmsService;
 import net.frontlinesms.messaging.sms.modem.SmsModem;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
-import net.frontlinesms.payment.safaricom.MpesaStandardService;
-import net.frontlinesms.ui.ThinletUiEventHandler;
+import net.frontlinesms.payment.safaricom.MpesaPersonalService;
 import net.frontlinesms.ui.UiGeneratorController;
 
-import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
 import org.smslib.CService;
 
-public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHandler {
+public class SafaricomPaymentServiceConfigUiHandler extends BaseDialog {
 	private static final String DIALOG_XML_FILE = "/ui/plugins/paymentview/services/safaricom/dgConfig.xml";
-	private UiGeneratorController ui;
-	private Object dialog;
 	private Object combo;
 	
 	/** TODO this should not be referenced here - remove this once we are saving a properties object and allowing
@@ -29,7 +26,7 @@ public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHan
 	private AccountDao accountDao;
 
 	public SafaricomPaymentServiceConfigUiHandler(UiGeneratorController ui, IncomingPaymentDao incomingPaymentDao, ClientDao clientDao, AccountDao accountDao) {
-		this.ui = ui;
+		super(ui);
 		this.eventBus = ui.getFrontlineController().getEventBus();
 		this.incomingPaymentDao = incomingPaymentDao;
 		this.clientDao = clientDao;
@@ -39,12 +36,16 @@ public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHan
 
 //> SETUP METHODS
 	private void initDialog() {
-		this.dialog = ui.loadComponentFromFile(DIALOG_XML_FILE, this);
+		this.dialogComponent = ui.loadComponentFromFile(DIALOG_XML_FILE, this);
 		initDeviceList();
 	}
 
 	private void initDeviceList() {
 		combo = getDeviceList();
+		setUpSMSService(); 
+	}
+
+	private void setUpSMSService() {
 		for(SmsService s : ui.getFrontlineController().getSmsServiceManager().getAll()) {
 			ui.add(combo, getComboChoice(s));
 		}
@@ -56,7 +57,7 @@ public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHan
 	}
 
 	private Object find(String componentName) {
-		return ui.find(this.dialog, componentName);
+		return ui.find(this.dialogComponent, componentName);
 	}
 
 	private Object getComboChoice(SmsService s) {
@@ -64,22 +65,7 @@ public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHan
 	}
 
 	public Object getDialog() {
-		return this.dialog;
-	}
-	
-	private boolean checkValidityOfPinFields(String pin, String vPin){
-		if(pin.trim().length()==0 || pin.trim().length()<4){
-			return false;
-		}else if(vPin.trim().length()==0 || vPin.trim().length()<4){
-			return false;
-		}else if(vPin.trim().length()==4 && vPin.trim().length()==4){
-			if(vPin.equals(pin)){
-				return true;
-			}else{
-				return false;
-			}
-		}
-		return false;
+		return this.dialogComponent;
 	}
 	
 	private String getPin() {
@@ -96,24 +82,19 @@ public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHan
 			String pin = getPin();
 			String vPin = getVPin();			
 			if(checkValidityOfPinFields(pin, vPin)){
-				SmsService s = ui.getAttachedObject(ui.getSelectedItem(getDeviceList()), SmsService.class);
-				MpesaPaymentService mpesaPaymentService = new MpesaStandardService();
+				SmsService smsService = ui.getAttachedObject(ui.getSelectedItem(getDeviceList()), SmsService.class);
+				MpesaPaymentService mpesaPaymentService = new MpesaPersonalService();
 				mpesaPaymentService.setPin(pin);
-				CService cService = ((SmsModem) s).getCService();
-				mpesaPaymentService.setCService(cService);
+				mpesaPaymentService.setSmsService((SmsModem) smsService);
 
 				mpesaPaymentService.setClientDao(clientDao);
 				mpesaPaymentService.setIncomingPaymentDao(incomingPaymentDao);	
 				mpesaPaymentService.setAccountDao(accountDao);
 				
 				eventBus.registerObserver(mpesaPaymentService);
-				ui.alert("Created payment service: " + s +" With PIN: " + pin +" Verify PIN: " + vPin + " And CService: " + cService);
-	
-				// TODO once we are persisting payment service settings, we will just save new (or update)
-				// settings here.  For now, we only have one, statically accessed PaymentService and so we
-				// can create it directly
-				PaymentViewPluginController.setPaymentService(mpesaPaymentService);
-				ui.remove(this.dialog);
+				ui.alert("Created payment service: " + smsService +" With PIN: " + pin +" Verify PIN: " + vPin + " And CService: " + smsService);
+				
+				ui.remove(this.dialogComponent);
 			} else {
 				ui.alert("The Pins are invalid or do not match");
 				// TODO set focus on pin 1 field
@@ -124,8 +105,19 @@ public class SafaricomPaymentServiceConfigUiHandler implements ThinletUiEventHan
 		}
 	}
 	
-	public void removeDialog() {
-		ui.remove(this.dialog);
+	private boolean checkValidityOfPinFields(String pin, String vPin){
+		if(pin.trim().length()==0 || pin.trim().length()<4){
+			return false;
+		}else if(vPin.trim().length()==0 || vPin.trim().length()<4){
+			return false;
+		}else if(vPin.trim().length()==4 && vPin.trim().length()==4){
+			if(vPin.equals(pin)){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		return false;
 	}
 	
 	public void assertMaxLength(Object component, int maxLength) {

@@ -9,7 +9,6 @@ package org.creditsms.plugins.paymentview;
 
 import net.frontlinesms.BuildProperties;
 import net.frontlinesms.FrontlineSMS;
-import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
@@ -22,7 +21,6 @@ import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
-import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.springframework.context.ApplicationContext;
 
@@ -49,12 +47,7 @@ public class PaymentViewPluginController extends BasePluginController
 	private CustomFieldDao customFieldDao;
 	private IncomingPaymentDao incomingPaymentDao;
 	private OutgoingPaymentDao outgoingPaymentDao;
-	private TargetDao targetDao;
 	
-	// TODO currently we have one or no payment services, and this is configured at runtime.  Eventually
-	// this should be persisted to the database and loaded when the controller is initialised
-	private static PaymentService paymentService;
-
 	private PaymentViewThinletTabController tabController;
 
 
@@ -62,7 +55,7 @@ public class PaymentViewPluginController extends BasePluginController
 	 * @see net.frontlinesms.plugins.PluginController#deinit()
 	 */
 	public void deinit() {
-		tabController.deinit();
+		//tabController.deinit();
 	}
 
 //> CONFIG METHODS
@@ -84,7 +77,7 @@ public class PaymentViewPluginController extends BasePluginController
 		outgoingPaymentDao = (OutgoingPaymentDao) applicationContext
 				.getBean("outgoingPaymentDao");
 		
-		targetDao = (TargetDao) applicationContext.getBean("targetDao");
+		//targetDao = (TargetDao) applicationContext.getBean("targetDao");
 		accountDao = (AccountDao) applicationContext.getBean("accountDao");
 		
 		// If not a production build, and database is empty, add test data
@@ -96,13 +89,7 @@ public class PaymentViewPluginController extends BasePluginController
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
 	@Override
 	public Object initThinletTab(UiGeneratorController uiController) {
-		tabController = new PaymentViewThinletTabController(this, uiController);
-		tabController.setTabComponent(targetDao);
-
-		tabController.refresh();
-
-		// Just after setting the DAOs
-		tabController.initTabs();
+		tabController = new PaymentViewThinletTabController(this, uiController);		
 		return tabController.getPaymentViewTab();
 	}
 	
@@ -129,9 +116,5 @@ public class PaymentViewPluginController extends BasePluginController
 	
 	public CustomValueDao getCustomValueDao() {
 		return customValueDao;
-	}
-	
-	public static void setPaymentService(PaymentService paymentService) {
-		PaymentViewPluginController.paymentService = paymentService;
 	}
 }

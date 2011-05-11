@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import net.frontlinesms.data.DuplicateKeyException;
-import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
@@ -15,9 +15,10 @@ import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
+import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
 
-public class EditClientHandler implements ThinletUiEventHandler {
+public class EditClientHandler extends BaseDialog{
 	private static final String COMPONENT_LIST_ACCOUNTS = "fldAccounts";
 
 	private static final String COMPONENT_TEXT_FIRST_NAME = "fldFirstName";
@@ -44,32 +45,26 @@ public class EditClientHandler implements ThinletUiEventHandler {
 	private Object compPanelFields;
 	private Map<CustomField, Object> customComponents;
 
-	public EditClientHandler(UiGeneratorController ui, ClientDao clientDao,
-			final ClientsTabHandler clientsTabHandler,
-			final CustomValueDao customValueDao,
-			final CustomFieldDao customFieldDao) {
-
-		this.ui = ui;
-		this.clientDao = clientDao;
+	public EditClientHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, ClientsTabHandler clientsTabHandler) {
+		super(ui);
+		this.clientDao = pluginController.getClientDao();
 		this.clientsTabHandler = clientsTabHandler;
-		this.customValueDao = customValueDao;
-		this.customFieldDao = customFieldDao;
+		this.customValueDao = pluginController.getCustomValueDao();
+		this.customFieldDao = pluginController.getCustomFieldDao();
 		this.editMode = false;
 		init();
 		refresh();
 	}
 
 	public EditClientHandler(UiGeneratorController ui, Client client,
-			ClientDao clientDao, final ClientsTabHandler clientsTabHandler,
-			final CustomValueDao customValueDao,
-			final CustomFieldDao customFieldDao) {
+			PaymentViewPluginController pluginController, ClientsTabHandler clientsTabHandler) {
+		super(ui);
 		this.client = client;
 		this.clientsTabHandler = clientsTabHandler;
-		this.customValueDao = customValueDao;
-		this.customFieldDao = customFieldDao;
+		this.customValueDao = pluginController.getCustomValueDao();
+		this.customFieldDao = pluginController.getCustomFieldDao();
+		this.clientDao = pluginController.getClientDao();
 		this.editMode = true;
-		this.clientDao = clientDao;
-		this.ui = ui;
 		init();
 		refresh();
 	}
@@ -78,10 +73,10 @@ public class EditClientHandler implements ThinletUiEventHandler {
 		return ui.createListItem(acc.getAccountNumber(), acc, true);
 	}
 
-	/**
+	/** 
 	 * @return the clientObj
 	 */
-	public Client getClientObj() {
+	public Client getClientObj() { 
 		return client;
 	}
 
@@ -153,16 +148,6 @@ public class EditClientHandler implements ThinletUiEventHandler {
 				ui.add(fieldListAccounts, createListItem(acc));
 			}
 		}
-	}
-
-	/** Remove the dialog from view. */
-	public void removeDialog() {
-		this.removeDialog(this.dialogComponent);
-	}
-
-	/** Remove a dialog from view. */
-	public void removeDialog(Object dialog) {
-		this.ui.removeDialog(dialog);
 	}
 
 	public void saveClient() {

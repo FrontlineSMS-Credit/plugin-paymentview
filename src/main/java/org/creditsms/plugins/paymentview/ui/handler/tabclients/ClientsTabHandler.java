@@ -30,10 +30,12 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	private Object clientsTab;
 	private Object clientTableHolder;
 	private BaseClientTable clientTableHandler;
+	private final PaymentViewPluginController pluginController;
 
 	public ClientsTabHandler(UiGeneratorController ui,
 			final PaymentViewPluginController pluginController) {
 		this.ui = ui;
+		this.pluginController = pluginController;
 		this.clientDao = pluginController.getClientDao();
 		this.customFieldDao = pluginController.getCustomFieldDao();
 		this.customValueDao = pluginController.getCustomValueDao();
@@ -59,8 +61,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 //> ACTION HANDLERS
 	
 	public void addClient() {
-		ui.add(new EditClientHandler(ui, clientDao, this, customValueDao,
-				customFieldDao).getDialog());
+		ui.add(new EditClientHandler(ui, pluginController, this).getDialog());
 	}
 
 	public void analyseClient() {
@@ -92,8 +93,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 				.getSelectedItems(clientsTableComponent);
 		for (Object selectedClient : selectedClients) {
 			Client c = (Client) ui.getAttachedObject(selectedClient);
-			ui.add(new EditClientHandler(ui, c, clientDao, this,
-					customValueDao, customFieldDao).getDialog());
+			ui.add(new EditClientHandler(ui, c, pluginController, this).getDialog());
 		}
 	}
 

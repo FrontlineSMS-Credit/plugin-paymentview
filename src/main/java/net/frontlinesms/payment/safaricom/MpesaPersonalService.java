@@ -2,6 +2,7 @@ package net.frontlinesms.payment.safaricom;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,8 +11,8 @@ import net.frontlinesms.data.domain.FrontlineMessage;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 
-public class MpesaStandardService extends MpesaPaymentService {
-	private static final String STANDARD_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n" +
+public class MpesaPersonalService extends MpesaPaymentService {
+	private static final String PERSONAL_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n" +
 					"You have received Ksh[,|[0-9]]+ ([A-Za-z ]+) 2547[0-9]{8} on " +
 					"(([1-2]?[1-9]|3[0-1])/([1-9]|1[0-2])/(1[1-2]))\\s(at)\\s([1]?\\d:[0-5]\\d)\\s(AM|PM)" +
 					"\nNew M-PESA balance Ksh[,|[0-9]]+";
@@ -19,7 +20,7 @@ public class MpesaStandardService extends MpesaPaymentService {
 	@Override
 	Account getAccount(FrontlineMessage message) {
 		Client client = clientDao.getClientByPhoneNumber(getPhoneNumber(message));
-		List<Account> accountsByClientId = accountDao.getAccountsByClientId(client.getId());
+		List<Account> accountsByClientId = new ArrayList<Account>(client.getAccounts());
 		if(!accountsByClientId.isEmpty()){
 			return accountsByClientId.get(0);
 		}
@@ -55,6 +56,10 @@ public class MpesaStandardService extends MpesaPaymentService {
     	
 	@Override
 	boolean isMessageTextValid(String messageText) {
-		return messageText.matches(STANDARD_REGEX_PATTERN);
+		return messageText.matches(PERSONAL_REGEX_PATTERN);
+	}
+	
+	public String toString(){
+		return "MPesa Safaricom - Kenya: Personal Service";
 	}
 }

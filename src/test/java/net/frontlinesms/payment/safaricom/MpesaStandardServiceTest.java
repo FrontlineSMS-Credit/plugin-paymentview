@@ -3,10 +3,10 @@
  */
 package net.frontlinesms.payment.safaricom;
 
-public class MpesaStandardServiceTest extends MpesaPaymentServiceTest<MpesaStandardService> {
+public class MpesaStandardServiceTest extends MpesaPaymentServiceTest<MpesaPersonalService> {
 	@Override
-	protected MpesaStandardService createNewTestClass() {
-		return new MpesaStandardService();
+	protected MpesaPersonalService createNewTestClass() {
+		return new MpesaPersonalService();
 	}
 	
 	public void testIncomingPaymentProcessingWithNoAccount() {

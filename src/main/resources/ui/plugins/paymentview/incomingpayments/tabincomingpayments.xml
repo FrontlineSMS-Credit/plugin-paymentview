@@ -2,17 +2,18 @@
 <tab name="tab_incomingPayments" text="Incoming Payments" icon="/icons/user_receiver.png">
 	<panel weightx="1" weighty="1" top="5" right="5" left="5"
 		columns="1" gap="10">
-		<panel columns="1" gap="5" name="pnl_clients" weightx="1"
+		<panel columns="2" gap="5" name="pnl_clients" weightx="1"
 			weighty="1">
 			<label text="Incoming Payments" font="20 Bold" weightx="1"/>
-			<table name="tbl_clients" weightx="1" weighty="1">
+			<button icon="/icons/refresh.png" action="refresh"/>
+			
+			<table name="tbl_clients" weightx="1" weighty="1" colspan="2">
 				<header>
 					<column text="Name" width="200" icon="/icons/user.png" />
 					<column text="Phone" width="150" icon="/icons/phone.png" />
 					<column text="Account" width="100" />
 					<column text="Amount" width="100" icon="/icons/money.png" />
 					<column text="Date" width="100" icon="/icons/date.png" />
-					<column text="Time" width="100" icon="/icons/time.png" />
 				</header>
 			</table>
 		</panel>

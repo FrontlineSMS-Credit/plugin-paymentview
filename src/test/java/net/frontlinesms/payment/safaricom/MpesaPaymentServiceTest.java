@@ -12,7 +12,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.EntitySavedNotification;
@@ -107,10 +108,10 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		clientDao = mock(ClientDao.class);
 		accountDao = mock(AccountDao.class);
 
-		List<Account> accounts1 = mockAccounts(ACCOUNTNUMBER_1_1);
-		List<Account> accounts2 = mockAccounts(ACCOUNTNUMBER_2_1, ACCOUNTNUMBER_2_2);
+		Set<Account> accounts1 = mockAccounts(ACCOUNTNUMBER_1_1);
+		Set<Account> accounts2 = mockAccounts(ACCOUNTNUMBER_2_1, ACCOUNTNUMBER_2_2);
 		
-		mockClient(0, PHONENUMBER_0, Collections.EMPTY_LIST);
+		mockClient(0, PHONENUMBER_0, Collections.EMPTY_SET);
 		mockClient(1, PHONENUMBER_1, accounts1);
 		mockClient(2, PHONENUMBER_2, accounts2);
 		
@@ -118,11 +119,12 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		this.mpesaPaymentService.setAccountDao(accountDao);
 	}
 	
-	private void mockClient(long id, String phoneNumber, List<Account> accounts) {
+	private void mockClient(long id, String phoneNumber, Set<Account> accounts) {
 		Client c = mock(Client.class);
 		when(c.getId()).thenReturn(id);
 		when(clientDao.getClientByPhoneNumber(phoneNumber)).thenReturn(c);
-		when(accountDao.getAccountsByClientId(id)).thenReturn(accounts);
+		when(c.getAccounts()).thenReturn(accounts);
+		when(accountDao.getAccountsByClientId(id)).thenReturn(new ArrayList<Account>(accounts));
 	}
 
 	public void testCheckBalance() throws PaymentServiceException, SMSLibDeviceException {
@@ -306,7 +308,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		return new EntitySavedNotification<FrontlineMessage>(m);
 	}
 	
-	private List<Account> mockAccounts(String... accountNumbers) {
+	private Set<Account> mockAccounts(String... accountNumbers) {
 		ArrayList<Account> accounts = new ArrayList<Account>();
 		for(String accountNumber : accountNumbers) {
 			Account account = mock(Account.class);
@@ -314,7 +316,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 			accounts.add(account);
 			when(accountDao.getAccountByAccountNumber(accountNumber)).thenReturn(account);
 		}
-		return accounts;
+		return new HashSet<Account>(accounts);
 	}
 }
 
