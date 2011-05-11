@@ -9,7 +9,10 @@ import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.dao.support.DataAccessUtils;
 
 public class HibernateIncomingPaymentDao extends
 		BaseHibernateDao<IncomingPayment> implements IncomingPaymentDao {
@@ -60,6 +63,15 @@ public class HibernateIncomingPaymentDao extends
 		return super.getList(criteria);
 	}
 
+	public Long getLastIncomingPaymentDateByAccountNumber(
+			String accountNumber) {
+		DetachedCriteria criteria = super.getCriterion();
+        ProjectionList ipProj = Projections.projectionList();
+        ipProj.add(Projections.max("timePaid"));
+        criteria.setProjection(ipProj);
+        return DataAccessUtils.longResult(this.getHibernateTemplate().findByCriteria(criteria));
+	}
+	
 	public List<IncomingPayment> getIncomingPaymentsByAccountNumberByTimeRange(
 			long accountId, Date startDate, Date endDate) {
 		// TODO Auto-generated method stub

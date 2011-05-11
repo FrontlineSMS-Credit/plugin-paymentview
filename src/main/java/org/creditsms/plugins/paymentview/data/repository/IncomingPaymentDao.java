@@ -52,6 +52,12 @@ public interface IncomingPaymentDao {
 			String accountNumber);
 
 	/**
+	 * returns the last IncomingPayment(s) by accountId
+	 * */
+	public Long getLastIncomingPaymentDateByAccountNumber(
+			String accountNumber);
+	
+	/**
 	 * returns IncomingPayment(s) by accountId by time ranges
 	 * */
 	public List<IncomingPayment> getIncomingPaymentsByAccountNumberByTimeRange(
