@@ -10,6 +10,7 @@ import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
@@ -31,12 +32,12 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	protected Object tableClientsPanel;
 	protected List<Client> selectedUsers;
 
-	public BaseClientTable(UiGeneratorController ui, ClientDao clientDao,
-			CustomFieldDao customFieldDao, CustomValueDao customValueDao) {
+	public BaseClientTable(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		this.ui = ui;
-		this.clientDao = clientDao;
-		this.customFieldDao = customFieldDao;
-		this.customValueDao = customValueDao;
+		this.clientDao = pluginController.getClientDao();
+		this.customFieldDao = pluginController.getCustomFieldDao();
+		this.customValueDao = pluginController.getCustomValueDao();
+		
 		this.selectedUsers = new ArrayList<Client>();
 		
 		this.init();

@@ -3,6 +3,7 @@ package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.step
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
@@ -14,14 +15,15 @@ public class ReviewHandler extends BasePanelHandler {
 	private ClientDao clientDao;
 	private CustomValueDao customValueDao;
 	private CustomFieldDao customFieldDao;
+	private final CreateSettingsHandler previousCreateSettingsHandler;
+	private final PaymentViewPluginController pluginController;
 
-	protected ReviewHandler(UiGeneratorController ui, ClientDao clientDao,
-			CustomFieldDao customFieldDao, CustomValueDao customValueDao,
-			AddClientTabHandler addClientTabHandler) {
+	protected ReviewHandler(UiGeneratorController ui, 
+			PaymentViewPluginController pluginController, AddClientTabHandler addClientTabHandler, 
+			CreateSettingsHandler createSettingsHandler) {
 		super(ui);
-		this.clientDao = clientDao;
-		this.customFieldDao = customFieldDao;
-		this.customValueDao = customValueDao;
+		this.pluginController = pluginController;
+		this.previousCreateSettingsHandler = createSettingsHandler;
 		this.addClientTabHandler = addClientTabHandler;
 		this.loadPanel(XML_STEP_REVIEW);
 	}
@@ -35,15 +37,12 @@ public class ReviewHandler extends BasePanelHandler {
 	}
 
 	public void previous() {
-		addClientTabHandler.setCurrentStepPanel(new CreateSettingsHandler(
-				(UiGeneratorController) ui, clientDao, customFieldDao, customValueDao, addClientTabHandler)
-				.getPanelComponent());
+		addClientTabHandler.setCurrentStepPanel(previousCreateSettingsHandler.getPanelComponent());
 	}
 
 	public void selectService() {
 		addClientTabHandler.setCurrentStepPanel(new SelectTargetSavingsHandler(
-				(UiGeneratorController) ui, clientDao, customValueDao,
-				customFieldDao, addClientTabHandler).getPanelComponent());
+				(UiGeneratorController) ui, pluginController, addClientTabHandler).getPanelComponent());
 	}
 
 	public void targetedSavings() {
@@ -52,8 +51,7 @@ public class ReviewHandler extends BasePanelHandler {
 
 	public void selectClient() {
 		addClientTabHandler.setCurrentStepPanel(new SelectClientsHandler(
-				(UiGeneratorController) ui, clientDao, customFieldDao,
-				customValueDao, addClientTabHandler).getPanelComponent());
+				(UiGeneratorController) ui, pluginController, addClientTabHandler).getPanelComponent());
 	}
 
 	public void createSettings() {

@@ -3,9 +3,7 @@ package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SchedulePaymentAuthDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SendPaymentAuthDialogHandler;
 
@@ -13,7 +11,6 @@ public class SelectFromClientsTabHandler extends BaseTabHandler {
 	private static final String XML_SELECT_FROM_CLIENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/selectfromclients.xml";
 	
 	private static final String PNL_CLIENT_TABLE_HOLDER = "pnlClientsTableHolder";
-	private ClientDao clientDao;
 
 	private Object schedulePaymentAuthDialog;
 	private Object selectFromClientsTab;
@@ -22,16 +19,11 @@ public class SelectFromClientsTabHandler extends BaseTabHandler {
 	private Object clientTableHolder;
 	private SelectClientsTableHandler clientsTableHandler;
 
-	private CustomFieldDao customFieldDao;
-	private CustomValueDao customValueDao;
+	private PaymentViewPluginController pluginController;
 
-	public SelectFromClientsTabHandler(UiGeneratorController ui,
-			ClientDao clientDao,CustomValueDao customValueDao,
-			CustomFieldDao customFieldDao) {
+	public SelectFromClientsTabHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui);
-		this.clientDao = clientDao;
-		this.customValueDao = customValueDao;
-		this.customFieldDao = customFieldDao;
+		this.pluginController = pluginController;
 		init();
 		refresh();
 	}
@@ -42,7 +34,7 @@ public class SelectFromClientsTabHandler extends BaseTabHandler {
 				XML_SELECT_FROM_CLIENTS_TAB, this);
 				
 		clientTableHolder = ui.find(selectFromClientsTab, PNL_CLIENT_TABLE_HOLDER);
-		clientsTableHandler = new SelectClientsTableHandler(ui, clientDao, customFieldDao, customValueDao);
+		clientsTableHandler = new SelectClientsTableHandler(ui, pluginController);
 		
 		ui.add(clientTableHolder, clientsTableHandler.getClientsTablePanel());
 		

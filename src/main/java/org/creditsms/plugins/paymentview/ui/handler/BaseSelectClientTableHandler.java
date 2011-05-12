@@ -4,22 +4,18 @@ import java.util.List;
 
 import net.frontlinesms.ui.UiGeneratorController;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 
 public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 
 	protected static final String ICONS_CHECKBOX_SELECTED_PNG = "/icons/checkbox-selected.png";
 	protected static final String ICONS_CHECKBOX_UNSELECTED_PNG = "/icons/checkbox-unselected.png";
 
-	public BaseSelectClientTableHandler(UiGeneratorController ui,
-			ClientDao clientDao, CustomFieldDao customFieldDao,
-			CustomValueDao customValueDao) {
-		super(ui, clientDao, customFieldDao, customValueDao);		
+	public BaseSelectClientTableHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
+		super(ui, pluginController);		
 	}
 
 	@Override

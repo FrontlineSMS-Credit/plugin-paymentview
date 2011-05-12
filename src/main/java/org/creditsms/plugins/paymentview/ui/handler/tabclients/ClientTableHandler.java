@@ -2,9 +2,7 @@ package org.creditsms.plugins.paymentview.ui.handler.tabclients;
 
 import net.frontlinesms.ui.UiGeneratorController;
 
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.BaseClientTable;
 
 public class ClientTableHandler extends BaseClientTable {
@@ -12,9 +10,8 @@ public class ClientTableHandler extends BaseClientTable {
 	private static final String XML_CLIENTS_PANEL = "/ui/plugins/paymentview/clients/clientsTable.xml";
 	private ClientsTabHandler clientsTabHandler;
 
-	public ClientTableHandler(UiGeneratorController ui, ClientsTabHandler clientsTabHandler,ClientDao clientDao,
-			CustomFieldDao customFieldDao, CustomValueDao customValueDao) {
-		super(ui, clientDao, customFieldDao, customValueDao);
+	public ClientTableHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, ClientsTabHandler clientsTabHandler) {
+		super(ui, pluginController);
 		this.clientsTabHandler = clientsTabHandler;
 	}
 

@@ -3,6 +3,7 @@ package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.step
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
@@ -32,24 +33,28 @@ public class SelectClientsHandler extends BasePanelHandler {
 	private Object pnlClientsTableHolder;
 	private Object cmbProduct;
 	private Object cmbClientsCharacteristics;
+	private PaymentViewPluginController pluginController;
+	private SelectTargetSavingsHandler previousSelectTargetSavingsHandler;
 
-	SelectClientsHandler(UiGeneratorController ui, ClientDao clientDao,
-			CustomFieldDao customFieldDao, CustomValueDao customDataDao,
+	SelectClientsHandler(UiGeneratorController ui, PaymentViewPluginController pluginController,
 			ViewDashBoardTabHandler viewDashBoardTabHandler) {
 		super(ui);
-		this.clientDao = clientDao;
-		this.customFieldDao = customFieldDao;
-		this.customDataDao = customDataDao;
+		this.pluginController = pluginController;
 		this.viewDashBoardTabHandler = viewDashBoardTabHandler;
 		this.loadPanel(XML_STEP_SELECT_CLIENT);
 		this.init();
 		refresh();
 	}
+	
+	SelectClientsHandler(UiGeneratorController ui, PaymentViewPluginController pluginController,
+			ViewDashBoardTabHandler viewDashBoardTabHandler, SelectTargetSavingsHandler previousSelectTargetSavingsHandler) {
+		this(ui, pluginController, viewDashBoardTabHandler);
+		this.previousSelectTargetSavingsHandler = previousSelectTargetSavingsHandler;
+	}
 
 	private void init() {
 		this.selectClientsTableHandler = new SelectClientsTableHandler(
-				(UiGeneratorController) ui, clientDao, customFieldDao,
-				customDataDao);
+				(UiGeneratorController) ui, pluginController);
 		pnlClientsTableHolder = this.find(PNL_CLIENTS_TABLE_HOLDER);
 		// Customize the Table Panel
 		ui.setColspan(selectClientsTableHandler.getClientsTablePanel(), 2);
@@ -71,16 +76,12 @@ public class SelectClientsHandler extends BasePanelHandler {
 
 	public void next() {
 		viewDashBoardTabHandler.setCurrentStepPanel(new CreateSettingsHandler(
-				(UiGeneratorController) ui, clientDao, viewDashBoardTabHandler,
-				customFieldDao, customDataDao).getPanelComponent());
+				(UiGeneratorController) ui, viewDashBoardTabHandler,pluginController).getPanelComponent());
 	}
 
 	public void previous() {
 		viewDashBoardTabHandler
-				.setCurrentStepPanel(new SelectTargetSavingsHandler(
-						(UiGeneratorController) ui, clientDao, customFieldDao,
-						customDataDao, viewDashBoardTabHandler)
-						.getPanelComponent());
+				.setCurrentStepPanel(previousSelectTargetSavingsHandler.getPanelComponent());
 	}
 
 	public void refresh() {

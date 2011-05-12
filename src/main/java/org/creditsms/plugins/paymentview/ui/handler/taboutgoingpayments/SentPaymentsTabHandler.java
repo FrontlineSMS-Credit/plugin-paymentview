@@ -13,6 +13,7 @@ import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
@@ -28,6 +29,7 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 
 	private AccountDao accountDao;
 	private ClientDao clientDao;
+	private OutgoingPaymentDao outgoingPaymentDao;
 
 	private Object sentPaymentsTableComponent;
 	private ComponentPagingHandler sentPaymentsTablePager;
@@ -37,7 +39,6 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	private NumberFormat formatter = new DecimalFormat("#,000.00");
 	SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss a");
 	
-	private OutgoingPaymentDao outgoingPaymentDao;
 	//
 	// For Dummy Purposes
 	Random random = new Random();
@@ -46,13 +47,11 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	private Object sentPaymentsTab;
 	private String sentPaymentsFilter = "";
 
-	public SentPaymentsTabHandler(UiGeneratorController ui,
-			ClientDao clientDao, OutgoingPaymentDao outgoingPaymentDao,
-			AccountDao accountDao) {
+	public SentPaymentsTabHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui);
-		this.clientDao = clientDao;
-		this.accountDao = accountDao;
-		this.outgoingPaymentDao = outgoingPaymentDao;
+		clientDao = pluginController.getClientDao();
+		accountDao = pluginController.getAccountDao();
+		outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
 		init();
 	}
 

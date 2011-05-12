@@ -4,36 +4,24 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.repository.AccountDao;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
-import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 
 public class OutgoingPaymentsTabHandler extends BaseTabHandler {
 
 	private static final String TABBED_PANE_MAIN = "tabbedPaneMain";
 	private static final String XML_OUTGOINGPAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/taboutgoingpayments.xml";
 
-	private AccountDao accountDao;
-	private ClientDao clientDao;
 	private ImportNewPaymentsTabHandler importNewPaymentsTab;
 	private Object mainTabbedPane;
-	private OutgoingPaymentDao outgoingPaymentDao;
 	private Object outgoingPaymentsTab;
-	private CustomValueDao customValueDao;
-	private CustomFieldDao customFieldDao;
 
 	private SelectFromClientsTabHandler selectFromClientsTab;
 	private SendNewPaymentsTabHandler sendNewPaymentsTab;
 	private SentPaymentsTabHandler sentPaymentsTab;
+	private PaymentViewPluginController pluginController;
 
 	public OutgoingPaymentsTabHandler(UiGeneratorController ui, final PaymentViewPluginController pluginController) {
 		super(ui);
-		this.outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
-		this.clientDao = pluginController.getClientDao();
-		this.customValueDao = pluginController.getCustomValueDao();
-		this.customFieldDao = pluginController.getCustomFieldDao();
+		this.pluginController = pluginController;
 		init();
 	}
 
@@ -43,8 +31,7 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler {
 				XML_OUTGOINGPAYMENTS_TAB, this);
 
 		mainTabbedPane = ui.find(outgoingPaymentsTab, TABBED_PANE_MAIN);
-		sentPaymentsTab = new SentPaymentsTabHandler(ui, clientDao,
-				outgoingPaymentDao, accountDao);
+		sentPaymentsTab = new SentPaymentsTabHandler(ui, pluginController);
 		ui.add(mainTabbedPane, sentPaymentsTab.getTab());
 
 		sendNewPaymentsTab = new SendNewPaymentsTabHandler(ui);
@@ -53,8 +40,7 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler {
 		importNewPaymentsTab = new ImportNewPaymentsTabHandler(ui);
 		ui.add(mainTabbedPane, importNewPaymentsTab.getTab());
 
-		selectFromClientsTab = new SelectFromClientsTabHandler(ui, clientDao,
-				customValueDao, customFieldDao);
+		selectFromClientsTab = new SelectFromClientsTabHandler(ui, pluginController);
 		selectFromClientsTab.refresh();
 		ui.add(mainTabbedPane, selectFromClientsTab.getTab());
 

@@ -45,7 +45,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	public void init() {
 		clientsTab = ui.loadComponentFromFile(XML_CLIENTS_TAB, this);
 		clientTableHolder = ui.find(clientsTab, PNL_CLIENT_TABLE_HOLDER);
-		clientTableHandler = new ClientTableHandler(ui, this, clientDao, customFieldDao, customValueDao);
+		clientTableHandler = new ClientTableHandler(ui, pluginController, this);
 		clientsTableComponent = clientTableHandler.getClientsTable();
 		ui.add(clientTableHolder, clientTableHandler.getClientsTablePanel());
 	}
@@ -98,7 +98,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	}
 
 	public void exportClient() {
-		new ClientExportHandler(ui, clientDao, customFieldDao, customValueDao)
+		new ClientExportHandler(ui, pluginController)
 				.showWizard();
 		this.refresh();
 	}
