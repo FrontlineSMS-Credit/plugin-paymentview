@@ -5,10 +5,10 @@
 	top="9" resizable="true" modal="true">
 
 	<label text="Enter Account PIN" />
-	<passwordfield colspan="2" columns="15" name="pin"  text="" action="assertMaxLength(this, 4)"/>
+	<passwordfield colspan="2" columns="15" name="pin"  text="" action="assertMaxLength(this)"/>
 	
 	<label text="Verify Account PIN"/>
-	<passwordfield colspan="2" columns="15" name="vpin" text="" action="assertMaxLength(this, 4)" perform="next(pin.text, vpin.text)"/>
+	<passwordfield colspan="2" columns="15" name="vpin" text="" action="assertMaxLength(this)" perform="next(pin.text, vpin.text)"/>
 
 	<panel colspan="3" weightx="1">
 		<button icon="/icons/left.png" text="Previous" action="previous" />

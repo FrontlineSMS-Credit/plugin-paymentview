@@ -10,6 +10,7 @@ import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.messaging.sms.SmsService;
+import net.frontlinesms.messaging.sms.modem.SmsModem;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
@@ -29,12 +30,12 @@ import org.smslib.stk.StkResponse;
 
 public abstract class MpesaPaymentService implements PaymentService {
 	// > CONSTANTS
-	protected static final String AMOUNT_PATTERN = "Ksh[,|[0-9]]+";
+	protected static final String AMOUNT_PATTERN = "Ksh[,|\\d]+";
 	protected static final String DATETIME_PATTERN = "d/M/yy hh:mm a";
-	protected static final String PHONE_PATTERN = "2547[0-9]{8}";
+	protected static final String PHONE_PATTERN = "2547[\\d]{8}";
 	protected static final String CONFIRMATION_CODE_PATTERN = "[A-Z0-9]+ Confirmed.";
 	protected static final String PAID_BY_PATTERN = "([A-Za-z ]+)";
-	protected static final String ACCOUNT_NUMBER_PATTERN = "Account Number [0-9]+";
+	protected static final String ACCOUNT_NUMBER_PATTERN = "Account Number [\\d]+";
 	protected static final String RECEIVED_FROM = "received from";
 
 	// > INSTANCE PROPERTIES
@@ -60,6 +61,9 @@ public abstract class MpesaPaymentService implements PaymentService {
 	}
 
 	public CService getCService(){
+		if (smsService != null & smsService instanceof SmsModem && cService == null){
+			return ((SmsModem)smsService).getCService();
+		}
 		return cService;
 	}
 	
@@ -141,7 +145,7 @@ public abstract class MpesaPaymentService implements PaymentService {
 		}
 
 		final FrontlineMessage message = (FrontlineMessage) entity;
-
+		
 		if (!messageIsValid(message)) {
 			return;
 		}
@@ -213,5 +217,25 @@ public abstract class MpesaPaymentService implements PaymentService {
 	
 	public String toString(){
 		return "MPesa Safaricom - Kenya: Abstract Payment Service";
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof PaymentService)){
+			return false;
+		}
+		
+		if (!(other instanceof MpesaPaymentService)){
+			return false;
+		}
+		
+		MpesaPaymentService that = (MpesaPaymentService) other;
+			
+		if (that.getClass().getName().equals(this.getClass().getName()) &				
+				that.getSmsService().getDisplayPort().equals(this.getSmsService().getDisplayPort())){ 
+			return true;
+		}
+		
+		return super.equals(other);
 	}
 }

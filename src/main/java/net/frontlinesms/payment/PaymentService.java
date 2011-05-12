@@ -6,6 +6,7 @@ import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.messaging.sms.SmsService;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.smslib.CService;
@@ -19,8 +20,10 @@ public interface PaymentService extends EventObserver{
 	SmsService getSmsService();
 	
 	void setPin(String pin);
+	
 	void setClientDao(ClientDao clientDao);
 	void setIncomingPaymentDao(IncomingPaymentDao incomingPaymentDao);
+	void setAccountDao(AccountDao accountDao);
 	
 //> The Basic Methods
 	void makePayment(Account account, BigDecimal amount) throws PaymentServiceException;

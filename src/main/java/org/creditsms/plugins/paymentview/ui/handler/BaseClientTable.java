@@ -29,6 +29,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	protected CustomFieldDao customFieldDao;
 	protected CustomValueDao customValueDao;
 	protected Object tableClientsPanel;
+	protected List<Client> selectedUsers;
 
 	public BaseClientTable(UiGeneratorController ui, ClientDao clientDao,
 			CustomFieldDao customFieldDao, CustomValueDao customValueDao) {
@@ -36,7 +37,8 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 		this.clientDao = clientDao;
 		this.customFieldDao = customFieldDao;
 		this.customValueDao = customValueDao;
-
+		this.selectedUsers = new ArrayList<Client>();
+		
 		this.init();
 	}
 
@@ -64,16 +66,31 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 
 	protected PagedListDetails getClientListDetails(int startIndex, int limit) {
 		List<Client> clients = null;
-		if (this.clientFilter.equals("")) {
-			clients = this.clientDao.getAllClients();
-		} else {
-			clients = this.clientDao.getClientsByName(clientFilter);
+		clients = getClients(clientFilter, startIndex, limit);
+		return new PagedListDetails(clients.size(), toThinletComponents(clients));
+	}
+
+	protected List<Client> getClients(String filter, int startIndex, int limit) {
+		if (selectedUsers.isEmpty()){
+			if (!filter.trim().isEmpty()) {
+				return this.clientDao.getClientsByName(filter, startIndex, limit);
+			}else{
+				return this.clientDao.getAllClients(startIndex, limit);
+			}
+		}else{
+			if (filter.trim().isEmpty()) {
+				return selectedUsers.subList(startIndex, startIndex);
+			}else{
+				List<Client> subList = selectedUsers.subList(startIndex, startIndex);
+				List<Client> copy = new ArrayList<Client>(); 
+				for (Client c : subList) {
+					if (c.getName().equalsIgnoreCase(filter)) {
+						copy.add(c);
+					}
+				}
+				return copy;
+			}
 		}
-
-		int totalItemCount = this.clientDao.getClientCount();
-		Object[] listItems = toThinletComponents(clients);
-
-		return new PagedListDetails(totalItemCount, listItems);
 	}
 
 	public void setClientFilter(String clientFilter) {
