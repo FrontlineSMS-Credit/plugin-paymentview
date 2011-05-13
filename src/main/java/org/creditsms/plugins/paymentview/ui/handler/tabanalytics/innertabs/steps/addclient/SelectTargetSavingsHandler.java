@@ -4,9 +4,6 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
 
 public class SelectTargetSavingsHandler extends BasePanelHandler {

@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dialog bottom="9" close="removeDialog(this)" 
 	columns="3" gap="15" left="9" name="clientDetailsDialog"
-	right="9" text="Create Target"
+	right="9" text="Create Service Item"
 	top="9" resizable="true" modal="true" closable="true">
 
 	<label text="Enter Target Name" />
-	<textfield columns="30" name="cmbSelectAction" colspan="2" text=""/>
+	<textfield columns="30" name="txtServiceItemName" colspan="2" text=""/>
 	
 	<label text="Enter Target Amount" />
-	<textfield columns="30" name="cmbSelectAction" colspan="2" text=""/>
+	<textfield columns="30" name="txtServiceItemAmount" colspan="2" text=""
+	perform="createServiceItem(txtServiceItemName.text,txtServiceItemAmount.text)"/>
 
 	<panel colspan="3" weightx="1">
 		<panel weightx="1" />
 		<button icon="/icons/tick.png" text="Create"
-			action="removeDialog" />
+			action="createServiceItem(txtServiceItemName.text,txtServiceItemAmount.text)" />
 	</panel>
 </dialog>

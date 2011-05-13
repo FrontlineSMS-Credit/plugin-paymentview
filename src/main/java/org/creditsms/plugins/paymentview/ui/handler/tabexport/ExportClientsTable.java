@@ -3,9 +3,6 @@ package org.creditsms.plugins.paymentview.ui.handler.tabexport;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.BaseSelectClientTableHandler;
 
 public class ExportClientsTable extends BaseSelectClientTableHandler {

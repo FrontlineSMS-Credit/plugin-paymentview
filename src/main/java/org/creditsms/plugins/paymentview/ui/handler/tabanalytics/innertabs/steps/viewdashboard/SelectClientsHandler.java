@@ -4,9 +4,6 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.SelectClientsTableHandler;
 
@@ -23,10 +20,7 @@ public class SelectClientsHandler extends BasePanelHandler {
 	private static final String PNL_CLIENTS_TABLE_HOLDER = "pnlClientsTableHolder";
 	private static final String XML_STEP_SELECT_CLIENT = "/ui/plugins/paymentview/analytics/viewdashboard/stepselectclients.xml";
 
-	private ClientDao clientDao;
 	private ViewDashBoardTabHandler viewDashBoardTabHandler;
-	private CustomFieldDao customFieldDao;
-	private CustomValueDao customDataDao;
 
 	private SelectClientsTableHandler selectClientsTableHandler;
 

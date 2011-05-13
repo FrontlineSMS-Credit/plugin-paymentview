@@ -55,9 +55,8 @@ public class HibernateServiceItemDao extends BaseHibernateDao<ServiceItem>
 		return super.countAll();
 	}
 
-	public void saveServiceItem(ServiceItem serviceItem)
-			throws DuplicateKeyException {
-		super.save(serviceItem);
+	public void saveServiceItem(ServiceItem serviceItem){
+		super.saveWithoutDuplicateHandling(serviceItem);
 	}
 
 	public void updateServiceItem(ServiceItem serviceItem)

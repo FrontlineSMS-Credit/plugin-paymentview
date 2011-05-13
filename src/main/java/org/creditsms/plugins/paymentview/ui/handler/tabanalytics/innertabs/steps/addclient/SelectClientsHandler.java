@@ -68,4 +68,8 @@ public class SelectClientsHandler extends BasePanelHandler {
 	public void targetedSavings() {
 		previous();
 	}
+
+	public SelectTargetSavingsHandler getSelectTargetSavingsHandler() {
+		return previousSelectTargetSavingsHandler;
+	}
 }

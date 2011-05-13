@@ -15,22 +15,18 @@
 			<label text="Creating Settings" />
 		</panel>
 		<label text="3. Create the settings for this client or group of clients" />
-		<panel columns="4" bottom="5" columns="1" gap="5" left="10"
+		<panel name="pnlFields" columns="4" bottom="5" gap="5" left="10"
 			right="10" top="10" weightx="1">
 			<label colspan="1" text="What is the Savings target / goal" />
-			<combobox colspan="3" action="evaluate(this)">
-				<choice text="Small Product - 1,995 KES"/>
-				<choice text="Large Product - 4,995 KES"/>
-				<choice text="Enter New Target"/>
-			</combobox>
+			<combobox name="cmbtargets" columns="30" colspan="3" action="evaluate"/>
 			<label colspan="1" text="What is the start date?" />
 			<panel colspan="3">
-				<textfield columns="10" name="txt_StartDate" />
+				<textfield columns="27" name="txt_StartDate" />
 				<button action="showDateSelecter(txt_StartDate)" icon="/icons/date.png" />
 			</panel>
 			<label colspan="1" text="What is the end date?" />
 			<panel colspan="3">
-				<textfield columns="10" name="txt_EndDate" />
+				<textfield columns="27" name="txt_EndDate" />
 				<button action="showDateSelecter(txt_EndDate)" icon="/icons/date.png" />
 			</panel>
 		</panel>

@@ -12,7 +12,7 @@ public class AddClientTabHandler extends BaseTabHandler {
 
 	
 	private Object createDashboardTab;
-	private static Object currentPanel;
+	private Object currentPanel;
 
 	private PaymentViewPluginController pluginController;
 

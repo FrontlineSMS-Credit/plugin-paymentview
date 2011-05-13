@@ -3,22 +3,25 @@ package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
-import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateNewTargetHandler;
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateNewServiceItemHandler;
 
 public class ConfigureServiceTabHandler extends BaseTabHandler {
 	private static final String TAB_CONFIGURE_SERVICE = "tab_configureService";
 	private static final String XML_CONFIGURE_SERVICE = "/ui/plugins/paymentview/analytics/configureservice/configurelayaway.xml";
 
 	private Object configureServiceTab;
+	private PaymentViewPluginController pluginController;
 
-	public ConfigureServiceTabHandler(UiGeneratorController ui, Object tabAnalytics) {
+	public ConfigureServiceTabHandler(UiGeneratorController ui, Object tabAnalytics, PaymentViewPluginController pluginController) {
 		super(ui);
+		this.pluginController = pluginController;
 		configureServiceTab = ui.find(tabAnalytics, TAB_CONFIGURE_SERVICE);
 		this.init();
 	}
 
 	public void createNew() {
-		ui.add(new CreateNewTargetHandler(ui)
+		ui.add(new CreateNewServiceItemHandler(ui, pluginController)
 				.getDialog());
 	}
 
