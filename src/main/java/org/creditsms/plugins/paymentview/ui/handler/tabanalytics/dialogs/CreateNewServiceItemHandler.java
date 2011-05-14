@@ -8,7 +8,6 @@ import net.frontlinesms.ui.UiGeneratorController;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
-import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.addclient.CreateSettingsHandler;
 
 public class CreateNewServiceItemHandler implements ThinletUiEventHandler {
 	private static final String XML_CREATE_NEW_TARGET = "/ui/plugins/paymentview/analytics/dialogs/dlgCreateNewTarget.xml";
@@ -17,15 +16,6 @@ public class CreateNewServiceItemHandler implements ThinletUiEventHandler {
 	private UiGeneratorController ui;
 
 	private PaymentViewPluginController pluginController;
-	private CreateSettingsHandler createSettingsHandler;
-
-	public CreateNewServiceItemHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, CreateSettingsHandler createSettingsHandler) {
-		this.ui = ui;
-		this.pluginController = pluginController;
-		this.createSettingsHandler = createSettingsHandler;
-		init();
-		refresh();
-	}
 
 	public CreateNewServiceItemHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController) {
@@ -68,12 +58,9 @@ public class CreateNewServiceItemHandler implements ThinletUiEventHandler {
 			ServiceItem serviceItem = new ServiceItem();
 			serviceItem.setTargetName(txtServiceItemName);
 			serviceItem.setAmount(new BigDecimal(txtServiceItemAmount));
+			
 			serviceItemDao.saveServiceItem(serviceItem);
-			
-			if (createSettingsHandler != null){
-				createSettingsHandler.addChoices();
-			}
-			
+								
 			ui.alert("Item Created successfully!");			
 			removeDialog();
 		}else{

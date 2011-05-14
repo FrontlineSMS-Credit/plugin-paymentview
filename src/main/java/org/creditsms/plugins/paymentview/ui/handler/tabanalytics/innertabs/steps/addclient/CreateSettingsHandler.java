@@ -2,6 +2,9 @@ package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.step
 
 import java.util.List;
 
+import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.events.EventObserver;
+import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
@@ -10,7 +13,7 @@ import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateNewServiceItemHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
 
-public class CreateSettingsHandler extends BasePanelHandler {
+public class CreateSettingsHandler extends BasePanelHandler implements EventObserver{
 	private static final String ENTER_NEW_TARGET = "Enter New Target";
 	private static final String XML_STEP_CREATE_SETTINGS = "/ui/plugins/paymentview/analytics/addclient/stepcreatesettings.xml";
 	private final AddClientTabHandler addClientTabHandler;
@@ -25,6 +28,8 @@ public class CreateSettingsHandler extends BasePanelHandler {
 		this.pluginController = pluginController;
 		this.addClientTabHandler = addClientTabHandler;
 		this.previousSelectClientsHandler = selectClientsHandler;
+		ui.getFrontlineController().getEventBus().registerObserver(this);
+		
 		this.loadPanel(XML_STEP_CREATE_SETTINGS);
 		init();
 	}
@@ -51,7 +56,7 @@ public class CreateSettingsHandler extends BasePanelHandler {
 		Object attachedObject = ui.getAttachedObject(item);
 		
 		if (attachedObject.equals(ENTER_NEW_TARGET)) {
-			ui.add(new CreateNewServiceItemHandler((UiGeneratorController) ui, pluginController, this)
+			ui.add(new CreateNewServiceItemHandler((UiGeneratorController) ui, pluginController)
 					.getDialog());
 		}
 	}
@@ -98,5 +103,19 @@ public class CreateSettingsHandler extends BasePanelHandler {
 
 	public Object getPanelFieldsComponent() {
 		return pnlFields;
+	}
+
+	public void notify(FrontlineEventNotification notification) {
+		if (!(notification instanceof EntitySavedNotification)) {
+			return;
+		}
+
+		Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
+		if (!(entity instanceof ServiceItem)) {
+			return;
+		}else{
+			this.addChoices();
+			ui.add(cmbtargets, ui.createComboboxChoice(ENTER_NEW_TARGET, ENTER_NEW_TARGET));
+		}
 	}
 }

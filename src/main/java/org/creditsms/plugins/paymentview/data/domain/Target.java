@@ -31,17 +31,13 @@ public class Target {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
-
 	@Column(name = FIELD_START_DATE)
 	private long startDate;
-	
 	@Column(name = FIELD_END_DATE)
 	private long endDate;
-	
 	@OneToOne
 	@JoinColumn(name = FIELD_ACCOUNT)
 	private Account account;
-	
 	@ManyToOne
 	@JoinColumn(name = FIELD_SERVICE_ITEM)
 	private ServiceItem serviceItem;
