@@ -1,42 +1,54 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<dialog bottom="9" close="removeDialog(this)" 
-	columns="3" gap="15" left="9" name="clientDetailsDialog"
-	right="9" text="Configure Mobile Payment Account"
+<dialog bottom="9" close="removeDialog(this)" icon="/icons/keyword.png"
+	columns="1" gap="15" left="9" name="clientDetailsDialog"
+	right="9" text="Configure Payment Account"
 	top="9" resizable="true" modal="true" closable="true">
-
-	<label text="Name:" />
-	<label name="txtName" text="" colspan="2"/>
 	
-	<label text="Phone Number:" />
-	<label name="txtNumber" text="" colspan="2"/>
-	
-	<label text="Balance:" />
-	<label name="txtBalance" text="" colspan="2"/>
-	
-	<label text="Type:" />
-	<label name="txtType" text="" colspan="2"/>
-	
-	<label text="SYSTEM" colspan="3"/>
-	<label text="Operator:" />
-	<label name="txtOperator" text="" colspan="2"/>
-	
-	<label text="Geography:" />
-	<label name="txtGeography" text="" colspan="2"/>
-	
-	<label text="Outgoing Payments:" />
-	<label name="txtOutgoingPayments" text="" colspan="2"/>
-	
-	<label text="Incoming Payments:" />
-	<label name="txtIncomingPayments" text="" colspan="2"/>
-	
-	<panel colspan="3" columns="1" weightx="1">
-		<button icon="/icons/keyword.png" text="Update Account PIN"
-			action="updateAccPIN" />
-		<button icon="/icons/keyword.png" text="Update Authorization Settings"
-			action="updateAuthSettings" />
-		<button icon="/icons/delete.png" text="Delete"
-			action="deteteAccount" />
-		<button text="Close"
-			action="removeDialog" />
+	<panel columns="1" gap="10" weightx="1">
+		<panel columns="3"  gap="10" weightx="1">
+			<label text="Name:" />
+			<label name="txtName" text="" colspan="2"/>
+			
+			<label text="Phone Number:" />
+			<label name="txtNumber" text="" colspan="2"/>
+			
+			<panel weightx="1" colspan="3"/>
+			
+			<label text="Balance:" />
+			<label name="txtBalance" text="" colspan="2"/>
+			
+			<label text="Type:" />
+			<label name="txtType" text="" colspan="2"/>
+			
+			<panel weightx="1" colspan="3"/>
+			
+			<label text="SYSTEM" colspan="3" font="bold"/>
+			<label text="Operator:" />
+			<label name="txtOperator" text="" colspan="2"/>
+			
+			<label text="Geography:" />
+			<label name="txtGeography" text="" colspan="2"/>
+			
+			<label text="Outgoing Payments:" />
+			<label name="txtOutgoingPayments" text="" colspan="2"/>
+			
+			<label text="Incoming Payments:" />
+			<label name="txtIncomingPayments" text="" colspan="2"/>
+		</panel>
+		<panel columns="1" weightx="1" gap="10">
+			<button text="Update Account PIN"
+				action="updateAccPIN"/>
+		</panel>
+		<panel columns="1" weightx="1" gap="10">
+			<button text="Update Authorization Settings"
+				action="updateAuthSettings" />
+		</panel>
+		<panel weightx="1">
+			<button icon="/icons/delete.png" text="Delete"
+				action="deleteAccount" weightx="1"/>
+			<panel weightx="1"/>
+			<button text="Close" icon="/icons/cross.png"
+				action="removeDialog" weightx="1"/>
+		</panel>
 	</panel>
 </dialog>

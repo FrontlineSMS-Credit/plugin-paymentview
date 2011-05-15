@@ -7,7 +7,7 @@ import net.frontlinesms.messaging.FrontlineMessagingServiceStatus;
 import net.frontlinesms.messaging.mms.email.MmsEmailServiceStatus;
 import net.frontlinesms.messaging.sms.SmsService;
 import net.frontlinesms.messaging.sms.modem.SmsModemStatus;
-import net.frontlinesms.payment.PaymentService;
+import net.frontlinesms.payment.PaymentServiceAccount;
 import net.frontlinesms.ui.Icon;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.UiGeneratorControllerConstants;
@@ -17,8 +17,7 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.ConfigureAccountHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings.MobilePaymentService;
 
 public class SettingsTabHandler extends BaseTabHandler {
@@ -27,10 +26,7 @@ public class SettingsTabHandler extends BaseTabHandler {
 
 	private AccountDao accountDao;
 
-	private ClientDao clientDao;
-	private IncomingPaymentDao incomingPaymentDao;
-	
-	private List<PaymentService> paymentServices;
+	private List<PaymentServiceAccount> paymentServices;
 
 	private Object settingsTab;
 	private Object settingsTableComponent;
@@ -40,14 +36,14 @@ public class SettingsTabHandler extends BaseTabHandler {
 		super(ui);
 		this.pluginController = pluginController;
 		
-		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.accountDao = pluginController.getAccountDao();
-		this.clientDao = pluginController.getClientDao();
-		paymentServices = new ArrayList<PaymentService>(0);
+		this.paymentServices = new ArrayList<PaymentServiceAccount>(0);
 		init();
 	}
 
 	public void configureAccount() {
+		ConfigureAccountHandler configureAccountHandler = new ConfigureAccountHandler(ui, pluginController);
+		configureAccountHandler.showDialog();
 	}
 
 	public void createNew() {
@@ -63,8 +59,7 @@ public class SettingsTabHandler extends BaseTabHandler {
 			accountDao.deleteAccount(a);
 		}
 
-		ui.removeDialog(ui
-				.find(UiGeneratorControllerConstants.COMPONENT_CONFIRM_DIALOG));
+		ui.removeDialog(ui.find(UiGeneratorControllerConstants.COMPONENT_CONFIRM_DIALOG));
 		ui.infoMessage("You have succesfully deleted from the operator!");
 		this.refresh();
 	}
@@ -81,17 +76,18 @@ public class SettingsTabHandler extends BaseTabHandler {
 		return settingsTab;
 	}
 	
-	public void addPaymentService(PaymentService paymentService) {
+	public void addPaymentService(PaymentServiceAccount paymentService) {
 		if (!paymentServices.contains(paymentService)){
 			paymentServices.add(paymentService);
 		}else{
 			ui.getFrontlineController().getEventBus().unregisterObserver(paymentService);
 			paymentService = null;
 		}
+		
 		refresh();
 	}
 	
-	public Object getRow(PaymentService paymentService){
+	public Object getRow(PaymentServiceAccount paymentService){
 		SmsService service = paymentService.getSmsService();
 		
 		Object cellServiceName = ui.createTableCell(service.getServiceName());
@@ -132,7 +128,7 @@ public class SettingsTabHandler extends BaseTabHandler {
 	@Override
 	public void refresh() {
 		ui.removeAll(settingsTableComponent);
-		for(PaymentService paymentService : paymentServices){
+		for(PaymentServiceAccount paymentService : paymentServices){
 			ui.add(settingsTableComponent, getRow(paymentService));
 		}
 	}

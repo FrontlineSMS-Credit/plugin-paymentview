@@ -30,7 +30,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	protected CustomFieldDao customFieldDao;
 	protected CustomValueDao customValueDao;
 	protected Object tableClientsPanel;
-	protected List<Client> selectedUsers;
+	protected List<Client> clients;
 
 	public BaseClientTable(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		this.ui = ui;
@@ -38,7 +38,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 		this.customFieldDao = pluginController.getCustomFieldDao();
 		this.customValueDao = pluginController.getCustomValueDao();
 		
-		this.selectedUsers = new ArrayList<Client>();
+		this.clients = new ArrayList<Client>();
 		
 		this.init();
 	}
@@ -72,7 +72,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	}
 
 	protected List<Client> getClients(String filter, int startIndex, int limit) {
-		if (selectedUsers.isEmpty()){
+		if (clients.isEmpty()){
 			if (!filter.trim().isEmpty()) {
 				return this.clientDao.getClientsByName(filter, startIndex, limit);
 			}else{
@@ -80,9 +80,9 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 			}
 		}else{
 			if (filter.trim().isEmpty()) {
-				return selectedUsers.subList(startIndex, startIndex);
+				return clients.subList(startIndex, startIndex);
 			}else{
-				List<Client> subList = selectedUsers.subList(startIndex, startIndex);
+				List<Client> subList = clients.subList(startIndex, startIndex);
 				List<Client> copy = new ArrayList<Client>(); 
 				for (Client c : subList) {
 					if (c.getName().equalsIgnoreCase(filter)) {

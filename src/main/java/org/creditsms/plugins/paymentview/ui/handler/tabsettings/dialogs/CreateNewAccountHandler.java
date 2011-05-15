@@ -18,7 +18,6 @@ public class CreateNewAccountHandler extends BaseDialog {
 	private void init() {
 		dialogComponent = ui.loadComponentFromFile(XML_CONFIGURE_ACCOUNT, this);
 	}
-
-	private void refresh() {
-	}
+	
+	protected void refresh() { }
 }

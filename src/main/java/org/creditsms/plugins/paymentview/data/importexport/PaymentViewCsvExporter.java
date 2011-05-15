@@ -32,7 +32,6 @@ import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
-import org.creditsms.plugins.paymentview.utils.StringUtil;
 
 public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 	/**
@@ -70,7 +69,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 			items.add(InternationalisationUtils.getI18nString(COMMON_ACCOUNTS));
 
 			for (CustomField cf : usedCustomFields) {
-				items.add(StringUtil.getMarkerFromString(cf.getReadableName()));
+				items.add(PaymentViewUtils.getMarkerFromString(cf.getReadableName()));
 				items.add(cf.getReadableName());
 			}
 			String[] str = new String[items.size()];
@@ -101,13 +100,13 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						curr = cfi.next();
 						for (CustomValue cv : allCustomValues) {
 							if (cv.getCustomField().equals(curr)) {
-								items.add(StringUtil.getMarkerFromString(curr.getReadableName()));
+								items.add(PaymentViewUtils.getMarkerFromString(curr.getReadableName()));
 								items.add(cv.getStrValue());
 								markerReplaced = true;
 							}
 						}
 						if (!markerReplaced) {
-							items.add(StringUtil.getMarkerFromString(curr.getReadableName()));
+							items.add(PaymentViewUtils.getMarkerFromString(curr.getReadableName()));
 							items.add("");
 						}
 					}

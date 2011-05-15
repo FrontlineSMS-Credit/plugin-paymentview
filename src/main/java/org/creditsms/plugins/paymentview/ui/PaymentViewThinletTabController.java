@@ -4,6 +4,7 @@
  */
 package org.creditsms.plugins.paymentview.ui;
 
+import net.frontlinesms.BuildProperties;
 import net.frontlinesms.plugins.BasePluginThinletTabController;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -12,7 +13,6 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.IncomingPaymentsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.AnalyticsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.tabexport.ExportTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.OutgoingPaymentsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.SettingsTabHandler;
 
@@ -32,7 +32,6 @@ public class PaymentViewThinletTabController extends
 	private OutgoingPaymentsTabHandler outgoingPayTab;
 	private IncomingPaymentsTabHandler incomingPayTab;
 	private ClientsTabHandler clientsTab;
-	private ExportTabHandler exportTab;
 	private AnalyticsTabHandler analyticsTab;
 	
 	private Object mainPane;
@@ -70,9 +69,12 @@ public class PaymentViewThinletTabController extends
 		outgoingPayTab.refresh();
 		ui.add(mainPane, outgoingPayTab.getTab());
 
-		exportTab = new ExportTabHandler(ui, getPluginController());
-		exportTab.refresh();
-		ui.add(mainPane, exportTab.getTab());
+		/** UNCOMMENT FOR VERSION 0.1.3 
+		* exportTab = new ExportTabHandler(ui, getPluginController());
+		* exportTab.refresh();
+		* ui.add(mainPane, exportTab.getTab());
+		* 
+		*/
 
 		analyticsTab = new AnalyticsTabHandler(ui, getPluginController());
 		analyticsTab.refresh();
@@ -82,9 +84,12 @@ public class PaymentViewThinletTabController extends
 		settingsTab.refresh();
 		ui.add(mainPane, settingsTab.getTab());
 		
-		cdtController = new PvDebugTabController(ui);
-		cdtController.setMessageDao(ui.getFrontlineController().getMessageDao());
-		ui.add(mainPane, cdtController.getTab());
+		//For Tests Only
+		if(BuildProperties.getInstance().isSnapshot() && getPluginController().getClientDao().getClientCount()==0) {
+			cdtController = new PvDebugTabController(ui);
+			cdtController.setMessageDao(ui.getFrontlineController().getMessageDao());
+			ui.add(mainPane, cdtController.getTab());
+		}
 	}
 
 	/**

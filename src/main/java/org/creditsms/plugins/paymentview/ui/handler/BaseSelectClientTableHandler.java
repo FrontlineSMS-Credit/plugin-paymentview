@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.frontlinesms.ui.UiGeneratorController;
@@ -14,8 +15,11 @@ public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 	protected static final String ICONS_CHECKBOX_SELECTED_PNG = "/icons/checkbox-selected.png";
 	protected static final String ICONS_CHECKBOX_UNSELECTED_PNG = "/icons/checkbox-unselected.png";
 
+	protected List<Client> selectedClients;
+	
 	public BaseSelectClientTableHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui, pluginController);		
+		selectedClients = new ArrayList<Client>(); 
 	}
 
 	@Override
@@ -119,11 +123,11 @@ public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 		Client attachedClient = (Client) ui.getAttachedObject(row);
 		if (attachedClient.isSelected()) {
 			attachedClient.setSelected(false);
-			selectedUsers.remove(attachedClient);
+			selectedClients.remove(attachedClient);
 			markCell(cell, false);
 		} else {
 			attachedClient.setSelected(true);
-			selectedUsers.add(attachedClient);
+			selectedClients.add(attachedClient);
 			markCell(cell, true);
 		}
 	
@@ -131,7 +135,7 @@ public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 	}
 
 	public List<Client> getSelectedUsers() {
-		return this.selectedUsers;
+		return this.selectedClients;
 	}
 
 }

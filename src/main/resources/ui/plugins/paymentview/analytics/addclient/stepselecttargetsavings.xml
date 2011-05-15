@@ -13,7 +13,7 @@
 		<label text="1. Select the Service for client or a group of clients" />
 		<panel columns="2" gap="5" left="10" right="10" weightx="1">
 			<label colspan="2" text="Incoming Payment" font="Bold"/>
-			<checkbox group="incomingPay" text="Targeted Savings / Layaway" />
+			<checkbox group="incomingPay" name="target_savings_layaway" text="Targeted Savings / Layaway" />
 		</panel>
 	</panel>
 

@@ -12,7 +12,7 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
-import org.creditsms.plugins.paymentview.utils.StringUtil;
+import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
 public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 	private static final String ENTER_NEW_FIELD = "Enter New Field";
@@ -57,7 +57,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		c = 0;
 		for (Field field : Client.class.getDeclaredFields()) {
 			if (field.isAnnotationPresent(Column.class)) {
-				addField(StringUtil.getReadableFieldName(field.getName()));
+				addField(PaymentViewUtils.getReadableFieldName(field.getName()));
 			}
 		}
 

@@ -13,7 +13,7 @@ import javax.persistence.Table;
 
 import net.frontlinesms.data.EntityField;
 
-import org.creditsms.plugins.paymentview.utils.StringUtil;
+import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
 /**
  * @Author Roy
@@ -98,7 +98,7 @@ public class CustomField {
 	}
 
 	public String getCamelCaseName() {
-		return StringUtil.toCamelCase(this.readableName);
+		return PaymentViewUtils.toCamelCase(this.readableName);
 	}
 
 	public void setUsed(boolean used) {

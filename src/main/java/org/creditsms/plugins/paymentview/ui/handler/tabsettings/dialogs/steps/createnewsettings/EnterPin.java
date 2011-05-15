@@ -1,7 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings;
 
 import net.frontlinesms.messaging.sms.modem.SmsModem;
-import net.frontlinesms.payment.PaymentService;
+import net.frontlinesms.payment.PaymentServiceAccount;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
@@ -39,7 +39,7 @@ public class EnterPin extends BaseDialog {
 
 	public void setUpThePaymentService(final String pin, final String vPin) {			
 			if(checkValidityOfPinFields(pin, vPin)){
-				PaymentService paymentService = previousMobilePaymentService.getPaymentService();
+				PaymentServiceAccount paymentService = previousMobilePaymentService.getPaymentService();
 				paymentService.setPin(pin);
 				paymentService.setSmsService((SmsModem) previousMobilePaymentService.getSmsService());
 
@@ -55,7 +55,7 @@ public class EnterPin extends BaseDialog {
 			}
 	}
 	
-	PaymentService getPaymentService() {
+	PaymentServiceAccount getPaymentService() {
 		return previousMobilePaymentService.getPaymentService();
 	}
 	

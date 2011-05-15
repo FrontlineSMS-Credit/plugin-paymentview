@@ -16,9 +16,11 @@ import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddCl
 public class CreateSettingsHandler extends BasePanelHandler implements EventObserver{
 	private static final String ENTER_NEW_TARGET = "Enter New Target";
 	private static final String XML_STEP_CREATE_SETTINGS = "/ui/plugins/paymentview/analytics/addclient/stepcreatesettings.xml";
+	
 	private final AddClientTabHandler addClientTabHandler;
 	private final SelectClientsHandler previousSelectClientsHandler;
 	private final PaymentViewPluginController pluginController;
+	
 	private Object cmbtargets;
 	private Object pnlFields;
 
@@ -105,6 +107,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		return pnlFields;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void notify(FrontlineEventNotification notification) {
 		if (!(notification instanceof EntitySavedNotification)) {
 			return;

@@ -1,46 +1,31 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs;
 
-import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
-public class ConfigureAccountHandler implements ThinletUiEventHandler {
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
+
+public class ConfigureAccountHandler extends BaseDialog {
 	private static final String XML_CONFIGURE_ACCOUNT = "/ui/plugins/paymentview/settings/dialogs/dlgConfigureAccount.xml";
 
-	private Object dialogComponent;
-	private UiGeneratorController ui;
+	private final PaymentViewPluginController pluginController;
 
-	public ConfigureAccountHandler(UiGeneratorController ui) {
-		this.ui = ui;
+	public ConfigureAccountHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
+		super(ui);
+		this.pluginController = pluginController;
 		init();
 		refresh();
 	}
 
-	public void deteteAccount() {
+	public void deleteAccount() {
 		// TODO Auto-generated method stub
-	}
-
-	/**
-	 * @return the customizeClientDialog
-	 */
-	public Object getDialog() {
-		return dialogComponent;
 	}
 
 	private void init() {
 		dialogComponent = ui.loadComponentFromFile(XML_CONFIGURE_ACCOUNT, this);
 	}
 
-	private void refresh() {
-	}
-
-	/** Remove the dialog from view. */
-	public void removeDialog() {
-		this.removeDialog(this.dialogComponent);
-	}
-
-	/** Remove a dialog from view. */
-	public void removeDialog(Object dialog) {
-		this.ui.removeDialog(dialog);
+	protected void refresh() {
 	}
 
 	public void updateAccPIN() {
