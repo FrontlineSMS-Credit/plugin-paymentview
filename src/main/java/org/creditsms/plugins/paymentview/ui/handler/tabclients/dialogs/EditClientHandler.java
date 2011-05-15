@@ -28,14 +28,12 @@ public class EditClientHandler extends BaseDialog{
 
 	private ClientDao clientDao;
 	private Client client;
-	private Object dialogComponent;
 	private boolean editMode;
 
 	private Object fieldFirstName;
 	private Object fieldListAccounts;
 	private Object fieldOtherName;
 	private Object fieldPhoneNumber;
-	private UiGeneratorController ui;
 
 	private ClientsTabHandler clientsTabHandler;
 
@@ -78,13 +76,6 @@ public class EditClientHandler extends BaseDialog{
 	 */
 	public Client getClientObj() { 
 		return client;
-	}
-
-	/**
-	 * @return the customizeClientDialog
-	 */
-	public Object getDialog() {
-		return dialogComponent;
 	}
 
 	public void init() {
