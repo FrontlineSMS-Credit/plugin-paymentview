@@ -25,13 +25,9 @@ public class TargetAnalytics {
 	private IncomingPaymentDao incomingPaymentDao;
 	
 	public BigDecimal getPercentageToGo(long tartgetId){
-	    String accountNumber = getAccountNumber(tartgetId);
-	    
 	    BigDecimal totalTargetCost = targetDao.getTargetById(tartgetId).
 	    		getServiceItem().getAmount();
-	    
-		List <IncomingPayment> incomingPayments = incomingPaymentDao.
-				getIncomingPaymentsByAccountNumber(accountNumber);
+	    List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(tartgetId);
 		
 		return calculatePercentageToGo(totalTargetCost, calculateAmount(incomingPayments));
 	}
@@ -49,33 +45,32 @@ public class TargetAnalytics {
 	}
 	 
 	public BigDecimal getAmountSaved(long tartgetId){
-	    String accountNumber = getAccountNumber(tartgetId);
-	    
-		List <IncomingPayment> incomingPayments = incomingPaymentDao.
-				getIncomingPaymentsByAccountNumber(accountNumber);
-		
+	    List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(tartgetId);
 		return calculateAmount(incomingPayments);
 	}
 	
 	public BigDecimal getLastAmountPaid(long tartgetId){
-	    String accountNumber = getAccountNumber(tartgetId);
-	    
-	    List <IncomingPayment> incomingPayments = incomingPaymentDao.
-		getIncomingPaymentsByAccountNumber(accountNumber);
+	    List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(tartgetId);
 	    int lastPoz = incomingPayments.size()-1;
 
 	    return incomingPayments.get(lastPoz).getAmountPaid();
 	}
 	
-	public boolean isStatusGood(long tartgetId){
+	private List<IncomingPayment> getIncomingPaymentsByTargetId(long tartgetId){
 	    String accountNumber = getAccountNumber(tartgetId);
 	    
 		List <IncomingPayment> incomingPayments = incomingPaymentDao.
 				getIncomingPaymentsByAccountNumber(accountNumber);
 		
+		return incomingPayments;
+	}
+	
+	public boolean isStatusGood(long tartgetId){
+		List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(tartgetId);
+		
 		BigDecimal amountPaid = calculateAmount(incomingPayments);
 		BigDecimal totalTargetCost = targetDao.getTargetById(tartgetId).
-		getServiceItem().getAmount();
+				getServiceItem().getAmount();
 		
 		BigDecimal amountRem = totalTargetCost.subtract(amountPaid);
 		long remDays = getDaysRemaining(tartgetId);
@@ -84,8 +79,10 @@ public class TargetAnalytics {
 		long startTime = targetDao.getTargetById(tartgetId).getStartDate().getTime();
 		long targetDays = getDateDiffDays(startTime, endTime);
 		
-		BigDecimal initAmntRate = totalTargetCost.divide(BigDecimal.valueOf(targetDays), 2, RoundingMode.HALF_UP);
-		BigDecimal remAmntRate = amountRem.divide(BigDecimal.valueOf(remDays), 2, RoundingMode.HALF_UP);
+		BigDecimal initAmntRate = totalTargetCost.divide(BigDecimal.
+				valueOf(targetDays), 2, RoundingMode.HALF_UP);
+		BigDecimal remAmntRate = amountRem.divide(BigDecimal.
+				valueOf(remDays), 2, RoundingMode.HALF_UP);
 
 		return initAmntRate.compareTo(remAmntRate) >= 0;
 	}
