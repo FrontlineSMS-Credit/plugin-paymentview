@@ -5,24 +5,21 @@ import java.util.List;
 
 import net.frontlinesms.ui.UiGeneratorController;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 
 public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 
 	protected static final String ICONS_CHECKBOX_SELECTED_PNG = "/icons/checkbox-selected.png";
 	protected static final String ICONS_CHECKBOX_UNSELECTED_PNG = "/icons/checkbox-unselected.png";
-	protected List<Client> selectedUsers;
 
-	public BaseSelectClientTableHandler(UiGeneratorController ui,
-			ClientDao clientDao, CustomFieldDao customFieldDao,
-			CustomValueDao customValueDao) {
-		super(ui, clientDao, customFieldDao, customValueDao);
-		selectedUsers = new ArrayList<Client>();
+	protected List<Client> selectedClients;
+	
+	public BaseSelectClientTableHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
+		super(ui, pluginController);		
+		selectedClients = new ArrayList<Client>(); 
 	}
 
 	@Override
@@ -126,11 +123,11 @@ public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 		Client attachedClient = (Client) ui.getAttachedObject(row);
 		if (attachedClient.isSelected()) {
 			attachedClient.setSelected(false);
-			selectedUsers.remove(attachedClient);
+			selectedClients.remove(attachedClient);
 			markCell(cell, false);
 		} else {
 			attachedClient.setSelected(true);
-			selectedUsers.add(attachedClient);
+			selectedClients.add(attachedClient);
 			markCell(cell, true);
 		}
 	
@@ -138,7 +135,7 @@ public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 	}
 
 	public List<Client> getSelectedUsers() {
-		return this.selectedUsers;
+		return this.selectedClients;
 	}
 
 }

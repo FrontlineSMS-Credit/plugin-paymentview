@@ -3,31 +3,31 @@ package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.step
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.SelectClientsTableHandler;
 
 public class SelectClientsHandler extends BasePanelHandler {
 	private static final String PNL_CLIENTS_TABLE_HOLDER = "pnlClientsTableHolder";
 	private static final String XML_STEP_SELECT_CLIENT = "/ui/plugins/paymentview/analytics/addclient/stepselectclients.xml";
-	private ClientDao clientDao;
 	private final AddClientTabHandler addClientTabHandler;
 	private SelectClientsTableHandler selectClientsTableHandler;
-	private CustomFieldDao customFieldDao;
-	private CustomValueDao customDataDao;
 	private Object pnlClientsTableHolder;
+	private final PaymentViewPluginController pluginController;
+	private SelectTargetSavingsHandler previousSelectTargetSavingsHandler;
 
 	protected SelectClientsHandler(UiGeneratorController ui,
-			ClientDao clientDao, CustomFieldDao customFieldDao,
-			CustomValueDao customDataDao,
-			AddClientTabHandler addClientTabHandler) {
+			PaymentViewPluginController pluginController, AddClientTabHandler addClientTabHandler, 
+			SelectTargetSavingsHandler selectTargetSavingsHandler) {
+		this(ui, pluginController, addClientTabHandler);
+		previousSelectTargetSavingsHandler = selectTargetSavingsHandler;
+	}
+	
+	protected SelectClientsHandler(UiGeneratorController ui,
+			PaymentViewPluginController pluginController, AddClientTabHandler addClientTabHandler) {
 		super(ui);
-		this.customFieldDao = customFieldDao;
-		this.customDataDao = customDataDao;
+		this.pluginController = pluginController;
 		this.addClientTabHandler = addClientTabHandler;
-		this.clientDao = clientDao;
 		this.loadPanel(XML_STEP_SELECT_CLIENT);
 		initialise();
 		refresh();
@@ -35,8 +35,7 @@ public class SelectClientsHandler extends BasePanelHandler {
 
 	private void initialise() {
 		this.selectClientsTableHandler = new SelectClientsTableHandler(
-				(UiGeneratorController) ui, clientDao, customFieldDao,
-				customDataDao);
+				(UiGeneratorController) ui, pluginController);
 		pnlClientsTableHolder = this.find(PNL_CLIENTS_TABLE_HOLDER);
 
 		this.ui.add(pnlClientsTableHolder,
@@ -54,14 +53,12 @@ public class SelectClientsHandler extends BasePanelHandler {
 
 	public void next() {
 		addClientTabHandler.setCurrentStepPanel(new CreateSettingsHandler(
-				(UiGeneratorController) ui, clientDao, customFieldDao, customDataDao, addClientTabHandler)
+				(UiGeneratorController) ui, this.pluginController, addClientTabHandler, this)
 				.getPanelComponent());
 	}
 
 	public void previous() {
-		addClientTabHandler.setCurrentStepPanel(new SelectTargetSavingsHandler(
-				(UiGeneratorController) ui, clientDao, customDataDao, customFieldDao, addClientTabHandler)
-				.getPanelComponent());
+		addClientTabHandler.setCurrentStepPanel(previousSelectTargetSavingsHandler.getPanelComponent());
 	}
 
 	public void selectService() {
@@ -70,5 +67,9 @@ public class SelectClientsHandler extends BasePanelHandler {
 
 	public void targetedSavings() {
 		previous();
+	}
+
+	public SelectTargetSavingsHandler getSelectTargetSavingsHandler() {
+		return previousSelectTargetSavingsHandler;
 	}
 }

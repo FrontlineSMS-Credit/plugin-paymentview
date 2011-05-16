@@ -1,7 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings;
 
 import net.frontlinesms.messaging.sms.modem.SmsModem;
-import net.frontlinesms.payment.PaymentService;
+import net.frontlinesms.payment.PaymentServiceAccount;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
@@ -9,6 +9,7 @@ import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.SettingsTabHandler;
 
 public class EnterPin extends BaseDialog {
+	private static final int MAX_LENGTH = 4;
 	private static final String XML_ENTER_PIN = "/ui/plugins/paymentview/settings/dialogs/createnewpaymentsteps/dlgCreateNewAccountStep2.xml";
 	private final PaymentViewPluginController pluginController;
 	private MobilePaymentService previousMobilePaymentService;
@@ -38,11 +39,12 @@ public class EnterPin extends BaseDialog {
 
 	public void setUpThePaymentService(final String pin, final String vPin) {			
 			if(checkValidityOfPinFields(pin, vPin)){
-				PaymentService paymentService = previousMobilePaymentService.getPaymentService();
+				PaymentServiceAccount paymentService = previousMobilePaymentService.getPaymentService();
 				paymentService.setPin(pin);
 				paymentService.setSmsService((SmsModem) previousMobilePaymentService.getSmsService());
 
 				paymentService.setClientDao(pluginController.getClientDao());
+				paymentService.setAccountDao(pluginController.getAccountDao());
 				paymentService.setIncomingPaymentDao(pluginController.getIncomingPaymentDao());
 				
 				ui.getFrontlineController().getEventBus().registerObserver(paymentService);				
@@ -53,7 +55,7 @@ public class EnterPin extends BaseDialog {
 			}
 	}
 	
-	PaymentService getPaymentService() {
+	PaymentServiceAccount getPaymentService() {
 		return previousMobilePaymentService.getPaymentService();
 	}
 	
@@ -62,11 +64,11 @@ public class EnterPin extends BaseDialog {
 	}
 	
 	private boolean checkValidityOfPinFields(String pin, String vPin){
-		if(pin.trim().length()==0 || pin.trim().length()<4){
+		if(pin.isEmpty() || pin.length() < MAX_LENGTH){
 			return false;
-		}else if(vPin.trim().length()==0 || vPin.trim().length()<4){
+		}else if(vPin.isEmpty() || vPin.length() < MAX_LENGTH){
 			return false;
-		}else if(vPin.trim().length()==4 && vPin.trim().length()==4){
+		}else if(pin.length() == vPin.length() & vPin.length() == MAX_LENGTH){
 			if(vPin.equals(pin)){
 				return true;
 			}else{
@@ -77,10 +79,10 @@ public class EnterPin extends BaseDialog {
 	}
 	
 	
-	public void assertMaxLength(Object component, int maxLength) {
+	public void assertMaxLength(Object component) {
 		String text = ui.getText(component);
-		if(text.length() > maxLength) {
-			ui.setText(component, text.substring(0, maxLength));
+		if(!text.isEmpty() & text.length() > MAX_LENGTH) {
+			ui.setText(component, text.substring(0, MAX_LENGTH - 1));
 		}
 	}
 }

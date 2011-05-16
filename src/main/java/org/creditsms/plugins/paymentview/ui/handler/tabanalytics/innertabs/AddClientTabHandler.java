@@ -4,9 +4,6 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.addclient.SelectTargetSavingsHandler;
 
 public class AddClientTabHandler extends BaseTabHandler {
@@ -15,19 +12,13 @@ public class AddClientTabHandler extends BaseTabHandler {
 
 	
 	private Object createDashboardTab;
-	private static Object currentPanel;
+	private Object currentPanel;
 
-	private ClientDao clientDao;
-
-
-	private final CustomValueDao customValueDao;
-	private final CustomFieldDao customFieldDao;
+	private PaymentViewPluginController pluginController;
 
 	public AddClientTabHandler(UiGeneratorController ui, Object tabAnalytics, final PaymentViewPluginController pluginController) {
 		super(ui);
-		this.clientDao = pluginController.getClientDao();
-		this.customValueDao = pluginController.getCustomValueDao();
-		this.customFieldDao = pluginController.getCustomFieldDao();
+		this.pluginController = pluginController;
 		createDashboardTab = ui.find(tabAnalytics, TAB_CREATE_DASHBOARD);
 		this.init();
 	}
@@ -37,7 +28,7 @@ public class AddClientTabHandler extends BaseTabHandler {
 
 	@Override
 	protected Object initialiseTab() {
-		setCurrentStepPanel(new SelectTargetSavingsHandler(ui, clientDao, customValueDao, customFieldDao, this)
+		setCurrentStepPanel(new SelectTargetSavingsHandler(ui, pluginController, this)
 				.getPanelComponent());
 		return createDashboardTab;
 	}

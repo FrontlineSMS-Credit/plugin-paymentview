@@ -17,6 +17,13 @@ public class MpesaPersonalService extends MpesaPaymentService {
 					"(([1-2]?[1-9]|3[0-1])/([1-9]|1[0-2])/(1[1-2]))\\s(at)\\s([1]?\\d:[0-5]\\d)\\s(AM|PM)" +
 					"\nNew M-PESA balance Ksh[,|[0-9]]+";
 
+	public MpesaPersonalService(){
+		this.setPaymentAccountType(PaymentAccountType.PERSONAL);
+		this.setGeography("Kenya");
+		this.setOperator("Safaricom");
+		this.setName("M-Pesa");
+	}
+	
 	@Override
 	Account getAccount(FrontlineMessage message) {
 		Client client = clientDao.getClientByPhoneNumber(getPhoneNumber(message));
@@ -57,9 +64,5 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	@Override
 	boolean isMessageTextValid(String messageText) {
 		return messageText.matches(PERSONAL_REGEX_PATTERN);
-	}
-	
-	public String toString(){
-		return "MPesa Safaricom - Kenya: Personal Service";
 	}
 }

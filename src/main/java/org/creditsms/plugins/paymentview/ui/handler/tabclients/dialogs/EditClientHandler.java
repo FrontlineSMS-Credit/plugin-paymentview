@@ -19,32 +19,34 @@ import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
 
 public class EditClientHandler extends BaseDialog{
+//> CONSTANTS
 	private static final String COMPONENT_LIST_ACCOUNTS = "fldAccounts";
-
 	private static final String COMPONENT_TEXT_FIRST_NAME = "fldFirstName";
 	private static final String COMPONENT_TEXT_OTHER_NAME = "fldOtherName";
 	private static final String COMPONENT_TEXT_PHONE_NUMBER = "fldPhoneNumber";
 	private static final String XML_EDIT_CLIENT = "/ui/plugins/paymentview/clients/dialogs/dlgEditClient.xml";
 
+//>DAOs
 	private ClientDao clientDao;
-	private Client client;
-	private Object dialogComponent;
-	private boolean editMode;
+	private CustomValueDao customValueDao;
+	private CustomFieldDao customFieldDao;
 
+	private Client client;
+	
+//> UI FIELDS
 	private Object fieldFirstName;
 	private Object fieldListAccounts;
 	private Object fieldOtherName;
 	private Object fieldPhoneNumber;
-	private UiGeneratorController ui;
 
+//UI HELPERS	
 	private ClientsTabHandler clientsTabHandler;
-
-	private CustomValueDao customValueDao;
-	private CustomFieldDao customFieldDao;
-
+	
 	private Object compPanelFields;
 	private Map<CustomField, Object> customComponents;
 
+	private boolean editMode;
+	
 	public EditClientHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, ClientsTabHandler clientsTabHandler) {
 		super(ui);
 		this.clientDao = pluginController.getClientDao();
@@ -71,20 +73,6 @@ public class EditClientHandler extends BaseDialog{
 
 	private Object createListItem(Account acc) {
 		return ui.createListItem(acc.getAccountNumber(), acc, true);
-	}
-
-	/** 
-	 * @return the clientObj
-	 */
-	public Client getClientObj() { 
-		return client;
-	}
-
-	/**
-	 * @return the customizeClientDialog
-	 */
-	public Object getDialog() {
-		return dialogComponent;
 	}
 
 	public void init() {
@@ -224,4 +212,12 @@ public class EditClientHandler extends BaseDialog{
 		removeDialog();
 		clientsTabHandler.refresh();
 	}
+
+	/** 
+	 * @return the clientObj
+	 */
+	public Client getClientObj() { 
+		return client;
+	}
+
 }

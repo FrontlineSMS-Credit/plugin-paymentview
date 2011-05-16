@@ -4,35 +4,23 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
-import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
-import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 
 public class ExportTabHandler extends BaseTabHandler {
 	private static final String TABBED_PANE_MAIN = "tabP_MainPane";
 	private static final String XML_EXPORT_TAB = "/ui/plugins/paymentview/export/tabexport.xml";
 
-	private ClientDao clientDao;
 	private ExportClientHistoryTabHandler exportclientHistoryTab;
 	private ExportClientsTabHandler exportclientsTab;
 	private Object exportTab;
-	private IncomingPaymentDao incomingPaymentDao;
 	private Object mainTabbedPane;
-	private OutgoingPaymentDao outgoingPaymentDao;
 	private ExportPaymentsTabHandler exportpaymentsTab;
-	private CustomFieldDao customFieldDao;
-	private CustomValueDao customValueDao;
+	private PaymentViewPluginController pluginController;
 
 	public ExportTabHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController) {
 		super(ui);
-		this.clientDao = pluginController.getClientDao();
-		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
-		this.outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
-		this.customFieldDao = pluginController.getCustomFieldDao();
-		this.customValueDao = pluginController.getCustomValueDao();
+		this.pluginController = pluginController;
+		
 		init();
 	}
 
@@ -51,9 +39,7 @@ public class ExportTabHandler extends BaseTabHandler {
 		exportTab = ui.loadComponentFromFile(XML_EXPORT_TAB, this);
 		mainTabbedPane = ui.find(exportTab, TABBED_PANE_MAIN);
 
-		exportclientsTab = new ExportClientsTabHandler(ui, clientDao,
-				customFieldDao, customValueDao, outgoingPaymentDao,
-				incomingPaymentDao);
+		exportclientsTab = new ExportClientsTabHandler(ui, pluginController);
 		ui.add(mainTabbedPane, exportclientsTab.getTab());
 		exportclientHistoryTab = new ExportClientHistoryTabHandler(ui);
 		ui.add(mainTabbedPane, exportclientHistoryTab.getTab());

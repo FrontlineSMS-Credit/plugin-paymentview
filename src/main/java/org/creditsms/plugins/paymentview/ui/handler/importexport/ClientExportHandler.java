@@ -9,6 +9,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.importexport.ExportDialogHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
@@ -16,7 +17,7 @@ import org.creditsms.plugins.paymentview.data.importexport.PaymentViewCsvExporte
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
-import org.creditsms.plugins.paymentview.utils.StringUtil;
+import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
 public class ClientExportHandler extends ExportDialogHandler<Client> {
 	private static final String COMPONENT_ACCOUNTS = "cbAccounts";
@@ -31,12 +32,11 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 
 	private CustomValueDao customValueDao;
 
-	public ClientExportHandler(UiGeneratorController ui, ClientDao clientDao,
-			CustomFieldDao customFieldDao, CustomValueDao customValueDao) {
+	public ClientExportHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(Client.class, ui);
-		this.clientDao = clientDao;
-		this.customFieldDao = customFieldDao;
-		this.customValueDao = customValueDao;
+		this.clientDao = pluginController.getClientDao();
+		this.customFieldDao = pluginController.getCustomFieldDao();
+		this.customValueDao = pluginController.getCustomValueDao();
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 				COMPONENT_ACCOUNTS);
 		
 		for(CustomField cf : customFieldDao.getAllActiveUsedCustomFields()){
-			addMarker(rowFormat, StringUtil.getMarkerFromString(cf.getReadableName()),
+			addMarker(rowFormat, PaymentViewUtils.getMarkerFromString(cf.getReadableName()),
 					cf.getCamelCaseName());
 		}
 		return rowFormat;

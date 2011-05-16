@@ -135,16 +135,15 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		this.incomingPaymentsTablePager.refresh();
 	}
 //> INCOMING PAYMENT NOTIFICATION...
+	@SuppressWarnings("rawtypes")
 	public void notify(FrontlineEventNotification notification) {
 		if (!(notification instanceof EntitySavedNotification)) {
 			return;
 		}
 
 		Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
-		if (!(entity instanceof IncomingPayment)) {
-			return;
+		if (entity instanceof IncomingPayment) {
+			this.refresh();
 		}
-		final IncomingPayment incomingPayment = (IncomingPayment) entity;
-		this.refresh();
 	}
 }

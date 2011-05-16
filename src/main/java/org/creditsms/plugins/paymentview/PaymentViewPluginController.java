@@ -21,6 +21,8 @@ import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
+import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.springframework.context.ApplicationContext;
 
@@ -47,9 +49,10 @@ public class PaymentViewPluginController extends BasePluginController
 	private CustomFieldDao customFieldDao;
 	private IncomingPaymentDao incomingPaymentDao;
 	private OutgoingPaymentDao outgoingPaymentDao;
+	private TargetDao targetDao;
+	private ServiceItemDao serviceItemDao;
 	
 	private PaymentViewThinletTabController tabController;
-
 
 	/**
 	 * @see net.frontlinesms.plugins.PluginController#deinit()
@@ -76,8 +79,10 @@ public class PaymentViewPluginController extends BasePluginController
 				.getBean("incomingPaymentDao");
 		outgoingPaymentDao = (OutgoingPaymentDao) applicationContext
 				.getBean("outgoingPaymentDao");
+		serviceItemDao = (ServiceItemDao) applicationContext
+		.getBean("serviceItemDao");
 		
-		//targetDao = (TargetDao) applicationContext.getBean("targetDao");
+		targetDao = (TargetDao) applicationContext.getBean("targetDao");
 		accountDao = (AccountDao) applicationContext.getBean("accountDao");
 		
 		// If not a production build, and database is empty, add test data
@@ -116,5 +121,13 @@ public class PaymentViewPluginController extends BasePluginController
 	
 	public CustomValueDao getCustomValueDao() {
 		return customValueDao;
+	}
+
+	public TargetDao getTargetDao() {
+		return targetDao;
+	}
+
+	public ServiceItemDao getServiceItemDao() {
+		return serviceItemDao;
 	}
 }

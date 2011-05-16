@@ -3,26 +3,26 @@ package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.step
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
 
 public class SelectTargetSavingsHandler extends BasePanelHandler {
+private static final String CHK_TARGET_SAVINGS_LAYAWAY = "target_savings_layaway";
+
+//> CONSTANTS
 	private static final String XML_STEP_SELECT_TARGET_SAVING = "/ui/plugins/paymentview/analytics/addclient/stepselecttargetsavings.xml";
+
 	private AddClientTabHandler addClientTabHandler;
-	private ClientDao clientDao;
-	private CustomValueDao customValueDao;
-	private CustomFieldDao customFieldDao;
+	private PaymentViewPluginController pluginController;
+
+	private Object chkTargetSavingsLayaway;
 
 	public SelectTargetSavingsHandler(UiGeneratorController ui,
-			ClientDao clientDao, CustomValueDao customValueDao,
-			CustomFieldDao customFieldDao,
+			PaymentViewPluginController pluginController,
 			final AddClientTabHandler addClientTabHandler) {
 		super(ui);
-		this.clientDao = clientDao;
-		this.customValueDao = customValueDao;
-		this.customFieldDao = customFieldDao;
+		
+		this.pluginController = pluginController;
 		this.addClientTabHandler = addClientTabHandler;
 		this.loadPanel(XML_STEP_SELECT_TARGET_SAVING);
 	}
@@ -33,9 +33,17 @@ public class SelectTargetSavingsHandler extends BasePanelHandler {
 	}
 
 	public void next() {
-		addClientTabHandler.setCurrentStepPanel(new SelectClientsHandler(
-				(UiGeneratorController) ui, clientDao,
-				customFieldDao, customValueDao, addClientTabHandler).getPanelComponent());
+		if (selectedRadiosButtons()){
+			addClientTabHandler.setCurrentStepPanel(new SelectClientsHandler(
+					(UiGeneratorController) ui, pluginController, addClientTabHandler, this).getPanelComponent());
+		}
+	}
+
+	private boolean selectedRadiosButtons() {
+		if(chkTargetSavingsLayaway == null){
+			chkTargetSavingsLayaway = ui.find(this.getPanelComponent(), CHK_TARGET_SAVINGS_LAYAWAY);
+		}
+		return ui.isSelected(chkTargetSavingsLayaway);
 	}
 
 	public void selectService() {

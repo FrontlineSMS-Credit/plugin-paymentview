@@ -3,17 +3,21 @@ package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.frontlinesms.messaging.FrontlineMessagingServiceStatus;
+import net.frontlinesms.messaging.mms.email.MmsEmailServiceStatus;
 import net.frontlinesms.messaging.sms.SmsService;
-import net.frontlinesms.payment.PaymentService;
+import net.frontlinesms.messaging.sms.modem.SmsModemStatus;
+import net.frontlinesms.payment.PaymentServiceAccount;
+import net.frontlinesms.ui.Icon;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.UiGeneratorControllerConstants;
 import net.frontlinesms.ui.handler.BaseTabHandler;
+import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.ConfigureAccountHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings.MobilePaymentService;
 
 public class SettingsTabHandler extends BaseTabHandler {
@@ -22,10 +26,7 @@ public class SettingsTabHandler extends BaseTabHandler {
 
 	private AccountDao accountDao;
 
-	private ClientDao clientDao;
-	private IncomingPaymentDao incomingPaymentDao;
-	
-	private List<PaymentService> paymentServices;
+	private List<PaymentServiceAccount> paymentServices;
 
 	private Object settingsTab;
 	private Object settingsTableComponent;
@@ -35,14 +36,14 @@ public class SettingsTabHandler extends BaseTabHandler {
 		super(ui);
 		this.pluginController = pluginController;
 		
-		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.accountDao = pluginController.getAccountDao();
-		this.clientDao = pluginController.getClientDao();
-		paymentServices = new ArrayList<PaymentService>(0);
+		this.paymentServices = new ArrayList<PaymentServiceAccount>(0);
 		init();
 	}
 
 	public void configureAccount() {
+		ConfigureAccountHandler configureAccountHandler = new ConfigureAccountHandler(ui, pluginController);
+		configureAccountHandler.showDialog();
 	}
 
 	public void createNew() {
@@ -58,8 +59,7 @@ public class SettingsTabHandler extends BaseTabHandler {
 			accountDao.deleteAccount(a);
 		}
 
-		ui.removeDialog(ui
-				.find(UiGeneratorControllerConstants.COMPONENT_CONFIRM_DIALOG));
+		ui.removeDialog(ui.find(UiGeneratorControllerConstants.COMPONENT_CONFIRM_DIALOG));
 		ui.infoMessage("You have succesfully deleted from the operator!");
 		this.refresh();
 	}
@@ -76,24 +76,51 @@ public class SettingsTabHandler extends BaseTabHandler {
 		return settingsTab;
 	}
 	
-	public void addPaymentService(PaymentService paymentService) {
-		paymentServices.add(paymentService);
+	public void addPaymentService(PaymentServiceAccount paymentService) {
+		if (!paymentServices.contains(paymentService)){
+			paymentServices.add(paymentService);
+		}else{
+			ui.getFrontlineController().getEventBus().unregisterObserver(paymentService);
+			paymentService = null;
+		}
+		
 		refresh();
 	}
 	
-	public Object getRow(SmsService smsService){
-		Object cellServiceName = ui.createTableCell(smsService.getServiceName());
-		Object cellMsisdn = ui.createTableCell(smsService.getMsisdn());
-		Object cellStatus = ui.createTableCell(smsService.getStatus().getI18nKey());
-		Object cellDisplayPort = ui.createTableCell(smsService.getDisplayPort());
-		Object cellStatusDetail = ui.createTableCell(smsService.getStatusDetail());
+	public Object getRow(PaymentServiceAccount paymentService){
+		SmsService service = paymentService.getSmsService();
 		
-		Object row = ui.createTableRow(smsService);
+		Object cellServiceName = ui.createTableCell(service.getServiceName());
+		Object cellMsisdn = ui.createTableCell(service.getMsisdn());
+		Object idCell = ui.createTableCell(service.getServiceIdentification());
+		Object cellDisplayPort = ui.createTableCell(service.getDisplayPort());
+		
+		Object row = ui.createTableRow(paymentService);
+		ui.add(row, cellDisplayPort);
+		ui.add(row, idCell);
 		ui.add(row, cellServiceName);
 		ui.add(row, cellMsisdn);
+		
+		
+		final String statusIcon;
+		FrontlineMessagingServiceStatus status = paymentService.getSmsService().getStatus();
+		if (status.equals(SmsModemStatus.CONNECTING) ||
+			status.equals(SmsModemStatus.DETECTED) ||
+			status.equals(SmsModemStatus.TRY_TO_CONNECT) ||
+			status.equals(MmsEmailServiceStatus.FETCHING)) {
+			statusIcon = Icon.LED_AMBER;	
+		} else if (paymentService.getSmsService().isConnected()){
+			statusIcon = Icon.LED_GREEN;
+		} else {
+			statusIcon = Icon.LED_RED;
+		}
+	
+		Object cellStatus = ui.createTableCell(InternationalisationUtils.getI18nString(service.getStatus().getI18nKey(), service.getStatusDetail()));
+		ui.setIcon(cellStatus, statusIcon);
 		ui.add(row, cellStatus);
-		ui.add(row, cellDisplayPort);
-		ui.add(row, cellStatusDetail);
+				
+		Object cellDescription = ui.createTableCell(paymentService.toString());
+		ui.add(row, cellDescription);
 		
 		return row;
 	}
@@ -101,8 +128,8 @@ public class SettingsTabHandler extends BaseTabHandler {
 	@Override
 	public void refresh() {
 		ui.removeAll(settingsTableComponent);
-		for(PaymentService paymentService : paymentServices){
-			ui.add(settingsTableComponent, getRow(paymentService.getSmsService()));
+		for(PaymentServiceAccount paymentService : paymentServices){
+			ui.add(settingsTableComponent, getRow(paymentService));
 		}
 	}
 

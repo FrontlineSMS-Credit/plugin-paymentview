@@ -1,5 +1,8 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabexport.dialogs;
 
+import net.frontlinesms.ui.UiGeneratorController;
+
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
 
 public class ExportByClientXticsStep2Handler extends ClientExportHandler {
@@ -7,17 +10,14 @@ public class ExportByClientXticsStep2Handler extends ClientExportHandler {
 	private static final String MESSAGE_EXPORTING_SELECTED_CONTACTS = "plugins.paymentview.message.exporting.selected.client";
 	private static final String UI_FILE_EXPORT_WIZARD_FORM = "/ui/plugins/paymentview/export/dialogs/dlgExportByClientXtics1.xml";
 	private static final String UI_FILE_OPTIONS_PANEL_CLIENT = "/ui/plugins/paymentview/importexport/pnClientDetails.xml";
+	private static PaymentViewPluginController  pluginController;
 
 	private String exportfilepath;
 	private final ExportByClientXticsStep1Handler exportByClientXticsStep1Handler;
 
-	public ExportByClientXticsStep2Handler(
+	public ExportByClientXticsStep2Handler(UiGeneratorController ui,
 			final ExportByClientXticsStep1Handler exportByClientXticsStep1Handler) {
-		super(exportByClientXticsStep1Handler.getUi(),
-				exportByClientXticsStep1Handler.getClientDao(),
-				exportByClientXticsStep1Handler.getCustomFieldDao(),
-				exportByClientXticsStep1Handler.getCustomValueDao());
-		
+		super(ui, pluginController);
 		this.exportByClientXticsStep1Handler = exportByClientXticsStep1Handler;
 	}
 

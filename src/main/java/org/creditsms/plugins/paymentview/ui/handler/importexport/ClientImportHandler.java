@@ -20,7 +20,7 @@ import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
 import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
-import org.creditsms.plugins.paymentview.utils.StringUtil;
+import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
 public class ClientImportHandler extends ImportDialogHandler {
 	private static final String COMPONENT_ACCOUNTS = "cbAccounts";
@@ -157,7 +157,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 				COMPONENT_CB_PHONE);
 		
 		for(CustomField cf : customFieldDao.getAllActiveUsedCustomFields()){
-			addMarker(rowFormat, StringUtil.getMarkerFromString(cf.getReadableName()),
+			addMarker(rowFormat, PaymentViewUtils.getMarkerFromString(cf.getReadableName()),
 					cf.getCamelCaseName());
 		}
 		

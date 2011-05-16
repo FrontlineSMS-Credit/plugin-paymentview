@@ -70,8 +70,7 @@ public interface ServiceItemDao {
 	 * 
 	 * @param serviceItem
 	 */
-	public void saveServiceItem(ServiceItem serviceItem)
-			throws DuplicateKeyException;
+	public void saveServiceItem(ServiceItem serviceItem);
 
 	/**
 	 * Update a ServiceItem to the system

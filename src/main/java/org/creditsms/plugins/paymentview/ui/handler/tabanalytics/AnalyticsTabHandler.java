@@ -22,7 +22,6 @@ public class AnalyticsTabHandler implements ThinletUiEventHandler {
 	public AnalyticsTabHandler(UiGeneratorController ui, final PaymentViewPluginController pluginController) {
 		this.ui = ui;
 		this.pluginController = pluginController;
-
 		init();
 	}
 
@@ -34,7 +33,7 @@ public class AnalyticsTabHandler implements ThinletUiEventHandler {
 		analyticsTab = ui.loadComponentFromFile(XML_ANALYTICS_TAB, this);
 		createDashBoardHandler = new AddClientTabHandler(ui, analyticsTab, pluginController);
 		viewDashBoardHandler = new ViewDashBoardTabHandler(ui, analyticsTab, pluginController);
-		configureServiceTabHandler = new ConfigureServiceTabHandler(ui,	analyticsTab);
+		configureServiceTabHandler = new ConfigureServiceTabHandler(ui,	analyticsTab, pluginController);
 		return analyticsTab;
 	}
 

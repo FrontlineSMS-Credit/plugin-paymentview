@@ -10,7 +10,8 @@ import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.messaging.sms.SmsService;
-import net.frontlinesms.payment.PaymentService;
+import net.frontlinesms.messaging.sms.modem.SmsModem;
+import net.frontlinesms.payment.PaymentServiceAccount;
 import net.frontlinesms.payment.PaymentServiceException;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
@@ -27,58 +28,34 @@ import org.smslib.stk.StkMenu;
 import org.smslib.stk.StkRequest;
 import org.smslib.stk.StkResponse;
 
-public abstract class MpesaPaymentService implements PaymentService {
-	// > CONSTANTS
-	protected static final String AMOUNT_PATTERN = "Ksh[,|[0-9]]+";
+public abstract class MpesaPaymentService implements PaymentServiceAccount {
+//> REGEX PATTERN CONSTANTS
+	protected static final String AMOUNT_PATTERN = "Ksh[,|\\d]+";
 	protected static final String DATETIME_PATTERN = "d/M/yy hh:mm a";
-	protected static final String PHONE_PATTERN = "2547[0-9]{8}";
+	protected static final String PHONE_PATTERN = "2547[\\d]{8}";
 	protected static final String CONFIRMATION_CODE_PATTERN = "[A-Z0-9]+ Confirmed.";
 	protected static final String PAID_BY_PATTERN = "([A-Za-z ]+)";
-	protected static final String ACCOUNT_NUMBER_PATTERN = "Account Number [0-9]+";
+	protected static final String ACCOUNT_NUMBER_PATTERN = "Account Number [\\d]+";
 	protected static final String RECEIVED_FROM = "received from";
 
-	// > INSTANCE PROPERTIES
+//> INSTANCE PROPERTIES
 	private final Logger log = FrontlineUtils.getLogger(this.getClass());
 	private SmsService smsService;
 	private CService cService;
 	
-	private String pin;
+//> DAOs
 	AccountDao accountDao;
 	ClientDao clientDao;
 	IncomingPaymentDao incomingPaymentDao;
-
-	public void setSmsService(SmsService smsService) {
-		this.smsService = smsService;
-	}
-
-	public SmsService getSmsService(){
-		return smsService;
-	}
 	
-	public void setCService(CService cService) {
-		this.cService = cService;
-	}
-
-	public CService getCService(){
-		return cService;
-	}
+//> FIELDS
+	private String pin;
+	private PaymentAccountType paymentAccountType;
+	private String geography;
+	private String operator;
+	private String name;
 	
-	public void setPin(String pin) {
-		this.pin = pin;
-	}
-
-	public void setAccountDao(AccountDao accountDao) {
-		this.accountDao = accountDao;
-	}
-
-	public void setIncomingPaymentDao(IncomingPaymentDao incomingPaymentDao) {
-		this.incomingPaymentDao = incomingPaymentDao;
-	}
-
-	public void setClientDao(ClientDao clientDao) {
-		this.clientDao = clientDao;
-	}
-
+//> STK & PAYMENT ACCOUNT
 	public void checkBalance() throws PaymentServiceException {
 		try {
 			StkMenu mPesaMenu = getMpesaMenu();
@@ -89,8 +66,8 @@ public abstract class MpesaPaymentService implements PaymentService {
 			assert getBalanceResponse instanceof StkInputRequiremnent;
 			StkInputRequiremnent pinRequired = (StkInputRequiremnent) getBalanceResponse;
 			assert pinRequired.getText().contains("Enter PIN");
-			StkResponse finalResponse = cService.stkRequest(
-					pinRequired.getRequest(), this.pin);
+			//StkResponse finalResponse = cService.stkRequest(
+			//pinRequired.getRequest(), this.pin);
 			// TODO check finalResponse is OK
 			// TODO wait for response...
 		} catch (SMSLibDeviceException ex) {
@@ -127,25 +104,34 @@ public abstract class MpesaPaymentService implements PaymentService {
 			throw new PaymentServiceException(ex);
 		}
 	}
-	
-	@SuppressWarnings("unchecked")
+
+//> EVENTBUS NOTIFY
+	@SuppressWarnings("rawtypes")
 	public void notify(FrontlineEventNotification notification) {
+		//If the notification is of Importance to us
 		if (!(notification instanceof EntitySavedNotification)) {
 			return;
 		}
-
+		
+		//And is of a saved message
 		Object entity = ((EntitySavedNotification) notification)
 				.getDatabaseEntity();
 		if (!(entity instanceof FrontlineMessage)) {
 			return;
 		}
-
 		final FrontlineMessage message = (FrontlineMessage) entity;
-
+		
+		//Verify that its from MPESA and is of valid pattern
 		if (!messageIsValid(message)) {
 			return;
 		}
+		
+		//Then process the payment 
+		processPayment(message);
+	}
 
+//> INCOMING MESSAGE PAYMENT PROCESSORS
+	private void processPayment(final FrontlineMessage message) {
 		new FrontlineUiUpateJob() {
 			// This probably shouldn't be a UI job,
 			// but it certainly should be done on a separate thread!
@@ -169,7 +155,6 @@ public abstract class MpesaPaymentService implements PaymentService {
 				}
 			}
 		}.execute();
-
 	}
 
 	private boolean messageIsValid(FrontlineMessage message) {
@@ -179,12 +164,10 @@ public abstract class MpesaPaymentService implements PaymentService {
 		return isMessageTextValid(message.getTextContent());
 	}
 
+	
 	abstract Date getTimePaid(FrontlineMessage message);
-
 	abstract boolean isMessageTextValid(String messageText);
-
 	abstract Account getAccount(FrontlineMessage message);
-
 	abstract String getPaymentBy(FrontlineMessage message);
 
 	private BigDecimal getAmount(FrontlineMessage message) {
@@ -212,6 +195,102 @@ public abstract class MpesaPaymentService implements PaymentService {
 	}
 	
 	public String toString(){
-		return "MPesa Safaricom - Kenya: Abstract Payment Service";
+		return this.getName() + " " + 
+		this.getOperator()+ " - " + 
+		this.getGeography() + ":" + 
+		this.getPaymentAccountType().getType() + " Service";
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof PaymentServiceAccount)){
+			return false;
+		}
+		
+		if (!(other instanceof MpesaPaymentService)){
+			return false;
+		}
+		
+		MpesaPaymentService that = (MpesaPaymentService) other;
+			
+		if (that.getClass().getName().equals(this.getClass().getName()) &				
+				that.getSmsService().getDisplayPort().equals(this.getSmsService().getDisplayPort())){ 
+			return true;
+		}
+		
+		return super.equals(other);
+	}
+	
+//> ACCESSORS AND MUTATORS
+	public void setSmsService(SmsService smsService) {
+		this.smsService = smsService;
+	}
+
+	public SmsService getSmsService(){
+		return smsService;
+	}
+	
+	public void setCService(CService cService) {
+		this.cService = cService;
+	}
+
+	public CService getCService(){
+		if (smsService != null & smsService instanceof SmsModem && cService == null){
+			return ((SmsModem)smsService).getCService();
+		}
+		return cService;
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getOperator() {
+		return operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
+	}
+
+	public String getPin() {
+		return pin;
+	}
+
+	public String getGeography() {
+		return geography;
+	}
+
+	public void setGeography(String geography) {
+		this.geography = geography;
+	}
+
+	public PaymentAccountType getPaymentAccountType() {
+		return paymentAccountType;
+	}
+
+	public void setPaymentAccountType(PaymentAccountType paymentAccountType) {
+		this.paymentAccountType = paymentAccountType;
+	}
+	
+	public void setPin(String pin) {
+		this.pin = pin;
+	}
+
+	public void setAccountDao(AccountDao accountDao) {
+		this.accountDao = accountDao;
+	}
+
+	public void setIncomingPaymentDao(IncomingPaymentDao incomingPaymentDao) {
+		this.incomingPaymentDao = incomingPaymentDao;
+	}
+
+	public void setClientDao(ClientDao clientDao) {
+		this.clientDao = clientDao;
+	}
+
 }

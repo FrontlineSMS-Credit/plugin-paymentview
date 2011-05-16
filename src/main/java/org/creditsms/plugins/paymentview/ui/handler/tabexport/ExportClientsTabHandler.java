@@ -3,38 +3,23 @@ package org.creditsms.plugins.paymentview.ui.handler.tabexport;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
-import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
-import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.BaseSelectClientTableHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabexport.dialogs.ExportByClientXticsStep1Handler;
 
 public class ExportClientsTabHandler extends BaseTabHandler {
 	private static final String PNL_CLIENTS_TABLE_HOLDER = "pnlClientsTableHolder";
 	private static final String XML_EXPORT_CLIENTS_TAB = "/ui/plugins/paymentview/export/innertabs/tabexportclients.xml";
-	private ClientDao clientDao;
 	private Object clientsTab;
 	private BaseSelectClientTableHandler clientsTableHandler;
 
-	private CustomFieldDao customFieldDao;
-	private CustomValueDao customValueDao;
 	private Object pnlClientsTableHolder;
-	private final OutgoingPaymentDao outgoingPaymentDao;
-	private final IncomingPaymentDao incomingPaymentDao;
+	private PaymentViewPluginController pluginController;
 
 	public ExportClientsTabHandler(UiGeneratorController ui,
-			ClientDao clientDao, CustomFieldDao customFieldDao,
-			CustomValueDao customValueDao,
-			OutgoingPaymentDao outgoingPaymentDao,
-			IncomingPaymentDao incomingPaymentDao) {
+			PaymentViewPluginController pluginController) {
 		super(ui);
-		this.clientDao = clientDao;
-		this.customFieldDao = customFieldDao;
-		this.customValueDao = customValueDao;
-		this.outgoingPaymentDao = outgoingPaymentDao;
-		this.incomingPaymentDao = incomingPaymentDao;
+		this.pluginController = pluginController;
 
 		init();
 		refresh();
@@ -44,8 +29,7 @@ public class ExportClientsTabHandler extends BaseTabHandler {
 	protected Object initialiseTab() {
 		clientsTab = ui.loadComponentFromFile(XML_EXPORT_CLIENTS_TAB, this);
 
-		clientsTableHandler = new ExportClientsTable(ui, clientDao,
-				customFieldDao, customValueDao);
+		clientsTableHandler = new ExportClientsTable(ui, pluginController);
 
 		pnlClientsTableHolder = ui.find(clientsTab, PNL_CLIENTS_TABLE_HOLDER);
 		this.ui.add(pnlClientsTableHolder,
@@ -60,10 +44,8 @@ public class ExportClientsTabHandler extends BaseTabHandler {
 	}
 
 	public void exportSelectedClients() {
-		ui.add(new ExportByClientXticsStep1Handler(ui, clientDao,
-				customFieldDao, customValueDao, clientsTableHandler
-						.getSelectedUsers(), outgoingPaymentDao,
-				incomingPaymentDao).getDialog());
+		ui.add(new ExportByClientXticsStep1Handler(ui, clientsTableHandler
+						.getSelectedUsers(), pluginController).getDialog());
 	}
 
 	public void selectAll() {

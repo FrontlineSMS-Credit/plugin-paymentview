@@ -1,7 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings;
 
 import net.frontlinesms.messaging.sms.SmsService;
-import net.frontlinesms.payment.PaymentService;
+import net.frontlinesms.payment.PaymentServiceAccount;
 import net.frontlinesms.payment.safaricom.MpesaPayBillService;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPersonalService;
@@ -14,7 +14,7 @@ import org.creditsms.plugins.paymentview.ui.handler.tabsettings.SettingsTabHandl
 public class MobilePaymentService extends BaseDialog {
 	private static final String XML_MOBILE_PAYMENT_SERVICE = "/ui/plugins/paymentview/settings/dialogs/createnewpaymentsteps/dlgCreateNewAccountStep1.xml";
 	private final PaymentViewPluginController pluginController;
-	private PaymentService paymentService;
+	private PaymentServiceAccount paymentService;
 	private SmsService smsService;
 	private final SettingsTabHandler settingsTabHandler;
 
@@ -65,7 +65,7 @@ public class MobilePaymentService extends BaseDialog {
 			if(smsService == null){
 				throw new RuntimeException("No Device Selected.");
 			}
-			paymentService = ui.getAttachedObject(ui.getItem(cmbSelectPaymentService, selectedIndex), PaymentService.class);
+			paymentService = ui.getAttachedObject(ui.getItem(cmbSelectPaymentService, selectedIndex), PaymentServiceAccount.class);
 			if (paymentService != null) {
 				EnterPin accountType = new EnterPin(ui, pluginController, this);
 				accountType.showDialog();
@@ -82,7 +82,7 @@ public class MobilePaymentService extends BaseDialog {
 	}
 
 //> ACCESSORS
-	PaymentService getPaymentService() {
+	PaymentServiceAccount getPaymentService() {
 		return paymentService;
 	}
 	

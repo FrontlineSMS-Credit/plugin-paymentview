@@ -12,6 +12,9 @@ public class BaseDialog implements ThinletUiEventHandler{
 		this.ui = ui;
 	}
 	
+	protected void refresh() {
+	}
+	
 	/**
 	 * @return the customizeClientDialog
 	 */

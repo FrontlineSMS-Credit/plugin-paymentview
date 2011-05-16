@@ -6,10 +6,8 @@ import java.util.List;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.utils.PaymentType;
@@ -25,32 +23,24 @@ public class ExportByClientXticsStep1Handler implements ThinletUiEventHandler {
 
 	private static final String XML_EXPORT_BY_CLIENT_XTICS = "/ui/plugins/paymentview/export/dialogs/dlgExportByClientXtics.xml";
 
-	private ClientDao clientDao;
 	private Object dialogComponent;
 
 	private UiGeneratorController ui;
 	private List<Client> selectedClients;
 	private PaymentType paymentType = null;
-	private CustomValueDao customValueDao;
-	private CustomFieldDao customFieldDao;
 	private Object pnlDateRange;
 	private List<Object> payments;
 	private DateOption dateOption = null;
 	private IncomingPaymentDao incomingPaymentDao;
 	private OutgoingPaymentDao outgoingPaymentDao;
+	private final PaymentViewPluginController pluginController;
 
 	public ExportByClientXticsStep1Handler(UiGeneratorController ui,
-			ClientDao clientDao, CustomFieldDao customFieldDao,
-			CustomValueDao customValueDao, List<Client> selectedUsers,
-			OutgoingPaymentDao outgoingPaymentDao,
-			IncomingPaymentDao incomingPaymentDao) {
+			List<Client> selectedUsers, PaymentViewPluginController pluginController) {
 		this.ui = ui;
-		this.clientDao = clientDao;
-		this.customFieldDao = customFieldDao;
-		this.customValueDao = customValueDao;
-		this.selectedClients = selectedUsers;
-		this.incomingPaymentDao = incomingPaymentDao;
-		this.outgoingPaymentDao = outgoingPaymentDao;
+		this.pluginController = pluginController;
+		incomingPaymentDao =  this.pluginController.getIncomingPaymentDao();
+		outgoingPaymentDao =  this.pluginController.getOutgoingPaymentDao();
 		init();
 		refresh();
 	}
@@ -69,7 +59,7 @@ public class ExportByClientXticsStep1Handler implements ThinletUiEventHandler {
 
 	public void next() {
 		getListOfPayments();
-		new ExportByClientXticsStep2Handler(this).showWizard();
+		new ExportByClientXticsStep2Handler(ui, this).showWizard();
 		removeDialog();
 	}
 
@@ -180,22 +170,6 @@ public class ExportByClientXticsStep1Handler implements ThinletUiEventHandler {
 	}
 
 	// > GETTERS AND SETTERS
-	public ClientDao getClientDao() {
-		return clientDao;
-	}
-
-	public void setClientDao(ClientDao clientDao) {
-		this.clientDao = clientDao;
-	}
-
-	public UiGeneratorController getUi() {
-		return ui;
-	}
-
-	public void setUi(UiGeneratorController ui) {
-		this.ui = ui;
-	}
-
 	public List<Client> getSelectedUsers() {
 		return selectedClients;
 	}
@@ -210,22 +184,6 @@ public class ExportByClientXticsStep1Handler implements ThinletUiEventHandler {
 
 	public void setPaymentType(PaymentType paymentType) {
 		this.paymentType = paymentType;
-	}
-
-	public CustomValueDao getCustomValueDao() {
-		return customValueDao;
-	}
-
-	public void setCustomValueDao(CustomValueDao customValueDao) {
-		this.customValueDao = customValueDao;
-	}
-
-	public CustomFieldDao getCustomFieldDao() {
-		return customFieldDao;
-	}
-
-	public void setCustomFieldDao(CustomFieldDao customFieldDao) {
-		this.customFieldDao = customFieldDao;
 	}
 
 	public List<Object> getPayments() {

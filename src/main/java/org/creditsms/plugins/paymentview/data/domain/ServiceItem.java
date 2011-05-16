@@ -97,4 +97,36 @@ public class ServiceItem {
 		return "ServiceItem [id=" + id + ", targetName=" + targetName
 				+ ", amount=" + amount + ", target=" + target + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((amount == null) ? 0 : amount.hashCode());
+		result = prime * result
+				+ ((targetName == null) ? 0 : targetName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ServiceItem other = (ServiceItem) obj;
+		if (amount == null) {
+			if (other.amount != null)
+				return false;
+		} else if (!amount.equals(other.amount))
+			return false;
+		if (targetName == null) {
+			if (other.targetName != null)
+				return false;
+		} else if (!targetName.equals(other.targetName))
+			return false;
+		return true;
+	}
 }
