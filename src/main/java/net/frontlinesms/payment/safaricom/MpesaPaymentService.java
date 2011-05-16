@@ -8,10 +8,11 @@ import java.util.regex.Pattern;
 import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.messaging.sms.SmsService;
 import net.frontlinesms.messaging.sms.modem.SmsModem;
-import net.frontlinesms.payment.PaymentServiceAccount;
+import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
@@ -28,7 +29,7 @@ import org.smslib.stk.StkMenu;
 import org.smslib.stk.StkRequest;
 import org.smslib.stk.StkResponse;
 
-public abstract class MpesaPaymentService implements PaymentServiceAccount {
+public abstract class MpesaPaymentService implements PaymentService, EventObserver  {
 //> REGEX PATTERN CONSTANTS
 	protected static final String AMOUNT_PATTERN = "Ksh[,|\\d]+";
 	protected static final String DATETIME_PATTERN = "d/M/yy hh:mm a";
@@ -50,10 +51,6 @@ public abstract class MpesaPaymentService implements PaymentServiceAccount {
 	
 //> FIELDS
 	private String pin;
-	private PaymentAccountType paymentAccountType;
-	private String geography;
-	private String operator;
-	private String name;
 	
 //> STK & PAYMENT ACCOUNT
 	public void checkBalance() throws PaymentServiceException {
@@ -193,17 +190,10 @@ public abstract class MpesaPaymentService implements PaymentServiceAccount {
 	protected String getFirstMatch(FrontlineMessage message, String regexMatcher) {
 		return getFirstMatch(message.getTextContent(), regexMatcher);
 	}
-	
-	public String toString(){
-		return this.getName() + " " + 
-		this.getOperator()+ " - " + 
-		this.getGeography() + ":" + 
-		this.getPaymentAccountType().getType() + " Service";
-	}
-	
+			
 	@Override
 	public boolean equals(Object other) {
-		if (!(other instanceof PaymentServiceAccount)){
+		if (!(other instanceof PaymentService)){
 			return false;
 		}
 		
@@ -222,6 +212,14 @@ public abstract class MpesaPaymentService implements PaymentServiceAccount {
 	}
 	
 //> ACCESSORS AND MUTATORS
+	public String getPin() {
+		return pin;
+	}
+
+	public void setPin(String pin) {
+		this.pin = pin;
+	}
+	
 	public void setSmsService(SmsService smsService) {
 		this.smsService = smsService;
 	}
@@ -241,46 +239,6 @@ public abstract class MpesaPaymentService implements PaymentServiceAccount {
 		return cService;
 	}
 	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getOperator() {
-		return operator;
-	}
-
-	public void setOperator(String operator) {
-		this.operator = operator;
-	}
-
-	public String getPin() {
-		return pin;
-	}
-
-	public String getGeography() {
-		return geography;
-	}
-
-	public void setGeography(String geography) {
-		this.geography = geography;
-	}
-
-	public PaymentAccountType getPaymentAccountType() {
-		return paymentAccountType;
-	}
-
-	public void setPaymentAccountType(PaymentAccountType paymentAccountType) {
-		this.paymentAccountType = paymentAccountType;
-	}
-	
-	public void setPin(String pin) {
-		this.pin = pin;
-	}
-
 	public void setAccountDao(AccountDao accountDao) {
 		this.accountDao = accountDao;
 	}

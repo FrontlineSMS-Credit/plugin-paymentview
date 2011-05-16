@@ -7,7 +7,7 @@ import net.frontlinesms.messaging.FrontlineMessagingServiceStatus;
 import net.frontlinesms.messaging.mms.email.MmsEmailServiceStatus;
 import net.frontlinesms.messaging.sms.SmsService;
 import net.frontlinesms.messaging.sms.modem.SmsModemStatus;
-import net.frontlinesms.payment.PaymentServiceAccount;
+import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.Icon;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.UiGeneratorControllerConstants;
@@ -15,18 +15,13 @@ import net.frontlinesms.ui.handler.BaseTabHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.domain.Account;
-import org.creditsms.plugins.paymentview.data.repository.AccountDao;
-import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.ConfigureAccountHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings.MobilePaymentService;
 
 public class SettingsTabHandler extends BaseTabHandler {
 	private static final String COMPONENT_SETTINGS_TABLE = "tbl_accounts";
 	private static final String XML_SETTINGS_TAB = "/ui/plugins/paymentview/settings/settingsTab.xml";
 
-	private AccountDao accountDao;
-
-	private List<PaymentServiceAccount> paymentServices;
+	private List<MpesaPaymentService> paymentServices;
 
 	private Object settingsTab;
 	private Object settingsTableComponent;
@@ -36,39 +31,14 @@ public class SettingsTabHandler extends BaseTabHandler {
 		super(ui);
 		this.pluginController = pluginController;
 		
-		this.accountDao = pluginController.getAccountDao();
-		this.paymentServices = new ArrayList<PaymentServiceAccount>(0);
+		this.paymentServices = new ArrayList<MpesaPaymentService>(0);
 		init();
 	}
 
-	public void configureAccount() {
-		ConfigureAccountHandler configureAccountHandler = new ConfigureAccountHandler(ui, pluginController);
-		configureAccountHandler.showDialog();
-	}
-
 	public void createNew() {
-//		ui.add(new SafaricomPaymentServiceConfigUiHandler(ui, incomingPaymentDao, clientDao, accountDao).getDialog());
 		new MobilePaymentService(ui, pluginController, this).showDialog();
 	}
-
-	public void deleteAccount() {
-		Object[] selectedClients = this.ui
-				.getSelectedItems(this.settingsTableComponent);
-		for (Object selectedClient : selectedClients) {
-			Account a = (Account) ui.getAttachedObject(selectedClient);
-			accountDao.deleteAccount(a);
-		}
-
-		ui.removeDialog(ui.find(UiGeneratorControllerConstants.COMPONENT_CONFIRM_DIALOG));
-		ui.infoMessage("You have succesfully deleted from the operator!");
-		this.refresh();
-	}
-
-	public void examineAccount() {
-		// TODO Auto-generated method stub
-
-	}
-
+	
 	@Override
 	protected Object initialiseTab() {
 		settingsTab = ui.loadComponentFromFile(XML_SETTINGS_TAB, this);
@@ -76,7 +46,7 @@ public class SettingsTabHandler extends BaseTabHandler {
 		return settingsTab;
 	}
 	
-	public void addPaymentService(PaymentServiceAccount paymentService) {
+	public void addPaymentService(MpesaPaymentService paymentService) {
 		if (!paymentServices.contains(paymentService)){
 			paymentServices.add(paymentService);
 		}else{
@@ -87,7 +57,7 @@ public class SettingsTabHandler extends BaseTabHandler {
 		refresh();
 	}
 	
-	public Object getRow(PaymentServiceAccount paymentService){
+	public Object getRow(MpesaPaymentService paymentService){
 		SmsService service = paymentService.getSmsService();
 		
 		Object cellServiceName = ui.createTableCell(service.getServiceName());
@@ -128,12 +98,34 @@ public class SettingsTabHandler extends BaseTabHandler {
 	@Override
 	public void refresh() {
 		ui.removeAll(settingsTableComponent);
-		for(PaymentServiceAccount paymentService : paymentServices){
+		for(MpesaPaymentService paymentService : paymentServices){
 			ui.add(settingsTableComponent, getRow(paymentService));
 		}
 	}
 
 	public void updateAccountBalance() {
 		// TODO Auto-generated method stub
+	}
+	
+	public void updateAuthCode() {
+		// TODO Auto-generated method stub
+	}
+	
+	public void deleteAccount() {
+		Object[] selectedItems = this.ui
+				.getSelectedItems(this.settingsTableComponent);
+		
+		if (selectedItems.length <= 0){
+			for (Object selectedClient : selectedItems) {
+				MpesaPaymentService m = ui.getAttachedObject(selectedClient, MpesaPaymentService.class);
+				ui.getFrontlineController().getEventBus().unregisterObserver(m);
+				paymentServices.remove(m);
+				m = null;
+			}
+			
+			ui.removeDialog(ui.find(UiGeneratorControllerConstants.COMPONENT_CONFIRM_DIALOG));
+			ui.infoMessage("You have succesfully deleted from the operator!");
+			this.refresh();
+		}
 	}
 }

@@ -1,7 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings;
 
 import net.frontlinesms.messaging.sms.modem.SmsModem;
-import net.frontlinesms.payment.PaymentServiceAccount;
+import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
@@ -18,14 +18,13 @@ public class EnterPin extends BaseDialog {
 			MobilePaymentService previousMobilePaymentService){
 		super(ui);		
 		this.pluginController = pluginController;
-		
+
 		init();
 		this.previousMobilePaymentService = previousMobilePaymentService;
 	}
 	
 	private void init() {
-		dialogComponent = ui.loadComponentFromFile(XML_ENTER_PIN,
-				this);
+		dialogComponent = ui.loadComponentFromFile(XML_ENTER_PIN,this);
 	}
 	
 	public void previous() {
@@ -39,7 +38,7 @@ public class EnterPin extends BaseDialog {
 
 	public void setUpThePaymentService(final String pin, final String vPin) {			
 			if(checkValidityOfPinFields(pin, vPin)){
-				PaymentServiceAccount paymentService = previousMobilePaymentService.getPaymentService();
+				MpesaPaymentService paymentService = previousMobilePaymentService.getPaymentService();
 				paymentService.setPin(pin);
 				paymentService.setSmsService((SmsModem) previousMobilePaymentService.getSmsService());
 
@@ -55,7 +54,7 @@ public class EnterPin extends BaseDialog {
 			}
 	}
 	
-	PaymentServiceAccount getPaymentService() {
+	MpesaPaymentService getPaymentService() {
 		return previousMobilePaymentService.getPaymentService();
 	}
 	

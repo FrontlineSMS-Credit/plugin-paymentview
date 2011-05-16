@@ -4,7 +4,6 @@
  */
 package org.creditsms.plugins.paymentview.ui;
 
-import net.frontlinesms.BuildProperties;
 import net.frontlinesms.plugins.BasePluginThinletTabController;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -85,11 +84,11 @@ public class PaymentViewThinletTabController extends
 		ui.add(mainPane, settingsTab.getTab());
 		
 		//For Tests Only
-		if(BuildProperties.getInstance().isSnapshot() && getPluginController().getClientDao().getClientCount()==0) {
+		//if(BuildProperties.getInstance().isSnapshot() && getPluginController().getClientDao().getClientCount()==0) {
 			cdtController = new PvDebugTabController(ui);
 			cdtController.setMessageDao(ui.getFrontlineController().getMessageDao());
 			ui.add(mainPane, cdtController.getTab());
-		}
+		//}
 	}
 
 	/**

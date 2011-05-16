@@ -44,7 +44,6 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		setUpDaos();
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void setUpDaos() throws DuplicateKeyException {
 		this.targetAnalytics = new TargetAnalytics();
 		

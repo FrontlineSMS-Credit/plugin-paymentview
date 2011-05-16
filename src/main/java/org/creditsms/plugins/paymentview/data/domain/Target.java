@@ -102,4 +102,49 @@ public class Target {
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate.getTime();
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((account == null) ? 0 : account.hashCode());
+		result = prime * result + (int) (endDate ^ (endDate >>> 32));
+		result = prime * result
+				+ ((serviceItem == null) ? 0 : serviceItem.hashCode());
+		result = prime * result + (int) (startDate ^ (startDate >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Target other = (Target) obj;
+		if (account == null) {
+			if (other.account != null)
+				return false;
+		} else if (!account.equals(other.account))
+			return false;
+		if (endDate != other.endDate)
+			return false;
+		if (serviceItem == null) {
+			if (other.serviceItem != null)
+				return false;
+		} else if (!serviceItem.equals(other.serviceItem))
+			return false;
+		if (startDate != other.startDate)
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Target [id=" + id + ", startDate=" + startDate + ", endDate="
+				+ endDate + ", account=" + account + ", serviceItem="
+				+ serviceItem + "]";
+	}
 }

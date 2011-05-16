@@ -83,8 +83,8 @@ public class HibernateTargetDao extends BaseHibernateDao<Target> implements
 		return super.countAll();
 	}
 
-	public void saveTarget(Target target) throws DuplicateKeyException {
-		super.save(target);
+	public void saveTarget(Target target) {
+		super.saveWithoutDuplicateHandling(target);
 	}
 
 	public void updateTarget(Target target) throws DuplicateKeyException {

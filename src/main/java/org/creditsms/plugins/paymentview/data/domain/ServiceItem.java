@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,7 +37,7 @@ public class ServiceItem {
 	@Column(name = FIELD_AMOUNT, nullable = false, unique = false)
 	private BigDecimal amount;
 
-	@OneToMany
+	@OneToMany(fetch=FetchType.EAGER)
 	private Set<Target> target;
 
 	@Column(name = FIELD_TARGET_NAME, nullable = false, unique = false)
