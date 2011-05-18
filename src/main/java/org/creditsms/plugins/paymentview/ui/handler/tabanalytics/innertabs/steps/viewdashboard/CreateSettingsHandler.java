@@ -16,18 +16,12 @@ public class CreateSettingsHandler extends BasePanelHandler {
 
 	CreateSettingsHandler(UiGeneratorController ui,
 			ViewDashBoardTabHandler viewDashBoardTabHandler,
-			PaymentViewPluginController pluginController) {
+			PaymentViewPluginController pluginController, SelectClientsHandler selectClientsHandler) {
 		super(ui);
 		this.viewDashBoardTabHandler = viewDashBoardTabHandler;
 		this.pluginController = pluginController;
-		this.loadPanel(XML_STEP_VIEW_CLIENTS);
-	}
-	
-	CreateSettingsHandler(UiGeneratorController ui,
-			ViewDashBoardTabHandler viewDashBoardTabHandler,
-			PaymentViewPluginController pluginController, SelectClientsHandler selectClientsHandler) {
-		this(ui, viewDashBoardTabHandler, pluginController);
 		this.previousSelectClientsHandler = selectClientsHandler;
+		this.loadPanel(XML_STEP_VIEW_CLIENTS);
 	}
 
 	public void createAlert() {
@@ -36,11 +30,6 @@ public class CreateSettingsHandler extends BasePanelHandler {
 
 	public void export() {
 		new ClientExportHandler((UiGeneratorController) ui, pluginController).showWizard();
-	}
-
-	@Override
-	public Object getPanelComponent() {
-		return super.getPanelComponent();
 	}
 
 	public void previous() {
