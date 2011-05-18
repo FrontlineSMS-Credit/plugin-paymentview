@@ -1,9 +1,12 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.addclient;
 
+import java.util.List;
+
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.SelectClientsTableHandler;
 
@@ -67,6 +70,10 @@ public class SelectClientsHandler extends BasePanelHandler {
 
 	public void targetedSavings() {
 		previous();
+	}
+	
+	List<Client> getSelectedClients() {
+		return selectClientsTableHandler.getSelectedClients();
 	}
 
 	public SelectTargetSavingsHandler getSelectTargetSavingsHandler() {

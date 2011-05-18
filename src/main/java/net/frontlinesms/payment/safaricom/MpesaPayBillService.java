@@ -17,13 +17,6 @@ public class MpesaPayBillService extends MpesaPaymentService {
 			+ "Time: ([0-2]\\d|[3][0-1])/(0[1-9]|1[0-2])/(20[1][1-2]) (([2][0-3]|[0-1]\\d):([0-5]\\d):([0-5]\\d))";
 
 	
-	public MpesaPayBillService(){
-		this.setPaymentAccountType(PaymentAccountType.PAYBILL);
-		this.setGeography("Kenya");
-		this.setOperator("Safaricom");
-		this.setName("M-Pesa");
-	}
-	
 	@Override
 	Account getAccount(FrontlineMessage message) {
 		String accNumber = getFirstMatch(message, ACCOUNT_NUMBER_PATTERN);
@@ -68,5 +61,10 @@ public class MpesaPayBillService extends MpesaPaymentService {
 			// TODO Check if the date is valid.
 			return true;
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "Mpesa Kenya: Paybill Service";
 	}
 }

@@ -134,7 +134,7 @@ public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 		ui.add(row, cell, 0);
 	}
 
-	public List<Client> getSelectedUsers() {
+	public List<Client> getSelectedClients() {
 		return this.selectedClients;
 	}
 

@@ -45,7 +45,7 @@ public class ExportClientsTabHandler extends BaseTabHandler {
 
 	public void exportSelectedClients() {
 		ui.add(new ExportByClientXticsStep1Handler(ui, clientsTableHandler
-						.getSelectedUsers(), pluginController).getDialog());
+						.getSelectedClients(), pluginController).getDialog());
 	}
 
 	public void selectAll() {

@@ -96,7 +96,7 @@ public interface TargetDao {
 	 * 
 	 * @param target
 	 */
-	public void saveTarget(Target target) throws DuplicateKeyException;
+	public void saveTarget(Target target);
 
 	/**
 	 * Update a Target to the system

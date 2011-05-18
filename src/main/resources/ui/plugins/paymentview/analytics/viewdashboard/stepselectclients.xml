@@ -3,7 +3,7 @@
 	left="5" right="5" top="10" weightx="1" weighty="1">
 
 	<panel columns="2" gap="5" weightx="1" weighty="1" name="pnlClientsTableHolder">
-		<label font="20 Bold" colspan="2" text="View Client progress" />
+		<!--<label font="20 Bold" colspan="2" text="View Client progress" />
 		<label text="2. Select the clients you wish to view" colspan="2"/>
 		<checkbox name="by_all" action="enable(this)" group="plan" text="All" colspan="2"/>
 		<checkbox name="by_product" action="enable(this)" group="plan" text="By Product"/>
@@ -13,6 +13,7 @@
 		<checkbox name="by_clients_characteristics" action="enable(this)" group="plan" text="Select By Client Characteristic"/>
 		<panel weightx="1"><combobox name="cmbClientsCharacteristics" text="Client Groups" weightx="1" enabled="false"/><panel weightx="1"/><panel weightx="1"/></panel>
 		<checkbox name="by_clients" action="enable(this)" group="plan" text="Select By Client" colspan="2"/>
+		-->
 		<!-- Table goes here... -->
 	</panel>
 	<panel gap="5" halign="right" weightx="1">

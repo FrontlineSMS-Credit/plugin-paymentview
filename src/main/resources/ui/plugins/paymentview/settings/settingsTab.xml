@@ -15,14 +15,14 @@
 					<column text="Description"/>
 				</header>
 				<popupmenu name="menu">
-					<menuitem action="examineAccount" icon="/icons/edit.png" name="miExamineAccount"
+					<!--<menuitem action="examineAccount" icon="/icons/edit.png" name="miExamineAccount"
 						text="i18n.plugins.paymentview.menuitem.examineaccount" />
 					<menuitem action="configureAccount"
-						icon="/icons/keyword.png" name="miConfigureAccount" text="i18n.plugins.paymentview.menuitem.configureaccount" />
+						icon="/icons/keyword.png" name="miConfigureAccount" text="i18n.plugins.paymentview.menuitem.configureaccount" /> -->
 					<menuitem action="showConfirmationDialog('deleteAccount')"
 						icon="/icons/delete.png" name="miDeleteAccount" text="i18n.plugins.paymentview.menuitem.deleteaccount" />
 					<menuitem action="updateAccountBalance"
-						icon="/icons/delete.png" name="miUpdateAccount" text="i18n.plugins.paymentview.menuitem.updateaccountbalance" />					
+						icon="/icons/connection.png" name="miUpdateAccount" text="i18n.plugins.paymentview.menuitem.updateaccountbalance" />					
 				</popupmenu>
 			</table>
 		</panel>
@@ -31,8 +31,10 @@
 			<button name="btn_analyse" icon="/icons/keyword_add.png" text="i18n.plugins.paymentview.action.createnew" action="createNew" />
 			<panel weightx="1"/>
 			<panel weightx="1"/>		
-			<button action="updateAccountBalance" icon="/icons/connection.png" halign="right" name="btn_export"
-				text="i18n.plugins.paymentview.action.updateaccountbalance" />
+			<!--<button action="updateAccountBalance" icon="/icons/connection.png" halign="right" name="btn_export"
+				text="i18n.plugins.paymentview.action.updateaccountbalance" /> -->
+			<button action="updateAuthCode" icon="/icons/connection.png" halign="right" name="btn_authcode"
+				text="Update Authorization Code" />
 		</panel>
 	</panel>
 </tab>

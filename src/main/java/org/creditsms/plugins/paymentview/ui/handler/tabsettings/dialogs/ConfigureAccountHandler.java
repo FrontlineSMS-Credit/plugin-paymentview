@@ -8,11 +8,8 @@ import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
 public class ConfigureAccountHandler extends BaseDialog {
 	private static final String XML_CONFIGURE_ACCOUNT = "/ui/plugins/paymentview/settings/dialogs/dlgConfigureAccount.xml";
 
-	private final PaymentViewPluginController pluginController;
-
 	public ConfigureAccountHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui);
-		this.pluginController = pluginController;
 		init();
 		refresh();
 	}
@@ -30,11 +27,9 @@ public class ConfigureAccountHandler extends BaseDialog {
 
 	public void updateAccPIN() {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void updateAuthSettings() {
 		// TODO Auto-generated method stub
-
 	}
 }
