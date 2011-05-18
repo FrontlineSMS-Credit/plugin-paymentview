@@ -3,20 +3,20 @@ import net.frontlinesms.junit.BaseTestCase;
 
 
 public class AuthorizationCodeIntegrationTest extends BaseTestCase {
-   private AuthCodeProperties properties;
+   private AuthorizationProperties properties;
 
    @Override
 	protected void setUp() throws Exception {
-	   properties = AuthCodeProperties.getInstance();
+	   properties = AuthorizationProperties.getInstance();
 	}
 
    public void testGetAuthCode() throws Exception {
 	   final String authCode = "passwd";
-	   AuthorizationCode authCodeObj = new AuthorizationCode();
-	   properties.setAuthCode(authCode);
-	   final byte[] retrievedSalt = properties.getSalt();
-	   
+	   AuthorizationChecker authCodeObj = new AuthorizationChecker();
+	   final byte[] retrievedSalt = authCodeObj.getSalt();
+	   properties.setAuthCode(authCodeObj.getHash(authCodeObj.ITERATION_NUMBER, authCode, retrievedSalt));
+
 	   assertEquals("Hashed authCode not returned as expected.",
-			   authCodeObj.getHash(authCodeObj.ITERATION_NUMBER, authCode, retrievedSalt), properties.getAuthCode());
+			   authCodeObj.getHash(authCodeObj.ITERATION_NUMBER, authCode, retrievedSalt), properties.getHashedAuthCode());
    }
 }

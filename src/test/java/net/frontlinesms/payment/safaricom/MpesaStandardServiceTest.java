@@ -27,6 +27,12 @@ public class MpesaStandardServiceTest extends MpesaPaymentServiceTest<MpesaPerso
 				"New M-PESA balance Ksh1,236",
 				PHONENUMBER_1, ACCOUNTNUMBER_1_1, "1235", "BI94HR849",
 				"yohan mwenyewe alibamba", "22:35 3 May 2011");
+		
+		testIncomingPaymentProcessing("BC77RI604 Confirmed.\n" +
+				" Ksh1,235 sent to DACON OMONDI 254723908001 on 29/12/10 at 2:21 PM\n" +
+				"New M-PESA balance Ksh1,236",
+				PHONENUMBER_1, ACCOUNTNUMBER_1_1, "1235", "BI94HR849",
+				"yohan mwenyewe alibamba", "22:35 3 May 2011");
 	}
 	
 	@Override
