@@ -54,5 +54,5 @@ public interface AccountDao {
 	 * 
 	 * @param account
 	 */
-	public void updateAccount(Account account) throws DuplicateKeyException;
+	public void updateAccount(Account account);
 }

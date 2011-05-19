@@ -46,7 +46,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	protected static final String ACCOUNTNUMBER_2_2 = "0700000022";
 	
 	private E mpesaPaymentService;
-	private CService c;
+	private CService cService;
 	
 	private StkMenuItem myAccountMenuItem;
 	private StkRequest mpesaMenuItemRequest;
@@ -61,21 +61,21 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		super.setUp();
 		
 		this.mpesaPaymentService = createNewTestClass();
-		this.c = mock(CService.class);
-		mpesaPaymentService.setCService(c);
+		this.cService = mock(CService.class);
+		mpesaPaymentService.setCService(cService);
 		incomingPaymentDao = mock(IncomingPaymentDao.class);
 		mpesaPaymentService.setIncomingPaymentDao(incomingPaymentDao);
 		
 		setUpDaos();
 
 		StkMenuItem mpesaMenuItem = mockMenuItem("M-PESA", 129, 21);
-		when(c.stkRequest(StkRequest.GET_ROOT_MENU)).thenReturn(
+		when(cService.stkRequest(StkRequest.GET_ROOT_MENU)).thenReturn(
 				new StkMenu("Safaricom", "Safaricom+", mpesaMenuItem));
 		
 		myAccountMenuItem = mockMenuItem("My account");
 		mpesaMenuItemRequest = mpesaMenuItem.getRequest();
 		sendMoneyMenuItem = mockMenuItem("Send money");
-		when(c.stkRequest(mpesaMenuItemRequest)).thenReturn(new StkMenu("M-PESA",
+		when(cService.stkRequest(mpesaMenuItemRequest)).thenReturn(new StkMenu("M-PESA",
 				sendMoneyMenuItem , "Withdraw cash", "Buy airtime",
 				"Pay Bill", "Buy Goods", "ATM Withdrawal", myAccountMenuItem));
 	}
@@ -131,13 +131,13 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		// setup
 		StkRequest myAccountMenuItemRequest = myAccountMenuItem.getRequest();
 		StkMenuItem showBalanceMenuItem = mockMenuItem("Show balance");
-		when(c.stkRequest(myAccountMenuItemRequest)).thenReturn(
+		when(cService.stkRequest(myAccountMenuItemRequest)).thenReturn(
 				new StkMenu("My account", showBalanceMenuItem, "Call support",
 						"Change PIN", "Secret word", "Language", "Update menu"));
 		StkInputRequiremnent pinRequired = mockInputRequirement("Enter PIN", 0, 0, 4, 4, 0);
 		StkRequest pinRequiredRequest = pinRequired.getRequest();
 		StkRequest showBalanceMenuItemRequest = showBalanceMenuItem.getRequest();
-		when(c.stkRequest(showBalanceMenuItemRequest)).thenReturn(pinRequired);
+		when(cService.stkRequest(showBalanceMenuItemRequest)).thenReturn(pinRequired);
 		
 		// given
 		mpesaPaymentService.setPin("1234");
@@ -146,25 +146,25 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		mpesaPaymentService.checkBalance();
 		
 		// then
-		InOrder inOrder = inOrder(c);
-		inOrder.verify(c).stkRequest(StkRequest.GET_ROOT_MENU);
-		inOrder.verify(c).stkRequest(mpesaMenuItemRequest);
-		inOrder.verify(c).stkRequest(myAccountMenuItemRequest);
-		inOrder.verify(c).stkRequest(showBalanceMenuItemRequest);
-		inOrder.verify(c).stkRequest(pinRequiredRequest, "1234");
+		InOrder inOrder = inOrder(cService);
+		inOrder.verify(cService).stkRequest(StkRequest.GET_ROOT_MENU);
+		inOrder.verify(cService).stkRequest(mpesaMenuItemRequest);
+		inOrder.verify(cService).stkRequest(myAccountMenuItemRequest);
+		inOrder.verify(cService).stkRequest(showBalanceMenuItemRequest);
+		inOrder.verify(cService).stkRequest(pinRequiredRequest, "1234");
 	}
 	
 	public void testMakePayment() throws PaymentServiceException, SMSLibDeviceException {
 		// setup
 		StkRequest sendMoneyMenuItemRequest = sendMoneyMenuItem.getRequest();
 		StkInputRequiremnent phoneNumberRequired = mockInputRequirement("Enter phone no.");
-		when(c.stkRequest(sendMoneyMenuItemRequest)).thenReturn(phoneNumberRequired);
+		when(cService.stkRequest(sendMoneyMenuItemRequest)).thenReturn(phoneNumberRequired);
 		StkRequest phoneNumberRequest = phoneNumberRequired.getRequest();
 		StkInputRequiremnent amountRequired = mockInputRequirement("Enter amount");
-		when(c.stkRequest(phoneNumberRequest, "0712345678")).thenReturn(amountRequired);
+		when(cService.stkRequest(phoneNumberRequest, "0712345678")).thenReturn(amountRequired);
 		StkRequest amountRequest = amountRequired.getRequest();
 		StkInputRequiremnent pinRequired = mockInputRequirement("Enter PIN");
-		when(c.stkRequest(amountRequest, "500")).thenReturn(pinRequired);
+		when(cService.stkRequest(amountRequest, "500")).thenReturn(pinRequired);
 		StkRequest pinRequiredRequest = pinRequired.getRequest();
 		
 		// given
@@ -174,13 +174,13 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		mpesaPaymentService.makePayment(mockAccount(), new BigDecimal("500"));
 		
 		// then
-		InOrder inOrder = inOrder(c);
-		inOrder.verify(c).stkRequest(StkRequest.GET_ROOT_MENU);
-		inOrder.verify(c).stkRequest(mpesaMenuItemRequest);
-		inOrder.verify(c).stkRequest(sendMoneyMenuItemRequest);
-		inOrder.verify(c).stkRequest(phoneNumberRequest , "0712345678");
-		inOrder.verify(c).stkRequest(amountRequest , "500");
-		inOrder.verify(c).stkRequest(pinRequiredRequest , "1234");
+		InOrder inOrder = inOrder(cService);
+		inOrder.verify(cService).stkRequest(StkRequest.GET_ROOT_MENU);
+		inOrder.verify(cService).stkRequest(mpesaMenuItemRequest);
+		inOrder.verify(cService).stkRequest(sendMoneyMenuItemRequest);
+		inOrder.verify(cService).stkRequest(phoneNumberRequest , "0712345678");
+		inOrder.verify(cService).stkRequest(amountRequest , "500");
+		inOrder.verify(cService).stkRequest(pinRequiredRequest , "1234");
 	}
 	
 	protected void testIncomingPaymentProcessing(String messageText,

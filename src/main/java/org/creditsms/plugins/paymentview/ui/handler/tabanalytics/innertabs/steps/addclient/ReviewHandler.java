@@ -58,7 +58,6 @@ public class ReviewHandler extends BasePanelHandler {
 				target.setServiceItem(previousCreateSettingsHandler.getSelectedServiceItem());
 				target.setAccount(account);
 				
-				ui.alert(target.toString());
 				targetDao.saveTarget(target);
 			} else {
 				//alert if a client does not have an account

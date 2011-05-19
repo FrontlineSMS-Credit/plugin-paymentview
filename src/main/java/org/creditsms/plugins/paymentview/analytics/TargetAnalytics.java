@@ -89,7 +89,7 @@ public class TargetAnalytics {
 	
 	private long getDateDiffDays(long startTime, long endTime){
 	    long diff = endTime - startTime;
-		long targetDays = diff / (1000*60*60*24);
+		long targetDays = diff / (1000 * 60 * 60 * 24);
 		
 		return targetDays;
 	}

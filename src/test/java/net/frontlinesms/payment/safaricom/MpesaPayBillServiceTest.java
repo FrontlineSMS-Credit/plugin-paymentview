@@ -1,12 +1,14 @@
 package net.frontlinesms.payment.safaricom;
 
+import static org.mockito.Mockito.mock;
+import net.frontlinesms.events.EventBus;
 
 public class MpesaPayBillServiceTest extends
 		MpesaPaymentServiceTest<MpesaPayBillService> {
 	
 	@Override
 	protected MpesaPayBillService createNewTestClass() {
-		return new MpesaPayBillService();
+		return new MpesaPayBillService(mock(EventBus.class));
 	}
 
 	public void testIncomingPayBillProcessing() throws Exception {

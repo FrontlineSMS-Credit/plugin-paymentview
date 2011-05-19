@@ -1,12 +1,16 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.Account;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
+import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
 
@@ -51,8 +55,20 @@ public class SelectTargetSavingsHandler extends BasePanelHandler {
 
 	public void next() {
 		if (ui.getSelectedIndex(cmbServiceItems) > -1) {
+			int index = ui.getSelectedIndex(cmbServiceItems);
+			ServiceItem attachedServiceItem = ui.getAttachedObject(ui.getItem(cmbServiceItems, index), ServiceItem.class);
+			List<Target> targets = pluginController.getTargetDao().getTargetsByServiceItem(attachedServiceItem.getId());
+			List<Client> clients = new ArrayList<Client>();
+			//FIXME: THIS IS JUST TOO MUCH PRESSURE FOR THE DB
+			for(Target target : targets){
+				Account acc = target.getAccount();
+				if ((acc != null) & (acc.getClient() != null)) {
+					clients.add(acc.getClient());
+				}
+			}
+			
 			viewDashBoardTabHandler.setCurrentStepPanel(new SelectClientsHandler(
-					(UiGeneratorController) ui, pluginController, viewDashBoardTabHandler, this).getPanelComponent());
+					(UiGeneratorController) ui, pluginController, viewDashBoardTabHandler, this, clients).getPanelComponent());
 		}
 	}
 }

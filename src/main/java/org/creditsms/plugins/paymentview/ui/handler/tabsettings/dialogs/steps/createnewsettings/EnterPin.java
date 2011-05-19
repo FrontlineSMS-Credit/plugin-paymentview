@@ -46,7 +46,6 @@ public class EnterPin extends BaseDialog {
 				paymentService.setAccountDao(pluginController.getAccountDao());
 				paymentService.setIncomingPaymentDao(pluginController.getIncomingPaymentDao());
 				
-				ui.getFrontlineController().getEventBus().registerObserver(paymentService);				
 				removeDialog();
 				new AuthorizationCode(ui, pluginController, this).showDialog();
 			}else{

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
+import net.frontlinesms.events.EventBus;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
@@ -16,7 +17,11 @@ public class MpesaPersonalService extends MpesaPaymentService {
 					"You have received Ksh[,|[0-9]]+ ([A-Za-z ]+) 2547[0-9]{8} on " +
 					"(([1-2]?[1-9]|3[0-1])/([1-9]|1[0-2])/(1[1-2]))\\s(at)\\s([1]?\\d:[0-5]\\d)\\s(AM|PM)" +
 					"\nNew M-PESA balance Ksh[,|[0-9]]+";
-
+	
+	public MpesaPersonalService(EventBus eventBus) {
+		super(eventBus);
+	}
+	
 	@Override
 	Account getAccount(FrontlineMessage message) {
 		Client client = clientDao.getClientByPhoneNumber(getPhoneNumber(message));

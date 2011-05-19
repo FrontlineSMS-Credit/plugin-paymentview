@@ -71,13 +71,13 @@ public class PaymentViewPluginController extends BasePluginController
 			throws PluginInitialisationException {
 		// Initialize the DAO for the domain objects
 		clientDao 			= (ClientDao) applicationContext.getBean("clientDao");
+		accountDao 			= (AccountDao) applicationContext.getBean("accountDao");
 		customValueDao 		= (CustomValueDao) applicationContext.getBean("customValueDao");
 		customFieldDao 		= (CustomFieldDao) applicationContext.getBean("customFieldDao");
 		incomingPaymentDao 	= (IncomingPaymentDao) applicationContext.getBean("incomingPaymentDao");
 		outgoingPaymentDao 	= (OutgoingPaymentDao) applicationContext.getBean("outgoingPaymentDao");
 		serviceItemDao 		= (ServiceItemDao) applicationContext.getBean("serviceItemDao");
 		targetDao 			= (TargetDao) applicationContext.getBean("targetDao");
-		accountDao 			= (AccountDao) applicationContext.getBean("accountDao");
 		
 		// If not a production build, and database is empty, add test data
 		if(BuildProperties.getInstance().isSnapshot() && clientDao.getClientCount()==0) {

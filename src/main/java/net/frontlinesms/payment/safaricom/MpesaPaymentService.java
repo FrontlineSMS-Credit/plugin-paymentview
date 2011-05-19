@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.messaging.sms.SmsService;
@@ -51,6 +52,13 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	
 //> FIELDS
 	private String pin;
+	
+	public MpesaPaymentService(EventBus eventBus){
+		eventBus.registerObserver(this);
+	}
+	
+	public MpesaPaymentService() {
+	}
 	
 //> STK & PAYMENT ACCOUNT
 	public void checkBalance() throws PaymentServiceException {
@@ -201,10 +209,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			return false;
 		}
 		
-		MpesaPaymentService that = (MpesaPaymentService) other;
 			
-		if (that.getClass().getName().equals(this.getClass().getName()) &				
-				that.getSmsService().getDisplayPort().equals(this.getSmsService().getDisplayPort())){ 
+		if (other.getClass().getName().equals(this.getClass().getName())){ 
 			return true;
 		}
 		

@@ -52,8 +52,8 @@ public class HibernateAccountDao extends BaseHibernateDao<Account> implements
 		super.save(account);
 	}
 
-	public void updateAccount(Account account) throws DuplicateKeyException {
-		super.update(account);
+	public void updateAccount(Account account) {
+		super.updateWithoutDuplicateHandling(account);
 	}
 
 }

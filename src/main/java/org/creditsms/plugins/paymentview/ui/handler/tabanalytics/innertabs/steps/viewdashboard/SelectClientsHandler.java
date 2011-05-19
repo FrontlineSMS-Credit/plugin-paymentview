@@ -1,9 +1,12 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard;
 
+import java.util.List;
+
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.SelectClientsTableHandler;
 
@@ -19,12 +22,14 @@ public class SelectClientsHandler extends BasePanelHandler {
 	private Object pnlClientsTableHolder;
 	private PaymentViewPluginController pluginController;
 	private SelectTargetSavingsHandler previousSelectTargetSavingsHandler;
+	private final List<Client> clients;
 	
 	SelectClientsHandler(UiGeneratorController ui, PaymentViewPluginController pluginController,
-			ViewDashBoardTabHandler viewDashBoardTabHandler, SelectTargetSavingsHandler previousSelectTargetSavingsHandler) {
+			ViewDashBoardTabHandler viewDashBoardTabHandler, SelectTargetSavingsHandler previousSelectTargetSavingsHandler, List<Client> clients) {
 		super(ui);
 		this.pluginController = pluginController;
 		this.viewDashBoardTabHandler = viewDashBoardTabHandler;
+		this.clients = clients;
 		this.init();
 		refresh();
 		this.previousSelectTargetSavingsHandler = previousSelectTargetSavingsHandler;
@@ -39,7 +44,7 @@ public class SelectClientsHandler extends BasePanelHandler {
 		ui.setColspan(selectClientsTableHandler.getClientsTablePanel(), 2);
 //		ui.setEnabledRecursively(selectClientsTableHandler.getClientsTable(),
 //				false);
-
+		selectClientsTableHandler.setClients(clients);
 		this.ui.add(pnlClientsTableHolder,
 				selectClientsTableHandler.getClientsTablePanel());
 	}
