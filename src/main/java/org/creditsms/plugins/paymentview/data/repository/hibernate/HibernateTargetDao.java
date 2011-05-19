@@ -71,7 +71,7 @@ public class HibernateTargetDao extends BaseHibernateDao<Target> implements
 		return super.getList(criteria, startIndex, limit);
 	}
 
-	public List<Target> getTargetsByTargetItem(long targetItemId) {
+	public List<Target> getTargetsByServiceItem(long targetItemId) {
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria targetItemCriteria = criteria
 				.createCriteria("serviceItem");

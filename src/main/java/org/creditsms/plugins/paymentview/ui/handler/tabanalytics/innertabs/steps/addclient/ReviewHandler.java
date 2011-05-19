@@ -47,9 +47,10 @@ public class ReviewHandler extends BasePanelHandler {
 	}
 
 	public void create() {
-		for (Client c : selectedClients) {
-			if (!c.getAccounts().isEmpty()) {
-				Account account = new ArrayList<Account>(c.getAccounts()).get(0);
+		for (Client client : selectedClients) {
+			//
+			if (!client.getAccounts().isEmpty()) {
+				Account account = new ArrayList<Account>(client.getAccounts()).get(0);
 				
 				Target target = new Target();
 				target.setStartDate(previousCreateSettingsHandler.getStartDate());
@@ -59,6 +60,8 @@ public class ReviewHandler extends BasePanelHandler {
 				
 				ui.alert(target.toString());
 				targetDao.saveTarget(target);
+			} else {
+				//alert if a client does not have an account
 			}
 		}
 	}

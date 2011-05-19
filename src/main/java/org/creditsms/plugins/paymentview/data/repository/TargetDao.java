@@ -41,12 +41,12 @@ public interface TargetDao {
 	public Target getTargetByAccount(String accountNumber);
 
 	/**
-	 * Returns a Target with TargetItem between a given date
+	 * Returns a Target with ServiceItem between a given date
 	 * 
-	 * @param targetItemId
+	 * @param serviceItemId
 	 * @return
 	 */
-	public Target getTargetByEndDateBetweenDates(long targetItemId,
+	public Target getTargetByEndDateBetweenDates(long serviceItemId,
 			Time startDate, Time endDate);
 
 	/**
@@ -80,13 +80,13 @@ public interface TargetDao {
 			int limit);
 
 	/**
-	 * Returns a list of Target of specified targetItem
+	 * Returns a list of Target of specified ServiceItem
 	 * 
 	 * @param target
 	 *            string to be used to match the names
 	 * @return
 	 */
-	public List<Target> getTargetsByTargetItem(long targetItemId);
+	public List<Target> getTargetsByServiceItem(long serviceItemId);
 
 	/** @return number of Target in the system */
 	public int getTargetCount();

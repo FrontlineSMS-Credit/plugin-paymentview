@@ -200,13 +200,14 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 				
 				if(!(that instanceof IncomingPayment)) return false;
 				IncomingPayment other = (IncomingPayment) that;
-				
+				System.out.println(amount+confirmationCode+payedBy);
 				return other.getPhoneNumber().equals(phoneNo) &&
 						other.getAmountPaid().equals(new BigDecimal(amount)) &&
 						other.getAccount().getAccountNumber().equals(accountNumber) &&
 						other.getConfirmationCode().equals(confirmationCode) &&
 						other.getTimePaid().equals(getTimestamp(datetime)) &&
 						other.getPaymentBy().equals(payedBy);
+				        
 						
 			}
 		});
