@@ -19,18 +19,11 @@
 		</panel>
 		<label text="You have selected the following clients:" />
 		<panel columns="1" gap="5" right="10" weightx="1" weighty="1">
-			<table weightx="1" weighty="1">
-				<header>
-					<column text="Select" />
-					<column text="Name" />
-					<column text="Phone" />
-					<column text="Account" />
-				</header>
-			</table>
-
-			<label text="To save:" />
-			<label text="Starting on: " />
-			<label text="Ending On:" />
+			<panel weightx="1" weighty="1" columns="1" gap="5" name="pnlClientTableHolder">			
+			</panel>
+			<label name="toSave" 	text="To Save: " />
+			<label name="startDate" text="Starting On: " />
+			<label name="endDate" 	text="Ending On: " />
 		</panel>
 	</panel>
 	<panel gap="5" halign="right" weightx="1">

@@ -15,24 +15,38 @@ import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddCl
 
 public class ReviewHandler extends BasePanelHandler {
 	private static final String XML_STEP_REVIEW = "/ui/plugins/paymentview/analytics/addclient/stepreview.xml";
+	private static final String PNL_CLIENT_TABLE_HOLDER = "pnlClientTableHolder";
+	
 	private AddClientTabHandler addClientTabHandler;
 	private final CreateSettingsHandler previousCreateSettingsHandler;
 	private TargetDao targetDao;
+	private Object clientTableHolder;
+	private ReviewClientTableHandler clientTableHandler;
+	private final PaymentViewPluginController pluginController;
+	private List<Client> selectedClients;
 
 	protected ReviewHandler(UiGeneratorController ui, 
 			PaymentViewPluginController pluginController, AddClientTabHandler addClientTabHandler, 
 			CreateSettingsHandler createSettingsHandler) {
 		super(ui);
+		this.pluginController = pluginController;
 		this.previousCreateSettingsHandler = createSettingsHandler;
 		this.addClientTabHandler = addClientTabHandler;
 		this.targetDao = pluginController.getTargetDao();
-		this.loadPanel(XML_STEP_REVIEW);
+		selectedClients = previousCreateSettingsHandler.
+		getPreviousSelectClientsHandler().getSelectedClients();
+		init();
 	}
 
-	public void create() { 
-		List<Client> selectedClients = previousCreateSettingsHandler.
-		getPreviousSelectClientsHandler().getSelectedClients();
-		
+	private void init() {
+		this.loadPanel(XML_STEP_REVIEW);
+		clientTableHolder = ui.find(this.getPanelComponent(), PNL_CLIENT_TABLE_HOLDER);
+		clientTableHandler = new ReviewClientTableHandler((UiGeneratorController) ui, pluginController, this);
+		clientTableHandler.setClients(selectedClients);
+		ui.add(clientTableHolder, clientTableHandler.getClientsTablePanel());
+	}
+
+	public void create() {
 		for (Client c : selectedClients) {
 			if (!c.getAccounts().isEmpty()) {
 				Account account = new ArrayList<Account>(c.getAccounts()).get(0);
@@ -43,7 +57,7 @@ public class ReviewHandler extends BasePanelHandler {
 				target.setServiceItem(previousCreateSettingsHandler.getSelectedServiceItem());
 				target.setAccount(account);
 				
-//				ui.alert(target.toString());
+				ui.alert(target.toString());
 				targetDao.saveTarget(target);
 			}
 		}

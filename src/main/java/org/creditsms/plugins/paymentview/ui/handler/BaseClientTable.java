@@ -30,7 +30,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	protected CustomFieldDao customFieldDao;
 	protected CustomValueDao customValueDao;
 	protected Object tableClientsPanel;
-	protected List<Client> clients;
+	private List<Client> clients;
 
 	public BaseClientTable(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		this.ui = ui;
@@ -38,8 +38,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 		this.customFieldDao = pluginController.getCustomFieldDao();
 		this.customValueDao = pluginController.getCustomValueDao();
 		
-		this.clients = new ArrayList<Client>();
-		
+		this.clients = new ArrayList<Client>();		
 		this.init();
 	}
 
@@ -79,17 +78,28 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 				return this.clientDao.getAllClients(startIndex, limit);
 			}
 		}else{
+			//FIXME: Make this stable
 			if (filter.trim().isEmpty()) {
-				return clients.subList(startIndex, startIndex);
+				if (clientsTablePager.getMaxItemsPerPage() < clients.size()){
+					return clients.subList(startIndex, limit);
+				}
+				return clients;
 			}else{
-				List<Client> subList = clients.subList(startIndex, startIndex);
-				List<Client> copy = new ArrayList<Client>(); 
+				List<Client> subList = null;
+				
+				if (clientsTablePager.getMaxItemsPerPage() < clients.size()){
+					subList = clients.subList(startIndex, limit);
+				}else{
+					subList = clients;
+				}
+				
+				List<Client> temp = new ArrayList<Client>(); 
 				for (Client c : subList) {
 					if (c.getName().equalsIgnoreCase(filter)) {
-						copy.add(c);
+						temp.add(c);
 					}
 				}
-				return copy;
+				return temp;
 			}
 		}
 	}
@@ -217,5 +227,13 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 
 	public Object getClientsTable() {
 		return this.tableClients;
+	}
+
+	/**
+	 * @param clients the clients to set
+	 */
+	public void setClients(List<Client> clients) {
+		this.clients = clients;
+		this.refresh();
 	}
 }

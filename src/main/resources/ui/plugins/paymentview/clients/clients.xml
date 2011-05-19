@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name="tab_clientList" text="Clients" icon="/icons/users.png">
 	<panel columns="1" weightx="1" weighty="1" gap="10">
-		<panel weightx="1" weighty="1" columns="1" gap="5"
-			name="pnlClientTableHolder">			
+		<panel weightx="1" weighty="1" columns="1" gap="5" name="pnlClientTableHolder">			
 		</panel>
 		<panel gap="5" left="5" right="5" bottom="5" name="pnl_buttons"
 			weightx="1"> 
