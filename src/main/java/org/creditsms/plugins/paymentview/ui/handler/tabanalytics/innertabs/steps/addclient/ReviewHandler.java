@@ -33,7 +33,7 @@ public class ReviewHandler extends BasePanelHandler {
 		this.previousCreateSettingsHandler = createSettingsHandler;
 		this.addClientTabHandler = addClientTabHandler;
 		this.targetDao = pluginController.getTargetDao();
-		selectedClients = previousCreateSettingsHandler.
+		this.selectedClients = previousCreateSettingsHandler.
 		getPreviousSelectClientsHandler().getSelectedClients();
 		init();
 	}

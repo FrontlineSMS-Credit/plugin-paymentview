@@ -50,7 +50,9 @@ public class SelectTargetSavingsHandler extends BasePanelHandler {
 	}
 
 	public void next() {
-		viewDashBoardTabHandler.setCurrentStepPanel(new SelectClientsHandler(
-				(UiGeneratorController) ui, pluginController, viewDashBoardTabHandler, this).getPanelComponent());
+		if (ui.getSelectedIndex(cmbServiceItems) > -1) {
+			viewDashBoardTabHandler.setCurrentStepPanel(new SelectClientsHandler(
+					(UiGeneratorController) ui, pluginController, viewDashBoardTabHandler, this).getPanelComponent());
+		}
 	}
 }

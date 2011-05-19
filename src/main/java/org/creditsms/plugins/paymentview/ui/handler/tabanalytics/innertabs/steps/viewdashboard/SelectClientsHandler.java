@@ -25,13 +25,13 @@ public class SelectClientsHandler extends BasePanelHandler {
 		super(ui);
 		this.pluginController = pluginController;
 		this.viewDashBoardTabHandler = viewDashBoardTabHandler;
-		this.loadPanel(XML_STEP_SELECT_CLIENT);
 		this.init();
 		refresh();
 		this.previousSelectTargetSavingsHandler = previousSelectTargetSavingsHandler;
 	}
 
 	private void init() {
+		this.loadPanel(XML_STEP_SELECT_CLIENT);
 		this.selectClientsTableHandler = new SelectClientsTableHandler(
 				(UiGeneratorController) ui, pluginController);
 		pnlClientsTableHolder = this.find(PNL_CLIENTS_TABLE_HOLDER);
@@ -62,35 +62,4 @@ public class SelectClientsHandler extends BasePanelHandler {
 	public void refresh() {
 		this.selectClientsTableHandler.updateClientsList();
 	}
-
-//	public void enable(Object checkbox) {
-//		String name = ui.getName(checkbox);
-//		if (name.equals(BY_PRODUCT)) {
-//			ui.setEnabled(chkProduct, true);
-//			// else
-//			ui.setEnabled(chkClientsCharacteristics, false);
-//			ui.setEnabledRecursively(
-//					selectClientsTableHandler.getClientsTable(), false);
-//			selectClientsTableHandler.unSelectAll();
-//		} else if (name.equals(BY_CLIENTS_CHARACTERISTICS)) {
-//			ui.setEnabled(chkClientsCharacteristics, true);
-//			// else
-//			ui.setEnabledRecursively(
-//					selectClientsTableHandler.getClientsTable(), false);
-//			ui.setEnabled(chkProduct, false);
-//			selectClientsTableHandler.unSelectAll();
-//		} else if (name.equals(BY_CLIENTS)) {
-//			ui.setEnabledRecursively(
-//					selectClientsTableHandler.getClientsTable(), true);
-//			// else
-//			ui.setEnabled(chkClientsCharacteristics, false);
-//			ui.setEnabled(chkProduct, false);
-//		} else {
-//			selectClientsTableHandler.unSelectAll();
-//			ui.setEnabledRecursively(
-//					selectClientsTableHandler.getClientsTable(), false);
-//			ui.setEnabled(chkClientsCharacteristics, false);
-//			ui.setEnabled(chkProduct, false);			
-//		}
-//	}
 }
