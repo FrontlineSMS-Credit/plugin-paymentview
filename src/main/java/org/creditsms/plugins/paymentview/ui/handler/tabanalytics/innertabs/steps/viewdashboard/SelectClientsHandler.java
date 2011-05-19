@@ -1,12 +1,15 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.SelectClientsTableHandler;
 
@@ -22,14 +25,14 @@ public class SelectClientsHandler extends BasePanelHandler {
 	private Object pnlClientsTableHolder;
 	private PaymentViewPluginController pluginController;
 	private SelectTargetSavingsHandler previousSelectTargetSavingsHandler;
-	private final List<Client> clients;
+	private final Map<Client, Target> clients_targets;
 	
 	SelectClientsHandler(UiGeneratorController ui, PaymentViewPluginController pluginController,
-			ViewDashBoardTabHandler viewDashBoardTabHandler, SelectTargetSavingsHandler previousSelectTargetSavingsHandler, List<Client> clients) {
+			ViewDashBoardTabHandler viewDashBoardTabHandler, SelectTargetSavingsHandler previousSelectTargetSavingsHandler, Map<Client, Target> clients_targets) {
 		super(ui);
 		this.pluginController = pluginController;
 		this.viewDashBoardTabHandler = viewDashBoardTabHandler;
-		this.clients = clients;
+		this.clients_targets = clients_targets;
 		this.init();
 		refresh();
 		this.previousSelectTargetSavingsHandler = previousSelectTargetSavingsHandler;
@@ -44,7 +47,7 @@ public class SelectClientsHandler extends BasePanelHandler {
 		ui.setColspan(selectClientsTableHandler.getClientsTablePanel(), 2);
 //		ui.setEnabledRecursively(selectClientsTableHandler.getClientsTable(),
 //				false);
-		selectClientsTableHandler.setClients(clients);
+		selectClientsTableHandler.setClients(new ArrayList<Client>(clients_targets.keySet()));
 		this.ui.add(pnlClientsTableHolder,
 				selectClientsTableHandler.getClientsTablePanel());
 	}
@@ -66,5 +69,13 @@ public class SelectClientsHandler extends BasePanelHandler {
 
 	public void refresh() {
 		this.selectClientsTableHandler.updateClientsList();
+	}
+	
+	List<Client> getSelectedClients(){
+		return this.selectClientsTableHandler.getSelectedClients();
+	}
+	
+	public Map<Client, Target> getClients_targets() {
+		return clients_targets;
 	}
 }

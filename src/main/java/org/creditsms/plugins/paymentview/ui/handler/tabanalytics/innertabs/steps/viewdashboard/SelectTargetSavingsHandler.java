@@ -1,7 +1,8 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
@@ -58,17 +59,17 @@ public class SelectTargetSavingsHandler extends BasePanelHandler {
 			int index = ui.getSelectedIndex(cmbServiceItems);
 			ServiceItem attachedServiceItem = ui.getAttachedObject(ui.getItem(cmbServiceItems, index), ServiceItem.class);
 			List<Target> targets = pluginController.getTargetDao().getTargetsByServiceItem(attachedServiceItem.getId());
-			List<Client> clients = new ArrayList<Client>();
+			Map<Client,Target> clients_targets = new HashMap<Client,Target>();
 			//FIXME: THIS IS JUST TOO MUCH PRESSURE FOR THE DB
 			for(Target target : targets){
-				Account acc = target.getAccount();
-				if ((acc != null) & (acc.getClient() != null)) {
-					clients.add(acc.getClient());
+				Account a = target.getAccount();
+				if ((a != null) & (a.getClient() != null)) {
+					clients_targets.put(a.getClient(), target);
 				}
 			}
 			
 			viewDashBoardTabHandler.setCurrentStepPanel(new SelectClientsHandler(
-					(UiGeneratorController) ui, pluginController, viewDashBoardTabHandler, this, clients).getPanelComponent());
+					(UiGeneratorController) ui, pluginController, viewDashBoardTabHandler, this, clients_targets).getPanelComponent());
 		}
 	}
 }

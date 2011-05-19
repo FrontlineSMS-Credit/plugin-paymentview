@@ -65,7 +65,7 @@ public class TargetAnalytics {
 		return incomingPayments;
 	}
 	
-	public boolean isStatusGood(long tartgetId){
+	public Boolean isStatusGood(long tartgetId){
 		List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(tartgetId);
 		
 		BigDecimal amountPaid = calculateAmount(incomingPayments);
@@ -87,14 +87,14 @@ public class TargetAnalytics {
 		return initAmntRate.compareTo(remAmntRate) >= 0;
 	}
 	
-	private long getDateDiffDays(long startTime, long endTime){
+	private Long getDateDiffDays(long startTime, long endTime){
 	    long diff = endTime - startTime;
 		long targetDays = diff / (1000 * 60 * 60 * 24);
 		
 		return targetDays;
 	}
 	
-	public long getDaysRemaining(long tartgetId){
+	public Long getDaysRemaining(long tartgetId){
 		long endTime = targetDao.getTargetById(tartgetId).getEndDate().getTime();
 		return getDateDiffDays(new Date().getTime(), endTime);
 	}

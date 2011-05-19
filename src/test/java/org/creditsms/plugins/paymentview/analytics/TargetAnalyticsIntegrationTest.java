@@ -73,11 +73,11 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	}
 	
 	public void testGetDaysRemaining(){
-		assertEquals(3, this.targetAnalytics.getDaysRemaining(targetId));	
+		assertEquals(Long.valueOf(3), this.targetAnalytics.getDaysRemaining(targetId));	
 	}
 	
 	public void testTargetStatus() {
-		assertEquals(true, this.targetAnalytics.isStatusGood(targetId));
+		assertEquals(Boolean.TRUE, this.targetAnalytics.isStatusGood(targetId));
 	}
 	
 	public void testGetLastDatePaid(){
