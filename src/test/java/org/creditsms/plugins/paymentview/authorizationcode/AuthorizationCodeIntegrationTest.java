@@ -12,11 +12,10 @@ public class AuthorizationCodeIntegrationTest extends BaseTestCase {
 
    public void testGetAuthCode() throws Exception {
 	   final String authCode = "passwd";
-	   AuthorizationChecker authCodeObj = new AuthorizationChecker();
-	   final byte[] retrievedSalt = authCodeObj.getSalt();
-	   properties.setAuthCode(authCodeObj.getHash(authCodeObj.ITERATION_NUMBER, authCode, retrievedSalt));
+	   final byte[] retrievedSalt = AuthorizationChecker.getSalt();
+	   properties.setAuthCode(AuthorizationChecker.getHash(AuthorizationChecker.ITERATION_NUMBER, authCode, retrievedSalt));
 
 	   assertEquals("Hashed authCode not returned as expected.",
-			   authCodeObj.getHash(authCodeObj.ITERATION_NUMBER, authCode, retrievedSalt), properties.getHashedAuthCode());
+			   AuthorizationChecker.getHash(AuthorizationChecker.ITERATION_NUMBER, authCode, retrievedSalt), properties.getHashedAuthCode());
    }
 }

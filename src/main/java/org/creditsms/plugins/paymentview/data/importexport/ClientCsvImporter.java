@@ -9,7 +9,6 @@ import net.frontlinesms.csv.CsvImportReport;
 import net.frontlinesms.csv.CsvImporter;
 import net.frontlinesms.csv.CsvParseException;
 import net.frontlinesms.csv.CsvRowFormat;
-import net.frontlinesms.data.DuplicateKeyException;
 
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Account;
@@ -81,13 +80,7 @@ public class ClientCsvImporter extends CsvImporter {
 				c.addAccount(a);
 			}
 
-			try {
-				clientDao.saveClient(c);
-			} catch (DuplicateKeyException e) {
-				// FIXME should actually pass details of this back to the user.
-				log.debug("Client already exist with this number", e);
-				throw new RuntimeException(e);
-			}
+			clientDao.saveClient(c);
 			//FIXME: Ability to take in custom fields and data.
 			/*
 			 * 1. Get the Optional data since we gave the rowFormatter the markers,

@@ -2,7 +2,6 @@ package org.creditsms.plugins.paymentview.data.repository.hibernate;
 
 import java.util.List;
 
-import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
@@ -48,8 +47,8 @@ public class HibernateAccountDao extends BaseHibernateDao<Account> implements
 		return super.countAll();
 	}
 	
-	public void saveAccount(Account account) throws DuplicateKeyException {
-		super.save(account);
+	public void saveAccount(Account account) {
+		super.saveWithoutDuplicateHandling(account);
 	}
 
 	public void updateAccount(Account account) {

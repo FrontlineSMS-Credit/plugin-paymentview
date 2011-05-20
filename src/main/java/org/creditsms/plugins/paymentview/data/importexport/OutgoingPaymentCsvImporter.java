@@ -70,15 +70,8 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 					PaymentViewCsvUtils.MARKER_OUTGOING_CONFIRMATION);
 
 			Account acc;
-
-			try {
-				acc = new Account(account);
-				accountDao.saveAccount(acc);
-			} catch (DuplicateKeyException e) {
-				// FIXME should actually pass details of this back to the user.
-				log.debug("An Account already exist with this number", e);
-				acc = accountDao.getAccountByAccountNumber(account);
-			}
+			acc = new Account(account);
+			accountDao.saveAccount(acc);
 
 			OutgoingPayment outgoingPayment = new OutgoingPayment(phoneNumber,
 					new BigDecimal(amountPaid), new Date(
