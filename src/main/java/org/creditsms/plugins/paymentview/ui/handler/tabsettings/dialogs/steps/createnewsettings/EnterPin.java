@@ -5,6 +5,7 @@ import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.authorizationcode.ui.AuthorizationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.SettingsTabHandler;
 
@@ -32,11 +33,11 @@ public class EnterPin extends BaseDialog {
 		removeDialog();
 	}
 	
-	public void next(final String Pin, final String VPin) {
-		setUpThePaymentService(Pin, VPin);
+	public void next(final String Pin, final String VPin, String methodToBeCalled) {
+		setUpThePaymentService(Pin, VPin, methodToBeCalled);
 	}
 
-	public void setUpThePaymentService(final String pin, final String vPin) {			
+	public void setUpThePaymentService(final String pin, final String vPin, String methodToBeCalled) {			
 			if(checkValidityOfPinFields(pin, vPin)){
 				MpesaPaymentService paymentService = previousMobilePaymentService.getPaymentService();
 				paymentService.setPin(pin);
@@ -47,10 +48,22 @@ public class EnterPin extends BaseDialog {
 				paymentService.setIncomingPaymentDao(pluginController.getIncomingPaymentDao());
 				
 				removeDialog();
-				new AuthorizationCode(ui, pluginController, this).showDialog();
+				showAuthorizationCodeDialog(methodToBeCalled).showDialog();
 			}else{
 				ui.alert("Invalid! Please Re-enter the PIN numbers again.");
 			}
+	}
+	
+	public AuthorizationCodeHandler showAuthorizationCodeDialog(String methodToBeCalled){
+		return pluginController.showAuthorizationCodeDialog(methodToBeCalled, this);
+	}
+	
+	public void create() {
+		this.getSettingsTabHandler().addPaymentService(this.getPaymentService());
+		this.getSettingsTabHandler().refresh();
+		
+		ui.alert("The Payment service has been created successfully!");
+		removeDialog();
 	}
 	
 	MpesaPaymentService getPaymentService() {

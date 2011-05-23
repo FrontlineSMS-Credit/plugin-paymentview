@@ -4,18 +4,13 @@
 	right="9" text="Create Alert"
 	top="9" resizable="true" modal="true">
 
-	<checkbox colspan="3" text="Require Authorization to send outgoing payments" />
-	
 	<label text="Enter Authorization Code" />
 	<textfield colspan="2" columns="15" text="" />
 	<label text="Verify Authorization Code" />
 	<textfield colspan="2" columns="15" text="" />
 
 	<panel colspan="3" weightx="1">
-		<button icon="/icons/left.png" text="Previous"
-			action="previous" />
 		<panel weightx="1" />
-		<button icon="/icons/right.png" text="Create"
-			action="create" />
+		<button name="btnAuthorize" icon="/icons/right.png" text="Authorize"/>
 	</panel>
 </dialog>

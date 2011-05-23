@@ -15,6 +15,7 @@ import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
+import org.creditsms.plugins.paymentview.authorizationcode.ui.AuthorizationCodeHandler;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
@@ -53,6 +54,7 @@ public class PaymentViewPluginController extends BasePluginController
 	private ServiceItemDao serviceItemDao;
 	
 	private PaymentViewThinletTabController tabController;
+	private UiGeneratorController ui;
 
 	/**
 	 * @see net.frontlinesms.plugins.PluginController#deinit()
@@ -87,10 +89,17 @@ public class PaymentViewPluginController extends BasePluginController
 
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
 	@Override
-	public Object initThinletTab(UiGeneratorController uiController) {
-		tabController = new PaymentViewThinletTabController(this, uiController);		
+	public Object initThinletTab(UiGeneratorController ui) {
+		tabController = new PaymentViewThinletTabController(this, ui);
+		this.ui = ui;
 		return tabController.getPaymentViewTab();
 	}
+	
+//> UTILITY ACTIONS
+	public AuthorizationCodeHandler showAuthorizationCodeDialog(String methodToBeCalled, ThinletUiEventHandler eventListener){
+		return new AuthorizationCodeHandler(ui, this, eventListener, methodToBeCalled);
+	}
+		
 	
 //> ACCESSORS
 	public AccountDao getAccountDao() {
