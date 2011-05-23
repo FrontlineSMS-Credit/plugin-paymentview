@@ -96,7 +96,7 @@ public class ServiceItem {
 	@Override
 	public String toString() {
 		return "ServiceItem [id=" + id + ", targetName=" + targetName
-				+ ", amount=" + amount + ", target=" + target + "]";
+				+ ", amount=" + amount + "]";
 	}
 
 	@Override

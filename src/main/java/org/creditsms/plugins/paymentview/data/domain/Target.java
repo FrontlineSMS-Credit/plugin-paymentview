@@ -144,7 +144,7 @@ public class Target {
 	@Override
 	public String toString() {
 		return "Target [id=" + id + ", startDate=" + startDate + ", endDate="
-				+ endDate + ", account=" + account + ", serviceItem="
+				+ endDate + ", serviceItem="
 				+ serviceItem + "]";
 	}
 }

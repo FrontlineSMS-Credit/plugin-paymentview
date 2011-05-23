@@ -1,7 +1,12 @@
 package org.creditsms.plugins.paymentview;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import net.frontlinesms.data.DuplicateKeyException;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
@@ -54,7 +59,7 @@ public class DemoData {
 				getAccountDao().updateAccount(a);
 			}
 			getClientDao().updateClient(c);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			System.out.println(c);
 			System.out.println(a);
 			e.printStackTrace();
@@ -104,11 +109,11 @@ public class DemoData {
 	
 	}
 	
-	private void createDummyServiceItem_Targets(String targetName, String amount, String[][] serviceItems) {
+	private void createDummyServiceItem_Targets(String targetName, String amount, String[][] serviceItems){
 		ServiceItem s = new ServiceItem();
 		s.setAmount(new BigDecimal(amount));
 		s.setTargetName(targetName);
-		
+		 	
 		getServiceItemDao().saveServiceItem(s);
 		
 		for(String[] serviceItem : serviceItems){
@@ -116,21 +121,33 @@ public class DemoData {
 		}
 	}
 	
-	private void createDummyTargets(ServiceItem targetItem, String accountNumber, String endDate, String startDate) {
+	private void createDummyTargets(ServiceItem targetItem, String accountNumber, String endDate, String startDate){
 		Target t = new Target();
-		
 		t.setAccount(getAccountDao().getAccountByAccountNumber(accountNumber));
-		t.setEndDate(new Date(Long.parseLong(endDate)));
-		t.setStartDate(new Date(Long.parseLong(startDate)));
-		t.setServiceItem(targetItem);
+		//t.setEndDate(new Date(Long.parseLong(endDate)));
+		//t.setStartDate(new Date(Long.parseLong(startDate)));
 		
-		//getTargetDao().saveTarget(t);
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		try { 
+			Date startDater = df.parse(startDate);  
+			Date endDater = df.parse(endDate);
+			t.setStartDate(startDater);
+			t.setEndDate(endDater);
+			
+			t.setServiceItem(targetItem);
+			getTargetDao().saveTarget(t);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
+	 * @throws DuplicateKeyException 
 	 * 
 	 */
-	private void createDummyData() {
+	private void createDummyData(){
 		// Create dummy clients
 		createDummyClient("Alice Wangare", "+254724574645", new String[] { "4343625", "247362623" });
 		createDummyClient("John Kamau", "+254720547355", new String[] { "82666633", "23233423" });
@@ -161,14 +178,18 @@ public class DemoData {
 		createDummyClient("Charlene Nyambura", "+254720762345", new String[] { "43330025", "23432674" });
 		createDummyClient("Tangus Koech", "+254721012326", new String[] { "42400255", "24343423" });
 		createDummyClient("Justus Matanda", "+254725014545", new String[] { "42547455", "43493444" });
-	
+
+		createDummyServiceItem_Targets("Solar Panel", "120000", new String[][]{{"232492474","24/08/2011", "24/05/2011"},{"9923623","24/08/2011", "24/05/2011"}});
+		createDummyServiceItem_Targets("Solar Panel Generator", "290000", new String[][]{{"00023225","24/08/2011", "24/05/2011"},{"434322934","21/08/2011", "21/05/2011"}});
+		createDummyServiceItem_Targets("Bore Hole", "10000", new String[][]{{"459732535","24/08/2011", "24/05/2011"},{"9923623","28/08/2011", "28/05/2011"}});
+		
 		createDummyIncomingPayment("Isiah Muchene", "+254723312235", "1300560000000", new BigDecimal("4513.20"), "59536723");
 		createDummyIncomingPayment("Tangus Koech", "+25472762345", "1300560000100", new BigDecimal("300.00"), "42400255");
 		createDummyIncomingPayment("Justin Mwakidedi", "+25475412345", "1300560000200", new BigDecimal("420.00"), "25857623");
 		createDummyIncomingPayment("Charlene Nyambura", "+25472012326", "1300560200300", new BigDecimal("400.00"), "24343423");
 		
 	
-		createDummyIncomingPayment("Angela Koki", "+254720999345", "1300564344000", new BigDecimal("4000.95"), "23278523");
+		createDummyIncomingPayment("Angela Koki", "+254720999345", "1300564344000", new BigDecimal("4000.95"), "9923623");
 		createDummyIncomingPayment("Isiah Mwiki", "+254720785345", "1300232333300", new BigDecimal("8800.00"), "233854323");
 		createDummyIncomingPayment("Roy Owino", "+254720487545", "1302304299006", new BigDecimal("10000.00"), "25857623");
 		createDummyIncomingPayment("Wambui Waweru", "+254720113445", "1302304299996", new BigDecimal("1780.00"), "232363547");
@@ -179,10 +200,7 @@ public class DemoData {
 		createDummyOutgoingPayment("Justin Mwakidedi", "+254754123445", "1302300049896", new BigDecimal("100.00"), "25857623");
 		createDummyOutgoingPayment("Charlene Nyambura", "+254720123426", "1302000034896", new BigDecimal("500.00"), "24343423");
 		createDummyOutgoingPayment("Phanice Nafula", "+254720145345", "1302000500896", new BigDecimal("4200.00"), "27434523");
-		
-		createDummyServiceItem_Targets("Solar Panel", "120000", new String[][]{{"232492474","1300564344000","1300564346000"},{"9923623","1300564344000","1300564346000"}});
-		createDummyServiceItem_Targets("Solar Panel Generator", "290000", new String[][]{{"00023225","1300564344000","1300564346000"},{"434322934","1300564344000","1300564346000"}});
-		createDummyServiceItem_Targets("Bore Hole", "10000", new String[][]{{"459732535","1300564344000","1300564346000"},{"9923623","1300564344000","1300564346000"}});
+
 	}
 	
 	public AccountDao getAccountDao() {
@@ -236,7 +254,7 @@ public class DemoData {
 
 	
 //> STATIC METHODS
-	public static void createDemoData(ApplicationContext applicationContext) {
+	public static void createDemoData(ApplicationContext applicationContext){
 		DemoData d = new DemoData(applicationContext);
 		d.createDummyData();
 	}
