@@ -5,11 +5,11 @@ import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.authorizationcode.ui.AuthorizationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.SettingsTabHandler;
 
 public class EnterPin extends BaseDialog {
+	private static final String DLG_VERIFICATION_CODE = "dlgVerificationCode";
 	private static final int MAX_LENGTH = 4;
 	private static final String XML_ENTER_PIN = "/ui/plugins/paymentview/settings/dialogs/createnewpaymentsteps/dlgCreateNewAccountStep2.xml";
 	private final PaymentViewPluginController pluginController;
@@ -48,14 +48,10 @@ public class EnterPin extends BaseDialog {
 				paymentService.setIncomingPaymentDao(pluginController.getIncomingPaymentDao());
 				
 				removeDialog();
-				showAuthorizationCodeDialog(methodToBeCalled).showDialog();
+				pluginController.showAuthorizationCodeDialog(methodToBeCalled, this);
 			}else{
 				ui.alert("Invalid! Please Re-enter the PIN numbers again.");
 			}
-	}
-	
-	public AuthorizationCodeHandler showAuthorizationCodeDialog(String methodToBeCalled){
-		return pluginController.showAuthorizationCodeDialog(methodToBeCalled, this);
 	}
 	
 	public void create() {
@@ -63,7 +59,7 @@ public class EnterPin extends BaseDialog {
 		this.getSettingsTabHandler().refresh();
 		
 		ui.alert("The Payment service has been created successfully!");
-		removeDialog();
+		removeDialog(ui.find(DLG_VERIFICATION_CODE));
 	}
 	
 	MpesaPaymentService getPaymentService() {

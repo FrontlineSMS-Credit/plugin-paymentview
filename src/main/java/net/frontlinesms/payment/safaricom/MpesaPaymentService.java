@@ -36,9 +36,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 //> REGEX PATTERN CONSTANTS
 	private static final String PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = 
 		"[A-Z0-9]+ Confirmed.\n" +
-	"You have received Ksh[,|\\d]+ ([A-Za-z ]+) 2547[\\d]{8} on " +
-	"(([1-2]?[1-9]|3[0-1])/([1-9]|1[0-2])/(1[1-2])) (at) ([1]?\\d:[0-5]\\d) (AM|PM)\n" +
-	"New M-PESA balance Ksh[,|\\d]+";
+		"You have received Ksh[,|\\d]+ ([A-Za-z ]+) 2547[\\d]{8} on " +
+		"(([1-2]?[1-9]|3[0-1])/([1-9]|1[0-2])/(1[1-2])) (at) ([1]?\\d:[0-5]\\d) (AM|PM)\n" +
+		"New M-PESA balance Ksh[,|\\d]+";
 	
 	protected static final String AMOUNT_PATTERN = "Ksh[,|\\d]+";
 	protected static final String DATETIME_PATTERN = "d/M/yy hh:mm a";

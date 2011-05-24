@@ -7,6 +7,9 @@
  */
 package org.creditsms.plugins.paymentview;
 
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
+
 import net.frontlinesms.BuildProperties;
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.plugins.BasePluginController;
@@ -15,7 +18,7 @@ import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
-import org.creditsms.plugins.paymentview.authorizationcode.ui.AuthorizationCodeHandler;
+import org.creditsms.plugins.paymentview.authorizationcode.AuthorizationChecker;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
@@ -43,6 +46,7 @@ public class PaymentViewPluginController extends BasePluginController
 
 //> CONSTANTS
 	/** Filename and path of the XML for the PaymentView tab */
+	private static final String XML_ENTER_AUTHORIZATION_CODE = "/ui/plugins/paymentview/settings/dialogs/createnewpaymentsteps/dlgCreateNewAccountStep3.xml";
 
 	private AccountDao accountDao;
 	private ClientDao clientDao;
@@ -55,6 +59,8 @@ public class PaymentViewPluginController extends BasePluginController
 	
 	private PaymentViewThinletTabController tabController;
 	private UiGeneratorController ui;
+	private Method authorizationAction;
+	private ThinletUiEventHandler authorizationEventListener;
 
 	/**
 	 * @see net.frontlinesms.plugins.PluginController#deinit()
@@ -95,11 +101,46 @@ public class PaymentViewPluginController extends BasePluginController
 		return tabController.getPaymentViewTab();
 	}
 	
-//> UTILITY ACTIONS
-	public AuthorizationCodeHandler showAuthorizationCodeDialog(String methodToBeCalled, ThinletUiEventHandler eventListener){
-		return new AuthorizationCodeHandler(ui, this, eventListener, methodToBeCalled);
+//> AUTHORIZATION UTILITY ACTIONS
+	public void showAuthorizationCodeDialog(String methodToBeCalled, ThinletUiEventHandler eventListener){
+		Object dialogComponent = ui.loadComponentFromFile(XML_ENTER_AUTHORIZATION_CODE, this);
+		try {
+			setAuthorizationAction(eventListener.getClass().getMethod(methodToBeCalled));
+			setAuthorizationEventListener(eventListener);
+		} catch (Throwable e) {
+			throw new RuntimeException(e);
+		}
+		ui.add(dialogComponent);
 	}
-		
+	
+	private void setAuthorizationEventListener(
+			ThinletUiEventHandler authorizationEventListener) {
+		this.authorizationEventListener = authorizationEventListener;
+	}
+
+	private void setAuthorizationAction(Method authorizationAction) {
+		this.authorizationAction = authorizationAction;
+	}
+
+ 	public void authorize(String authCode, String verifyAuthCode) {
+		try {
+			if ((authCode.equals(verifyAuthCode)) & AuthorizationChecker.authenticate(authCode)){
+				if (authorizationAction != null) {
+					try {
+						authorizationAction.invoke(authorizationEventListener);
+					}  catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				}else{
+					throw new RuntimeException("Null AuthorizationAction!");
+				}
+			}else{
+				ui.alert("Invalid Entry! Enter the Authorization Code Again.");
+			}
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
 //> ACCESSORS
 	public AccountDao getAccountDao() {
