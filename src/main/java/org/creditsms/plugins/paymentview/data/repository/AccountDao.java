@@ -29,11 +29,20 @@ public interface AccountDao {
 	 * @param accountId
 	 **/
 	public Account getAccountById(long accountId);
+	
+	/** @return number of Accountsf in the system */
+	public int getAccountCount();
 
 	/**
 	 * returns all the accounts belonging to a client
 	 **/
 	public List<Account> getAccountsByClientId(long clientId);
+	
+	/**
+	 * return all the inactive accounts belonging to a client
+	 **/
+	
+	public List<Account> getInactiveAccountsByClientId(long clientId);
 
 	/**
 	 * returns all the client accounts existing in the database

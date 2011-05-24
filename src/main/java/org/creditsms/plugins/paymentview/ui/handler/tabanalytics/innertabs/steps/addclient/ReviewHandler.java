@@ -1,21 +1,21 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.addclient;
 
-import java.util.ArrayList;
-import java.util.List;
 
+import java.util.List;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.domain.Account;
+import org.creditsms.plugins.paymentview.analytics.TargetPayBillProcess;
+import org.creditsms.plugins.paymentview.analytics.TargetStandardProcess;
 import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
 
 public class ReviewHandler extends BasePanelHandler {
 	private static final String XML_STEP_REVIEW = "/ui/plugins/paymentview/analytics/addclient/stepreview.xml";
 	private static final String PNL_CLIENT_TABLE_HOLDER = "pnlClientTableHolder";
+	private static final String PAYMENT_PROCESS = "StandardPaymentService";
 	
 	private AddClientTabHandler addClientTabHandler;
 	private final CreateSettingsHandler previousCreateSettingsHandler;
@@ -48,20 +48,25 @@ public class ReviewHandler extends BasePanelHandler {
 
 	public void create() {
 		for (Client client : selectedClients) {
-			//
-			if (!client.getAccounts().isEmpty()) {
-				Account account = new ArrayList<Account>(client.getAccounts()).get(0);
+			if (PAYMENT_PROCESS.equals("StandardPaymentService")){
+				TargetStandardProcess targetCreationProcess = new TargetStandardProcess(
+						client, previousCreateSettingsHandler.getStartDate(), 
+						previousCreateSettingsHandler.getEndDate(), 
+						previousCreateSettingsHandler.getSelectedServiceItem());
 				
-				Target target = new Target();
-				target.setStartDate(previousCreateSettingsHandler.getStartDate());
-				target.setEndDate(previousCreateSettingsHandler.getEndDate());
-				target.setCompletedDate(null);
-				target.setServiceItem(previousCreateSettingsHandler.getSelectedServiceItem());
-				target.setAccount(account);
+				if(targetCreationProcess.canCreateTarget()){
+					targetCreationProcess.createTarget();
+				}else{
+					ui.alert("The client "+client.getFirstName()+" "+client.getName()
+							+" already has a standart payment active target.");
+				}
+			}else if(PAYMENT_PROCESS.equals("PayBillPaymentService")){
+				TargetPayBillProcess targetCreationProcess = new TargetPayBillProcess(
+						client, previousCreateSettingsHandler.getStartDate(), 
+						previousCreateSettingsHandler.getEndDate(), 
+						previousCreateSettingsHandler.getSelectedServiceItem());
 				
-				targetDao.saveTarget(target);
-			} else {
-				//alert if a client does not have an account
+					targetCreationProcess.createTarget();
 			}
 		}
 	}

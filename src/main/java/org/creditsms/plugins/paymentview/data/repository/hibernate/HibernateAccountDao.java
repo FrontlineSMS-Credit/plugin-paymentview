@@ -38,6 +38,15 @@ public class HibernateAccountDao extends BaseHibernateDao<Account> implements
 		clientCriteria.add(Restrictions.eq("id", id));
 		return super.getList(criteria);
 	}
+	
+
+	public List<Account> getInactiveAccountsByClientId(long clientId) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("activeAccount", false));
+		DetachedCriteria clientCriteria = criteria.createCriteria("client");
+		clientCriteria.add(Restrictions.eq("id", clientId));
+		return super.getList(criteria);
+	}
 
 	public List<Account> getAllAcounts() {
 		return super.getAll();
@@ -55,4 +64,7 @@ public class HibernateAccountDao extends BaseHibernateDao<Account> implements
 		super.updateWithoutDuplicateHandling(account);
 	}
 
+	public int getAccountCount() {
+		return super.getAll().size();
+	}
 }
