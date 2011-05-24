@@ -51,7 +51,14 @@ public abstract class TargetCreationProcess {
 	
 	public abstract void createTarget();
 	
-	/*public abstract void createAccount();*/
+	public String createAccountNumber(){
+		int accountNumberGenerated = this.getAccountDao().getAccountCount()+1;
+		String accountNumberGeneratedStr = String.format("%05d", accountNumberGenerated);
+		while (this.getAccountDao().getAccountByAccountNumber(accountNumberGeneratedStr) != null){
+			String.format("%05d", ++ accountNumberGenerated);
+		}
+		return accountNumberGeneratedStr;
+	}
 	
 	
 	
