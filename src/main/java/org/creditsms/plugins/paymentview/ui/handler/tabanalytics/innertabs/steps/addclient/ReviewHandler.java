@@ -55,6 +55,7 @@ public class ReviewHandler extends BasePanelHandler {
 				Target target = new Target();
 				target.setStartDate(previousCreateSettingsHandler.getStartDate());
 				target.setEndDate(previousCreateSettingsHandler.getEndDate());
+				target.setCompletedDate(null);
 				target.setServiceItem(previousCreateSettingsHandler.getSelectedServiceItem());
 				target.setAccount(account);
 				

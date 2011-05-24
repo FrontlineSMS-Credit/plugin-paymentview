@@ -86,6 +86,7 @@ public class AccountIntergrationTest extends HibernateTestCase {
 	private Account setAccountNumber(String accNum){
 		Account acc = new Account();
 		acc.setAccountNumber(accNum);
+		acc.setActiveAccount(true);
 		return acc;
 	}
 	
@@ -122,6 +123,7 @@ public class AccountIntergrationTest extends HibernateTestCase {
 	private Account createAccountWithAccountNumber(String accNumber, Client client){
 		Account account = new Account();
 		account.setAccountNumber(accNumber);
+		account.setActiveAccount(true);
 		if(client!=null)account.setClient(client);
 		return account;
 	}

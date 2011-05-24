@@ -9,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import net.frontlinesms.data.EntityField;
@@ -24,8 +23,10 @@ public class Target {
 
 	public static final String FIELD_START_DATE = "startDate";
 	public static final String FIELD_END_DATE = "endDate";
+	public static final String FIELD_COMPLETED_DATE = "completedDate";
 	public static final String FIELD_ACCOUNT = "accountId";
 	public static final String FIELD_SERVICE_ITEM = "serviceItemId";
+
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +36,9 @@ public class Target {
 	private long startDate;
 	@Column(name = FIELD_END_DATE)
 	private long endDate;
-	@OneToOne
+	@Column(name = FIELD_COMPLETED_DATE, nullable = true)
+	private Long completedDate;
+	@ManyToOne
 	@JoinColumn(name = FIELD_ACCOUNT)
 	private Account account;
 	@ManyToOne
@@ -45,6 +48,7 @@ public class Target {
 	public enum Field implements EntityField<Target> {
 		START_DATE(FIELD_START_DATE),
 		END_DATE(FIELD_END_DATE),
+		COMPLETED_DATE(FIELD_COMPLETED_DATE),
 		ACCOUNT(FIELD_ACCOUNT),
 		SERVICE_ITEM(FIELD_SERVICE_ITEM);
 		
@@ -70,6 +74,11 @@ public class Target {
 	public Date getEndDate() {
 		return new Date(endDate);
 	}
+	
+	public Date getCompletedDate() {
+		return completedDate == null ? null :
+				new Date(completedDate);
+	}
 
 	public long getId() {
 		return id;
@@ -89,6 +98,14 @@ public class Target {
 
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate.getTime();
+	}
+	
+	public void setCompletedDate(Date completedDate) {
+		if (completedDate != null) {
+			this.completedDate = completedDate.getTime();	
+		} else {
+			this.completedDate = null;
+		}
 	}
 
 	public void setId(long id) {
@@ -137,6 +154,9 @@ public class Target {
 		} else if (!serviceItem.equals(other.serviceItem))
 			return false;
 		if (startDate != other.startDate)
+			return false;
+		// WARNING => NULL?????
+		if (completedDate != other.completedDate)
 			return false;
 		return true;
 	}

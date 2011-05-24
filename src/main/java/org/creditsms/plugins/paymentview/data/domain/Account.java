@@ -24,7 +24,8 @@ public class Account {
 	private static final String FIELD_ACCOUNT_NUMBER = "accountNumber";
 	private static final String FIELD_CLIENT = "clientId";
 	private static final String FIELD_ID = "id";
-
+	private static final String FIELD_ACTIVE_ACCOUNT = "activeAccount";
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = FIELD_ID, nullable = false, unique = true)
@@ -32,6 +33,8 @@ public class Account {
 
 	@Column(name = FIELD_ACCOUNT_NUMBER, nullable = false, unique = true)
 	private String accountNumber;
+	@Column(name = FIELD_ACTIVE_ACCOUNT, nullable = false)
+	private Boolean activeAccount;
 
 	@ManyToOne
 	@JoinColumn(name = FIELD_CLIENT, nullable = true)
@@ -44,6 +47,7 @@ public class Account {
 	public enum Field implements EntityField<Account> {
 		ID(FIELD_ID),
 		ACCOUNT_NUMBER(FIELD_ACCOUNT_NUMBER),
+		ACTIVE_ACCOUNT(FIELD_ACTIVE_ACCOUNT),
 		CLIENT(FIELD_CLIENT);
 		
 		/** name of a field */
@@ -59,11 +63,19 @@ public class Account {
 	
 	public Account(String accountNumber) {
 		this.accountNumber = accountNumber;
+		this.activeAccount = false;
 	}
 
 	public Account(String accountNumber, Client client) {
 		this.accountNumber = accountNumber;
 		this.client = client;
+		this.activeAccount = false;
+	}
+	
+	public Account(String accountNumber, Client client, Boolean activeAccount) {
+		this.accountNumber = accountNumber;
+		this.client = client;
+		this.activeAccount = activeAccount;
 	}
 
 	public long getAccountId() {
@@ -72,6 +84,10 @@ public class Account {
 
 	public String getAccountNumber() {
 		return accountNumber;
+	}
+	
+	public Boolean getActiveAccount() {
+		return activeAccount;
 	}
 
 	public Client getClient() {
@@ -84,6 +100,10 @@ public class Account {
 
 	public void setAccountNumber(String accountNumber) {
 		this.accountNumber = accountNumber;
+	}
+	
+	public void setActiveAccount(Boolean activeAccount) {
+		this.activeAccount = activeAccount;
 	}
 
 	public void setClient(Client client) {
