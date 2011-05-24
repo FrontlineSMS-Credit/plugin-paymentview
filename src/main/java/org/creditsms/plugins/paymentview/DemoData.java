@@ -52,6 +52,7 @@ public class DemoData {
 				if(a == null) {
 					a = new Account(accountNumber);
 					a.setClient(c);
+					a.setActiveAccount(true);
 					getAccountDao().saveAccount(a);
 				}
 				c.addAccount(a);
@@ -133,7 +134,7 @@ public class DemoData {
 			Date endDater = df.parse(endDate);
 			t.setStartDate(startDater);
 			t.setEndDate(endDater);
-			
+			t.setCompletedDate(null);
 			t.setServiceItem(targetItem);
 			getTargetDao().saveTarget(t);
 		} catch (ParseException e) {
