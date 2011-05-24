@@ -25,15 +25,10 @@ import net.frontlinesms.data.EntityField;
 @Table(name = OutgoingPayment.TABLE_NAME)
 public class OutgoingPayment {
 	public static final String TABLE_NAME = "Outgoingpayment";
-
 	public static final String FIELD_TIME_PAID = "timePaid";
-
 	public static final String FIELD_PHONE_NUMBER = "phoneNumber";
-
 	public static final String FIELD_AMOUNT_PAID = "amountPaid";
-
 	public static final String FIELD_CONFIRMATION_CODE = "confirmationCode";
-
 	public static final String FIELD_NOTES = "notes";
 
 	@Id

@@ -20,9 +20,11 @@ import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
 import org.smslib.stk.StkInputRequiremnent;
@@ -32,6 +34,12 @@ import org.smslib.stk.StkResponse;
 
 public abstract class MpesaPaymentService implements PaymentService, EventObserver  {
 //> REGEX PATTERN CONSTANTS
+	private static final String PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = 
+		"[A-Z0-9]+ Confirmed.\n" +
+	"You have received Ksh[,|\\d]+ ([A-Za-z ]+) 2547[\\d]{8} on " +
+	"(([1-2]?[1-9]|3[0-1])/([1-9]|1[0-2])/(1[1-2])) (at) ([1]?\\d:[0-5]\\d) (AM|PM)\n" +
+	"New M-PESA balance Ksh[,|\\d]+";
+	
 	protected static final String AMOUNT_PATTERN = "Ksh[,|\\d]+";
 	protected static final String DATETIME_PATTERN = "d/M/yy hh:mm a";
 	protected static final String PHONE_PATTERN = "2547[\\d]{8}";
@@ -49,6 +57,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	AccountDao accountDao;
 	ClientDao clientDao;
 	IncomingPaymentDao incomingPaymentDao;
+	OutgoingPaymentDao outgoingPaymentDao;
 	
 //> FIELDS
 	private String pin;
@@ -126,17 +135,50 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}
 		final FrontlineMessage message = (FrontlineMessage) entity;
 		
-		//Verify that its from MPESA and is of valid pattern
-		if (!messageIsValid(message)) {
-			return;
+		if (isOutgoingPaymentConfirmation(message)){
+			processOutgoingPayment(message);
+		}else if (isValidIncomingPaymentConfirmation(message)) {
+			processIncomingPayment(message);
 		}
-		
-		//Then process the payment 
-		processPayment(message);
+	}
+ 
+	private boolean isOutgoingPaymentConfirmation(FrontlineMessage message) {
+		String textContent = message.getTextContent();
+		if (textContent.contains("sent by")){
+			return false;
+		}
+		return textContent.matches(PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN);
 	}
 
-//> INCOMING MESSAGE PAYMENT PROCESSORS
-	private void processPayment(final FrontlineMessage message) {
+	private void processOutgoingPayment(final FrontlineMessage message) {
+		new FrontlineUiUpateJob() {
+
+			// This probably shouldn't be a UI job,
+			// but it certainly should be done on a separate thread!
+			public void run() {
+				try {
+					final OutgoingPayment payment = new OutgoingPayment();
+					payment.setAccount(getAccount(message));
+					payment.setPhoneNumber(getPhoneNumber(message));
+					payment.setAmountPaid(getAmount(message));
+					payment.setConfirmationCode(getConfirmationCode(message));
+					//payment.setPaymentBy(getPaymentBy(message));
+					payment.setTimePaid(getTimePaid(message));
+		
+					outgoingPaymentDao.saveOutgoingPayment(payment);
+				} catch (IllegalArgumentException ex) {
+					log.warn("Message failed to parse; likely incorrect format", ex);
+					throw new RuntimeException(ex);
+				} catch (Exception ex) {
+					log.error("Unexpected exception parsing incoming payment SMS.", ex);
+					throw new RuntimeException(ex);
+				}
+			}
+		}.execute();
+	}
+	
+	//> INCOMING MESSAGE PAYMENT PROCESSORS
+	private void processIncomingPayment(final FrontlineMessage message) {
 		new FrontlineUiUpateJob() {
 			// This probably shouldn't be a UI job,
 			// but it certainly should be done on a separate thread!
@@ -162,7 +204,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}.execute();
 	}
 
-	private boolean messageIsValid(FrontlineMessage message) {
+	private boolean isValidIncomingPaymentConfirmation(FrontlineMessage message) {
 		if (!message.getSenderMsisdn().equals("MPESA")) {
 			return false;
 		}
@@ -257,4 +299,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.clientDao = clientDao;
 	}
 
+	public void setOutgoingPaymentDao(OutgoingPaymentDao outgoingPaymentDao) {
+		this.outgoingPaymentDao = outgoingPaymentDao;
+	}
 }
