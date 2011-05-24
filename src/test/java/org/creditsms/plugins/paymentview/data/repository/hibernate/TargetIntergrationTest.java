@@ -101,8 +101,11 @@ public class TargetIntergrationTest extends HibernateTestCase{
 		try { 
 			Date startDate = df.parse(startDateStr);  
 			Date endDate = df.parse(endDateStr);
+			//Date completeDate = df.parse(completeDateStr);
 			tgt.setStartDate(startDate);
 			tgt.setEndDate(endDate);
+			tgt.setCompletedDate(null);
+			System.out.println(tgt.getCompletedDate());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -112,6 +115,7 @@ public class TargetIntergrationTest extends HibernateTestCase{
 	private Account getAccountNumber(String accNum) throws DuplicateKeyException{
 		Account acc = new Account();
 		acc.setAccountNumber(accNum);
+		acc.setActiveAccount(true);
 		hibernateAccountDao.saveAccount(acc);
 		assertEquals(1, hibernateAccountDao.getAllAcounts().size());
 		return hibernateAccountDao.getAllAcounts().get(0);

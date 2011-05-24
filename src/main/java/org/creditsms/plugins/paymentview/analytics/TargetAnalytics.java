@@ -41,7 +41,7 @@ public class TargetAnalytics {
 	}
 	
 	BigDecimal calculatePercentageToGo(BigDecimal totalTargetCost, BigDecimal amountPaid) {
-		return amountPaid.divide(totalTargetCost, 6, RoundingMode.HALF_DOWN).multiply(new BigDecimal(100));
+		return amountPaid.divide(totalTargetCost, 2, RoundingMode.HALF_DOWN).multiply(new BigDecimal(100).stripTrailingZeros());
 	}
 	 
 	public BigDecimal getAmountSaved(long tartgetId){
@@ -51,9 +51,14 @@ public class TargetAnalytics {
 	
 	public BigDecimal getLastAmountPaid(long tartgetId){
 	    List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(tartgetId);
-	    int lastPoz = incomingPayments.size()-1;
+	    
+	    if(incomingPayments.size()==0){
+	    	return new BigDecimal("0.00");
+	    }else{
+		    int lastPoz = incomingPayments.size()-1;
+		    return incomingPayments.get(lastPoz).getAmountPaid();	
+	    }
 
-	    return incomingPayments.get(lastPoz).getAmountPaid();
 	}
 	
 	private List<IncomingPayment> getIncomingPaymentsByTargetId(long tartgetId){
@@ -65,12 +70,17 @@ public class TargetAnalytics {
 		return incomingPayments;
 	}
 	
-	public Boolean isStatusGood(long tartgetId){
+	// return code: 0 - Delayed, 1 - on track, 2 - completed.
+	public int isStatusGood(long tartgetId){
 		List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(tartgetId);
 		
 		BigDecimal amountPaid = calculateAmount(incomingPayments);
 		BigDecimal totalTargetCost = targetDao.getTargetById(tartgetId).
 				getServiceItem().getAmount();
+		
+		if(amountPaid.compareTo(totalTargetCost) >=0){
+			return 2;
+		}
 		
 		BigDecimal amountRem = totalTargetCost.subtract(amountPaid);
 		long remDays = getDaysRemaining(tartgetId);
@@ -83,10 +93,14 @@ public class TargetAnalytics {
 				valueOf(targetDays), 2, RoundingMode.HALF_UP);
 		BigDecimal remAmntRate = amountRem.divide(BigDecimal.
 				valueOf(remDays), 2, RoundingMode.HALF_UP);
-
-		return initAmntRate.compareTo(remAmntRate) >= 0;
+		
+		if(initAmntRate.compareTo(remAmntRate) >= 0){
+			return 1;
+		}else{
+			return 0;
+		}
 	}
-	
+
 	private Long getDateDiffDays(long startTime, long endTime){
 	    long diff = endTime - startTime;
 		long targetDays = diff / (1000 * 60 * 60 * 24);

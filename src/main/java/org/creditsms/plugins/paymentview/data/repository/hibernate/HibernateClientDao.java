@@ -2,7 +2,6 @@ package org.creditsms.plugins.paymentview.data.repository.hibernate;
 
 import java.util.List;
 
-import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
@@ -69,11 +68,11 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements
 		return super.getList(criteria, startIndex, limit);
 	}
 
-	public void saveClient(Client client) throws DuplicateKeyException {
-		super.save(client);
+	public void saveClient(Client client) {
+		super.saveWithoutDuplicateHandling(client);
 	}
 
-	public void updateClient(Client client) throws DuplicateKeyException {
-		super.update(client);
+	public void updateClient(Client client) {
+		super.updateWithoutDuplicateHandling(client);
 	}
 }

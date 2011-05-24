@@ -15,7 +15,7 @@
 				<column text="Last payment" width="100" />
 				<column text="Last payment Date" width="150" />
 				<column text="Days remaining" width="100" />
-				<column text="Rate" width="100" />
+				<column text="Target Status" width="100" />
 			</header>
 		</table>
 	</panel>

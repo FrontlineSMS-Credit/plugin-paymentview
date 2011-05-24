@@ -59,7 +59,7 @@ public class ClientIntegrationTest extends HibernateTestCase {
 			hibernateClientDao.saveClient(c1again);
 			fail("Should not be able to save contact with duplicate phone number.");
 			passedTest = false;
-		} catch (DuplicateKeyException e) {
+		} catch (Exception e) {
 			passedTest = true;
 		}
 		assertTrue(passedTest);

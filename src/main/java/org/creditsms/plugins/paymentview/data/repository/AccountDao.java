@@ -2,8 +2,6 @@ package org.creditsms.plugins.paymentview.data.repository;
 
 import java.util.List;
 
-import net.frontlinesms.data.DuplicateKeyException;
-
 import org.creditsms.plugins.paymentview.data.domain.Account;
 
 /**
@@ -47,7 +45,7 @@ public interface AccountDao {
 	 * 
 	 * @param account
 	 */
-	public void saveAccount(Account account) throws DuplicateKeyException;
+	public void saveAccount(Account account);
 
 	/**
 	 * Saves a Account to the system

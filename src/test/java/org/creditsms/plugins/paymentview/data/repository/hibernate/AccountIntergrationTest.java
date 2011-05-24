@@ -37,12 +37,8 @@ public class AccountIntergrationTest extends HibernateTestCase {
 		Account ac2 = setAccountNumber("101");
 
 		hibernateAccountDao.saveAccount(ac1);
-		try{
-			hibernateAccountDao.saveAccount(ac2);
-			fail("you cannot add more than one account with same accounts number!!");
-		}catch (DuplicateKeyException e) {
-			// expected
-		}
+		hibernateAccountDao.saveAccount(ac2);
+		fail("you cannot add more than one account with same accounts number!!");
 	}
 	
 	public void testDeleteAccount() throws DuplicateKeyException{
@@ -90,6 +86,7 @@ public class AccountIntergrationTest extends HibernateTestCase {
 	private Account setAccountNumber(String accNum){
 		Account acc = new Account();
 		acc.setAccountNumber(accNum);
+		acc.setActiveAccount(true);
 		return acc;
 	}
 	
@@ -126,6 +123,7 @@ public class AccountIntergrationTest extends HibernateTestCase {
 	private Account createAccountWithAccountNumber(String accNumber, Client client){
 		Account account = new Account();
 		account.setAccountNumber(accNumber);
+		account.setActiveAccount(true);
 		if(client!=null)account.setClient(client);
 		return account;
 	}

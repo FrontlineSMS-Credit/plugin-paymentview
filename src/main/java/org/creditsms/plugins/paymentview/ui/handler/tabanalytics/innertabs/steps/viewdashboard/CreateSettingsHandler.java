@@ -64,22 +64,34 @@ public class CreateSettingsHandler extends BasePanelHandler {
 		Object amountSaved = ui.createTableCell(targetAnalytics.getAmountSaved(target.getId()).toString());
 		Object daysRemaining = ui.createTableCell(targetAnalytics.getDaysRemaining(target.getId()).toString());
 		Object lastAmountPaid = ui.createTableCell(targetAnalytics.getLastAmountPaid(target.getId()).toString());
-		Object percentageToGo = ui.createTableCell(targetAnalytics.getPercentageToGo(target.getId()).toString());
+		Object percentageToGo = ui.createTableCell(targetAnalytics.getPercentageToGo(target.getId()).toString()+" %");
 		Object lastDatePaid = ui.createTableCell(dateFormat.format(targetAnalytics.getLastDatePaid(target.getId())));
-		Object statusGood = ui.createTableCell(targetAnalytics.isStatusGood(target.getId()).toString());
+		String targetStatusStr = "";
+		int targetStatusRC =0;
+		targetStatusRC = targetAnalytics.isStatusGood(target.getId());
 		
+		if(targetStatusRC==0){
+			targetStatusStr = "delayed";
+		}else if(targetStatusRC==1){
+			targetStatusStr = "on track";
+		}else if(targetStatusRC==2){
+			targetStatusStr = "completed";
+		}
+		Object targetStatus = ui.createTableCell(targetStatusStr);
+		Object savingsTarget = ui.createTableCell(target.getServiceItem().getAmount().toString());
 		Object startDate = ui.createTableCell(dateFormat.format(target.getStartDate()));
 		Object endDate = ui.createTableCell(dateFormat.format(target.getEndDate()));
 		
 		ui.add(row, name);
 		ui.add(row, startDate);
 		ui.add(row, endDate);
+		ui.add(row, savingsTarget);
 		ui.add(row, amountSaved);
 		ui.add(row, percentageToGo);
 		ui.add(row, lastAmountPaid);
 		ui.add(row, lastDatePaid);
 		ui.add(row, daysRemaining);
-		ui.add(row, statusGood);
+		ui.add(row, targetStatus);
 		
 		return row;
 	}

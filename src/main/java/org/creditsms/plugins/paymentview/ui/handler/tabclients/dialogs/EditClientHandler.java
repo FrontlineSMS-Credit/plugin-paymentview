@@ -140,59 +140,51 @@ public class EditClientHandler extends BaseDialog{
 
 	public void saveClient() {
 		if (editMode) {
-			try {
-				this.client.setFirstName(ui.getText(fieldFirstName));
-				this.client.setOtherName(ui.getText(fieldOtherName));
-				this.client.setPhoneNumber(ui.getText(fieldPhoneNumber));
-				this.clientDao.updateClient(this.client);
+			this.client.setFirstName(ui.getText(fieldFirstName));
+			this.client.setOtherName(ui.getText(fieldOtherName));
+			this.client.setPhoneNumber(ui.getText(fieldPhoneNumber));
+			this.clientDao.updateClient(this.client);
 
-				List<CustomField> allCustomFields = this.customFieldDao
-						.getAllActiveUsedCustomFields();
+			List<CustomField> allCustomFields = this.customFieldDao
+					.getAllActiveUsedCustomFields();
 
-				if (!allCustomFields.isEmpty()) {
-					for (CustomField cf : allCustomFields) {
-						List<CustomValue> cvs = customValueDao
-								.getCustomValuesByClientId(client.getId());
-						CustomValue cv = null;
+			if (!allCustomFields.isEmpty()) {
+				for (CustomField cf : allCustomFields) {
+					List<CustomValue> cvs = customValueDao
+							.getCustomValuesByClientId(client.getId());
+					CustomValue cv = null;
 
-						for (CustomValue _cv : cvs) {
-							if (_cv.getCustomField().equals(cf)) {
-								cv = _cv;
-							}
-
+					for (CustomValue _cv : cvs) {
+						if (_cv.getCustomField().equals(cf)) {
+							cv = _cv;
 						}
-						if (cv == null) {
-							cv = new CustomValue(ui.getText(customComponents
-									.get(cf)), cf, client);
-							try {
-								customValueDao.saveCustomValue(cv);
-							} catch (DuplicateKeyException e) {
-								throw new RuntimeException(e);
-							}
-						} else {
-							cv.setStrValue(ui.getText(customComponents.get(cf)));
 
-							try {
-								customValueDao.updateCustomValue(cv);
-							} catch (DuplicateKeyException e) {
-								throw new RuntimeException(e);
-							}
+					}
+					if (cv == null) {
+						cv = new CustomValue(ui.getText(customComponents
+								.get(cf)), cf, client);
+						try {
+							customValueDao.saveCustomValue(cv);
+						} catch (DuplicateKeyException e) {
+							throw new RuntimeException(e);
+						}
+					} else {
+						cv.setStrValue(ui.getText(customComponents.get(cf)));
+
+						try {
+							customValueDao.updateCustomValue(cv);
+						} catch (DuplicateKeyException e) {
+							throw new RuntimeException(e);
 						}
 					}
 				}
-			} catch (DuplicateKeyException e) {
-				throw new RuntimeException(e);
 			}
 		} else {
 			String fn = ui.getText(fieldFirstName);
 			String on = ui.getText(fieldOtherName);
 			String phone = ui.getText(fieldPhoneNumber);
 			Client client = new Client(fn, on, phone);
-			try {
-				this.clientDao.saveClient(client);
-			} catch (DuplicateKeyException e) {
-				throw new RuntimeException(e);
-			}
+			this.clientDao.saveClient(client);
 
 			List<CustomField> allUsedCustomFields = this.customFieldDao
 					.getAllActiveUsedCustomFields();
