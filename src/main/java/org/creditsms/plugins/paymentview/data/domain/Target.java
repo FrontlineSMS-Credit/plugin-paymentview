@@ -66,6 +66,17 @@ public class Target {
 	/** Empty constructor required for hibernate. */
 	public Target() {
 	}
+	
+	//NEW CONSTRUCTOR KIM
+	public Target(Date targetStartDate,Date targetEndDate, ServiceItem serviceItem, Account account) {
+		this.startDate = targetStartDate.getTime();
+		this.endDate = targetEndDate.getTime();
+		this.completedDate = null;
+		this.serviceItem = serviceItem;
+		this.account = account;
+		
+
+	}
 
 	public Account getAccount() {
 		return account;
