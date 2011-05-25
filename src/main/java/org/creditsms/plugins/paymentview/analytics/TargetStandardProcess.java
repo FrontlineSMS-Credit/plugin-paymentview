@@ -2,6 +2,7 @@ package org.creditsms.plugins.paymentview.analytics;
 
 import java.util.Date;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
@@ -9,11 +10,8 @@ import org.creditsms.plugins.paymentview.data.domain.Target;
 
 public class TargetStandardProcess extends TargetCreationProcess{
 
-	public  TargetStandardProcess( Client client, Date targetStartDate, Date targetEndDate,ServiceItem serviceItem){
-		this.client = client; 
-		this.targetStartDate = targetStartDate;
-		this.targetEndDate = targetEndDate;
-		this.serviceItem = serviceItem;
+	public  TargetStandardProcess(Client client, Date targetStartDate, Date targetEndDate,ServiceItem serviceItem, PaymentViewPluginController pluginController){
+		super(client, serviceItem, targetStartDate, targetEndDate, pluginController);
 	}
 	
 	public void createTarget(){

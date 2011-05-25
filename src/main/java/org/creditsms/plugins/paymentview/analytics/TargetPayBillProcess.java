@@ -2,6 +2,7 @@ package org.creditsms.plugins.paymentview.analytics;
 
 import java.util.Date;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
@@ -9,16 +10,13 @@ import org.creditsms.plugins.paymentview.data.domain.Target;
 
 public class TargetPayBillProcess  extends TargetCreationProcess{
 	
-	public  TargetPayBillProcess( Client client, Date targetStartDate, Date targetEndDate,ServiceItem serviceItem){
-		this.client = client; 
-		this.targetStartDate = targetStartDate;
-		this.targetEndDate = targetEndDate;
-		this.serviceItem = serviceItem;
+	public  TargetPayBillProcess(Client client, Date targetStartDate, Date targetEndDate,ServiceItem serviceItem, PaymentViewPluginController pluginController){
+		super(client, serviceItem, targetStartDate, targetEndDate, pluginController);
 	}
 	
 	public void createTarget(){
 		// Check if there are any accounts linked to the client
-		if (haveToCreateNewAccount()){
+		if (canCreateTarget()){
 			// create new account
 			this.setAccount(new Account(createAccountNumber(), client, false));
 			this.getAccountDao().saveAccount(this.getAccount());
@@ -36,7 +34,7 @@ public class TargetPayBillProcess  extends TargetCreationProcess{
 		}
 	}
 	
-	public boolean haveToCreateNewAccount(){
+	public boolean canCreateTarget(){
 		this.setInactiveAccounts(this.getAccountDao().
 		getInactiveAccountsByClientId(this.getClient().getId()));
 		this.setTotalListAccounts(this.getAccountDao().getAccountsByClientId(

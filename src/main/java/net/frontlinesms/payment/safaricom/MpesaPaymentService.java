@@ -1,6 +1,7 @@
 package net.frontlinesms.payment.safaricom;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -205,7 +206,13 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 						targetAnalytics.setIncomingPaymentDao(incomingPaymentDao);
 						targetAnalytics.setTargetDao(targetDao);
 						if (targetAnalytics.isStatusGood(tgt.getId())==2){
-							
+							//Update target.completedDate
+							Calendar calendar = Calendar.getInstance();
+							tgt.setCompletedDate(calendar.getTime());
+							targetDao.updateTarget(tgt);
+							// Update account.activeAccount
+							payment.getAccount().setActiveAccount(false);
+							accountDao.updateAccount(payment.getAccount());
 						}
 					}
 					
@@ -319,5 +326,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 
 	public void setOutgoingPaymentDao(OutgoingPaymentDao outgoingPaymentDao) {
 		this.outgoingPaymentDao = outgoingPaymentDao;
+	}
+	
+	public void setTargetDao(TargetDao targetDao) {
+		this.targetDao = targetDao;
 	}
 }

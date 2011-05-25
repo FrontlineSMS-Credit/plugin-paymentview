@@ -7,7 +7,6 @@
  */
 package org.creditsms.plugins.paymentview;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 
 import net.frontlinesms.BuildProperties;
@@ -18,7 +17,6 @@ import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
-import org.creditsms.plugins.paymentview.authorizationcode.AuthorizationChecker;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
@@ -123,22 +121,12 @@ public class PaymentViewPluginController extends BasePluginController
 	}
 
  	public void authorize(String authCode, String verifyAuthCode) {
-		try {
-			if ((authCode.equals(verifyAuthCode)) & AuthorizationChecker.authenticate(authCode)){
-				if (authorizationAction != null) {
-					try {
-						authorizationAction.invoke(authorizationEventListener);
-					}  catch (Exception e) {
-						throw new RuntimeException(e);
-					}
-				}else{
-					throw new RuntimeException("Null AuthorizationAction!");
-				}
-			}else{
-				ui.alert("Invalid Entry! Enter the Authorization Code Again.");
+		if (authorizationAction != null) {
+			try {
+				authorizationAction.invoke(authorizationEventListener);
+			}  catch (Exception e) {
+				throw new RuntimeException(e);
 			}
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
 		}
 	}
 	

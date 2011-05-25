@@ -44,8 +44,11 @@ public class EnterPin extends BaseDialog {
 				paymentService.setSmsService((SmsModem) previousMobilePaymentService.getSmsService());
 
 				paymentService.setClientDao(pluginController.getClientDao());
+				paymentService.setTargetDao(pluginController.getTargetDao());
 				paymentService.setAccountDao(pluginController.getAccountDao());
 				paymentService.setIncomingPaymentDao(pluginController.getIncomingPaymentDao());
+				paymentService.setOutgoingPaymentDao(pluginController.getOutgoingPaymentDao());
+				
 				
 				removeDialog();
 				pluginController.showAuthorizationCodeDialog(methodToBeCalled, this);
