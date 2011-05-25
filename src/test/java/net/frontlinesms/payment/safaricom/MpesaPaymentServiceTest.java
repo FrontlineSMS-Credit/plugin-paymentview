@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -207,47 +208,41 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 				if(!(that instanceof IncomingPayment)) return false;
 				IncomingPayment other = (IncomingPayment) that;
 				return other.getPhoneNumber().equals(phoneNo) &&
-						other.getAmountPaid().equals(new BigDecimal(amount)) &&
-						other.getAccount().getAccountNumber().equals(accountNumber) &&
-						other.getConfirmationCode().equals(confirmationCode) &&
-						other.getTimePaid().equals(getTimestamp(datetime)) &&
-						other.getPaymentBy().equals(payedBy);
-						
+					other.getAmountPaid().equals(new BigDecimal(amount)) &&
+					other.getAccount().getAccountNumber().equals(accountNumber) &&
+					other.getConfirmationCode().equals(confirmationCode) &&
+					other.getTimePaid().equals(getTimestamp(datetime).getTime()) &&
+					other.getPaymentBy().equals(payedBy);
 			}
 		});
 	}
 	
 	protected void testOutgoingPaymentProcessing(String messageText,
 			final String phoneNo, final String accountNumber, final String amount,
-			final String confirmationCode, final String payedBy, final String datetime) {
+			final String confirmationCode, final String payTo, final String datetime, final OutgoingPayment.Status status) {
 		// then
 		assertTrue(mpesaPaymentService instanceof EventObserver);
 		
 		// when
 		mpesaPaymentService.notify(mockMessageNotification("MPESA", messageText));
 		
+		OutgoingPayment payment = new OutgoingPayment();
+		payment.setPhoneNumber(phoneNo);
+		payment.setAmountPaid(new BigDecimal(amount));
+		payment.setAccount(accountDao.getAccountByAccountNumber(accountNumber));
+		payment.setConfirmationCode(confirmationCode);
+		payment.setTimePaid(getTimestamp(datetime));
+		payment.setStatus(status);
+		payment.setPaymentTo(payTo);
+		
 		// then
 		WaitingJob.waitForEvent();
-		verify(outgoingPaymentDao).saveOutgoingPayment(new OutgoingPayment() {
-			@Override
-			public boolean equals(Object that) {
-				
-				if(!(that instanceof OutgoingPayment)) return false;
-				OutgoingPayment other = (OutgoingPayment) that;
-				return other.getPhoneNumber().equals(phoneNo) &&
-						other.getAmountPaid().equals(new BigDecimal(amount)) &&
-						other.getAccount().getAccountNumber().equals(accountNumber) &&
-						other.getConfirmationCode().equals(confirmationCode) &&
-						other.getTimePaid().equals(getTimestamp(datetime)) &&
-						other.getPaymentTo().equals(payedBy);
-						
-			}
-		});
+		verify(outgoingPaymentDao).saveOutgoingPayment(payment);
 	}
 	
-	private long getTimestamp(String dateString) {
+	private Date getTimestamp(String dateString) {
 		try {
-			return new SimpleDateFormat("HH:mm dd MMM yyyy").parse(dateString).getTime();
+			return new SimpleDateFormat("d/M/yy hh:mm a").parse(dateString);
 		} catch (ParseException e) {
 			throw new IllegalArgumentException("Test date supplied in incorrect format: " + dateString);
 		}

@@ -11,7 +11,7 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 
 public class MpesaPayBillService extends MpesaPaymentService {
 	private static final String PAYBILL_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n"
-			+ "on (([1-2]?[1-9]|3[0-1])/([1-9]|1[0-2])/(1[1-3])) at ([1]?\\d:[0-5]\\d) (AM|PM)\n"
+			+ "on (([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[1-3])) at ([1]?\\d:[0-5]\\d) (AM|PM)\n"
 			+ "Ksh[,|\\d]+ received from ([A-Za-z ]+) 2547[\\d]{8}.\n"
 			+ "Account Number (\\d+)\n"
 			+ "New Utility balance is Ksh[,|\\d]+\n"
@@ -74,4 +74,5 @@ public class MpesaPayBillService extends MpesaPaymentService {
 	public String toString() {
 		return "Mpesa Kenya: Paybill Service";
 	}
+
 }

@@ -19,7 +19,7 @@ public class MpesaPayBillServiceTest extends
 						+ "New Utility balance is Ksh50,802\n"
 						+ "Time: 05/04/2011 14:45:34",
 				PHONENUMBER_2, ACCOUNTNUMBER_2_1, "950", "BH45UU225",
-				"BORIS BECKER", "14:45 5 Apr 2011");
+				"BORIS BECKER", "5/4/11 2:45 PM");
 		
 		//testing mpessa paybill message with paidby in small caps  
 		testIncomingPaymentProcessing("BH45UU225 Confirmed.\n"
@@ -29,17 +29,17 @@ public class MpesaPayBillServiceTest extends
 						+ "New Utility balance is Ksh50,802\n"
 						+ "Time: 05/04/2011 14:45:34",
 				PHONENUMBER_2, ACCOUNTNUMBER_2_1, "950", "BH45UU225",
-				"ian mbogua kuburi", "14:45 5 Apr 2011");
+				"ian mbogua kuburi", "5/4/11 2:45 PM");
 		
 		// Check the payment time is processed rather than the balance time
 		testIncomingPaymentProcessing("BHT57U225 Confirmed.\n"
-						+ "on 5/4/11 at 1:45 PM\n"
+						+ "on 10/4/11 at 1:45 PM\n"
 						+ "Ksh123 received from ELLY ASAKHULU 254723908002.\n"
 						+ "Account Number 0700000022\n"
 						+ "New Utility balance is Ksh50,802\n"
 						+ "Time: 05/04/2011 16:45:34",
 				PHONENUMBER_2, ACCOUNTNUMBER_2_2, "123", "BHT57U225",
-				"ELLY ASAKHULU", "13:45 5 Apr 2011");
+				"ELLY ASAKHULU", "10/4/11 1:45 PM");
 	}
 
 	@Override

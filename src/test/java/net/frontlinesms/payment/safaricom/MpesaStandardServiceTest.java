@@ -3,6 +3,9 @@
  */
 package net.frontlinesms.payment.safaricom;
 import static org.mockito.Mockito.mock;
+
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+
 import net.frontlinesms.events.EventBus;
 
 public class MpesaStandardServiceTest extends MpesaPaymentServiceTest<MpesaPersonalService> {
@@ -19,24 +22,24 @@ public class MpesaStandardServiceTest extends MpesaPaymentServiceTest<MpesaPerso
 	
 	public void testIncomingPaymentProcessing() {
 		testIncomingPaymentProcessing("BI94HR849 Confirmed.\n" +
-				"You have received Ksh1,235 JOHN KIU 254723908001 on 3/5/11 at 10:35 PM\n" +
+				"You have received Ksh1,235 JOHN KIU 254723908001 on 30/5/11 at 10:35 PM\n" +
 				"New M-PESA balance Ksh1,236",
 				PHONENUMBER_1, ACCOUNTNUMBER_1_1, "1235", "BI94HR849",
-				"JOHN KIU", "22:35 3 May 2011");
+				"JOHN KIU", "30/5/11 10:35 PM");
 		
 		testIncomingPaymentProcessing("BI94HR849 Confirmed.\n" +
-				"You have received Ksh1,235 yohan mwenyewe alibamba 254723908001 on 3/5/11 at 10:35 PM\n" +
+				"You have received Ksh1,235 yohan mwenyewe alibamba 254723908001 on 3/5/11 at 8:35 PM\n" +
 				"New M-PESA balance Ksh1,236",
 				PHONENUMBER_1, ACCOUNTNUMBER_1_1, "1235", "BI94HR849",
-				"yohan mwenyewe alibamba", "22:35 3 May 2011");
+				"yohan mwenyewe alibamba", "3/5/11 8:35 PM");
 	}
 	
 	public void testOutgoingPaymentProcessing() {
 		testOutgoingPaymentProcessing("BC77RI604 Confirmed.\n" +
-				"Ksh1,235 sent to DACON OMONDI 254723908001 on 29/12/10 at 2:21 PM\n" +
+				"Ksh1,235 sent to DACON OMONDI 254723908001 on 22/5/11 at 10:35 PM\n" +
 				"New M-PESA balance Ksh1,236",
 				PHONENUMBER_1, ACCOUNTNUMBER_1_1, "1235", "BC77RI604",
-				"DACON OMONDI", "22:35 3 May 2011");
+				"DACON OMONDI", "22/5/11 10:35 PM", OutgoingPayment.Status.CONFIRMED);
 	}
 	
 	@Override
@@ -47,14 +50,19 @@ public class MpesaStandardServiceTest extends MpesaPaymentServiceTest<MpesaPerso
 						"You have received Ksh1,235 JOHN KIU 254723908001 on 3/5/11 at 10:35 PM\n" +
 						"New M-PESA balance Ksh1,236",
 						
+				"Real text from a MPESA Standard confirmation; Testing 20/5/11",
+				"BI94HR849 Confirmed.\n" +
+						"You have received Ksh1,235 JOHN KIU 254723908001 on 20/5/11 at 10:35 PM\n" +
+						"New M-PESA balance Ksh1,236",
+						
 				"Test in case someone has only one name",
 				"BI94HR849 Confirmed.\n" +
-						"You have received Ksh1,235 KIU 254723908001 on 3/5/11 at 10:35 PM\n" +
+						"You have received Ksh1,235 KIU 254723908001 on 10/5/11 at 10:35 PM\n" +
 						"New M-PESA balance Ksh1,236",
 						
 				"Test in case confirmation codes are made longer",
 				"BI94HR849XXX Confirmed.\n" +
-						"You have received Ksh1,235 JOHN KIU 254723908001 on 3/5/11 at 10:35 PM\n" +
+						"You have received Ksh1,235 JOHN KIU 254723908001 on 30/5/11 at 10:35 PM\n" +
 						"New M-PESA balance Ksh1,236",
 		};
 	}
