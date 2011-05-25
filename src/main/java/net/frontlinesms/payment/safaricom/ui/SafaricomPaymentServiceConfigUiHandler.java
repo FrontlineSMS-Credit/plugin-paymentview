@@ -55,10 +55,6 @@ public class SafaricomPaymentServiceConfigUiHandler extends BaseDialog {
 		return find("cbDevices");
 	}
 
-	private Object find(String componentName) {
-		return ui.find(this.dialogComponent, componentName);
-	}
-
 	private Object getComboChoice(SmsService s) {
 		return ui.createComboboxChoice(s.getServiceName(), s);
 	}

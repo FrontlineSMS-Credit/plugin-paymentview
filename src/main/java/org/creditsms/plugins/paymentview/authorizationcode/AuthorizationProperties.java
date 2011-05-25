@@ -29,9 +29,10 @@ final class AuthorizationProperties extends UserHomeFilePropertySet {
 	
 	private byte[] getPropertyAsByteArray(String key) {
 		String value = super.getProperty(key);
-		if(value != null)
+		if(value != null){
 			return HexUtils.decode(value);
-		else return null;
+		}
+		return null;
 	}
 
 	public static AuthorizationProperties getInstance() {

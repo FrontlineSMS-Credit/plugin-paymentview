@@ -13,7 +13,7 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 
 public class MpesaPersonalService extends MpesaPaymentService {
-	private static final String PERSONAL_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n" +
+	private static final String PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n" +
 			"You have received Ksh[,|\\d]+ ([A-Za-z ]+) 2547[\\d]{8} on " +
 			"(([1-2]?[1-9]|3[0-1])/([1-9]|1[0-2])/(1[1-2])) (at) ([1]?\\d:[0-5]\\d) (AM|PM)\n" +
 			"New M-PESA balance Ksh[,|\\d]+";
@@ -61,7 +61,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
     	
 	@Override
 	boolean isMessageTextValid(String messageText) {
-		return messageText.matches(PERSONAL_REGEX_PATTERN);
+		return messageText.matches(PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN);
 	}
 	
 	@Override

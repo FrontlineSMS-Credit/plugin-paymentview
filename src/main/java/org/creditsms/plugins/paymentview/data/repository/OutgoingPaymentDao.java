@@ -65,8 +65,7 @@ public interface OutgoingPaymentDao {
 	/**
 	 * saves an OutgoingPayment payment to the system
 	 * */
-	public void saveOutgoingPayment(OutgoingPayment outgoingPayment)
-			throws DuplicateKeyException;
+	public void saveOutgoingPayment(OutgoingPayment outgoingPayment);
 
 	/**
 	 * updates an OutgoingPayment payment to the system

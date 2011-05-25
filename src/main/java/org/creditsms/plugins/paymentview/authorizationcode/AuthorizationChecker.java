@@ -16,8 +16,10 @@ public class AuthorizationChecker {
    
 	static byte[] getSalt() {
 		byte[] salt = AuthorizationProperties.getInstance().getSalt();
-		if(salt == null) return new byte[]{0,1,0,1,0,1,0,1,0,1,0,1};
-		else return salt;
+		if(salt == null) {
+			return new byte[]{0,1,0,1,0,1,0,1,0,1,0,1};
+		} 
+		return salt;
 	}
 
 	static byte[] getHash(int iterationNb, String authenticationCode,

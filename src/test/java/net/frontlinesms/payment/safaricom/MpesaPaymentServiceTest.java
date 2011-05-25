@@ -25,9 +25,11 @@ import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.mockito.InOrder;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
@@ -54,6 +56,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	private ClientDao clientDao;
 	private AccountDao accountDao;
 	private IncomingPaymentDao incomingPaymentDao;
+	private OutgoingPaymentDao outgoingPaymentDao;
 	
 	
 	@Override
@@ -64,7 +67,10 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		this.cService = mock(CService.class);
 		mpesaPaymentService.setCService(cService);
 		incomingPaymentDao = mock(IncomingPaymentDao.class);
+		outgoingPaymentDao= mock(OutgoingPaymentDao.class);
+		
 		mpesaPaymentService.setIncomingPaymentDao(incomingPaymentDao);
+		mpesaPaymentService.setOutgoingPaymentDao(outgoingPaymentDao);		
 		
 		setUpDaos();
 
@@ -200,14 +206,40 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 				
 				if(!(that instanceof IncomingPayment)) return false;
 				IncomingPayment other = (IncomingPayment) that;
-				System.out.println(amount+confirmationCode+payedBy);
 				return other.getPhoneNumber().equals(phoneNo) &&
 						other.getAmountPaid().equals(new BigDecimal(amount)) &&
 						other.getAccount().getAccountNumber().equals(accountNumber) &&
 						other.getConfirmationCode().equals(confirmationCode) &&
 						other.getTimePaid().equals(getTimestamp(datetime)) &&
 						other.getPaymentBy().equals(payedBy);
-				        
+						
+			}
+		});
+	}
+	
+	protected void testOutgoingPaymentProcessing(String messageText,
+			final String phoneNo, final String accountNumber, final String amount,
+			final String confirmationCode, final String payedBy, final String datetime) {
+		// then
+		assertTrue(mpesaPaymentService instanceof EventObserver);
+		
+		// when
+		mpesaPaymentService.notify(mockMessageNotification("MPESA", messageText));
+		
+		// then
+		WaitingJob.waitForEvent();
+		verify(outgoingPaymentDao).saveOutgoingPayment(new OutgoingPayment() {
+			@Override
+			public boolean equals(Object that) {
+				
+				if(!(that instanceof OutgoingPayment)) return false;
+				OutgoingPayment other = (OutgoingPayment) that;
+				return other.getPhoneNumber().equals(phoneNo) &&
+						other.getAmountPaid().equals(new BigDecimal(amount)) &&
+						other.getAccount().getAccountNumber().equals(accountNumber) &&
+						other.getConfirmationCode().equals(confirmationCode) &&
+						other.getTimePaid().equals(getTimestamp(datetime)) &&
+						other.getPaymentTo().equals(payedBy);
 						
 			}
 		});
