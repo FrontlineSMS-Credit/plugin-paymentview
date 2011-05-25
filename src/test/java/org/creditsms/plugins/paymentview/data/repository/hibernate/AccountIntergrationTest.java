@@ -93,6 +93,21 @@ public class AccountIntergrationTest extends HibernateTestCase {
 		assertEquals(0, hibernateAccountDao.getAllAcounts().size());
 	}
 	
+	public void testCreateAccountNumber() {
+		assertNoAccountsInDatabase();
+		Account ac1 = setAccountNumber(createAccountNumber());
+		hibernateAccountDao.saveAccount(ac1);
+		Account ac2 = setAccountNumber("00002");
+		hibernateAccountDao.saveAccount(ac2);
+		Account ac3 = setAccountNumber(createAccountNumber());
+		hibernateAccountDao.saveAccount(ac3);
+		Account ac4 = setAccountNumber("00005");
+		hibernateAccountDao.saveAccount(ac4);
+		
+		createAccountNumber();
+	}
+	
+	
 	private Account setAccountNumber(String accNum){
 		Account acc = new Account();
 		acc.setAccountNumber(accNum);
@@ -136,5 +151,16 @@ public class AccountIntergrationTest extends HibernateTestCase {
 		account.setActiveAccount(accAtatus);
 		if(client!=null)account.setClient(client);
 		return account;
+	}
+	
+	private String createAccountNumber(){
+		int accountNumberGenerated = this.hibernateAccountDao.getAccountCount()+1;
+		String accountNumberGeneratedStr = String.format("%05d", accountNumberGenerated);
+		System.out.println("counter calculated :"+ accountNumberGeneratedStr);
+		while (this.hibernateAccountDao.getAccountByAccountNumber(accountNumberGeneratedStr) != null){
+			accountNumberGeneratedStr = String.format("%05d", ++ accountNumberGenerated);
+			System.out.println("counter incremented as previous generated account number exists:"+ accountNumberGeneratedStr);
+		}
+		return accountNumberGeneratedStr;
 	}
 }

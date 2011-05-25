@@ -21,7 +21,6 @@ public class TargetStandardProcess extends TargetCreationProcess{
 		// Check if there are any accounts linked to the client
 		if (this.getTotalListAccounts()==null){
 			// create new account
-			
 			this.setAccount(new Account(createAccountNumber(), client, false));
 			this.getAccountDao().saveAccount(this.getAccount());
 			// create new target
