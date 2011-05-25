@@ -18,13 +18,16 @@ import net.frontlinesms.payment.PaymentServiceException;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
 import org.apache.log4j.Logger;
+import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
 import org.smslib.stk.StkInputRequiremnent;
@@ -56,6 +59,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 //> DAOs
 	AccountDao accountDao;
 	ClientDao clientDao;
+	TargetDao targetDao;
 	IncomingPaymentDao incomingPaymentDao;
 	OutgoingPaymentDao outgoingPaymentDao;
 	
@@ -192,6 +196,21 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 					payment.setTimePaid(getTimePaid(message));
 		
 					incomingPaymentDao.saveIncomingPayment(payment);
+					
+					//Check if target reached
+					Target tgt = targetDao.getActiveTargetByAccount(payment.getAccount().getAccountNumber());
+					if (tgt != null){
+						// Check if the client has reached his targeted amount
+						TargetAnalytics targetAnalytics = new TargetAnalytics();
+						targetAnalytics.setIncomingPaymentDao(incomingPaymentDao);
+						targetAnalytics.setTargetDao(targetDao);
+						if (targetAnalytics.isStatusGood(tgt.getId())==2){
+							
+						}
+					}
+					
+					//Update account.activeAccount
+					//Update target.completedDate
 				} catch (IllegalArgumentException ex) {
 					log.warn("Message failed to parse; likely incorrect format", ex);
 					throw new RuntimeException(ex);

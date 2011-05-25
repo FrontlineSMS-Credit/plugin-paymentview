@@ -41,11 +41,20 @@ public interface TargetDao {
 	public Target getTargetByAccount(String accountNumber);
 
 	/**
+	 * Returns an active Target with Account id
+	 * 
+	 * @param serviceItemId
+	 * @return
+	 */
+	public Target getActiveTargetByAccount(String string);
+	
+	/**
 	 * Returns a Target with ServiceItem between a given date
 	 * 
 	 * @param serviceItemId
 	 * @return
 	 */
+		
 	public Target getTargetByEndDateBetweenDates(long serviceItemId,
 			Time startDate, Time endDate);
 
