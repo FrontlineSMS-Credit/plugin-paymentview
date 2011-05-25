@@ -32,6 +32,11 @@ public class BaseDialog implements ThinletUiEventHandler{
 		this.ui.removeDialog(dialog);
 	}
 	
+	/** Remove a dialog from view. */
+	public Object find(String object) {
+		return ui.find(this.dialogComponent, object);
+	}
+	
 	public void showDialog() {
 		ui.add(this.dialogComponent);
 	}

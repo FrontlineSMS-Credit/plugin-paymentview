@@ -2,6 +2,7 @@ package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.step
 
 
 import java.util.List;
+
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
@@ -9,7 +10,6 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.analytics.TargetPayBillProcess;
 import org.creditsms.plugins.paymentview.analytics.TargetStandardProcess;
 import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
 
 public class ReviewHandler extends BasePanelHandler {
@@ -19,7 +19,6 @@ public class ReviewHandler extends BasePanelHandler {
 	
 	private AddClientTabHandler addClientTabHandler;
 	private final CreateSettingsHandler previousCreateSettingsHandler;
-	private TargetDao targetDao;
 	private Object clientTableHolder;
 	private ReviewClientTableHandler clientTableHandler;
 	private final PaymentViewPluginController pluginController;
@@ -32,7 +31,6 @@ public class ReviewHandler extends BasePanelHandler {
 		this.pluginController = pluginController;
 		this.previousCreateSettingsHandler = createSettingsHandler;
 		this.addClientTabHandler = addClientTabHandler;
-		this.targetDao = pluginController.getTargetDao();
 		this.selectedClients = previousCreateSettingsHandler.
 		getPreviousSelectClientsHandler().getSelectedClients();
 		init();

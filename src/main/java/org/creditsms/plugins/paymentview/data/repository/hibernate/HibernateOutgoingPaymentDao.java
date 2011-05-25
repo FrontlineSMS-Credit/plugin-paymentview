@@ -95,9 +95,8 @@ public class HibernateOutgoingPaymentDao extends
 		return null;
 	}
 
-	public void saveOutgoingPayment(OutgoingPayment outgoingPayment)
-			throws DuplicateKeyException {
-		super.save(outgoingPayment);
+	public void saveOutgoingPayment(OutgoingPayment outgoingPayment){
+		super.saveWithoutDuplicateHandling(outgoingPayment);
 	}
 
 	public void updateOutgoingPayment(OutgoingPayment outgoingPayment)

@@ -8,7 +8,6 @@ import net.frontlinesms.csv.CsvImportReport;
 import net.frontlinesms.csv.CsvImporter;
 import net.frontlinesms.csv.CsvParseException;
 import net.frontlinesms.csv.CsvRowFormat;
-import net.frontlinesms.data.DuplicateKeyException;
 
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Account;
@@ -77,12 +76,7 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 					new BigDecimal(amountPaid), new Date(
 							Long.parseLong(timePaid)), acc, notes,
 					Status.getStatusFromString(status));
-			try {
-				outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
-			} catch (DuplicateKeyException e) {
-				// FIXME should actually pass details of this back to the user.
-				log.debug("An incoming Payment already exist with this id", e);
-			}
+			outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
 
 		}
 
