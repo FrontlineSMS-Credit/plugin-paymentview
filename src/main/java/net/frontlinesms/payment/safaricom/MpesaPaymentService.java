@@ -35,10 +35,10 @@ import org.smslib.stk.StkResponse;
 public abstract class MpesaPaymentService implements PaymentService, EventObserver  {
 //> REGEX PATTERN CONSTANTS
 	private static final String PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = 
-		"[A-Z0-9]+ Confirmed.\n" +
-		"You have received Ksh[,|\\d]+ ([A-Za-z ]+) 2547[\\d]{8} on " +
-		"(([1-2]?[1-9]|3[0-1])/([1-9]|1[0-2])/(1[1-2])) (at) ([1]?\\d:[0-5]\\d) (AM|PM)\n" +
-		"New M-PESA balance Ksh[,|\\d]+";
+		"[A-Z\\d]+ Confirmed.\n"+
+		"Ksh[,|\\d]+ sent to ([A-Za-z ]+) 07[\\d]{8} on " +
+		"(([1-2]?[1-9]|3[0-1])/([1-9]|1[0-2])/(1[1-2])) at ([1]?\\d:[0-5]\\d) (AM|PM)"+
+		"New M-PESA balance is Ksh([,|\\d]+)";
 	
 	protected static final String AMOUNT_PATTERN = "Ksh[,|\\d]+";
 	protected static final String DATETIME_PATTERN = "d/M/yy hh:mm a";
@@ -135,19 +135,18 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}
 		final FrontlineMessage message = (FrontlineMessage) entity;
 		
-		if (isOutgoingPaymentConfirmation(message)){
+		if (isValidOutgoingPaymentConfirmation(message)){
 			processOutgoingPayment(message);
 		}else if (isValidIncomingPaymentConfirmation(message)) {
 			processIncomingPayment(message);
 		}
 	}
  
-	private boolean isOutgoingPaymentConfirmation(FrontlineMessage message) {
-		String textContent = message.getTextContent();
-		if (textContent.contains("sent by")){
+	private boolean isValidOutgoingPaymentConfirmation(FrontlineMessage message) {
+		if (!message.getSenderMsisdn().equals("MPESA")) {
 			return false;
 		}
-		return textContent.matches(PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN);
+		return message.getTextContent().matches(PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN);
 	}
 
 	private void processOutgoingPayment(final FrontlineMessage message) {
@@ -162,7 +161,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 					payment.setPhoneNumber(getPhoneNumber(message));
 					payment.setAmountPaid(getAmount(message));
 					payment.setConfirmationCode(getConfirmationCode(message));
-					//payment.setPaymentBy(getPaymentBy(message));
+					payment.setPaymentTo(getPaymentBy(message));
 					payment.setTimePaid(getTimePaid(message));
 		
 					outgoingPaymentDao.saveOutgoingPayment(payment);

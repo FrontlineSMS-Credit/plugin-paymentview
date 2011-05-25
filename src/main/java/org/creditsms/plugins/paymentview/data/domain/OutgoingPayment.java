@@ -26,6 +26,7 @@ import net.frontlinesms.data.EntityField;
 public class OutgoingPayment {
 	public static final String TABLE_NAME = "Outgoingpayment";
 	public static final String FIELD_TIME_PAID = "timePaid";
+	public static final String FIELD_PAYMENT_TO = "paymentTo";
 	public static final String FIELD_PHONE_NUMBER = "phoneNumber";
 	public static final String FIELD_AMOUNT_PAID = "amountPaid";
 	public static final String FIELD_CONFIRMATION_CODE = "confirmationCode";
@@ -50,6 +51,9 @@ public class OutgoingPayment {
 
 	@Column(name = FIELD_PHONE_NUMBER, nullable = false, unique = false)
 	private String phoneNumber;
+	
+	@Column(name = FIELD_PAYMENT_TO, nullable = false)
+	private String paymentTo;
 
 	@Column(name = FIELD_TIME_PAID, nullable = false, unique = false)
 	private long timePaid;
@@ -57,6 +61,7 @@ public class OutgoingPayment {
 	public enum Field implements EntityField<OutgoingPayment> {
 		AMOUNT_PAID(FIELD_AMOUNT_PAID),
 		CONFIRMATION_CODE(FIELD_CONFIRMATION_CODE),
+		PAYMENT_TO(FIELD_PAYMENT_TO),
 		PHONE_NUMBER(FIELD_PHONE_NUMBER),
 		TIME_PAID(FIELD_TIME_PAID),
 		NOTES(FIELD_NOTES);
@@ -154,7 +159,7 @@ public class OutgoingPayment {
 		return phoneNumber;
 	}
 
-	public long getTimePaid() {
+	public Long getTimePaid() {
 		return this.timePaid;
 	}
 
@@ -186,6 +191,28 @@ public class OutgoingPayment {
 		this.timePaid = timePaid.getTime();
 	}
 
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	/**
+	 * @param paymentTo the paymentTo to set
+	 */
+	public void setPaymentTo(String paymentTo) {
+		this.paymentTo = paymentTo;
+	}
+
+	/**
+	 * @return the paymentTo
+	 */
+	public String getPaymentTo() {
+		return paymentTo;
+	}
+	
 	@Override
 	public String toString() {
 		return "OutgoingPayment [id=" + id + ", amountPaid=" + amountPaid
@@ -195,11 +222,75 @@ public class OutgoingPayment {
 				+ account + "]";
 	}
 
-	public Status getStatus() {
-		return status;
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((amountPaid == null) ? 0 : amountPaid.hashCode());
+		result = prime
+				* result
+				+ ((confirmationCode == null) ? 0 : confirmationCode.hashCode());
+		result = prime * result
+				+ ((paymentTo == null) ? 0 : paymentTo.hashCode());
+		result = prime * result
+				+ ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		result = prime * result + (int) (timePaid ^ (timePaid >>> 32));
+		return result;
 	}
 
-	public void setStatus(Status status) {
-		this.status = status;
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if ((!(obj instanceof OutgoingPayment))||(obj == null)) {
+			return false;
+		}
+		OutgoingPayment other = (OutgoingPayment) obj;
+		if (amountPaid == null) {
+			if (other.amountPaid != null) {
+				return false;
+			}
+		} else if (!amountPaid.equals(other.amountPaid)) {
+			return false;
+		}
+		if (confirmationCode == null) {
+			if (other.confirmationCode != null) {
+				return false;
+			}
+		} else if (!confirmationCode.equals(other.confirmationCode)) {
+			return false;
+		}
+		if (paymentTo == null) {
+			if (other.paymentTo != null) {
+				return false;
+			}
+		} else if (!paymentTo.equals(other.paymentTo)) {
+			return false;
+		}
+		if (phoneNumber == null) {
+			if (other.phoneNumber != null) {
+				return false;
+			}
+		} else if (!phoneNumber.equals(other.phoneNumber)) {
+			return false;
+		}
+		if (status != other.status) {
+			return false;
+		}
+		if (timePaid != other.timePaid) {
+			return false;
+		}
+		return true;
 	}
+	
+	
 }
