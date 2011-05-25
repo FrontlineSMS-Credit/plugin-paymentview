@@ -38,8 +38,10 @@ public class TargetStandardProcess extends TargetCreationProcess{
 	}
 	
 	public boolean canCreateTarget(){
+
 		this.setInactiveAccounts(this.getAccountDao().
-		getInactiveAccountsByClientId(this.getClient().getId()));
+				getInactiveAccountsByClientId(this.getClient().getId()));
+	
 		this.setTotalListAccounts(this.getAccountDao().getAccountsByClientId(
 				this.getClient().getId())); 
 
