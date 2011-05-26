@@ -5,6 +5,7 @@ package org.creditsms.plugins.paymentview.analytics;
 import java.util.Date;
 import java.util.List;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
@@ -28,28 +29,26 @@ public abstract class TargetCreationProcess {
 	protected Target target;
 	protected List<Account> inactiveAccounts;
 	protected List<Account> totalListAccounts;
-
+	
+	public TargetCreationProcess(Client client, ServiceItem serviceItem, Date targetStartDate, Date targetEndDate, PaymentViewPluginController pluginController) {
+		this.client = client;
+		this.serviceItem = serviceItem;
+		this.targetStartDate = targetStartDate;
+		this.targetEndDate = targetEndDate;
+		this.accountDao  = pluginController.getAccountDao();
+		this.targetDao = pluginController.getTargetDao();
+	}
+	
 	public TargetDao getTargetDao() {
 		return targetDao;
-	}
-
-	public void setTargetDao(TargetDao targetDao) {
-		this.targetDao = targetDao;
 	}
 
 	public AccountDao getAccountDao() {
 		return accountDao;
 	}
 
-	public void setAccountDao(AccountDao accountDao) {
-		this.accountDao = accountDao;
-	}
-
-	public TargetCreationProcess() {
-		// TODO Auto-generated constructor stub
-	};
-	
 	public abstract void createTarget();
+	public abstract boolean canCreateTarget();
 	
 	public String createAccountNumber(){
 		int accountNumberGenerated = this.getAccountDao().getAccountCount()+1;

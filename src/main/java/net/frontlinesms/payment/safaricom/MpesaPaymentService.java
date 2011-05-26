@@ -1,6 +1,7 @@
 package net.frontlinesms.payment.safaricom;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -209,11 +210,32 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 					payment.setStatus(OutgoingPayment.Status.CONFIRMED);
 		
 					outgoingPaymentDao.saveOutgoingPayment(payment);
+					
+					//Check if target reached
+					Target tgt = targetDao.getActiveTargetByAccount(payment.getAccount().getAccountNumber());
+					if (tgt != null){
+						// Check if the client has reached his targeted amount
+						TargetAnalytics targetAnalytics = new TargetAnalytics();
+						targetAnalytics.setIncomingPaymentDao(incomingPaymentDao);
+						targetAnalytics.setTargetDao(targetDao);
+						if (targetAnalytics.isStatusGood(tgt.getId())==2){
+							//Update target.completedDate
+							Calendar calendar = Calendar.getInstance();
+							tgt.setCompletedDate(calendar.getTime());
+							targetDao.updateTarget(tgt);
+							// Update account.activeAccount
+							payment.getAccount().setActiveAccount(false);
+							accountDao.updateAccount(payment.getAccount());
+						}
+					}
+					
+					//Update account.activeAccount
+					//Update target.completedDate
 				} catch (IllegalArgumentException ex) {
 					log.warn("Message failed to parse; likely incorrect format", ex);
 					throw new RuntimeException(ex);
 				} catch (Exception ex) {
-					log.error("Unexpected exception parsing ougoing payment SMS.", ex);
+					log.error("Unexpected exception parsing outgoing payment SMS.", ex);
 					throw new RuntimeException(ex);
 				}
 			}

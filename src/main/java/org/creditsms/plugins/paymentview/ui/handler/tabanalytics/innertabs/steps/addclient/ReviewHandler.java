@@ -7,6 +7,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.analytics.TargetCreationProcess;
 import org.creditsms.plugins.paymentview.analytics.TargetPayBillProcess;
 import org.creditsms.plugins.paymentview.analytics.TargetStandardProcess;
 import org.creditsms.plugins.paymentview.data.domain.Client;
@@ -47,10 +48,10 @@ public class ReviewHandler extends BasePanelHandler {
 	public void create() {
 		for (Client client : selectedClients) {
 			if (PAYMENT_PROCESS.equals("StandardPaymentService")){
-				TargetStandardProcess targetCreationProcess = new TargetStandardProcess(
+				TargetCreationProcess targetCreationProcess = new TargetStandardProcess(
 						client, previousCreateSettingsHandler.getStartDate(), 
 						previousCreateSettingsHandler.getEndDate(), 
-						previousCreateSettingsHandler.getSelectedServiceItem());
+						previousCreateSettingsHandler.getSelectedServiceItem(), pluginController);
 				
 				if(targetCreationProcess.canCreateTarget()){
 					targetCreationProcess.createTarget();
@@ -59,10 +60,10 @@ public class ReviewHandler extends BasePanelHandler {
 							+" already has a standart payment active target.");
 				}
 			}else if(PAYMENT_PROCESS.equals("PayBillPaymentService")){
-				TargetPayBillProcess targetCreationProcess = new TargetPayBillProcess(
+				TargetCreationProcess targetCreationProcess = new TargetPayBillProcess(
 						client, previousCreateSettingsHandler.getStartDate(), 
 						previousCreateSettingsHandler.getEndDate(), 
-						previousCreateSettingsHandler.getSelectedServiceItem());
+						previousCreateSettingsHandler.getSelectedServiceItem(), pluginController);
 				
 					targetCreationProcess.createTarget();
 			}

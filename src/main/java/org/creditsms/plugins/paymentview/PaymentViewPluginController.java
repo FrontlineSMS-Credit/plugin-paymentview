@@ -124,11 +124,11 @@ public class PaymentViewPluginController extends BasePluginController
 //		try {
 //			if ((authCode.equals(verifyAuthCode)) & AuthorizationChecker.authenticate(authCode)){
 //				if (authorizationAction != null) {
-					try {
-						authorizationAction.invoke(authorizationEventListener);
-					}  catch (Exception e) {
-						throw new RuntimeException(e);
-					}
+			try {
+				authorizationAction.invoke(authorizationEventListener);
+			}  catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 //				}else{
 //					throw new RuntimeException("Null AuthorizationAction!");
 //				}
