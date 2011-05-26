@@ -25,7 +25,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	@Override
 	Account getAccount(FrontlineMessage message) {
 		Client client = clientDao.getClientByPhoneNumber(getPhoneNumber(message));
-		List<Account> accountsByClientId = new ArrayList<Account>(client.getAccounts());
+		List<Account> accountsByClientId = new ArrayList<Account>(accountDao.getAccountsByClientId(client.getId()));
 		if(!accountsByClientId.isEmpty()){
 			return accountsByClientId.get(0);
 		}

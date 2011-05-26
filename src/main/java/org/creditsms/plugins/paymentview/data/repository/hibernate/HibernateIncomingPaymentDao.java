@@ -56,8 +56,9 @@ public class HibernateIncomingPaymentDao extends
 	}
 
 	public List<IncomingPayment> getIncomingPaymentsByAccountNumber(
-			String accountNumber) {
+			String accountNumber, long startDate, long endDate) {
 		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.between("timePaid", startDate, endDate));
 		DetachedCriteria accountCriteria = criteria.createCriteria("account");
 		accountCriteria.add(Restrictions.eq("accountNumber", accountNumber));
 		return super.getList(criteria);

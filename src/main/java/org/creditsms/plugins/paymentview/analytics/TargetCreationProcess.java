@@ -11,6 +11,7 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 
 public abstract class TargetCreationProcess {
@@ -19,6 +20,7 @@ public abstract class TargetCreationProcess {
 	//> DAOs
 	TargetDao targetDao;
     AccountDao accountDao;
+    ClientDao clientDao;
 	
 	//> FIELDS
 	protected Client client;
@@ -37,6 +39,7 @@ public abstract class TargetCreationProcess {
 		this.targetEndDate = targetEndDate;
 		this.accountDao  = pluginController.getAccountDao();
 		this.targetDao = pluginController.getTargetDao();
+		this.clientDao = pluginController.getClientDao();
 	}
 	
 	public TargetDao getTargetDao() {
@@ -47,6 +50,10 @@ public abstract class TargetCreationProcess {
 		return accountDao;
 	}
 
+	public ClientDao getClientDao() {
+		return clientDao;
+	}
+	
 	public abstract void createTarget();
 	public abstract boolean canCreateTarget();
 	

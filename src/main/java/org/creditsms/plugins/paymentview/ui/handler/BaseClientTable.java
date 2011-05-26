@@ -15,6 +15,7 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.domain.CustomValue;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
@@ -29,6 +30,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	protected ClientDao clientDao;
 	protected CustomFieldDao customFieldDao;
 	protected CustomValueDao customValueDao;
+	protected AccountDao accountDao;
 	protected Object tableClientsPanel;
 	private List<Client> clients;
 
@@ -37,6 +39,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 		this.clientDao = pluginController.getClientDao();
 		this.customFieldDao = pluginController.getCustomFieldDao();
 		this.customValueDao = pluginController.getCustomValueDao();
+		this.accountDao = pluginController.getAccountDao();
 		
 		this.clients = new ArrayList<Client>();		
 		this.init();
@@ -126,10 +129,10 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 						+ client.getOtherName()));
 		ui.add(row, ui.createTableCell(client.getPhoneNumber()));
 
-		List<String> accountNumbers = new ArrayList<String>(client
-				.getAccounts().size());
+		List<String> accountNumbers = new ArrayList<String>(this.accountDao.getAccountsByClientId(client
+				.getId()).size());
 
-		for (Account a : client.getAccounts()) {
+		for (Account a : this.accountDao.getAccountsByClientId(client.getId())) {
 			accountNumbers.add(a.getAccountNumber());
 		}
 

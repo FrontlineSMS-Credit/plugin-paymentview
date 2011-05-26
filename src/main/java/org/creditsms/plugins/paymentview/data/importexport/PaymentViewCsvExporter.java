@@ -30,6 +30,7 @@ import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
@@ -42,7 +43,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 	 */
 	public static void exportClients(File exportFile,
 			Collection<Client> clients, CustomFieldDao customFieldDao,
-			CustomValueDao customValueDao, CsvRowFormat clientFormat)
+			CustomValueDao customValueDao, CsvRowFormat clientFormat, AccountDao accountDao)
 			throws IOException {
 		LOG.trace("ENTER");
 		LOG.debug("Client format [" + clientFormat + "]");
@@ -90,7 +91,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 				items.add(client.getPhoneNumber());
 				items.add(PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS);
 				items.add(PaymentViewUtils.accountsAsString(
-						client.getAccounts(), ACCOUNTS_DELIMITER));
+						accountDao.getAccountsByClientId(client.getId()), ACCOUNTS_DELIMITER));
 
 				if (!usedCustomFields.isEmpty()) {
 					CustomField curr = null;

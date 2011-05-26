@@ -1,6 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.addclient;
 
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -81,12 +82,42 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		((UiGeneratorController) ui).showDateSelecter(textField);
 	}
 	
-	public void parseDateRange(){
+	boolean validateStartDate(Date startDate){
+		Calendar calendar = Calendar.getInstance();
+		Date srtDate = calendar.getTime();
+
+		if(srtDate.compareTo(startDate)<=0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	boolean validateEndDate(Date startDate, Date endDate){
+		if(startDate.compareTo(endDate)<0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public boolean parseDateRange(){
 		try {
 			String strStartDate = ui.getText(txtStartDate);
 			String strEndDate = ui.getText(txtEndDate);
 			startDate = InternationalisationUtils.getDateFormat().parse(strStartDate);
+			if(validateStartDate(startDate)){
+			}else{
+				ui.alert("Invalid Start Date");
+				return false;
+			}
 			endDate = InternationalisationUtils.getDateFormat().parse(strEndDate);
+			if(validateEndDate(startDate, endDate)){
+				return true;
+			}else{
+				ui.alert("Invalid End Date");
+				return false;
+			}
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}
@@ -111,10 +142,11 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	
 //> WIZARD NAVIGATORS
 	public void next() {
-		parseDateRange();
-		readServiceItem();
-		addClientTabHandler.setCurrentStepPanel(new ReviewHandler(
-				(UiGeneratorController) ui, this.pluginController, addClientTabHandler, this).getPanelComponent());
+		if(parseDateRange()){
+			readServiceItem();
+			addClientTabHandler.setCurrentStepPanel(new ReviewHandler(
+					(UiGeneratorController) ui, this.pluginController, addClientTabHandler, this).getPanelComponent());
+		}
 	}
 
 	public void readServiceItem() {

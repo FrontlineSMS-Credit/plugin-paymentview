@@ -214,6 +214,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							payment.getAccount().setActiveAccount(false);
 							accountDao.updateAccount(payment.getAccount());
 						}
+					}else{
 					}
 					
 					//Update account.activeAccount

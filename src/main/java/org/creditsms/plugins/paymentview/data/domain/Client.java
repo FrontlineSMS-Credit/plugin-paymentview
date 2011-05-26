@@ -45,8 +45,8 @@ public class Client {
 	@Column(name = FIELD_PHONE_NUMBER, nullable = false, unique = true)
 	private String phoneNumber;
 
-	@OneToMany(fetch = FetchType.EAGER)
-	private Set<Account> accounts = new HashSet<Account>();
+	//@OneToMany(fetch = FetchType.EAGER)
+	//private Set<Account> accounts = new HashSet<Account>();
 
 	@OneToMany
 	private Set<CustomValue> customValue;
@@ -78,9 +78,9 @@ public class Client {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public void addAccount(Account account) {
-		this.accounts.add(account);
-	}
+	//public void addAccount(Account account) {
+	//	this.accounts.add(account);
+	//}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -99,9 +99,9 @@ public class Client {
 		return true;
 	}
 
-	public Set<Account> getAccounts() {
-		return accounts;
-	}
+	//public Set<Account> getAccounts() {
+	//	return accounts;
+	//}
 
 	public Set<CustomValue> getCustomValue() {
 		return customValue;
@@ -132,9 +132,9 @@ public class Client {
 		return result;
 	}
 
-	void setAccounts(Set<Account> accounts) {
-		this.accounts = accounts;
-	}
+	//public void setAccounts(Set<Account> accounts) {
+	//	this.accounts = accounts;
+	//}
 
 	public void setCustomValue(Set<CustomValue> customValue) {
 		this.customValue = customValue;
