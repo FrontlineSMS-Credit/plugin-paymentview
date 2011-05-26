@@ -39,7 +39,7 @@ public class DemoData {
 	
 //> DUMMY DATA CREATION
 	
-	private Client createDummyClient(String name, String phoneNumber,
+	/*private Client createDummyClient(String name, String phoneNumber,
 		String[] accountNumbers) {
 		String[] names = name.split(" ");
 		
@@ -65,9 +65,15 @@ public class DemoData {
 			System.out.println(a);
 			e.printStackTrace();
 		}
-		
 		return c;
-	}
+	}*/
+	
+	private Client createDummyClient(String name, String phoneNumber) {
+			String[] names = name.split(" ");
+			Client c = new Client(names[0], names[1], phoneNumber);
+			getClientDao().saveClient(c);
+			return c;
+		}
 	
 	private void createDummyIncomingPayment(String paymentBy,
 			String phoneNumber, String timePaid, BigDecimal amountPaid,
@@ -110,7 +116,7 @@ public class DemoData {
 	
 	}
 	
-	private void createDummyServiceItem_Targets(String targetName, String amount, String[][] serviceItems){
+	/*private void createDummyServiceItem_Targets(String targetName, String amount, String[][] serviceItems){
 		ServiceItem s = new ServiceItem();
 		s.setAmount(new BigDecimal(amount));
 		s.setTargetName(targetName);
@@ -120,6 +126,14 @@ public class DemoData {
 		for(String[] serviceItem : serviceItems){
 			createDummyTargets(s, serviceItem[0], serviceItem[1], serviceItem[2]);
 		}
+	}*/
+	
+	private void createDummyServiceItem_Targets(String targetName, String amount){
+		ServiceItem s = new ServiceItem();
+		s.setAmount(new BigDecimal(amount));
+		s.setTargetName(targetName);
+		 	
+		getServiceItemDao().saveServiceItem(s);
 	}
 	
 	private void createDummyTargets(ServiceItem targetItem, String accountNumber, String endDate, String startDate){
@@ -150,7 +164,7 @@ public class DemoData {
 	 */
 	private void createDummyData(){
 		// Create dummy clients
-		createDummyClient("Alice Wangare", "+254724574645", new String[] { "4343625", "247362623" });
+		/*createDummyClient("Alice Wangare", "+254724574645", new String[] { "4343625", "247362623" });
 		createDummyClient("John Kamau", "+254720547355", new String[] { "82666633", "23233423" });
 		createDummyClient("Wekalao Matanda", "+254725452345", new String[] { "4323425", "234327443" });
 		createDummyClient("Ismael Koli", "+254720445345", new String[] { "434147425", "2439423" });
@@ -178,8 +192,31 @@ public class DemoData {
 		createDummyClient("Lowuya Lamini", "+254720455345", new String[] { "00023225", "232363547" });
 		createDummyClient("Charlene Nyambura", "+254720762345", new String[] { "43330025", "23432674" });
 		createDummyClient("Tangus Koech", "+254721012326", new String[] { "42400255", "24343423" });
-		createDummyClient("Justus Matanda", "+254725014545", new String[] { "42547455", "43493444" });
-
+		createDummyClient("Justus Matanda", "+254725014545", new String[] { "42547455", "43493444" });*/
+		
+		
+		createDummyClient("Alice Wangare", "+254724574645");
+		createDummyClient("John Kamau", "+254720547355");
+		createDummyClient("Wekalao Matanda", "+254725452345");
+		createDummyClient("Ismael Koli", "+254720445345");
+		createDummyClient("Alice Wayua", "+254720459345");
+		createDummyClient("Laura Agutu", "+254720546415");
+		createDummyClient("Wangunyu Maigua", "+254724504645");
+		createDummyClient("Stephen Kalungi", "+254725044545");
+		createDummyClient("Mitawi Kisio", "+254724630345");
+		createDummyClient("Angela Koki", "+254724634495");
+		createDummyClient("Edith Khalai", "+254726745415");
+		createDummyClient("Juma Omondi", "+254726712345");
+		createDummyClient("Harry Mwabare", "+254725702345");
+		createDummyClient("Wambui Waweru", "+254720144545");
+		createDummyClient("Lavender Akoth", "+254725565345");
+		createDummyClient("Sammy Kitonyi", "+254724412345");
+		
+		createDummyServiceItem_Targets("Solar Panel", "120000");
+		createDummyServiceItem_Targets("Solar Panel Generator", "320000");
+		createDummyServiceItem_Targets("Bore Hole", "10000");
+		
+		/*
 		createDummyServiceItem_Targets("Solar Panel", "120000", new String[][]{{"232492474","24/08/2011", "24/05/2011"},{"9923623","24/08/2011", "24/05/2011"}});
 		createDummyServiceItem_Targets("Solar Panel Generator", "290000", new String[][]{{"00023225","24/08/2011", "24/05/2011"},{"434322934","21/08/2011", "21/05/2011"}});
 		createDummyServiceItem_Targets("Bore Hole", "10000", new String[][]{{"459732535","24/08/2011", "24/05/2011"},{"9923623","28/08/2011", "28/05/2011"}});
@@ -201,7 +238,7 @@ public class DemoData {
 		createDummyOutgoingPayment("Justin Mwakidedi", "+254754123445", "1302300049896", new BigDecimal("100.00"), "25857623");
 		createDummyOutgoingPayment("Charlene Nyambura", "+254720123426", "1302000034896", new BigDecimal("500.00"), "24343423");
 		createDummyOutgoingPayment("Phanice Nafula", "+254720145345", "1302000500896", new BigDecimal("4200.00"), "27434523");
-
+		*/
 	}
 	
 	public AccountDao getAccountDao() {
