@@ -15,6 +15,7 @@ import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
 
@@ -30,6 +31,7 @@ public class EditClientHandler extends BaseDialog{
 	private ClientDao clientDao;
 	private CustomValueDao customValueDao;
 	private CustomFieldDao customFieldDao;
+	private AccountDao accountDao; 
 
 	private Client client;
 	
@@ -53,6 +55,7 @@ public class EditClientHandler extends BaseDialog{
 		this.clientsTabHandler = clientsTabHandler;
 		this.customValueDao = pluginController.getCustomValueDao();
 		this.customFieldDao = pluginController.getCustomFieldDao();
+		this.accountDao = pluginController.getAccountDao();
 		this.editMode = false;
 		init();
 		refresh();
@@ -66,6 +69,7 @@ public class EditClientHandler extends BaseDialog{
 		this.customValueDao = pluginController.getCustomValueDao();
 		this.customFieldDao = pluginController.getCustomFieldDao();
 		this.clientDao = pluginController.getClientDao();
+		this.accountDao = pluginController.getAccountDao();
 		this.editMode = true;
 		init();
 		refresh();
@@ -132,7 +136,7 @@ public class EditClientHandler extends BaseDialog{
 				}
 			}
 
-			for (Account acc : this.getClientObj().getAccounts()) {
+			for (Account acc : this.accountDao.getAccountsByClientId(getClientObj().getId())) {
 				ui.add(fieldListAccounts, createListItem(acc));
 			}
 		}

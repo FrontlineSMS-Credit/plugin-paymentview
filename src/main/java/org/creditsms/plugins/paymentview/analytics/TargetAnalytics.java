@@ -63,9 +63,10 @@ public class TargetAnalytics {
 	
 	private List<IncomingPayment> getIncomingPaymentsByTargetId(long tartgetId){
 	    String accountNumber = getAccountNumber(tartgetId);
-	    
-		List <IncomingPayment> incomingPayments = incomingPaymentDao.
-				getIncomingPaymentsByAccountNumber(accountNumber);
+	    List <IncomingPayment> incomingPayments = incomingPaymentDao.
+				getIncomingPaymentsByAccountNumber(accountNumber, 
+						targetDao.getTargetById(tartgetId).getStartDate().getTime(), 
+						targetDao.getTargetById(tartgetId).getEndDate().getTime());
 		
 		return incomingPayments;
 	}

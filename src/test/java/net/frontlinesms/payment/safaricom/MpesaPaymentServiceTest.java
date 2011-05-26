@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
@@ -134,7 +135,10 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		Client c = mock(Client.class);
 		when(c.getId()).thenReturn(id);
 		when(clientDao.getClientByPhoneNumber(phoneNumber)).thenReturn(c);
-		when(c.getAccounts()).thenReturn(accounts);
+		
+		//when(c.getAccounts()).thenReturn(accounts);
+		//when(accountDao.getAccountsByClientId(c.getId())).thenReturn((List<Account>) accounts);
+		
 		when(accountDao.getAccountsByClientId(id)).thenReturn(new ArrayList<Account>(accounts));
 	}
 

@@ -17,6 +17,7 @@ import org.creditsms.plugins.paymentview.data.importexport.PaymentViewCsvExporte
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
 public class ClientExportHandler extends ExportDialogHandler<Client> {
@@ -29,14 +30,16 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 
 	private ClientDao clientDao;
 	private CustomFieldDao customFieldDao;
-
+	private AccountDao accountDao;
 	private CustomValueDao customValueDao;
+	
 
 	public ClientExportHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(Client.class, ui);
 		this.clientDao = pluginController.getClientDao();
 		this.customFieldDao = pluginController.getCustomFieldDao();
 		this.customValueDao = pluginController.getCustomValueDao();
+		this.accountDao = pluginController.getAccountDao();
 	}
 
 	@Override
@@ -74,7 +77,7 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 		log.debug("Row Format [" + rowFormat + "]");
 
 		PaymentViewCsvExporter.exportClients(new File(filename), clients,
-				customFieldDao, customValueDao, rowFormat);
+				customFieldDao, customValueDao, rowFormat, accountDao);
 		uiController.setStatus(InternationalisationUtils
 				.getI18nString(MESSAGE_EXPORT_TASK_SUCCESSFUL));
 		this.uiController.infoMessage(InternationalisationUtils

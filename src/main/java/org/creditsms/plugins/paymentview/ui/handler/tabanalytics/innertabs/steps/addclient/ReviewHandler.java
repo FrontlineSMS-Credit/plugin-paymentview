@@ -55,6 +55,7 @@ public class ReviewHandler extends BasePanelHandler {
 				
 				if(targetCreationProcess.canCreateTarget()){
 					targetCreationProcess.createTarget();
+					ui.alert("New target created for client "+client.getFirstName()+" "+client.getName()+".");
 				}else{
 					ui.alert("The client "+client.getFirstName()+" "+client.getName()
 							+" already has a standart payment active target.");

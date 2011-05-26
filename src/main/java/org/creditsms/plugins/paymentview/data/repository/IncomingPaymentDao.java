@@ -49,7 +49,7 @@ public interface IncomingPaymentDao {
 	 * returns IncomingPayment(s) by accountId
 	 * */
 	public List<IncomingPayment> getIncomingPaymentsByAccountNumber(
-			String accountNumber);
+			String accountNumber, long startDate, long endDate);
 
 	/**
 	 * returns the last IncomingPayment(s) by accountId

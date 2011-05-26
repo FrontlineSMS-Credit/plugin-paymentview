@@ -75,12 +75,13 @@ public class ClientCsvImporter extends CsvImporter {
 			String accounts = rowFormat.getOptionalValue(lineValues,
 					PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS);
 
-			Client c = new Client(firstname, otherName, phonenumber);
+			/*Client c = new Client(firstname, otherName, phonenumber);
 			for (Account a : getAccountsFromString(accounts)) {
 				c.addAccount(a);
 			}
-
 			clientDao.saveClient(c);
+			*/
+			
 			//FIXME: Ability to take in custom fields and data.
 			/*
 			 * 1. Get the Optional data since we gave the rowFormatter the markers,

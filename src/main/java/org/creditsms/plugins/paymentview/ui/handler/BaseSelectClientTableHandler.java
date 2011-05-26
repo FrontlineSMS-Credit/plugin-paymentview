@@ -72,7 +72,7 @@ public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 						+ client.getOtherName()));
 		ui.add(row, ui.createTableCell(client.getPhoneNumber()));
 		String accountStr = "";
-		for (Account a : client.getAccounts()) {
+		for (Account a : accountDao.getAccountsByClientId(client.getId())) {
 			accountStr += a.getAccountNumber() + " ";
 		}
 		ui.add(row, ui.createTableCell(accountStr));
