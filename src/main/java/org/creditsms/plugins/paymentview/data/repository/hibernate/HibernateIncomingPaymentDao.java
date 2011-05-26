@@ -55,10 +55,15 @@ public class HibernateIncomingPaymentDao extends
 		return null;
 	}
 
-	public List<IncomingPayment> getIncomingPaymentsByAccountNumber(
-			String accountNumber, long startDate, long endDate) {
+	public List<IncomingPayment> getIncomingPaymentsByTarget(long targetId) {
 		DetachedCriteria criteria = super.getCriterion();
-		criteria.add(Restrictions.between("timePaid", startDate, endDate));
+		DetachedCriteria accountCriteria = criteria.createCriteria("target");
+		accountCriteria.add(Restrictions.eq("id", targetId));
+		return super.getList(criteria);
+	}
+	
+	public List<IncomingPayment> getIncomingPaymentsByAccountNumber(String accountNumber) {
+		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria accountCriteria = criteria.createCriteria("account");
 		accountCriteria.add(Restrictions.eq("accountNumber", accountNumber));
 		return super.getList(criteria);
@@ -66,11 +71,21 @@ public class HibernateIncomingPaymentDao extends
 
 	public Long getLastIncomingPaymentDateByAccountNumber(
 			String accountNumber) {
+		
 		DetachedCriteria criteria = super.getCriterion();
-        ProjectionList ipProj = Projections.projectionList();
-        ipProj.add(Projections.max("timePaid"));
-        criteria.setProjection(ipProj);
-        return DataAccessUtils.longResult(this.getHibernateTemplate().findByCriteria(criteria));
+		DetachedCriteria accountCriteria = criteria.createCriteria("account");
+		accountCriteria.add(Restrictions.eq("accountNumber", accountNumber));
+		List<IncomingPayment> incomingPaymentsLst = super.getList(criteria);
+		
+		if(incomingPaymentsLst.size()==0){
+			return null;
+		}else{
+			DetachedCriteria criteriafnl = super.getCriterion();
+	        ProjectionList ipProj = Projections.projectionList();
+	        ipProj.add(Projections.max("timePaid"));
+	        criteriafnl.setProjection(ipProj);
+	        return DataAccessUtils.longResult(this.getHibernateTemplate().findByCriteria(criteriafnl));
+		}      
 	}
 	
 	public List<IncomingPayment> getIncomingPaymentsByAccountNumberByTimeRange(

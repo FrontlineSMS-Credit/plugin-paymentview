@@ -1,6 +1,8 @@
 package org.creditsms.plugins.paymentview.data.domain;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import net.frontlinesms.data.EntityField;
@@ -26,6 +29,7 @@ public class Target {
 	public static final String FIELD_COMPLETED_DATE = "completedDate";
 	public static final String FIELD_ACCOUNT = "accountId";
 	public static final String FIELD_SERVICE_ITEM = "serviceItemId";
+	public static final String FIELD_INCOMING_PAYMENT ="incomingPaymentId";
 
 	
 	@Id
@@ -44,13 +48,17 @@ public class Target {
 	@ManyToOne
 	@JoinColumn(name = FIELD_SERVICE_ITEM)
 	private ServiceItem serviceItem;
-	
+	@OneToMany
+	@JoinColumn(name = FIELD_INCOMING_PAYMENT)
+	private Set<IncomingPayment> incomingPayments = new HashSet<IncomingPayment>();
+
 	public enum Field implements EntityField<Target> {
 		START_DATE(FIELD_START_DATE),
 		END_DATE(FIELD_END_DATE),
 		COMPLETED_DATE(FIELD_COMPLETED_DATE),
 		ACCOUNT(FIELD_ACCOUNT),
-		SERVICE_ITEM(FIELD_SERVICE_ITEM);
+		SERVICE_ITEM(FIELD_SERVICE_ITEM),
+		INCOMING_PAYMENT(FIELD_INCOMING_PAYMENT);
 		
 		/** name of a field */
 		private final String fieldName;
@@ -74,8 +82,6 @@ public class Target {
 		this.completedDate = null;
 		this.serviceItem = serviceItem;
 		this.account = account;
-		
-
 	}
 
 	public Account getAccount() {
@@ -129,6 +135,14 @@ public class Target {
 
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate.getTime();
+	}
+
+	public Set<IncomingPayment> getIncomingPayments() {
+		return incomingPayments;
+	}
+
+	public void setIncomingPayments(Set<IncomingPayment> incomingPayments) {
+		this.incomingPayments = incomingPayments;
 	}
 
 	@Override

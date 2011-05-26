@@ -13,8 +13,10 @@ import net.frontlinesms.csv.CsvRowFormat;
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 
 /**
  * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
@@ -44,7 +46,7 @@ public class IncomingPaymentCsvImporter extends CsvImporter {
 	 *             If there was a problem with the format of the file
 	 */
 	public CsvImportReport importIncomingPayments(
-			IncomingPaymentDao incomingPaymentDao, AccountDao accountDao,
+			IncomingPaymentDao incomingPaymentDao, AccountDao accountDao, TargetDao targetDao,
 			CsvRowFormat rowFormat) {
 		log.trace("ENTER");
 
@@ -59,15 +61,19 @@ public class IncomingPaymentCsvImporter extends CsvImporter {
 					PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID);
 			String account = rowFormat.getOptionalValue(lineValues,
 					PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT);
-
 			Account acc;
 
 			acc = new Account(account);
 			accountDao.saveAccount(acc);
+			
+			Target tgt;
+			
+			tgt = new Target();
+			targetDao.saveTarget(tgt);
 
 			IncomingPayment incomingPayment = new IncomingPayment(paymentBy,
 					phoneNumber, new BigDecimal(amountPaid), new Date(
-							Long.parseLong(timePaid)), acc);
+							Long.parseLong(timePaid)), acc, tgt);
 			incomingPaymentDao.saveIncomingPayment(incomingPayment);
 		}
 

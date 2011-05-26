@@ -190,16 +190,19 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 				try {
 					final IncomingPayment payment = new IncomingPayment();
 					payment.setAccount(getAccount(message));
-					payment.setPhoneNumber(getPhoneNumber(message));
-					payment.setAmountPaid(getAmount(message));
-					payment.setConfirmationCode(getConfirmationCode(message));
-					payment.setPaymentBy(getPaymentBy(message));
-					payment.setTimePaid(getTimePaid(message));
-		
-					incomingPaymentDao.saveIncomingPayment(payment);
-					
-					//Check if target reached
 					Target tgt = targetDao.getActiveTargetByAccount(payment.getAccount().getAccountNumber());
+					if (tgt != null){
+						payment.setTarget(tgt);
+						payment.setPhoneNumber(getPhoneNumber(message));
+						payment.setAmountPaid(getAmount(message));
+						payment.setConfirmationCode(getConfirmationCode(message));
+						payment.setPaymentBy(getPaymentBy(message));
+						payment.setTimePaid(getTimePaid(message));
+						incomingPaymentDao.saveIncomingPayment(payment);						
+					}else{
+						//TODO dealing with an incoming payment for a completed target 
+					}
+					//Check if target reached
 					if (tgt != null){
 						// Check if the client has reached his targeted amount
 						TargetAnalytics targetAnalytics = new TargetAnalytics();
@@ -216,7 +219,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 						}
 					}else{
 					}
-					
 					//Update account.activeAccount
 					//Update target.completedDate
 				} catch (IllegalArgumentException ex) {

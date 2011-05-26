@@ -29,6 +29,7 @@ public class IncomingPayment {
 	public static final String FIELD_PHONE_NUMBER = "phoneNumber";
 	public static final String FIELD_TIME_PAID = "timePaid";
 	public static final String FIELD_ACCOUNT = "account";
+	public static final String FIELD_TARGET ="target";
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
@@ -53,13 +54,18 @@ public class IncomingPayment {
 	@JoinColumn(name = FIELD_ACCOUNT)
 	private Account account;
 	
+	@ManyToOne
+	@JoinColumn(name = FIELD_TARGET)
+	private Target target;
+
 	public enum Field implements EntityField<IncomingPayment> {
 		AMOUNT_PAID(FIELD_AMOUNT_PAID),
 		CONFIRMATION_CODE(FIELD_CONFIRMATION_CODE),
 		PAYMENT_BY(FIELD_PAYMENT_BY),
 		PHONE_NUMBER(FIELD_PHONE_NUMBER),
 		TIME_PAID(FIELD_TIME_PAID),
-		ACCOUNT(FIELD_ACCOUNT);
+		ACCOUNT(FIELD_ACCOUNT),
+		TARGET(FIELD_TARGET);
 		
 		/** name of a field */
 		private final String fieldName;
@@ -77,17 +83,18 @@ public class IncomingPayment {
 	}	
 	
 	public IncomingPayment(String paymentBy, String phoneNumber,
-			BigDecimal amountPaid, long timePaid, Account account) {
+			BigDecimal amountPaid, long timePaid, Account account, Target target) {
 		this.paymentBy = paymentBy;
 		this.phoneNumber = phoneNumber;
 		this.amountPaid = amountPaid;
 		this.timePaid = timePaid;
 		this.account = account;
+		this.target = target;
 	}
 
 	public IncomingPayment(String paymentBy, String phoneNumber,
-			BigDecimal amountPaid, Date timePaid, Account account) {
-		this(paymentBy,phoneNumber,amountPaid,timePaid.getTime(),account);
+			BigDecimal amountPaid, Date timePaid, Account account, Target target) {
+		this(paymentBy,phoneNumber,amountPaid,timePaid.getTime(),account, target);
 	}
 	
 	public Account getAccount() {
@@ -122,6 +129,16 @@ public class IncomingPayment {
 		this.account = account;
 	}
 
+	
+	public Target getTarget() {
+		return this.target;
+	}
+
+	public void setTarget(Target target) {
+		this.target = target;
+	}
+
+	
 	public void setAmountPaid(BigDecimal amountPaid) {
 		this.amountPaid = amountPaid;
 	}

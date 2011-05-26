@@ -1,6 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard;
 
 import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +66,13 @@ public class CreateSettingsHandler extends BasePanelHandler {
 		Object daysRemaining = ui.createTableCell(targetAnalytics.getDaysRemaining(target.getId()).toString());
 		Object lastAmountPaid = ui.createTableCell(targetAnalytics.getLastAmountPaid(target.getId()).toString());
 		Object percentageToGo = ui.createTableCell(targetAnalytics.getPercentageToGo(target.getId()).toString()+" %");
-		Object lastDatePaid = ui.createTableCell(dateFormat.format(targetAnalytics.getLastDatePaid(target.getId())));
+		Object lastDatePaid = "";
+		if(targetAnalytics.getLastDatePaid(target.getId())!=null){
+			lastDatePaid = ui.createTableCell(dateFormat.format(targetAnalytics.getLastDatePaid(target.getId())));
+		}else{
+			lastDatePaid = ui.createTableCell("No payment done yet");
+		}
+
 		String targetStatusStr = "";
 		int targetStatusRC =0;
 		targetStatusRC = targetAnalytics.isStatusGood(target.getId());

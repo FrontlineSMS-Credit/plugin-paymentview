@@ -46,10 +46,16 @@ public interface IncomingPaymentDao {
 	public IncomingPayment getIncomingPaymentById(long incomingPaymentId);
 
 	/**
+	 * returns IncomingPayment(s) by targetId
+	 * */
+	public List<IncomingPayment> getIncomingPaymentsByTarget(
+			long targetId);
+
+	/**
 	 * returns IncomingPayment(s) by accountId
 	 * */
 	public List<IncomingPayment> getIncomingPaymentsByAccountNumber(
-			String accountNumber, long startDate, long endDate);
+			String accountNo);
 
 	/**
 	 * returns the last IncomingPayment(s) by accountId

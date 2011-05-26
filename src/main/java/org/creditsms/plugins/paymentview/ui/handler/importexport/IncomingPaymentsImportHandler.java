@@ -19,6 +19,7 @@ import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.importexport.IncomingPaymentCsvImporter;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 
 /**
  * @author ian <ian@credit.frontlinesms.com>
@@ -42,7 +43,7 @@ public class IncomingPaymentsImportHandler extends ImportDialogHandler {
 	// > INSTANCE PROPERTIES
 	private IncomingPaymentCsvImporter importer;
 	private IncomingPaymentDao incomingPaymentDao;
-
+	private TargetDao targetDao;
 	public IncomingPaymentsImportHandler(UiGeneratorController ui) {
 		super(ui);
 	}
@@ -94,7 +95,7 @@ public class IncomingPaymentsImportHandler extends ImportDialogHandler {
 	protected void doSpecialImport(String dataPath) {
 		CsvRowFormat rowFormat = getRowFormatForIncomingPayment();
 		this.importer.importIncomingPayments(this.incomingPaymentDao,
-				this.accountDao, rowFormat);
+				this.accountDao,this.targetDao, rowFormat);
 		// this.uiController.refreshContactsTab();
 		this.uiController.infoMessage(InternationalisationUtils
 				.getI18nString(I18N_IMPORT_SUCCESSFUL));
