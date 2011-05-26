@@ -8,11 +8,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,6 +31,7 @@ import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.mockito.InOrder;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
@@ -56,6 +57,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	private StkMenuItem sendMoneyMenuItem;
 	private ClientDao clientDao;
 	private AccountDao accountDao;
+	private TargetDao targetDao;
 	private IncomingPaymentDao incomingPaymentDao;
 	private OutgoingPaymentDao outgoingPaymentDao;
 	
@@ -69,9 +71,14 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		mpesaPaymentService.setCService(cService);
 		incomingPaymentDao = mock(IncomingPaymentDao.class);
 		outgoingPaymentDao= mock(OutgoingPaymentDao.class);
+		targetDao = mock(TargetDao.class);
+		clientDao = mock(ClientDao.class);
+		accountDao = mock(AccountDao.class);
 		
 		mpesaPaymentService.setIncomingPaymentDao(incomingPaymentDao);
-		mpesaPaymentService.setOutgoingPaymentDao(outgoingPaymentDao);		
+		mpesaPaymentService.setTargetDao(targetDao);
+		mpesaPaymentService.setClientDao(clientDao);
+		mpesaPaymentService.setOutgoingPaymentDao(outgoingPaymentDao);
 		
 		setUpDaos();
 
@@ -112,9 +119,6 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 
 	@SuppressWarnings("unchecked")
 	private void setUpDaos() {
-		clientDao = mock(ClientDao.class);
-		accountDao = mock(AccountDao.class);
-
 		Set<Account> accounts1 = mockAccounts(ACCOUNTNUMBER_1_1);
 		Set<Account> accounts2 = mockAccounts(ACCOUNTNUMBER_2_1, ACCOUNTNUMBER_2_2);
 		

@@ -164,7 +164,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 					payment.setConfirmationCode(getConfirmationCode(message));
 					payment.setPaymentBy(getPaymentBy(message));
 					payment.setTimePaid(getTimePaid(message));
-		
+					
 					incomingPaymentDao.saveIncomingPayment(payment);
 					
 					//Check if target reached
@@ -339,5 +339,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 
 	public void setOutgoingPaymentDao(OutgoingPaymentDao outgoingPaymentDao) {
 		this.outgoingPaymentDao = outgoingPaymentDao;
+	}
+
+	public void setTargetDao(TargetDao targetDao) {
+		this.targetDao = targetDao;
 	}
 }

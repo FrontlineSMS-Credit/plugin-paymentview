@@ -42,9 +42,10 @@ public class EnterPin extends BaseDialog {
 				MpesaPaymentService paymentService = previousMobilePaymentService.getPaymentService();
 				paymentService.setPin(pin);
 				paymentService.setSmsService((SmsModem) previousMobilePaymentService.getSmsService());
-
+				
 				paymentService.setClientDao(pluginController.getClientDao());
 				paymentService.setAccountDao(pluginController.getAccountDao());
+				paymentService.setTargetDao(pluginController.getTargetDao());
 				paymentService.setIncomingPaymentDao(pluginController.getIncomingPaymentDao());
 				paymentService.setOutgoingPaymentDao(pluginController.getOutgoingPaymentDao());
 				
