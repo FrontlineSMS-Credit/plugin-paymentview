@@ -218,7 +218,7 @@ public class OutgoingPayment {
 		return "OutgoingPayment [id=" + id + ", amountPaid=" + amountPaid
 				+ ", status=" + status + ", confirmationCode="
 				+ confirmationCode + ", notes=" + notes + ", phoneNumber="
-				+ phoneNumber + ", timePaid=" + timePaid + ", account="
+				+ phoneNumber + ", timePaid=" + timePaid + ", paymentTo="+ paymentTo + ", account="
 				+ account + "]";
 	}
 

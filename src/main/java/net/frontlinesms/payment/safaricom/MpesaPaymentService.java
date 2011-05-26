@@ -37,14 +37,15 @@ import org.smslib.stk.StkRequest;
 import org.smslib.stk.StkResponse;
 
 public abstract class MpesaPaymentService implements PaymentService, EventObserver  {
-//> REGEX PATTERN CONSTANTS
-	private static final String PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = 
+	//> REGEX PATTERN CONSTANTS
+	protected static final String PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = 
 		"[A-Z\\d]+ Confirmed.\n"+
-		"Ksh[,|\\d]+ sent to ([A-Za-z ]+) 2547[\\d]{8} on " +
-		"(([1-2]?[1-9]|3[0-1])/([1-9]|1[0-2])/(1[1-2])) at ([1]?\\d:[0-5]\\d) (AM|PM)"+
-		"New M-PESA balance is Ksh([,|\\d]+)";
+		"Ksh[,|\\d]+ sent to ([A-Za-z ]+) 2547[\\d]{8} on "+
+		"(([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) at ([1]?\\d:[0-5]\\d) ([A|P]M)\n"+
+		"New M-PESA balance Ksh([,|\\d]+)";
 	
 	protected static final String AMOUNT_PATTERN = "Ksh[,|\\d]+";
+	protected static final String SENT_TO = " sent to";
 	protected static final String DATETIME_PATTERN = "d/M/yy hh:mm a";
 	protected static final String PHONE_PATTERN = "2547[\\d]{8}";
 	protected static final String CONFIRMATION_CODE_PATTERN = "[A-Z0-9]+ Confirmed.";
@@ -53,7 +54,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	protected static final String RECEIVED_FROM = "received from";
 
 //> INSTANCE PROPERTIES
-	private final Logger log = FrontlineUtils.getLogger(this.getClass());
+	protected final Logger log = FrontlineUtils.getLogger(this.getClass());
 	private SmsService smsService;
 	private CService cService;
 	
@@ -66,13 +67,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	
 //> FIELDS
 	private String pin;
-	
-	public MpesaPaymentService(EventBus eventBus){
-		eventBus.registerObserver(this);
-	}
-	
-	public MpesaPaymentService() {
-	}
+	private EventBus eventBus;
 	
 //> STK & PAYMENT ACCOUNT
 	public void checkBalance() throws PaymentServiceException {
@@ -140,47 +135,22 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}
 		final FrontlineMessage message = (FrontlineMessage) entity;
 		
-		if (isValidOutgoingPaymentConfirmation(message)){
-			processOutgoingPayment(message);
-		}else if (isValidIncomingPaymentConfirmation(message)) {
+		if (isValidIncomingPaymentConfirmation(message)) {
 			processIncomingPayment(message);
 		}
-	}
- 
-	private boolean isValidOutgoingPaymentConfirmation(FrontlineMessage message) {
-		if (!message.getSenderMsisdn().equals("MPESA")) {
-			return false;
+		
+		if (!(this instanceof MpesaPayBillService)) {
+			//This Should be moved to The MpesaPersonalService
+			if (isValidOutgoingPaymentConfirmation(message)) {
+				processOutgoingPayment(message);
+			}
 		}
+	}
+	
+	private boolean isValidOutgoingPaymentConfirmation(FrontlineMessage message) {
 		return message.getTextContent().matches(PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN);
 	}
 
-	private void processOutgoingPayment(final FrontlineMessage message) {
-		new FrontlineUiUpateJob() {
-
-			// This probably shouldn't be a UI job,
-			// but it certainly should be done on a separate thread!
-			public void run() {
-				try {
-					final OutgoingPayment payment = new OutgoingPayment();
-					payment.setAccount(getAccount(message));
-					payment.setPhoneNumber(getPhoneNumber(message));
-					payment.setAmountPaid(getAmount(message));
-					payment.setConfirmationCode(getConfirmationCode(message));
-					payment.setPaymentTo(getPaymentBy(message));
-					payment.setTimePaid(getTimePaid(message));
-		
-					outgoingPaymentDao.saveOutgoingPayment(payment);
-				} catch (IllegalArgumentException ex) {
-					log.warn("Message failed to parse; likely incorrect format", ex);
-					throw new RuntimeException(ex);
-				} catch (Exception ex) {
-					log.error("Unexpected exception parsing incoming payment SMS.", ex);
-					throw new RuntimeException(ex);
-				}
-			}
-		}.execute();
-	}
-	
 	//> INCOMING MESSAGE PAYMENT PROCESSORS
 	private void processIncomingPayment(final FrontlineMessage message) {
 		new FrontlineUiUpateJob() {
@@ -199,6 +169,63 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 						payment.setPaymentBy(getPaymentBy(message));
 						payment.setTimePaid(getTimePaid(message));
 						incomingPaymentDao.saveIncomingPayment(payment);						
+					}else{
+						//TODO dealing with an incoming payment for a completed target 
+					}
+
+					
+					//Check if target reached
+					Target tgt = targetDao.getActiveTargetByAccount(payment.getAccount().getAccountNumber());
+					if (tgt != null){
+						// Check if the client has reached his targeted amount
+						TargetAnalytics targetAnalytics = new TargetAnalytics();
+						targetAnalytics.setIncomingPaymentDao(incomingPaymentDao);
+						targetAnalytics.setTargetDao(targetDao);
+						if (targetAnalytics.isStatusGood(tgt.getId())==2){
+							//Update target.completedDate
+							Calendar calendar = Calendar.getInstance();
+							tgt.setCompletedDate(calendar.getTime());
+							targetDao.updateTarget(tgt);
+							// Update account.activeAccount
+							payment.getAccount().setActiveAccount(false);
+							accountDao.updateAccount(payment.getAccount());
+						}
+					}else{
+					}
+
+					
+					//Update account.activeAccount
+					//Update target.completedDate
+				} catch (IllegalArgumentException ex) {
+					log.warn("Message failed to parse; likely incorrect format", ex);
+					throw new RuntimeException(ex);
+				} catch (Exception ex) {
+					log.error("Unexpected exception parsing incoming payment SMS.", ex);
+					throw new RuntimeException(ex);
+				}
+			}
+		}.execute();
+	}
+	
+	private void processOutgoingPayment(final FrontlineMessage message) {
+		new FrontlineUiUpateJob() {
+
+			// This probably shouldn't be a UI job,
+			// but it certainly should be done on a separate thread!
+			public void run() {
+				try {
+					final OutgoingPayment payment = new OutgoingPayment();
+					payment.setAccount(getAccount(message));
+					Target tgt = targetDao.getActiveTargetByAccount(payment.getAccount().getAccountNumber());
+					if (tgt != null){
+						payment.setTarget(tgt);
+						payment.setPhoneNumber(getPhoneNumber(message));
+						payment.setAmountPaid(getAmount(message));
+						payment.setConfirmationCode(getConfirmationCode(message));
+					payment.setPaymentTo(getPaymentTo(message));
+						payment.setTimePaid(getTimePaid(message));
+					payment.setStatus(OutgoingPayment.Status.CONFIRMED);
+					outgoingPaymentDao.saveOutgoingPayment(payment);
 					}else{
 						//TODO dealing with an incoming payment for a completed target 
 					}
@@ -225,7 +252,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 					log.warn("Message failed to parse; likely incorrect format", ex);
 					throw new RuntimeException(ex);
 				} catch (Exception ex) {
-					log.error("Unexpected exception parsing incoming payment SMS.", ex);
+					log.error("Unexpected exception parsing outgoing payment SMS.", ex);
 					throw new RuntimeException(ex);
 				}
 			}
@@ -238,14 +265,24 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}
 		return isMessageTextValid(message.getTextContent());
 	}
-
 	
 	abstract Date getTimePaid(FrontlineMessage message);
-	abstract boolean isMessageTextValid(String messageText);
+	abstract boolean isMessageTextValid(String message);
 	abstract Account getAccount(FrontlineMessage message);
 	abstract String getPaymentBy(FrontlineMessage message);
+	
+	private String getPaymentTo(FrontlineMessage message) {
+		try {
+	        String nameAndPhone = getFirstMatch(message, "Ksh[,|[0-9]]+ sent to ([A-Za-z ]+) 2547[0-9]{8}");
+	        String nameWKshSentTo = nameAndPhone.split(AMOUNT_PATTERN+SENT_TO)[1];
+	        String names = getFirstMatch(nameWKshSentTo,PAID_BY_PATTERN).trim();
+	        return names;
+		} catch(ArrayIndexOutOfBoundsException ex) {
+			throw new IllegalArgumentException(ex);
+		}
+	}
 
-	private BigDecimal getAmount(FrontlineMessage message) {
+	BigDecimal getAmount(FrontlineMessage message) {
 		String amountWithKsh = getFirstMatch(message, AMOUNT_PATTERN);
 		return new BigDecimal(amountWithKsh.substring(3).replaceAll(",", ""));
 	}
@@ -254,7 +291,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		return "+" + getFirstMatch(message, PHONE_PATTERN);
 	}
 
-	private String getConfirmationCode(FrontlineMessage message) {
+	String getConfirmationCode(FrontlineMessage message) {
 		String firstMatch = getFirstMatch(message, CONFIRMATION_CODE_PATTERN);
 		return firstMatch.replace(" Confirmed.", "").trim();
 	}
@@ -287,9 +324,21 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		return super.equals(other);
 	}
 	
+//> FINALIZE
+	public void deinit(){
+		eventBus.unregisterObserver(this);
+	}
+	
 //> ACCESSORS AND MUTATORS
 	public String getPin() {
 		return pin;
+	}
+	
+	public void registerToEventBus(EventBus eventBus) {
+		if (eventBus != null) {
+			this.eventBus = eventBus;
+			this.eventBus.registerObserver(this);
+		}
 	}
 
 	public void setPin(String pin) {
@@ -330,7 +379,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	public void setOutgoingPaymentDao(OutgoingPaymentDao outgoingPaymentDao) {
 		this.outgoingPaymentDao = outgoingPaymentDao;
 	}
-	
+
 	public void setTargetDao(TargetDao targetDao) {
 		this.targetDao = targetDao;
 	}

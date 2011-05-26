@@ -121,13 +121,23 @@ public class PaymentViewPluginController extends BasePluginController
 	}
 
  	public void authorize(String authCode, String verifyAuthCode) {
-		if (authorizationAction != null) {
+//		try {
+//			if ((authCode.equals(verifyAuthCode)) & AuthorizationChecker.authenticate(authCode)){
+//				if (authorizationAction != null) {
 			try {
 				authorizationAction.invoke(authorizationEventListener);
 			}  catch (Exception e) {
 				throw new RuntimeException(e);
 			}
-		}
+//				}else{
+//					throw new RuntimeException("Null AuthorizationAction!");
+//				}
+//			}else{
+//				ui.alert("Invalid Entry! Enter the Authorization Code Again.");
+//			}
+//		} catch (UnsupportedEncodingException e) {
+//			throw new RuntimeException(e);
+//		}
 	}
 	
 //> ACCESSORS

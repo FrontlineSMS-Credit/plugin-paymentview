@@ -78,7 +78,7 @@ public class SafaricomPaymentServiceConfigUiHandler extends BaseDialog {
 			String vPin = getVPin();			
 			if(checkValidityOfPinFields(pin, vPin)){
 				SmsService smsService = ui.getAttachedObject(ui.getSelectedItem(getDeviceList()), SmsService.class);
-				MpesaPaymentService mpesaPaymentService = new MpesaPersonalService(ui.getFrontlineController().getEventBus());
+				MpesaPaymentService mpesaPaymentService = new MpesaPersonalService();
 				mpesaPaymentService.setPin(pin);
 				mpesaPaymentService.setSmsService((SmsModem) smsService);
 

@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,7 @@ import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.mockito.InOrder;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
@@ -56,6 +58,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	private StkMenuItem sendMoneyMenuItem;
 	private ClientDao clientDao;
 	private AccountDao accountDao;
+	private TargetDao targetDao;
 	private IncomingPaymentDao incomingPaymentDao;
 	private OutgoingPaymentDao outgoingPaymentDao;
 	
@@ -69,9 +72,14 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		mpesaPaymentService.setCService(cService);
 		incomingPaymentDao = mock(IncomingPaymentDao.class);
 		outgoingPaymentDao= mock(OutgoingPaymentDao.class);
+		targetDao = mock(TargetDao.class);
+		clientDao = mock(ClientDao.class);
+		accountDao = mock(AccountDao.class);
 		
 		mpesaPaymentService.setIncomingPaymentDao(incomingPaymentDao);
-		mpesaPaymentService.setOutgoingPaymentDao(outgoingPaymentDao);		
+		mpesaPaymentService.setTargetDao(targetDao);
+		mpesaPaymentService.setClientDao(clientDao);
+		mpesaPaymentService.setOutgoingPaymentDao(outgoingPaymentDao);
 		
 		setUpDaos();
 
@@ -112,9 +120,6 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 
 	@SuppressWarnings("unchecked")
 	private void setUpDaos() {
-		clientDao = mock(ClientDao.class);
-		accountDao = mock(AccountDao.class);
-
 		Set<Account> accounts1 = mockAccounts(ACCOUNTNUMBER_1_1);
 		Set<Account> accounts2 = mockAccounts(ACCOUNTNUMBER_2_1, ACCOUNTNUMBER_2_2);
 		
@@ -211,47 +216,41 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 				if(!(that instanceof IncomingPayment)) return false;
 				IncomingPayment other = (IncomingPayment) that;
 				return other.getPhoneNumber().equals(phoneNo) &&
-						other.getAmountPaid().equals(new BigDecimal(amount)) &&
-						other.getAccount().getAccountNumber().equals(accountNumber) &&
-						other.getConfirmationCode().equals(confirmationCode) &&
-						other.getTimePaid().equals(getTimestamp(datetime)) &&
-						other.getPaymentBy().equals(payedBy);
-						
+					other.getAmountPaid().equals(new BigDecimal(amount)) &&
+					other.getAccount().getAccountNumber().equals(accountNumber) &&
+					other.getConfirmationCode().equals(confirmationCode) &&
+					other.getTimePaid().equals(getTimestamp(datetime).getTime()) &&
+					other.getPaymentBy().equals(payedBy);
 			}
 		});
 	}
 	
 	protected void testOutgoingPaymentProcessing(String messageText,
 			final String phoneNo, final String accountNumber, final String amount,
-			final String confirmationCode, final String payedBy, final String datetime) {
+			final String confirmationCode, final String payTo, final String datetime, final OutgoingPayment.Status status) {
 		// then
 		assertTrue(mpesaPaymentService instanceof EventObserver);
 		
 		// when
 		mpesaPaymentService.notify(mockMessageNotification("MPESA", messageText));
 		
+		OutgoingPayment payment = new OutgoingPayment();
+		payment.setPhoneNumber(phoneNo);
+		payment.setAmountPaid(new BigDecimal(amount));
+		payment.setAccount(accountDao.getAccountByAccountNumber(accountNumber));
+		payment.setConfirmationCode(confirmationCode);
+		payment.setTimePaid(getTimestamp(datetime));
+		payment.setStatus(status);
+		payment.setPaymentTo(payTo);
+		
 		// then
 		WaitingJob.waitForEvent();
-		verify(outgoingPaymentDao).saveOutgoingPayment(new OutgoingPayment() {
-			@Override
-			public boolean equals(Object that) {
-				
-				if(!(that instanceof OutgoingPayment)) return false;
-				OutgoingPayment other = (OutgoingPayment) that;
-				return other.getPhoneNumber().equals(phoneNo) &&
-						other.getAmountPaid().equals(new BigDecimal(amount)) &&
-						other.getAccount().getAccountNumber().equals(accountNumber) &&
-						other.getConfirmationCode().equals(confirmationCode) &&
-						other.getTimePaid().equals(getTimestamp(datetime)) &&
-						other.getPaymentTo().equals(payedBy);
-						
-			}
-		});
+		verify(outgoingPaymentDao).saveOutgoingPayment(payment);
 	}
 	
-	private long getTimestamp(String dateString) {
+	private Date getTimestamp(String dateString) {
 		try {
-			return new SimpleDateFormat("HH:mm dd MMM yyyy").parse(dateString).getTime();
+			return new SimpleDateFormat("d/M/yy hh:mm a").parse(dateString);
 		} catch (ParseException e) {
 			throw new IllegalArgumentException("Test date supplied in incorrect format: " + dateString);
 		}

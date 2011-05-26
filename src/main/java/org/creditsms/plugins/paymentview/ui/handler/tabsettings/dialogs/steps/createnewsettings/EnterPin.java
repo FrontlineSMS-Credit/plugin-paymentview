@@ -42,10 +42,11 @@ public class EnterPin extends BaseDialog {
 				MpesaPaymentService paymentService = previousMobilePaymentService.getPaymentService();
 				paymentService.setPin(pin);
 				paymentService.setSmsService((SmsModem) previousMobilePaymentService.getSmsService());
-
+				
 				paymentService.setClientDao(pluginController.getClientDao());
 				paymentService.setTargetDao(pluginController.getTargetDao());
 				paymentService.setAccountDao(pluginController.getAccountDao());
+				paymentService.setTargetDao(pluginController.getTargetDao());
 				paymentService.setIncomingPaymentDao(pluginController.getIncomingPaymentDao());
 				paymentService.setOutgoingPaymentDao(pluginController.getOutgoingPaymentDao());
 				
@@ -58,6 +59,7 @@ public class EnterPin extends BaseDialog {
 	}
 	
 	public void create() {
+		ui.getFrontlineController().getEventBus().registerObserver(this.getPaymentService());
 		this.getSettingsTabHandler().addPaymentService(this.getPaymentService());
 		this.getSettingsTabHandler().refresh();
 		
