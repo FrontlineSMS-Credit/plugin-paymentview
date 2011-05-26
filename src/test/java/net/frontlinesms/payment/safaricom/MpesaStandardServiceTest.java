@@ -2,16 +2,12 @@
  * 
  */
 package net.frontlinesms.payment.safaricom;
-import static org.mockito.Mockito.mock;
-
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
-
-import net.frontlinesms.events.EventBus;
 
 public class MpesaStandardServiceTest extends MpesaPaymentServiceTest<MpesaPersonalService> {
 	@Override
 	protected MpesaPersonalService createNewTestClass() {
-		return new MpesaPersonalService(mock(EventBus.class));
+		return new MpesaPersonalService();
 	}
 	
 	public void testIncomingPaymentProcessingWithNoAccount() {

@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.events.EventBus;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 
@@ -17,12 +16,6 @@ public class MpesaPayBillService extends MpesaPaymentService {
 			+ "New Utility balance is Ksh[,|\\d]+\n"
 			+ "Time: ([0-2]\\d|[3][0-1])/(0[1-9]|1[0-2])/(20[1][1-2]) (([2][0-3]|[0-1]\\d):([0-5]\\d):([0-5]\\d))";
 
-	public MpesaPayBillService(EventBus eventBus) {
-		super(eventBus);
-	}
-	
-	public MpesaPayBillService() {
-	}
 	
 	@Override
 	Account getAccount(FrontlineMessage message) {

@@ -2,12 +2,10 @@ package net.frontlinesms.payment.safaricom;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.events.EventBus;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
@@ -18,16 +16,14 @@ public class MpesaPersonalService extends MpesaPaymentService {
 			"(([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) (at) ([1]?\\d:[0-5]\\d) (AM|PM)\n" +
 			"New M-PESA balance Ksh[,|\\d]+";
 	
-	public MpesaPersonalService(EventBus eventBus) {
-		super(eventBus);
-	}
-	
 	@Override
 	Account getAccount(FrontlineMessage message) {
 		Client client = clientDao.getClientByPhoneNumber(getPhoneNumber(message));
-		List<Account> accountsByClientId = new ArrayList<Account>(client.getAccounts());
-		if(!accountsByClientId.isEmpty()){
-			return accountsByClientId.get(0);
+		if (client != null) {
+			List<Account> accountsByClientId = accountDao.getAccountsByClientId(client.getId());
+			if(!accountsByClientId.isEmpty()){
+				return accountsByClientId.get(0);
+			}
 		}
 		return null;
 	}

@@ -66,13 +66,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	
 //> FIELDS
 	private String pin;
-	
-	public MpesaPaymentService(EventBus eventBus){
-		eventBus.registerObserver(this);
-	}
-	
-	public MpesaPaymentService() {
-	}
+	private EventBus eventBus;
 	
 //> STK & PAYMENT ACCOUNT
 	public void checkBalance() throws PaymentServiceException {
@@ -144,8 +138,11 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			processIncomingPayment(message);
 		}
 		
-		if (isValidOutgoingPaymentConfirmation(message)) {
-			processOutgoingPayment(message);
+		if (!(this instanceof MpesaPayBillService)) {
+			//This Should be moved to The MpesaPersonalService
+			if (isValidOutgoingPaymentConfirmation(message)) {
+				processOutgoingPayment(message);
+			}
 		}
 	}
 	
@@ -288,9 +285,21 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		return super.equals(other);
 	}
 	
+//> FINALIZE
+	public void deinit(){
+		eventBus.unregisterObserver(this);
+	}
+	
 //> ACCESSORS AND MUTATORS
 	public String getPin() {
 		return pin;
+	}
+	
+	public void registerToEventBus(EventBus eventBus) {
+		if (eventBus != null) {
+			this.eventBus = eventBus;
+			this.eventBus.registerObserver(this);
+		}
 	}
 
 	public void setPin(String pin) {

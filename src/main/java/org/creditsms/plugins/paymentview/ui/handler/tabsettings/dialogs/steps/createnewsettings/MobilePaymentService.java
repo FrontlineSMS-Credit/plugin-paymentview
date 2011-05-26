@@ -1,6 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings;
 
-import net.frontlinesms.events.EventBus;
 import net.frontlinesms.messaging.sms.SmsService;
 import net.frontlinesms.payment.safaricom.MpesaPayBillService;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
@@ -44,12 +43,11 @@ public class MobilePaymentService extends BaseDialog {
 	}
 	
 	private void setUpPaymentServices(Object cmbSelectPaymentService) {
-		EventBus eventBus = ui.getFrontlineController().getEventBus();
 		//TODO: We should think of having modules at this case;Some Metaprogramming in the house!!
-		MpesaPaymentService mpesaPersonal = new MpesaPersonalService(eventBus);
+		MpesaPaymentService mpesaPersonal = new MpesaPersonalService();
 		Object comboboxChoice1 = ui.createComboboxChoice(mpesaPersonal.toString(), mpesaPersonal);
 		
-		MpesaPaymentService mpesaPayBill = new MpesaPayBillService(eventBus);
+		MpesaPaymentService mpesaPayBill = new MpesaPayBillService();
 		Object comboboxChoice2 = ui.createComboboxChoice(mpesaPayBill.toString(), mpesaPayBill);
 		
 		ui.add(cmbSelectPaymentService, comboboxChoice1);
@@ -78,7 +76,7 @@ public class MobilePaymentService extends BaseDialog {
 	}
 	
 	private void cleanUp() {
-		//TODO: Clean up unused stuff; or just let the Garbage collector to it.
+		//Memory Leaks; Should the Payment Services be Singletons
 	}
 
 //> ACCESSORS
