@@ -2,6 +2,7 @@ package org.creditsms.plugins.paymentview.authorizationcode;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+
 import net.frontlinesms.resources.UserHomeFilePropertySet;
 
 import org.smslib.util.HexUtils;

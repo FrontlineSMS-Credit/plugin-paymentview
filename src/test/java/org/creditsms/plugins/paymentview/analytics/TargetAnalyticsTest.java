@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
-
 import net.frontlinesms.junit.BaseTestCase;
+
+import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 
 public class TargetAnalyticsTest extends BaseTestCase {
 	private TargetAnalytics targetAnalytics = new TargetAnalytics();

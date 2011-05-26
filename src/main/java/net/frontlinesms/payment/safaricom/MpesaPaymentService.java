@@ -175,7 +175,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 
 					
 					//Check if target reached
-					Target tgt = targetDao.getActiveTargetByAccount(payment.getAccount().getAccountNumber());
 					if (tgt != null){
 						// Check if the client has reached his targeted amount
 						TargetAnalytics targetAnalytics = new TargetAnalytics();
@@ -216,38 +215,14 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 				try {
 					final OutgoingPayment payment = new OutgoingPayment();
 					payment.setAccount(getAccount(message));
-					Target tgt = targetDao.getActiveTargetByAccount(payment.getAccount().getAccountNumber());
-					if (tgt != null){
-						payment.setTarget(tgt);
-						payment.setPhoneNumber(getPhoneNumber(message));
-						payment.setAmountPaid(getAmount(message));
-						payment.setConfirmationCode(getConfirmationCode(message));
+					payment.setPhoneNumber(getPhoneNumber(message));
+					payment.setAmountPaid(getAmount(message));
+					payment.setConfirmationCode(getConfirmationCode(message));
 					payment.setPaymentTo(getPaymentTo(message));
-						payment.setTimePaid(getTimePaid(message));
+					payment.setTimePaid(getTimePaid(message));
 					payment.setStatus(OutgoingPayment.Status.CONFIRMED);
+						
 					outgoingPaymentDao.saveOutgoingPayment(payment);
-					}else{
-						//TODO dealing with an incoming payment for a completed target 
-					}
-					//Check if target reached
-					if (tgt != null){
-						// Check if the client has reached his targeted amount
-						TargetAnalytics targetAnalytics = new TargetAnalytics();
-						targetAnalytics.setIncomingPaymentDao(incomingPaymentDao);
-						targetAnalytics.setTargetDao(targetDao);
-						if (targetAnalytics.isStatusGood(tgt.getId())==2){
-							//Update target.completedDate
-							Calendar calendar = Calendar.getInstance();
-							tgt.setCompletedDate(calendar.getTime());
-							targetDao.updateTarget(tgt);
-							// Update account.activeAccount
-							payment.getAccount().setActiveAccount(false);
-							accountDao.updateAccount(payment.getAccount());
-						}
-					}else{
-					}
-					//Update account.activeAccount
-					//Update target.completedDate
 				} catch (IllegalArgumentException ex) {
 					log.warn("Message failed to parse; likely incorrect format", ex);
 					throw new RuntimeException(ex);

@@ -1,7 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard;
 
 import java.text.DateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 

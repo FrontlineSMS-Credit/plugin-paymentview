@@ -1,7 +1,6 @@
 package org.creditsms.plugins.paymentview.analytics;
 
 import java.util.Date;
-import java.util.Set;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Account;
