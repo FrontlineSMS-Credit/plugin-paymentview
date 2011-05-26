@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<panel name="pnlViewClients" bottom="5" columns="1" gap="10"
+<panel name="pnlServiceItem" bottom="5" columns="1" gap="10"
 	left="5" right="5" top="10" weightx="1" weighty="1">
-
-	<panel columns="1" gap="5" weightx="1" weighty="1">
-		<label font="20 Bold" text="Configure Layaway" />
+	<panel columns="3" gap="5" weightx="1" weighty="1">
+		<label font="20 Bold" text="Configure Layaway" colspan="3"/>
+		
 		<label text="Current Savings target" />
-		<table name="tbl_clients" weightx="1" weighty="1">
-			<header>
-				<column text="Target Name" width="200"/>
-				<column text="Taget Amount" width="200" icon="/icons/money.png" />
-			</header>
-		</table>
+		<panel weightx="1"/>
+		<button icon="/icons/refresh.png" action="refresh"/>
+		
+		<panel name="pnl_tbl_serviceItem_holder" weightx="1" weighty="1" colspan="3" columns="1">
+			<table name="tbl_serviceItem" weightx="1" weighty="1">
+				<header>
+					<column text="Target Name" width="200"/>
+					<column text="Target Amount" width="200" icon="/icons/money.png" />
+				</header>
+			</table>
+		</panel>
 	</panel>
 	<panel gap="5" weightx="1">
 		<button action="createNew" icon="/icons/helper_add.png" text="Create New" />
