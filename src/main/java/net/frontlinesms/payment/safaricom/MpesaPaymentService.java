@@ -126,7 +126,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 //> EVENTBUS NOTIFY
 	@SuppressWarnings("rawtypes")
 	public void notify(FrontlineEventNotification notification) {
-		System.out.println("Kim1");
 		
 		//If the notification is of Importance to us
 		if (!(notification instanceof EntitySavedNotification)) {
@@ -142,10 +141,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		final FrontlineMessage message = (FrontlineMessage) entity;
 		
 		if (isValidIncomingPaymentConfirmation(message)) {
-			System.out.println("Kim2");
 			processIncomingPayment(message);
-		} else {
-			System.out.println("Kim invalid message");
 		}
 		
 		if (!(this instanceof MpesaPayBillService)) {
@@ -166,14 +162,15 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			// This probably shouldn't be a UI job,
 			// but it certainly should be done on a separate thread!
 			public void run() {
-				System.out.println("Kim3");
+				String alertMessage;
 				try {
 					final IncomingPayment payment = new IncomingPayment();
 					
 					// check account existence
-					if (getAccount(message) != null){
-						System.out.println("The account existssssssssssssssssssssssssss");
-						payment.setAccount(getAccount(message));
+					Account account = getAccount(message);
+					
+					if (account != null){
+						payment.setAccount(account);
 						Target tgt = targetDao.getActiveTargetByAccount(payment.getAccount().getAccountNumber());
 						if (tgt != null){
 							payment.setTarget(tgt);
@@ -182,6 +179,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							payment.setConfirmationCode(getConfirmationCode(message));
 							payment.setPaymentBy(getPaymentBy(message));
 							payment.setTimePaid(getTimePaid(message));
+							
 							incomingPaymentDao.saveIncomingPayment(payment);
 							
 							// Check if the client has reached his targeted amount
@@ -197,22 +195,19 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 								payment.getAccount().setActiveAccount(false);
 								accountDao.updateAccount(payment.getAccount());
 							}
-
 						}else{
-							//TODO dealing with an incoming payment for a completed target 
-							ui.alert("The account exists but is INACTIVE!!!!!!!!!!!!!");
+							//TODO log the unprocessed incoming message 
+							
+							alertMessage = "The account "+ account.getAccountNumber() + "of the client " 
+							+ getPaymentBy(message) + " (" + getPhoneNumber(message) + ") exists but is inactive. Please create a target";
+							ui.alert(alertMessage);
 						}
 					} else {
-						System.out.println("The account does not exist");
+						//TODO log the unprocessed incoming message
+						alertMessage = "The client " + getPaymentBy(message) + " (" + getPhoneNumber(message) + ") has not got any account set up.";						
+						ui.alert(alertMessage);
+
 					}
-
-
-					
-
-
-
-					
-
 				} catch (IllegalArgumentException ex) {
 					log.warn("Message failed to parse; likely incorrect format", ex);
 					throw new RuntimeException(ex);
