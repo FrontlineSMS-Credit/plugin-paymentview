@@ -136,7 +136,10 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		final FrontlineMessage message = (FrontlineMessage) entity;
 		
 		if (isValidIncomingPaymentConfirmation(message)) {
+			System.out.println("roy message valid");
 			processIncomingPayment(message);
+		} else {
+			System.out.println("roy messgae invalid");
 		}
 		
 		if (!(this instanceof MpesaPayBillService)) {
