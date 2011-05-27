@@ -38,9 +38,8 @@ public class TargetPayBillProcess  extends TargetCreationProcess{
 		this.setInactiveAccounts(this.getAccountDao().
 		getInactiveAccountsByClientId(this.getClient().getId()));
 		this.setTotalListAccounts(this.getAccountDao().getAccountsByClientId(
-				this.getClient().getId())); 
-
-		if(this.getInactiveAccounts()==null || this.getTotalListAccounts()==null){
+				this.getClient().getId()));
+		if(this.getInactiveAccounts().size()==0 || this.getTotalListAccounts().size()==0){
 			return true;
 		}else{
 			return false;
