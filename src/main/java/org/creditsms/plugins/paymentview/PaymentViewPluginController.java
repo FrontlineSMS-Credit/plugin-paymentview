@@ -172,4 +172,8 @@ public class PaymentViewPluginController extends BasePluginController
 	public ServiceItemDao getServiceItemDao() {
 		return serviceItemDao;
 	}
+	
+	public UiGeneratorController getUiGeneratorController() {
+		return ui;
+	}
 }
