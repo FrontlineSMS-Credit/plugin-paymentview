@@ -16,9 +16,11 @@ import net.frontlinesms.messaging.sms.SmsService;
 import net.frontlinesms.messaging.sms.modem.SmsModem;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
+import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
 import org.apache.log4j.Logger;
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
@@ -68,6 +70,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 //> FIELDS
 	private String pin;
 	private EventBus eventBus;
+
+	private UiGeneratorController ui;
 	
 //> STK & PAYMENT ACCOUNT
 	public void checkBalance() throws PaymentServiceException {
@@ -122,6 +126,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 //> EVENTBUS NOTIFY
 	@SuppressWarnings("rawtypes")
 	public void notify(FrontlineEventNotification notification) {
+		System.out.println("Kim1");
+		
 		//If the notification is of Importance to us
 		if (!(notification instanceof EntitySavedNotification)) {
 			return;
@@ -136,10 +142,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		final FrontlineMessage message = (FrontlineMessage) entity;
 		
 		if (isValidIncomingPaymentConfirmation(message)) {
-			System.out.println("roy message valid");
 			processIncomingPayment(message);
-		} else {
-			System.out.println("roy messgae invalid");
 		}
 		
 		if (!(this instanceof MpesaPayBillService)) {
@@ -160,44 +163,53 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			// This probably shouldn't be a UI job,
 			// but it certainly should be done on a separate thread!
 			public void run() {
+				System.out.println("Kim3");
 				try {
 					final IncomingPayment payment = new IncomingPayment();
-					payment.setAccount(getAccount(message));
-					Target tgt = targetDao.getActiveTargetByAccount(payment.getAccount().getAccountNumber());
-					if (tgt != null){
-						payment.setTarget(tgt);
-						payment.setPhoneNumber(getPhoneNumber(message));
-						payment.setAmountPaid(getAmount(message));
-						payment.setConfirmationCode(getConfirmationCode(message));
-						payment.setPaymentBy(getPaymentBy(message));
-						payment.setTimePaid(getTimePaid(message));
-						incomingPaymentDao.saveIncomingPayment(payment);						
-					}else{
-						//TODO dealing with an incoming payment for a completed target 
-					}
-
 					
-					//Check if target reached
-					if (tgt != null){
-						// Check if the client has reached his targeted amount
-						TargetAnalytics targetAnalytics = new TargetAnalytics();
-						targetAnalytics.setIncomingPaymentDao(incomingPaymentDao);
-						targetAnalytics.setTargetDao(targetDao);
-						if (targetAnalytics.isStatusGood(tgt.getId())==2){
-							//Update target.completedDate
-							Calendar calendar = Calendar.getInstance();
-							tgt.setCompletedDate(calendar.getTime());
-							targetDao.updateTarget(tgt);
-							// Update account.activeAccount
-							payment.getAccount().setActiveAccount(false);
-							accountDao.updateAccount(payment.getAccount());
+					// check account existence
+					if (getAccount(message) != null){
+						System.out.println("The account existssssssssssssssssssssssssss");
+						payment.setAccount(getAccount(message));
+						Target tgt = targetDao.getActiveTargetByAccount(payment.getAccount().getAccountNumber());
+						if (tgt != null){
+							payment.setTarget(tgt);
+							payment.setPhoneNumber(getPhoneNumber(message));
+							payment.setAmountPaid(getAmount(message));
+							payment.setConfirmationCode(getConfirmationCode(message));
+							payment.setPaymentBy(getPaymentBy(message));
+							payment.setTimePaid(getTimePaid(message));
+							incomingPaymentDao.saveIncomingPayment(payment);
+
+							// Check if the client has reached his targeted amount
+							TargetAnalytics targetAnalytics = new TargetAnalytics();
+							targetAnalytics.setIncomingPaymentDao(incomingPaymentDao);
+							targetAnalytics.setTargetDao(targetDao);
+							if (targetAnalytics.isStatusGood(tgt.getId())==2){
+								//Update target.completedDate
+								Calendar calendar = Calendar.getInstance();
+								tgt.setCompletedDate(calendar.getTime());
+								targetDao.updateTarget(tgt);
+								// Update account.activeAccount
+								payment.getAccount().setActiveAccount(false);
+								accountDao.updateAccount(payment.getAccount());
+							}
+
+						}else{
+							//TODO dealing with an incoming payment for a completed target 
+							ui.alert("The account exists but is INACTIVE!!!!!!!!!!!!!");
 						}
-					}else{
+					} else {
+						System.out.println("The account does not exist");
 					}
 
+
 					
-					//Update account.activeAccount
-					//Update target.completedDate
+
+
+
+					
+
 				} catch (IllegalArgumentException ex) {
 					log.warn("Message failed to parse; likely incorrect format", ex);
 					throw new RuntimeException(ex);
@@ -341,24 +353,13 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}
 		return cService;
 	}
-	
-	public void setAccountDao(AccountDao accountDao) {
-		this.accountDao = accountDao;
-	}
 
-	public void setIncomingPaymentDao(IncomingPaymentDao incomingPaymentDao) {
-		this.incomingPaymentDao = incomingPaymentDao;
-	}
-
-	public void setClientDao(ClientDao clientDao) {
-		this.clientDao = clientDao;
-	}
-
-	public void setOutgoingPaymentDao(OutgoingPaymentDao outgoingPaymentDao) {
-		this.outgoingPaymentDao = outgoingPaymentDao;
-	}
-
-	public void setTargetDao(TargetDao targetDao) {
-		this.targetDao = targetDao;
+	public void setPluginController(PaymentViewPluginController pluginController) {
+		this.accountDao = pluginController.getAccountDao();
+		this.clientDao = pluginController.getClientDao();
+		this.outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
+		this.targetDao = pluginController.getTargetDao();
+		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
+		this.ui = pluginController.getUiGeneratorController();
 	}
 }

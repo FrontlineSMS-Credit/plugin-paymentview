@@ -89,9 +89,6 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		calendar.set(Calendar.SECOND, 0);  
 		calendar.set(Calendar.MILLISECOND, 0);
 		Date srtDate = calendar.getTime();
-		
-		System.out.println("today :"+srtDate);
-		System.out.println("start date :"+startDate);
 
 		if(srtDate.compareTo(startDate)<=0){
 			return true;
