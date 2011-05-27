@@ -181,7 +181,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							payment.setTimePaid(getTimePaid(message));
 							
 							incomingPaymentDao.saveIncomingPayment(payment);
-							
+
 							// Check if the client has reached his targeted amount
 							TargetAnalytics targetAnalytics = new TargetAnalytics();
 							targetAnalytics.setIncomingPaymentDao(incomingPaymentDao);
