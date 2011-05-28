@@ -125,9 +125,6 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		mockClient(0, PHONENUMBER_0, Collections.EMPTY_SET);
 		mockClient(1, PHONENUMBER_1, accounts1);
 		mockClient(2, PHONENUMBER_2, accounts2);
-		
-		this.mpesaPaymentService.setClientDao(clientDao);
-		this.mpesaPaymentService.setAccountDao(accountDao);
 	}
 	
 	private void mockClient(long id, String phoneNumber, Set<Account> accounts) {

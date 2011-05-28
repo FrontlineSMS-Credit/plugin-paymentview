@@ -15,8 +15,6 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 
 public abstract class TargetCreationProcess {
-	
-	
 	//> DAOs
 	TargetDao targetDao;
     AccountDao accountDao;
