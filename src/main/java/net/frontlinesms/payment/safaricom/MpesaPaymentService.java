@@ -142,10 +142,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		final FrontlineMessage message = (FrontlineMessage) entity;
 		
 		if (isValidIncomingPaymentConfirmation(message)) {
-			System.out.println("Kim2");
 			processIncomingPayment(message);
-		} else {
-			System.out.println("Kim invalid message");
 		}
 		
 		if (!(this instanceof MpesaPayBillService)) {
@@ -183,7 +180,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							payment.setPaymentBy(getPaymentBy(message));
 							payment.setTimePaid(getTimePaid(message));
 							incomingPaymentDao.saveIncomingPayment(payment);
-							
+
 							// Check if the client has reached his targeted amount
 							TargetAnalytics targetAnalytics = new TargetAnalytics();
 							targetAnalytics.setIncomingPaymentDao(incomingPaymentDao);
