@@ -16,7 +16,8 @@ import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddCl
 public class ReviewHandler extends BasePanelHandler {
 	private static final String XML_STEP_REVIEW = "/ui/plugins/paymentview/analytics/addclient/stepreview.xml";
 	private static final String PNL_CLIENT_TABLE_HOLDER = "pnlClientTableHolder";
-	private static final String PAYMENT_PROCESS = "StandardPaymentService";
+	/*private static final String PAYMENT_PROCESS = "StandardPaymentService";*/
+	private static final String PAYMENT_PROCESS = "PayBillPaymentService";
 	
 	private AddClientTabHandler addClientTabHandler;
 	private final CreateSettingsHandler previousCreateSettingsHandler;
@@ -65,8 +66,8 @@ public class ReviewHandler extends BasePanelHandler {
 						client, previousCreateSettingsHandler.getStartDate(), 
 						previousCreateSettingsHandler.getEndDate(), 
 						previousCreateSettingsHandler.getSelectedServiceItem(), pluginController);
-				
 					targetCreationProcess.createTarget();
+					ui.alert("New target created for client "+client.getFirstName()+" "+client.getName()+".");
 			}
 		}
 	}
