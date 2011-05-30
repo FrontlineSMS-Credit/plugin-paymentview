@@ -84,6 +84,10 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	
 	boolean validateStartDate(Date startDate){
 		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, 0);  
+		calendar.set(Calendar.MINUTE, 0);  
+		calendar.set(Calendar.SECOND, 0);  
+		calendar.set(Calendar.MILLISECOND, 0);
 		Date srtDate = calendar.getTime();
 
 		if(srtDate.compareTo(startDate)<=0){
