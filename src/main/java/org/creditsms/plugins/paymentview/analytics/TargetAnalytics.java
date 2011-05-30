@@ -21,6 +21,16 @@ import org.creditsms.plugins.paymentview.data.repository.TargetDao;
  * @author Roy
  */
 public class TargetAnalytics {
+	public enum Status {
+		DELAYED,
+		ON_TRACK,
+		COMPLETED;
+		
+		public String toString() {
+			return name().toLowerCase().replace('_', ' ');
+		}
+	}
+	
 	private TargetDao targetDao;
 	private IncomingPaymentDao incomingPaymentDao;
 	
@@ -68,8 +78,7 @@ public class TargetAnalytics {
 		return incomingPayments;
 	}
 	
-	// return code: 0 - Delayed, 1 - on track, 2 - completed.
-	public int isStatusGood(long tartgetId){
+	public Status getStatus(long tartgetId){
 		List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(tartgetId);
 		
 		BigDecimal amountPaid = calculateAmount(incomingPayments);
@@ -77,7 +86,7 @@ public class TargetAnalytics {
 				getServiceItem().getAmount();
 		
 		if(amountPaid.compareTo(totalTargetCost) >=0){
-			return 2;
+			return Status.COMPLETED;
 		}
 		
 		BigDecimal amountRem = totalTargetCost.subtract(amountPaid);
@@ -93,9 +102,9 @@ public class TargetAnalytics {
 				valueOf(remDays), 2, RoundingMode.HALF_UP);
 		
 		if(initAmntRate.compareTo(remAmntRate) >= 0){
-			return 1;
+			return Status.ON_TRACK;
 		}else{
-			return 0;
+			return Status.DELAYED;
 		}
 	}
 
@@ -121,8 +130,6 @@ public class TargetAnalytics {
 	    }else{
 	    	return null;
 	    }
-	    
-		
 	}
 
 	private String getAccountNumber(long tartgetId) {
