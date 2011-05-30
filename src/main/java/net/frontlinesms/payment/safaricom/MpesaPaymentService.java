@@ -31,6 +31,7 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
+import org.creditsms.plugins.paymentview.utils.PvUtils;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
 import org.smslib.stk.StkInputRequiremnent;
@@ -39,6 +40,8 @@ import org.smslib.stk.StkRequest;
 import org.smslib.stk.StkResponse;
 
 public abstract class MpesaPaymentService implements PaymentService, EventObserver  {
+	public static boolean TEST = false;
+	
 	//> REGEX PATTERN CONSTANTS
 	protected static final String PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = 
 		"[A-Z\\d]+ Confirmed.\n"+
@@ -57,6 +60,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 
 //> INSTANCE PROPERTIES
 	protected final Logger log = FrontlineUtils.getLogger(this.getClass());
+	protected final Logger pvLog = PvUtils.getLogger(this.getClass());
 	private SmsService smsService;
 	private CService cService;
 	
@@ -200,12 +204,24 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							
 							alertMessage = "The account "+ account.getAccountNumber() + "of the client " 
 							+ getPaymentBy(message) + " (" + getPhoneNumber(message) + ") exists but is inactive. Please create a target";
-							ui.alert(alertMessage);
+							
+							if (!TEST){
+								pvLog.warn("Account exists but is inactive: " + message.getTextContent());
+								ui.alert(alertMessage);
+							}else{
+								System.out.println(alertMessage);
+							}
 						}
 					} else {
 						//TODO log the unprocessed incoming message
-						alertMessage = "The client " + getPaymentBy(message) + " (" + getPhoneNumber(message) + ") has not got any account set up.";						
-						ui.alert(alertMessage);
+						alertMessage = "The client " + getPaymentBy(message) + " (" + getPhoneNumber(message) + 
+						") has not got any account set up.";						
+						if (!TEST){
+							pvLog.warn("No accounts set up for the client: " + message.getTextContent());
+							ui.alert(alertMessage);
+						}else{
+							System.out.println(alertMessage);
+						}
 
 					}
 				} catch (IllegalArgumentException ex) {
