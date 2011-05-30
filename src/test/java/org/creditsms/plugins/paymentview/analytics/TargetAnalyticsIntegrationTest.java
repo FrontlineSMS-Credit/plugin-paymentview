@@ -77,7 +77,7 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	}
 	
 	public void testTargetStatus() {
-		assertEquals(Boolean.TRUE, this.targetAnalytics.isStatusGood(targetId));
+		assertEquals(Boolean.TRUE, this.targetAnalytics.getStatus(targetId));
 	}
 	
 	public void testGetLastDatePaid(){

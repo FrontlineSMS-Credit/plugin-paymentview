@@ -76,6 +76,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	private EventBus eventBus;
 
 	private UiGeneratorController ui;
+
+	private TargetAnalytics targetAnalytics;
 	
 //> STK & PAYMENT ACCOUNT
 	public void checkBalance() throws PaymentServiceException {
@@ -88,8 +90,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			assert getBalanceResponse instanceof StkInputRequiremnent;
 			StkInputRequiremnent pinRequired = (StkInputRequiremnent) getBalanceResponse;
 			assert pinRequired.getText().contains("Enter PIN");
-			//StkResponse finalResponse = cService.stkRequest(
-			//pinRequired.getRequest(), this.pin);
+			StkResponse finalResponse = cService.stkRequest(pinRequired.getRequest(), this.pin);
 			// TODO check finalResponse is OK
 			// TODO wait for response...
 		} catch (SMSLibDeviceException ex) {
@@ -162,6 +163,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 
 	//> INCOMING MESSAGE PAYMENT PROCESSORS
 	private void processIncomingPayment(final FrontlineMessage message) {
+		System.out.println("in processIncomingPayment");
 		new FrontlineUiUpateJob() {
 			// This probably shouldn't be a UI job,
 			// but it certainly should be done on a separate thread!
@@ -174,9 +176,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 					Account account = getAccount(message);
 					
 					if (account != null){
-						payment.setAccount(account);
-						Target tgt = targetDao.getActiveTargetByAccount(payment.getAccount().getAccountNumber());
+						Target tgt = targetDao.getActiveTargetByAccount(account.getAccountNumber());
 						if (tgt != null){
+							payment.setAccount(account);
 							payment.setTarget(tgt);
 							payment.setPhoneNumber(getPhoneNumber(message));
 							payment.setAmountPaid(getAmount(message));
@@ -187,10 +189,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							incomingPaymentDao.saveIncomingPayment(payment);
 
 							// Check if the client has reached his targeted amount
-							TargetAnalytics targetAnalytics = new TargetAnalytics();
-							targetAnalytics.setIncomingPaymentDao(incomingPaymentDao);
-							targetAnalytics.setTargetDao(targetDao);
-							if (targetAnalytics.isStatusGood(tgt.getId())==2){
+							if (targetAnalytics.getStatus(tgt.getId()) == TargetAnalytics.Status.COMPLETED){
 								//Update target.completedDate
 								Calendar calendar = Calendar.getInstance();
 								tgt.setCompletedDate(calendar.getTime());
@@ -199,6 +198,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 								payment.getAccount().setActiveAccount(false);
 								accountDao.updateAccount(payment.getAccount());
 							}
+
 						}else{
 							//TODO log the unprocessed incoming message 
 							
@@ -375,5 +375,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.targetDao = pluginController.getTargetDao();
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.ui = pluginController.getUiGeneratorController();
+		this.targetAnalytics = pluginController.getTargetAnalytics();
 	}
 }

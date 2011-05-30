@@ -17,6 +17,7 @@ import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
+import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
@@ -55,6 +56,8 @@ public class PaymentViewPluginController extends BasePluginController
 	private TargetDao targetDao;
 	private ServiceItemDao serviceItemDao;
 	
+	private TargetAnalytics targetAnalytics;
+	
 	private PaymentViewThinletTabController tabController;
 	private UiGeneratorController ui;
 	private Method authorizationAction;
@@ -84,6 +87,10 @@ public class PaymentViewPluginController extends BasePluginController
 		outgoingPaymentDao 	= (OutgoingPaymentDao) applicationContext.getBean("outgoingPaymentDao");
 		serviceItemDao 		= (ServiceItemDao) applicationContext.getBean("serviceItemDao");
 		targetDao 			= (TargetDao) applicationContext.getBean("targetDao");
+		
+		targetAnalytics = new TargetAnalytics();
+		targetAnalytics.setIncomingPaymentDao(incomingPaymentDao);
+		targetAnalytics.setTargetDao(targetDao);
 		
 		// If not a production build, and database is empty, add test data
 		if(BuildProperties.getInstance().isSnapshot() && clientDao.getClientCount()==0) {
@@ -175,5 +182,9 @@ public class PaymentViewPluginController extends BasePluginController
 	
 	public UiGeneratorController getUiGeneratorController() {
 		return ui;
+	}
+
+	public TargetAnalytics getTargetAnalytics() {
+		return targetAnalytics;
 	}
 }

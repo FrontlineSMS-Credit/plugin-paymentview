@@ -72,17 +72,8 @@ public class CreateSettingsHandler extends BasePanelHandler {
 			lastDatePaid = ui.createTableCell("No payment done yet");
 		}
 
-		String targetStatusStr = "";
-		int targetStatusRC =0;
-		targetStatusRC = targetAnalytics.isStatusGood(target.getId());
+		String targetStatusStr = targetAnalytics.getStatus(target.getId()).toString();
 		
-		if(targetStatusRC==0){
-			targetStatusStr = "delayed";
-		}else if(targetStatusRC==1){
-			targetStatusStr = "on track";
-		}else if(targetStatusRC==2){
-			targetStatusStr = "completed";
-		}
 		Object targetStatus = ui.createTableCell(targetStatusStr);
 		Object savingsTarget = ui.createTableCell(target.getServiceItem().getAmount().toString());
 		Object startDate = ui.createTableCell(dateFormat.format(target.getStartDate()));
