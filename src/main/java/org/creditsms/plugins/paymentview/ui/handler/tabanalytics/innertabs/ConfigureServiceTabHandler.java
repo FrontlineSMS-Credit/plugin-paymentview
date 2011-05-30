@@ -104,8 +104,4 @@ public class ConfigureServiceTabHandler extends BaseTabHandler implements PagedC
 		return row;
 	}
 
-
-
-	
-
 }
