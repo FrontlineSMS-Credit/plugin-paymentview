@@ -7,6 +7,7 @@ import java.util.List;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
 
+import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 

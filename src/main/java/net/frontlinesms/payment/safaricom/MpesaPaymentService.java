@@ -31,6 +31,7 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
+import org.creditsms.plugins.paymentview.utils.PvUtils;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
 import org.smslib.stk.StkInputRequiremnent;
@@ -39,6 +40,8 @@ import org.smslib.stk.StkRequest;
 import org.smslib.stk.StkResponse;
 
 public abstract class MpesaPaymentService implements PaymentService, EventObserver  {
+	public static boolean TEST = false;
+	
 	//> REGEX PATTERN CONSTANTS
 	protected static final String PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = 
 		"[A-Z\\d]+ Confirmed.\n"+
@@ -57,6 +60,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 
 //> INSTANCE PROPERTIES
 	protected final Logger log = FrontlineUtils.getLogger(this.getClass());
+	protected final Logger pvLog = PvUtils.getLogger(this.getClass());
 	private SmsService smsService;
 	private CService cService;
 	
@@ -72,6 +76,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	private EventBus eventBus;
 
 	private UiGeneratorController ui;
+
+	private TargetAnalytics targetAnalytics;
 	
 //> STK & PAYMENT ACCOUNT
 	public void checkBalance() throws PaymentServiceException {
@@ -84,8 +90,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			assert getBalanceResponse instanceof StkInputRequiremnent;
 			StkInputRequiremnent pinRequired = (StkInputRequiremnent) getBalanceResponse;
 			assert pinRequired.getText().contains("Enter PIN");
-			//StkResponse finalResponse = cService.stkRequest(
-			//pinRequired.getRequest(), this.pin);
+			StkResponse finalResponse = cService.stkRequest(pinRequired.getRequest(), this.pin);
 			// TODO check finalResponse is OK
 			// TODO wait for response...
 		} catch (SMSLibDeviceException ex) {
@@ -126,7 +131,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 //> EVENTBUS NOTIFY
 	@SuppressWarnings("rawtypes")
 	public void notify(FrontlineEventNotification notification) {
-		System.out.println("Kim1");
 		
 		//If the notification is of Importance to us
 		if (!(notification instanceof EntitySavedNotification)) {
@@ -142,10 +146,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		final FrontlineMessage message = (FrontlineMessage) entity;
 		
 		if (isValidIncomingPaymentConfirmation(message)) {
-			System.out.println("Kim2");
 			processIncomingPayment(message);
-		} else {
-			System.out.println("Kim invalid message");
 		}
 		
 		if (!(this instanceof MpesaPayBillService)) {
@@ -162,33 +163,33 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 
 	//> INCOMING MESSAGE PAYMENT PROCESSORS
 	private void processIncomingPayment(final FrontlineMessage message) {
+		System.out.println("in processIncomingPayment");
 		new FrontlineUiUpateJob() {
 			// This probably shouldn't be a UI job,
 			// but it certainly should be done on a separate thread!
 			public void run() {
-				System.out.println("Kim3");
+				String alertMessage;
 				try {
 					final IncomingPayment payment = new IncomingPayment();
 					
 					// check account existence
-					if (getAccount(message) != null){
-						System.out.println("The account existssssssssssssssssssssssssss");
-						payment.setAccount(getAccount(message));
-						Target tgt = targetDao.getActiveTargetByAccount(payment.getAccount().getAccountNumber());
+					Account account = getAccount(message);
+					
+					if (account != null){
+						Target tgt = targetDao.getActiveTargetByAccount(account.getAccountNumber());
 						if (tgt != null){
+							payment.setAccount(account);
 							payment.setTarget(tgt);
 							payment.setPhoneNumber(getPhoneNumber(message));
 							payment.setAmountPaid(getAmount(message));
 							payment.setConfirmationCode(getConfirmationCode(message));
 							payment.setPaymentBy(getPaymentBy(message));
 							payment.setTimePaid(getTimePaid(message));
-							incomingPaymentDao.saveIncomingPayment(payment);
 							
+							incomingPaymentDao.saveIncomingPayment(payment);
+
 							// Check if the client has reached his targeted amount
-							TargetAnalytics targetAnalytics = new TargetAnalytics();
-							targetAnalytics.setIncomingPaymentDao(incomingPaymentDao);
-							targetAnalytics.setTargetDao(targetDao);
-							if (targetAnalytics.isStatusGood(tgt.getId())==2){
+							if (targetAnalytics.getStatus(tgt.getId()) == TargetAnalytics.Status.COMPLETED){
 								//Update target.completedDate
 								Calendar calendar = Calendar.getInstance();
 								tgt.setCompletedDate(calendar.getTime());
@@ -199,20 +200,30 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							}
 
 						}else{
-							//TODO dealing with an incoming payment for a completed target 
-							ui.alert("The account exists but is INACTIVE!!!!!!!!!!!!!");
+							//TODO log the unprocessed incoming message 
+							
+							alertMessage = "The account "+ account.getAccountNumber() + "of the client " 
+							+ getPaymentBy(message) + " (" + getPhoneNumber(message) + ") exists but is inactive. Please create a target";
+							
+							if (!TEST){
+								pvLog.warn("Account exists but is inactive: " + message.getTextContent());
+								ui.alert(alertMessage);
+							}else{
+								System.out.println(alertMessage);
+							}
 						}
 					} else {
-						System.out.println("The account does not exist");
+						//TODO log the unprocessed incoming message
+						alertMessage = "The client " + getPaymentBy(message) + " (" + getPhoneNumber(message) + 
+						") has not got any account set up.";						
+						if (!TEST){
+							pvLog.warn("No accounts set up for the client: " + message.getTextContent());
+							ui.alert(alertMessage);
+						}else{
+							System.out.println(alertMessage);
+						}
+
 					}
-
-
-					
-
-
-
-					
-
 				} catch (IllegalArgumentException ex) {
 					log.warn("Message failed to parse; likely incorrect format", ex);
 					throw new RuntimeException(ex);
@@ -364,5 +375,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.targetDao = pluginController.getTargetDao();
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.ui = pluginController.getUiGeneratorController();
+		this.targetAnalytics = pluginController.getTargetAnalytics();
 	}
 }

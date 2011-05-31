@@ -59,17 +59,16 @@ public class SelectTargetSavingsHandler extends BasePanelHandler {
 			int index = ui.getSelectedIndex(cmbServiceItems);
 			ServiceItem attachedServiceItem = ui.getAttachedObject(ui.getItem(cmbServiceItems, index), ServiceItem.class);
 			List<Target> targets = pluginController.getTargetDao().getTargetsByServiceItem(attachedServiceItem.getId());
-			Map<Client,Target> clients_targets = new HashMap<Client,Target>();
+			Map<Client,ServiceItem> clients_serviceItems = new HashMap<Client,ServiceItem>();
 			//FIXME: THIS IS JUST TOO MUCH PRESSURE FOR THE DB
 			for(Target target : targets){
 				Account a = target.getAccount();
 				if ((a != null) & (a.getClient() != null)) {
-					clients_targets.put(a.getClient(), target);
+					clients_serviceItems.put(a.getClient(), target.getServiceItem());
 				}
 			}
-			
 			viewDashBoardTabHandler.setCurrentStepPanel(new SelectClientsHandler(
-					(UiGeneratorController) ui, pluginController, viewDashBoardTabHandler, this, clients_targets).getPanelComponent());
+					(UiGeneratorController) ui, pluginController, viewDashBoardTabHandler, this, clients_serviceItems).getPanelComponent());
 		}
 	}
 }

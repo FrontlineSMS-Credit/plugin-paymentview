@@ -97,6 +97,16 @@ public interface TargetDao {
 	 */
 	public List<Target> getTargetsByServiceItem(long serviceItemId);
 
+	/**
+	 * Returns a list of Target of specified ServiceItem
+	 * and targetOwner
+	 * 
+	 * @param target
+	 *            string to be used to match the names
+	 * @return
+	 */
+	public List<Target> getTargetsByServiceItemByClient(long serviceItemId, long clientId);
+	
 	/** @return number of Target in the system */
 	public int getTargetCount();
 

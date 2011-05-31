@@ -9,6 +9,7 @@ import net.frontlinesms.ui.handler.BasePanelHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.SelectClientsTableHandler;
@@ -25,10 +26,10 @@ public class SelectClientsHandler extends BasePanelHandler {
 	private Object pnlClientsTableHolder;
 	private PaymentViewPluginController pluginController;
 	private SelectTargetSavingsHandler previousSelectTargetSavingsHandler;
-	private final Map<Client, Target> clients_targets;
+	private final Map<Client, ServiceItem> clients_targets;
 	
 	SelectClientsHandler(UiGeneratorController ui, PaymentViewPluginController pluginController,
-			ViewDashBoardTabHandler viewDashBoardTabHandler, SelectTargetSavingsHandler previousSelectTargetSavingsHandler, Map<Client, Target> clients_targets) {
+			ViewDashBoardTabHandler viewDashBoardTabHandler, SelectTargetSavingsHandler previousSelectTargetSavingsHandler, Map<Client, ServiceItem> clients_targets) {
 		super(ui);
 		this.pluginController = pluginController;
 		this.viewDashBoardTabHandler = viewDashBoardTabHandler;
@@ -75,7 +76,7 @@ public class SelectClientsHandler extends BasePanelHandler {
 		return this.selectClientsTableHandler.getSelectedClients();
 	}
 	
-	public Map<Client, Target> getClients_targets() {
+	public Map<Client, ServiceItem> getClients_targets() {
 		return clients_targets;
 	}
 }

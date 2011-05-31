@@ -1,11 +1,6 @@
 package net.frontlinesms.payment.safaricom;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -21,12 +16,17 @@ import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.junit.BaseTestCase;
 import net.frontlinesms.payment.PaymentServiceException;
+import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
+import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
@@ -42,7 +42,7 @@ import org.smslib.stk.StkRequest;
 
 /** Unit tests for {@link MpesaPaymentService} */
 public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> extends BaseTestCase {
-	private static final String PHONENUMBER_0 = "+254723908000";
+	protected static final String PHONENUMBER_0 = "+254723908000";
 	protected static final String PHONENUMBER_1 = "+254723908001";
 	protected static final String PHONENUMBER_2 = "+254723908002";
 	protected static final String ACCOUNTNUMBER_1_1 = "0700000011";
@@ -55,30 +55,27 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	private StkMenuItem myAccountMenuItem;
 	private StkRequest mpesaMenuItemRequest;
 	private StkMenuItem sendMoneyMenuItem;
+	
 	private ClientDao clientDao;
 	private AccountDao accountDao;
 	private TargetDao targetDao;
 	private IncomingPaymentDao incomingPaymentDao;
 	private OutgoingPaymentDao outgoingPaymentDao;
+	private PaymentViewPluginController pluginController;
+	private UiGeneratorController ui;
+	private TargetAnalytics targetAnalytics;
 	
 	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
+		//a simple hack to avoid mocking ui.alert functions
+		MpesaPaymentService.TEST = true;
+		
 		this.mpesaPaymentService = createNewTestClass();
 		this.cService = mock(CService.class);
 		mpesaPaymentService.setCService(cService);
-		incomingPaymentDao = mock(IncomingPaymentDao.class);
-		outgoingPaymentDao= mock(OutgoingPaymentDao.class);
-		targetDao = mock(TargetDao.class);
-		clientDao = mock(ClientDao.class);
-		accountDao = mock(AccountDao.class);
-		
-		mpesaPaymentService.setIncomingPaymentDao(incomingPaymentDao);
-		mpesaPaymentService.setTargetDao(targetDao);
-		mpesaPaymentService.setClientDao(clientDao);
-		mpesaPaymentService.setOutgoingPaymentDao(outgoingPaymentDao);
 		
 		setUpDaos();
 
@@ -119,27 +116,48 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 
 	@SuppressWarnings("unchecked")
 	private void setUpDaos() {
+		incomingPaymentDao = mock(IncomingPaymentDao.class);
+		outgoingPaymentDao= mock(OutgoingPaymentDao.class);
+		targetDao = mock(TargetDao.class);
+		clientDao = mock(ClientDao.class);
+		accountDao = mock(AccountDao.class);
+		targetAnalytics = mock(TargetAnalytics.class);
+		when(targetAnalytics.getStatus(anyLong())).thenReturn(TargetAnalytics.Status.ON_TRACK);
+		
+		pluginController = mock(PaymentViewPluginController.class);
+		ui = mock(UiGeneratorController.class);
+		
+		//Set Up Rules
+		when(pluginController.getAccountDao()).thenReturn(accountDao);
+		when(pluginController.getOutgoingPaymentDao()).thenReturn(outgoingPaymentDao);
+		when(pluginController.getIncomingPaymentDao()).thenReturn(incomingPaymentDao);
+		when(pluginController.getTargetDao()).thenReturn(targetDao);
+		when(pluginController.getClientDao()).thenReturn(clientDao);
+		when(pluginController.getUiGeneratorController()).thenReturn(ui);
+		when(pluginController.getTargetAnalytics()).thenReturn(targetAnalytics);
+		
+		mpesaPaymentService.setPluginController(pluginController);
+		
 		Set<Account> accounts1 = mockAccounts(ACCOUNTNUMBER_1_1);
+		Set<Target> targets1 = mockTargets(accounts1);
 		Set<Account> accounts2 = mockAccounts(ACCOUNTNUMBER_2_1, ACCOUNTNUMBER_2_2);
+		Set<Target> targets2 = mockTargets(accounts2);
+		
+		//when(targetAnalytics.isStatusGood(target.getId)).thenReturn(1);
 		
 		mockClient(0, PHONENUMBER_0, Collections.EMPTY_SET);
 		mockClient(1, PHONENUMBER_1, accounts1);
 		mockClient(2, PHONENUMBER_2, accounts2);
-		
-		this.mpesaPaymentService.setClientDao(clientDao);
-		this.mpesaPaymentService.setAccountDao(accountDao);
 	}
 	
 	private void mockClient(long id, String phoneNumber, Set<Account> accounts) {
 		Client c = mock(Client.class);
 		when(c.getId()).thenReturn(id);
 		when(clientDao.getClientByPhoneNumber(phoneNumber)).thenReturn(c);
-		
-		//when(c.getAccounts()).thenReturn(accounts);
-		//when(accountDao.getAccountsByClientId(c.getId())).thenReturn((List<Account>) accounts);
-		
 		when(accountDao.getAccountsByClientId(id)).thenReturn(new ArrayList<Account>(accounts));
 	}
+	
+	
 
 	public void testCheckBalance() throws PaymentServiceException, SMSLibDeviceException {
 		// setup
@@ -165,6 +183,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		inOrder.verify(cService).stkRequest(mpesaMenuItemRequest);
 		inOrder.verify(cService).stkRequest(myAccountMenuItemRequest);
 		inOrder.verify(cService).stkRequest(showBalanceMenuItemRequest);
+		
 		inOrder.verify(cService).stkRequest(pinRequiredRequest, "1234");
 	}
 	
@@ -336,6 +355,8 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		return a;
 	}
 	
+
+	
 	private EntitySavedNotification<FrontlineMessage> mockMessageNotification(String from, String text) {
 		FrontlineMessage m = mock(FrontlineMessage.class);
 		when(m.getSenderMsisdn()).thenReturn(from);
@@ -352,6 +373,40 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 			when(accountDao.getAccountByAccountNumber(accountNumber)).thenReturn(account);
 		}
 		return new HashSet<Account>(accounts);
+	}
+	
+	private Set<Target> mockTargets(Set<Account> mockAccounts) {
+		ArrayList<Target> targets = new ArrayList<Target>();
+		for (Account account :  mockAccounts) {
+			ServiceItem svsItem = mock(ServiceItem.class);
+			svsItem.setAmount(new BigDecimal("8900"));
+			svsItem.setTargetName("PUMP");
+			
+			Target target = mock(Target.class);
+			when(target.getAccount()).thenReturn(account);
+			when(targetDao.getActiveTargetByAccount(account.getAccountNumber())).thenReturn(target);
+			when(target.getServiceItem()).thenReturn(svsItem);
+			when(target.getId()).thenReturn((long)1234);
+			targets.add(target);
+		}
+		return new HashSet<Target>(targets);
+	}
+	
+	private Set<Target> mockTargetAnalytics(Set<Account> mockAccounts) {
+		ArrayList<Target> targets = new ArrayList<Target>();
+		for (Account account :  mockAccounts) {
+			ServiceItem svsItem = mock(ServiceItem.class);
+			svsItem.setAmount(new BigDecimal("8900"));
+			svsItem.setTargetName("PUMP");
+			
+			Target target = mock(Target.class);
+			when(target.getAccount()).thenReturn(account);
+			when(targetDao.getActiveTargetByAccount(account.getAccountNumber())).thenReturn(target);
+			when(target.getServiceItem()).thenReturn(svsItem);
+			when(target.getId()).thenReturn((long)1234);
+			targets.add(target);
+		}
+		return new HashSet<Target>(targets);
 	}
 }
 
