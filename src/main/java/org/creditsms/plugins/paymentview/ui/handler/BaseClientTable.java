@@ -32,7 +32,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	protected CustomValueDao customValueDao;
 	protected AccountDao accountDao;
 	protected Object tableClientsPanel;
-	private List<Client> clients;
+	protected List<Client> clients;
 
 	public BaseClientTable(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		this.ui = ui;
