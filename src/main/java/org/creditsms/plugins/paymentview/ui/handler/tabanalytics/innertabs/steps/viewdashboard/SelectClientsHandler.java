@@ -12,7 +12,6 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.SelectClientsTableHandler;
 
 public class SelectClientsHandler extends BasePanelHandler {
 	
