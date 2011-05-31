@@ -14,7 +14,6 @@ public class TargetStandardProcess extends TargetCreationProcess{
 		super(client, serviceItem, targetStartDate, targetEndDate, pluginController);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void createTarget(){
 		// Check if there are any accounts linked to the client
 		if (this.getTotalListAccounts().size()==0){
