@@ -86,6 +86,19 @@ public class HibernateTargetDao extends BaseHibernateDao<Target> implements
 		targetItemCriteria.add(Restrictions.eq("id", targetItemId));
 		return super.getList(criteria);
 	}
+	
+	public List<Target> getTargetsByServiceItemByClient(long targetItemId, long clientId) {
+		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria targetItemCriteria = criteria
+				.createCriteria("serviceItem");
+		targetItemCriteria.add(Restrictions.eq("id", targetItemId));
+		DetachedCriteria accountCriteria = criteria
+		.createCriteria("account");
+		DetachedCriteria clientCriteria = accountCriteria
+		.createCriteria("client");
+		clientCriteria.add(Restrictions.eq("id", clientId));
+		return super.getList(criteria);
+	}
 
 	public int getTargetCount() {
 		return super.countAll();

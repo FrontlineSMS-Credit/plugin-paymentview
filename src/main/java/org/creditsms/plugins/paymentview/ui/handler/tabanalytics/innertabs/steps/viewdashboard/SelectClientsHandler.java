@@ -9,7 +9,7 @@ import net.frontlinesms.ui.handler.BasePanelHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.domain.Target;
+import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
 
 public class SelectClientsHandler extends BasePanelHandler {
@@ -24,23 +24,23 @@ public class SelectClientsHandler extends BasePanelHandler {
 	private Object pnlClientsTableHolder;
 	private PaymentViewPluginController pluginController;
 	private SelectTargetSavingsHandler previousSelectTargetSavingsHandler;
-	private final Map<Client, Target> clients_targets;
+	private final Map<Client, ServiceItem> clients_targets;
 	
 	SelectClientsHandler(UiGeneratorController ui, PaymentViewPluginController pluginController,
-			ViewDashBoardTabHandler viewDashBoardTabHandler, SelectTargetSavingsHandler previousSelectTargetSavingsHandler, Map<Client, Target> clients_targets) {
+			ViewDashBoardTabHandler viewDashBoardTabHandler, SelectTargetSavingsHandler previousSelectTargetSavingsHandler, Map<Client, ServiceItem> clients_targets) {
 		super(ui);
 		this.pluginController = pluginController;
 		this.viewDashBoardTabHandler = viewDashBoardTabHandler;
 		this.clients_targets = clients_targets;
+		this.previousSelectTargetSavingsHandler = previousSelectTargetSavingsHandler;
 		this.init();
 		refresh();
-		this.previousSelectTargetSavingsHandler = previousSelectTargetSavingsHandler;
 	}
 
 	private void init() {
 		this.loadPanel(XML_STEP_SELECT_CLIENT);
 		this.selectClientsTableHandler = new SelectClientsTableHandler(
-				(UiGeneratorController) ui, pluginController);
+				(UiGeneratorController) ui, pluginController, this.getSelectedServiceItem());
 		pnlClientsTableHolder = this.find(PNL_CLIENTS_TABLE_HOLDER);
 		// Customize the Table Panel
 		ui.setColspan(selectClientsTableHandler.getClientsTablePanel(), 2);
@@ -74,7 +74,11 @@ public class SelectClientsHandler extends BasePanelHandler {
 		return this.selectClientsTableHandler.getSelectedClients();
 	}
 	
-	public Map<Client, Target> getClients_targets() {
+	public ServiceItem getSelectedServiceItem() {
+		return previousSelectTargetSavingsHandler.getAttachedServiceItem();
+	}
+	
+	public Map<Client, ServiceItem> getClients_targets() {
 		return clients_targets;
 	}
 }

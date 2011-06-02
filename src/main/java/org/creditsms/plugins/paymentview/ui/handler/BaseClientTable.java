@@ -131,14 +131,19 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 
 		List<String> accountNumbers = new ArrayList<String>(this.accountDao.getAccountsByClientId(client
 				.getId()).size());
-
-		for (Account a : this.accountDao.getAccountsByClientId(client.getId())) {
-			accountNumbers.add(a.getAccountNumber());
-		}
+		accountNumbers = getAccounts(client);
 
 		ui.add(row, ui.createTableCell(StringUtils
 				.arrayToCommaDelimitedString(accountNumbers.toArray())));
 		return addCustomData(client, row);
+	}
+
+	protected List<String> getAccounts(Client client) {
+		List<String> accountNumbers = new ArrayList<String>();
+		for (Account a : this.accountDao.getAccountsByClientId(client.getId())) {
+			accountNumbers.add(a.getAccountNumber());
+		}
+		return accountNumbers;
 	}
 
 	protected Object addCustomData(Client client, Object row) {

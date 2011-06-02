@@ -51,6 +51,9 @@ public class TargetAnalytics {
 	}
 	
 	BigDecimal calculatePercentageToGo(BigDecimal totalTargetCost, BigDecimal amountPaid) {
+		if(amountPaid.divide(totalTargetCost, 2, RoundingMode.HALF_DOWN).multiply(new BigDecimal(100).stripTrailingZeros()).equals(BigDecimal.ZERO)){
+			return amountPaid.divide(totalTargetCost, 4, RoundingMode.HALF_DOWN).multiply(new BigDecimal(100).stripTrailingZeros());
+		}
 		return amountPaid.divide(totalTargetCost, 2, RoundingMode.HALF_DOWN).multiply(new BigDecimal(100).stripTrailingZeros());
 	}
 	 
