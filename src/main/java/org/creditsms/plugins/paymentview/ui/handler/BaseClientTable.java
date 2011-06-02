@@ -131,7 +131,6 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 
 		List<String> accountNumbers = new ArrayList<String>(this.accountDao.getAccountsByClientId(client
 				.getId()).size());
-
 		accountNumbers = getAccounts(client);
 
 		ui.add(row, ui.createTableCell(StringUtils
