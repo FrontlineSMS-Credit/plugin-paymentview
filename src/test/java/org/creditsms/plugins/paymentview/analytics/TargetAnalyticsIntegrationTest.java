@@ -61,7 +61,7 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	}
 	
 	public void testGetPercentageToGo(){
-		assertEquals(new BigDecimal("96.774200"), this.targetAnalytics.getPercentageToGo(targetId));
+		assertEquals(new BigDecimal("97"), this.targetAnalytics.getPercentageToGo(targetId));
 	}
 	
 	public void testGetAmountSaved(){
@@ -73,11 +73,11 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	}
 	
 	public void testGetDaysRemaining(){
-		assertEquals(Long.valueOf(3), this.targetAnalytics.getDaysRemaining(targetId));	
+		assertEquals(Long.valueOf(12), this.targetAnalytics.getDaysRemaining(targetId));	
 	}
 	
 	public void testTargetStatus() {
-		assertEquals(Boolean.TRUE, this.targetAnalytics.getStatus(targetId));
+		assertEquals(TargetAnalytics.Status.ON_TRACK, this.targetAnalytics.getStatus(targetId));
 	}
 	
 	public void testGetLastDatePaid(){
@@ -88,10 +88,11 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	private void setUpTestData() throws DuplicateKeyException{
 		Account acc = getAccountNumber("104");
 		ServiceItem si = saveServiceItem("Solar Cooker","9300", 1);
-		targetId = createTarget(acc, si, "01/05/2011", "15/05/2011").getId();
-		createIncomingPayment("0723000000","4500","Mr. Renyenjes", acc);
-		createIncomingPayment("0723000000","2500","Mr. Renyenjes", acc);
-		createIncomingPayment("0723000000","2000","Mr. Renyenjes", acc);
+		Target tgt = createTarget(acc, si, "01/06/2011", "15/06/2011");
+		targetId = tgt.getId();
+		createIncomingPayment("0723000000","4500","Mr. Renyenjes", acc, tgt);
+		createIncomingPayment("0723000000","2500","Mr. Renyenjes", acc, tgt);
+		createIncomingPayment("0723000000","2000","Mr. Renyenjes", acc, tgt);
 	}
 
 	private Target createTarget(Account ac, ServiceItem si, String startDateStr, String endDateStr) throws DuplicateKeyException {
@@ -111,6 +112,7 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	private Account getAccountNumber(String accNum) throws DuplicateKeyException{
 		Account acc = new Account();
 		acc.setAccountNumber(accNum);
+		acc.setActiveAccount(true);
 		this.hibernateAccountDao.saveAccount(acc);
 		assertEquals(1, this.hibernateAccountDao.getAllAcounts().size());
 		return this.hibernateAccountDao.getAllAcounts().get(0);
@@ -132,13 +134,14 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	}
 	
 	private IncomingPayment createIncomingPayment(String phoneNumber, String amount,
-			String by, Account account) {
+			String by, Account account, Target tgt) {
 		
 		IncomingPayment ip = new IncomingPayment();
 		ip.setPhoneNumber(phoneNumber);
 		ip.setAmountPaid(new BigDecimal(amount));
 		ip.setPaymentBy(by);
 		ip.setAccount(account);
+		ip.setTarget(tgt);
 		Date todaysDatesv = new Date(); 
 		this.todaysDate = todaysDatesv;
 		ip.setTimePaid(todaysDatesv);
@@ -156,5 +159,4 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		}
 		return null;
 	}
-	
 }

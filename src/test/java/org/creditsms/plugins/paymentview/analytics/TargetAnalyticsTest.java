@@ -12,9 +12,9 @@ public class TargetAnalyticsTest extends BaseTestCase {
 	private TargetAnalytics targetAnalytics = new TargetAnalytics();
 	
 	public void testCalculatePercentageToGo() {
-		testPercentageToGo("9000", "12000", "75.00");
-		testPercentageToGo("75", "100", "75.00");
-		testPercentageToGo("145000", "200000", "72.500");
+		testPercentageToGo("9000", "12000", "75");
+		testPercentageToGo("75", "100", "75");
+		testPercentageToGo("145000", "200000", "72");
 	}
 	
 	private void testPercentageToGo(String paid, String target, String expectedPercentage) { 

@@ -113,6 +113,7 @@ public class OutgoingPaymentIntergrationTest extends HibernateTestCase{
 	private Account createAndSaveAccount(String accountNumber, int expectedAccountCount, Client client) throws DuplicateKeyException {
 		Account ac = new Account();
 		ac.setAccountNumber(accountNumber);
+		ac.setActiveAccount(true);
 		if(client != null) ac.setClient(client);
 		hibernateAccountDao.saveAccount(ac);
 		assertEquals(expectedAccountCount, hibernateAccountDao.getAllAcounts().size());
