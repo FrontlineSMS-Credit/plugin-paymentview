@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import net.frontlinesms.data.DuplicateKeyException;
@@ -73,7 +74,7 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	}
 	
 	public void testGetDaysRemaining(){
-		assertEquals(Long.valueOf(12), this.targetAnalytics.getDaysRemaining(targetId));	
+		assertEquals(Long.valueOf(5), this.targetAnalytics.getDaysRemaining(targetId));	
 	}
 	
 	public void testTargetStatus() {
@@ -86,22 +87,29 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	}
 
 	private void setUpTestData() throws DuplicateKeyException{
+		
+		Calendar calendar1 = Calendar.getInstance();
+		calendar1.set(Calendar.DAY_OF_MONTH, Calendar.DAY_OF_MONTH);  
+		Date startDate = calendar1.getTime();
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.DAY_OF_MONTH, Calendar.DAY_OF_MONTH+4);  
+		Date endDate = calendar.getTime();
+
 		Account acc = getAccountNumber("104");
 		ServiceItem si = saveServiceItem("Solar Cooker","9300", 1);
-		Target tgt = createTarget(acc, si, "01/06/2011", "15/06/2011");
+		Target tgt = createTarget(acc, si, startDate, endDate);
 		targetId = tgt.getId();
 		createIncomingPayment("0723000000","4500","Mr. Renyenjes", acc, tgt);
 		createIncomingPayment("0723000000","2500","Mr. Renyenjes", acc, tgt);
 		createIncomingPayment("0723000000","2000","Mr. Renyenjes", acc, tgt);
 	}
 
-	private Target createTarget(Account ac, ServiceItem si, String startDateStr, String endDateStr) throws DuplicateKeyException {
+	private Target createTarget(Account ac, ServiceItem si, Date startDate, Date endDate) throws DuplicateKeyException {
 		Target tgt = new Target();
 		tgt.setServiceItem(si);
 		tgt.setAccount(ac);
-	
-		Date startDate = getDate(startDateStr);  
-		Date endDate = getDate(endDateStr);
+
 		tgt.setStartDate(startDate);
 		tgt.setEndDate(endDate);
 		this.hibernateTargetDao.saveTarget(tgt);
@@ -148,15 +156,5 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		this.hibernateIncomingPaymentDao.saveIncomingPayment(ip);
 		return ip;
 	}
-	
-	private Date getDate(String strDate){
-		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		try { 
-			Date theDate = df.parse(strDate); 
-			return theDate;
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+
 }
