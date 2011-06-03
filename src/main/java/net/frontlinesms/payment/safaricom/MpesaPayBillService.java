@@ -6,7 +6,6 @@ import java.util.Date;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
 
-import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 
 public class MpesaPayBillService extends MpesaPaymentService {

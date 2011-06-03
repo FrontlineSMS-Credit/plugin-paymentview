@@ -24,7 +24,6 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
-import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
@@ -42,13 +41,7 @@ import org.smslib.stk.StkResponse;
 public abstract class MpesaPaymentService implements PaymentService, EventObserver  {
 	public static boolean TEST = false;
 	
-	//> REGEX PATTERN CONSTANTS
-	protected static final String PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = 
-		"[A-Z\\d]+ Confirmed.\n"+
-		"Ksh[,|\\d]+ sent to ([A-Za-z ]+) 2547[\\d]{8} on "+
-		"(([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) at ([1]?\\d:[0-5]\\d) ([A|P]M)\n"+
-		"New M-PESA balance Ksh([,|\\d]+)";
-	
+//> REGEX PATTERN CONSTANTS
 	protected static final String AMOUNT_PATTERN = "Ksh[,|\\d]+";
 	protected static final String SENT_TO = " sent to";
 	protected static final String DATETIME_PATTERN = "d/M/yy hh:mm a";
@@ -131,7 +124,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 //> EVENTBUS NOTIFY
 	@SuppressWarnings("rawtypes")
 	public void notify(FrontlineEventNotification notification) {
-		
 		//If the notification is of Importance to us
 		if (!(notification instanceof EntitySavedNotification)) {
 			return;
@@ -144,21 +136,15 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			return;
 		}
 		final FrontlineMessage message = (FrontlineMessage) entity;
-		
+		processMessage(message);
+	}
+
+	protected void processMessage(final FrontlineMessage message) {
+		//I have overrided this function...
 		if (isValidIncomingPaymentConfirmation(message)) {
 			processIncomingPayment(message);
+			return;
 		}
-		
-		if (!(this instanceof MpesaPayBillService)) {
-			//This Should be moved to The MpesaPersonalService
-			if (isValidOutgoingPaymentConfirmation(message)) {
-				processOutgoingPayment(message);
-			}
-		}
-	}
-	
-	private boolean isValidOutgoingPaymentConfirmation(FrontlineMessage message) {
-		return message.getTextContent().matches(PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN);
 	}
 
 	//> INCOMING MESSAGE PAYMENT PROCESSORS
@@ -235,34 +221,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}.execute();
 	}
 	
-	private void processOutgoingPayment(final FrontlineMessage message) {
-		new FrontlineUiUpateJob() {
-
-			// This probably shouldn't be a UI job,
-			// but it certainly should be done on a separate thread!
-			public void run() {
-				try {
-					final OutgoingPayment payment = new OutgoingPayment();
-					payment.setAccount(getAccount(message));
-					payment.setPhoneNumber(getPhoneNumber(message));
-					payment.setAmountPaid(getAmount(message));
-					payment.setConfirmationCode(getConfirmationCode(message));
-					payment.setPaymentTo(getPaymentTo(message));
-					payment.setTimePaid(getTimePaid(message));
-					payment.setStatus(OutgoingPayment.Status.CONFIRMED);
-						
-					outgoingPaymentDao.saveOutgoingPayment(payment);
-				} catch (IllegalArgumentException ex) {
-					log.warn("Message failed to parse; likely incorrect format", ex);
-					throw new RuntimeException(ex);
-				} catch (Exception ex) {
-					log.error("Unexpected exception parsing outgoing payment SMS.", ex);
-					throw new RuntimeException(ex);
-				}
-			}
-		}.execute();
-	}
-
 	private boolean isValidIncomingPaymentConfirmation(FrontlineMessage message) {
 		if (!message.getSenderMsisdn().equals("MPESA")) {
 			return false;
@@ -275,17 +233,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	abstract Account getAccount(FrontlineMessage message);
 	abstract String getPaymentBy(FrontlineMessage message);
 	
-	private String getPaymentTo(FrontlineMessage message) {
-		try {
-	        String nameAndPhone = getFirstMatch(message, "Ksh[,|[0-9]]+ sent to ([A-Za-z ]+) 2547[0-9]{8}");
-	        String nameWKshSentTo = nameAndPhone.split(AMOUNT_PATTERN+SENT_TO)[1];
-	        String names = getFirstMatch(nameWKshSentTo,PAID_BY_PATTERN).trim();
-	        return names;
-		} catch(ArrayIndexOutOfBoundsException ex) {
-			throw new IllegalArgumentException(ex);
-		}
-	}
-
 	BigDecimal getAmount(FrontlineMessage message) {
 		String amountWithKsh = getFirstMatch(message, AMOUNT_PATTERN);
 		return new BigDecimal(amountWithKsh.substring(3).replaceAll(",", ""));
