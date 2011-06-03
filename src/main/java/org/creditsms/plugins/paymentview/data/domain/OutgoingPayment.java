@@ -52,7 +52,7 @@ public class OutgoingPayment {
 	@Column(name = FIELD_PHONE_NUMBER, nullable = false, unique = false)
 	private String phoneNumber;
 	
-	@Column(name = FIELD_PAYMENT_TO, nullable = false)
+	@Column(name = FIELD_PAYMENT_TO, nullable = true)
 	private String paymentTo;
 
 	@Column(name = FIELD_TIME_PAID, nullable = false, unique = false)
