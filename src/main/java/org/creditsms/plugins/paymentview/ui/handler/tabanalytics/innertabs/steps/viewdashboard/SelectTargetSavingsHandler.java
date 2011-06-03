@@ -23,6 +23,7 @@ public class SelectTargetSavingsHandler extends BasePanelHandler {
 	private final PaymentViewPluginController pluginController;
 	private Object cmbServiceItems;
 	private ServiceItemDao serviceItemDao;
+	private ServiceItem attachedServiceItem;
 
 	public SelectTargetSavingsHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController,
@@ -57,7 +58,9 @@ public class SelectTargetSavingsHandler extends BasePanelHandler {
 	public void next() {
 		if (ui.getSelectedIndex(cmbServiceItems) > -1) {
 			int index = ui.getSelectedIndex(cmbServiceItems);
-			ServiceItem attachedServiceItem = ui.getAttachedObject(ui.getItem(cmbServiceItems, index), ServiceItem.class);
+			//Get Service Item from ComboBox
+			attachedServiceItem = ui.getAttachedObject(ui.getItem(cmbServiceItems, index), ServiceItem.class);
+			
 			List<Target> targets = pluginController.getTargetDao().getTargetsByServiceItem(attachedServiceItem.getId());
 			Map<Client,ServiceItem> clients_serviceItems = new HashMap<Client,ServiceItem>();
 			//FIXME: THIS IS JUST TOO MUCH PRESSURE FOR THE DB
@@ -65,10 +68,14 @@ public class SelectTargetSavingsHandler extends BasePanelHandler {
 				Account a = target.getAccount();
 				if ((a != null) & (a.getClient() != null)) {
 					clients_serviceItems.put(a.getClient(), target.getServiceItem());
-				}
+				} 	
 			}
 			viewDashBoardTabHandler.setCurrentStepPanel(new SelectClientsHandler(
 					(UiGeneratorController) ui, pluginController, viewDashBoardTabHandler, this, clients_serviceItems).getPanelComponent());
 		}
+	}
+	
+	public ServiceItem getAttachedServiceItem() {
+		return attachedServiceItem;
 	}
 }

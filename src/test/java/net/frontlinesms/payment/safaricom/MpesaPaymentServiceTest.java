@@ -409,40 +409,6 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		return new HashSet<Target>(targets);
 	}
 	
-	private Set<Target> mockTargets(Set<Account> mockAccounts) {
-		ArrayList<Target> targets = new ArrayList<Target>();
-		for (Account account :  mockAccounts) {
-			ServiceItem svsItem = mock(ServiceItem.class);
-			svsItem.setAmount(new BigDecimal("8900"));
-			svsItem.setTargetName("PUMP");
-			
-			Target target = mock(Target.class);
-			when(target.getAccount()).thenReturn(account);
-			when(targetDao.getActiveTargetByAccount(account.getAccountNumber())).thenReturn(target);
-			when(target.getServiceItem()).thenReturn(svsItem);
-			when(target.getId()).thenReturn((long)1234);
-			targets.add(target);
-		}
-		return new HashSet<Target>(targets);
-	}
-	
-	private Set<Target> mockTargetAnalytics(Set<Account> mockAccounts) {
-		ArrayList<Target> targets = new ArrayList<Target>();
-		for (Account account :  mockAccounts) {
-			ServiceItem svsItem = mock(ServiceItem.class);
-			svsItem.setAmount(new BigDecimal("8900"));
-			svsItem.setTargetName("PUMP");
-			
-			Target target = mock(Target.class);
-			when(target.getAccount()).thenReturn(account);
-			when(targetDao.getActiveTargetByAccount(account.getAccountNumber())).thenReturn(target);
-			when(target.getServiceItem()).thenReturn(svsItem);
-			when(target.getId()).thenReturn((long)1234);
-			targets.add(target);
-		}
-		return new HashSet<Target>(targets);
-	}
-	
 }
 
 class WaitingJob extends FrontlineUiUpateJob {
