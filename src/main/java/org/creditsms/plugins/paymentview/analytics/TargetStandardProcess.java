@@ -28,9 +28,6 @@ public class TargetStandardProcess extends TargetCreationProcess{
 				e.printStackTrace();
 			}
 			// attach new account to the client
-			//this.client.setAccounts((Set<Account>) this.getAccount());
-			//this.getClientDao().saveClient(client);
-			
 			// create new target
 			this.setTarget(new Target(targetStartDate, targetEndDate, serviceItem, this.account));
             this.getTargetDao().saveTarget(this.getTarget());

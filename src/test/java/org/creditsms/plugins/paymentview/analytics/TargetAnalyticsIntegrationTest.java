@@ -1,9 +1,6 @@
 package org.creditsms.plugins.paymentview.analytics;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -74,7 +71,7 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	}
 	
 	public void testGetDaysRemaining(){
-		assertEquals(Long.valueOf(5), this.targetAnalytics.getDaysRemaining(targetId));	
+		assertEquals(Long.valueOf(4), this.targetAnalytics.getDaysRemaining(targetId));	
 	}
 	
 	public void testTargetStatus() {
@@ -89,11 +86,20 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	private void setUpTestData() throws DuplicateKeyException{
 		
 		Calendar calendar1 = Calendar.getInstance();
-		calendar1.set(Calendar.DAY_OF_MONTH, Calendar.DAY_OF_MONTH);  
+		calendar1.set(Calendar.HOUR_OF_DAY, 0);  
+		calendar1.set(Calendar.MINUTE, 0);  
+		calendar1.set(Calendar.SECOND, 0);  
+		calendar1.set(Calendar.MILLISECOND, 0);
+		System.out.println("today:"+calendar1.get(Calendar.DAY_OF_MONTH));
 		Date startDate = calendar1.getTime();
 		
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.DAY_OF_MONTH, Calendar.DAY_OF_MONTH+4);  
+		calendar.add(Calendar.DATE, 4);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);  
+		calendar.set(Calendar.MINUTE, 0);  
+		calendar.set(Calendar.SECOND, 0);  
+		calendar.set(Calendar.MILLISECOND, 0);
+		System.out.println("end day:"+calendar.get(Calendar.DAY_OF_MONTH));
 		Date endDate = calendar.getTime();
 
 		Account acc = getAccountNumber("104");
