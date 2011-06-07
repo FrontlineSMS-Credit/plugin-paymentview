@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
@@ -15,15 +16,18 @@ import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 public class MpesaPersonalService extends MpesaPaymentService {
 	
 //> REGEX PATTERN CONSTANTS
-	private static final String PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n" +
+	private static final String STR_PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n" +
 			"You have received Ksh[,|\\d]+ ([A-Za-z ]+) 2547[\\d]{8} on " +
 			"(([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) (at) ([1]?\\d:[0-5]\\d) (AM|PM)\n" +
 			"New M-PESA balance Ksh[,|\\d]+";
-	protected static final String PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = 
+	private static final Pattern PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN = Pattern.compile(STR_PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN);
+	
+	private static final String STR_PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = 
 		"[A-Z\\d]+ Confirmed.\n"+
 		"Ksh[,|\\d]+ sent to ([A-Za-z ]+) 2547[\\d]{8} on "+
 		"(([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) at ([1]?\\d:[0-5]\\d) ([A|P]M)\n"+
 		"New M-PESA balance Ksh([,|\\d]+)";
+	private static final Pattern PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = Pattern.compile(STR_PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN);
 	
 //>BEGIN - OUTGOING PAYMENT REGION	
 	@Override
@@ -74,7 +78,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	}
 	
 	private boolean isValidOutgoingPaymentConfirmation(FrontlineMessage message) {
-		return message.getTextContent().matches(PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN);
+		return PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN.matcher(message.getTextContent()).matches();
 	}
 //>END - OUTGOING PAYMENT REGION
 	
@@ -119,7 +123,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	
 	@Override
 	boolean isMessageTextValid(String message) {
-		return message.matches(PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN);
+		return PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN.matcher(message).matches();
 	}
 
 	@Override

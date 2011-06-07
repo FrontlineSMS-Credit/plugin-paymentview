@@ -55,7 +55,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	protected static final String ACCOUNTNUMBER_2_1 = "0700000021";
 	protected static final String ACCOUNTNUMBER_2_2 = "0700000022";
 	
-	private E mpesaPaymentService;
+	protected E mpesaPaymentService;
 	private CService cService;
 	
 	private StkMenuItem myAccountMenuItem;
@@ -63,7 +63,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	private StkMenuItem sendMoneyMenuItem;
 	
 	private ClientDao clientDao;
-	private AccountDao accountDao;
+	protected AccountDao accountDao;
 	private TargetDao targetDao;
 	private IncomingPaymentDao incomingPaymentDao;
 	private OutgoingPaymentDao outgoingPaymentDao;
@@ -92,6 +92,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		myAccountMenuItem = mockMenuItem("My account");
 		mpesaMenuItemRequest = mpesaMenuItem.getRequest();
 		sendMoneyMenuItem = mockMenuItem("Send money");
+		
 		when(cService.stkRequest(mpesaMenuItemRequest)).thenReturn(new StkMenu("M-PESA",
 				sendMoneyMenuItem , "Withdraw cash", "Buy airtime",
 				"Pay Bill", "Buy Goods", "ATM Withdrawal", myAccountMenuItem));

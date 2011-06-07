@@ -93,8 +93,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 
 	private StkMenu getMpesaMenu() throws PaymentServiceException {
 		try {
-			StkMenu rootMenu = (StkMenu) cService
-					.stkRequest(StkRequest.GET_ROOT_MENU);
+			StkMenu rootMenu = (StkMenu) cService.stkRequest(StkRequest.getRootMenu());
 			return (StkMenu) cService.stkRequest(rootMenu.getRequest("M-PESA"));
 		} catch (SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
@@ -149,7 +148,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 
 	//> INCOMING MESSAGE PAYMENT PROCESSORS
 	private void processIncomingPayment(final FrontlineMessage message) {
-		System.out.println("in processIncomingPayment");
 		new FrontlineUiUpateJob() {
 			// This probably shouldn't be a UI job,
 			// but it certainly should be done on a separate thread!
