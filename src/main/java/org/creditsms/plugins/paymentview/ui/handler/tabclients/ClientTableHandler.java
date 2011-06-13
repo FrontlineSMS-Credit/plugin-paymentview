@@ -25,10 +25,6 @@ public class ClientTableHandler extends BaseClientTable {
 		return XML_CLIENTS_PANEL;
 	}
 
-	public void analyseClient() {
-		clientsTabHandler.analyseClient();
-	}
-
 	public void deleteClient() {
 		clientsTabHandler.deleteClient();
 	}

@@ -1,9 +1,11 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs;
 
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 
@@ -15,12 +17,13 @@ public class OtherFieldHandler implements ThinletUiEventHandler {
 	private UiGeneratorController ui;
 	private CustomizeClientDBHandler customizeClientDBHandler;
 
-	public OtherFieldHandler(UiGeneratorController ui,
+	public OtherFieldHandler(PaymentViewPluginController pluginController,
 			CustomFieldDao customFieldDao,
-			CustomizeClientDBHandler customizeClientDBHandler, Object comboBox) {
-		this.ui = ui;
+			CustomizeClientDBHandler customizeClientDBHandler) {
+		this.ui = pluginController.getUiGeneratorController();
 		this.customFieldDao = customFieldDao;
 		this.customizeClientDBHandler = customizeClientDBHandler;
+		
 		init();
 		refresh();
 	}
@@ -37,9 +40,7 @@ public class OtherFieldHandler implements ThinletUiEventHandler {
 
 		this.removeDialog();
 		this.customizeClientDBHandler.refreshChoices();
-		customizeClientDBHandler.setSelectedItemOnCombo(customField);
-		ui.infoMessage("You have succesfully created the field '" + fieldName
-				+ "'!");
+		ui.infoMessage("You have succesfully created the field '" + fieldName + "'!");
 	}
 
 	public static String camelCase(String string) {
