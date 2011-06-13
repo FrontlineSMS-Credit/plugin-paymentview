@@ -8,6 +8,7 @@ import net.frontlinesms.csv.CsvImportReport;
 import net.frontlinesms.csv.CsvImporter;
 import net.frontlinesms.csv.CsvParseException;
 import net.frontlinesms.csv.CsvRowFormat;
+import net.frontlinesms.data.DuplicateKeyException;
 
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Account;
@@ -70,7 +71,12 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 
 			Account acc;
 			acc = new Account(account);
-			accountDao.saveAccount(acc);
+			try {
+				accountDao.saveAccount(acc);
+			} catch (DuplicateKeyException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			OutgoingPayment outgoingPayment = new OutgoingPayment(phoneNumber,
 					new BigDecimal(amountPaid), new Date(

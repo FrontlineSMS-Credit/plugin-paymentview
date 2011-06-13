@@ -33,8 +33,8 @@ public class Account {
 
 	@Column(name = FIELD_ACCOUNT_NUMBER, nullable = false, unique = true)
 	private String accountNumber;
-	@Column(name = FIELD_ACTIVE_ACCOUNT, nullable = false)
-	private Boolean activeAccount;
+	@Column(name = FIELD_ACTIVE_ACCOUNT)
+	private boolean activeAccount;
 
 	@ManyToOne
 	@JoinColumn(name = FIELD_CLIENT, nullable = true)
