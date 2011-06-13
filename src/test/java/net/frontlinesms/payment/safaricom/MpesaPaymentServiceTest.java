@@ -63,10 +63,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	private StkRequest mpesaMenuItemRequest;
 	private StkMenuItem sendMoneyMenuItem;
 	
-	//KIM
 	private StkMenu mpesaMenu;
-	//FIN KIM
-	
 	private ClientDao clientDao;
 	protected AccountDao accountDao;
 	private TargetDao targetDao;
@@ -92,32 +89,16 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 
 		StkMenuItem mpesaMenuItem = mockMenuItem("M-PESA", 129, 21);
 		
-		//KIM DEBUT
-//		when((StkMenu)cService.stkRequest(StkRequest.GET_ROOT_MENU)).thenReturn(
-//				new StkMenu("Safaricom", "Safaricom+", mpesaMenuItem));
 		StkMenu rootMenu = new StkMenu("Safaricom", "Safaricom+", mpesaMenuItem);
 		when((StkMenu)cService.stkRequest(StkRequest.GET_ROOT_MENU)).thenReturn(rootMenu);
-		//KIM FIN
 		
 		myAccountMenuItem = mockMenuItem("My account");
-		//KIM DEBUT
-		//mpesaMenuItemRequest = mpesaMenuItem.getRequest();
 		mpesaMenuItemRequest = rootMenu.getRequest("M-PESA");
-		
-		//KIM FIN
 		sendMoneyMenuItem = mockMenuItem("Send money");
-		//KIM DEBUT
-//		when(cService.stkRequest(mpesaMenuItemRequest)).thenReturn(new StkMenu("M-PESA",
-//				sendMoneyMenuItem , "Withdraw cash", "Buy airtime",
-//				"Pay Bill", "Buy Goods", "ATM Withdrawal", myAccountMenuItem));
-		
 		mpesaMenu = new StkMenu("M-PESA",
 				sendMoneyMenuItem , "Withdraw cash", "Buy airtime",
 				"Pay Bill", "Buy Goods", "ATM Withdrawal", myAccountMenuItem);
 		when(cService.stkRequest(mpesaMenuItemRequest)).thenReturn(mpesaMenu);	
-		
-
-		//KIM FIN
 		
 	}
 	
@@ -191,9 +172,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 
 	public void testCheckBalance() throws PaymentServiceException, SMSLibDeviceException, IOException  {
 		// setup
-		//KIM DEBUT
-		//StkRequest myAccountMenuItemRequest = myAccountMenuItem.getRequest();
-		StkRequest myAccountMenuItemRequest = mpesaMenu.getRequest("My account"); //add
+		StkRequest myAccountMenuItemRequest = mpesaMenu.getRequest("My account");
 		
 		StkMenuItem showBalanceMenuItem = mockMenuItem("Show balance");
 
@@ -203,12 +182,8 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 
 		StkInputRequiremnent pinRequired = mockInputRequirement("Enter PIN", 0, 0, 4, 4, 0);
 		StkRequest pinRequiredRequest = pinRequired.getRequest();
-		//KIM PREVIOUSStkRequest showBalanceMenuItemRequest = showBalanceMenuItem.getRequest();
 		StkRequest showBalanceMenuItemRequest = myAccountMenu.getRequest("Show balance");
 		when(cService.stkRequest(showBalanceMenuItemRequest)).thenReturn(pinRequired);
-		
-		//KIMFIN
-		
 		
 		// given
 		mpesaPaymentService.setPin("1234");
@@ -228,14 +203,10 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	
 	public void testMakePayment() throws PaymentServiceException, SMSLibDeviceException, IOException  {
 		// setup
-		//KIM PREVIOUS StkRequest sendMoneyMenuItemRequest = sendMoneyMenuItem.getRequest();
-		StkRequest sendMoneyMenuItemRequest = mpesaMenu.getRequest("Send money"); // KIM NEW
+		StkRequest sendMoneyMenuItemRequest = mpesaMenu.getRequest("Send money");
 		StkInputRequiremnent phoneNumberRequired = mockInputRequirement("Enter phone no.");
-		when(cService.stkRequest(sendMoneyMenuItemRequest)).thenReturn(phoneNumberRequired);
-		
+		when(cService.stkRequest(sendMoneyMenuItemRequest)).thenReturn(phoneNumberRequired);		
 		StkRequest phoneNumberRequest = phoneNumberRequired.getRequest();
-		//StkRequest phoneNumberRequest = ((StkInputRequiremnent) cService.stkRequest(sendMoneyMenuItemRequest)).getRequest();//KIM NEW
-		
 		StkInputRequiremnent amountRequired = mockInputRequirement("Enter amount");
 		when(cService.stkRequest(phoneNumberRequest, "0712345678")).thenReturn(amountRequired);
 		StkRequest amountRequest = amountRequired.getRequest();
