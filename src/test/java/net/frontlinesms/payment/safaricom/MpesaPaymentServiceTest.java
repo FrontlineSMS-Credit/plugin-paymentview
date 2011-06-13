@@ -167,7 +167,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	
 	
 
-	public void testCheckBalance() throws PaymentServiceException, SMSLibDeviceException, IOException {
+	public void testCheckBalance() throws PaymentServiceException, SMSLibDeviceException {
 		// setup
 		StkRequest myAccountMenuItemRequest = myAccountMenuItem.getRequest();
 		StkMenuItem showBalanceMenuItem = mockMenuItem("Show balance");
@@ -195,7 +195,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		inOrder.verify(cService).stkRequest(pinRequiredRequest, "1234");
 	}
 	
-	public void testMakePayment() throws PaymentServiceException, SMSLibDeviceException, IOException {
+	public void testMakePayment() throws PaymentServiceException, SMSLibDeviceException {
 		// setup
 		StkRequest sendMoneyMenuItemRequest = sendMoneyMenuItem.getRequest();
 		StkInputRequiremnent phoneNumberRequired = mockInputRequirement("Enter phone no.");
