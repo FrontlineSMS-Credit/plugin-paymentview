@@ -5,9 +5,8 @@
 	<panel columns="2" gap="5" weightx="1" weighty="1">
 		<label font="20 Bold" text="View Client progress" colspan="2"/>
 		<label text="1. Select the service you wish to view" />
-		<button icon="/icons/refresh.png" action="refresh"/>
+		<button icon="/icons/refresh.png" action="refresh" tooltip="Click here to refresh the services items list."/>
 		<combobox name="cmbServiceItems" text="Services Items Created" colspan="2"/>
-		<button text="Targeted Savings / Layaway" colspan="2"/>
 	</panel>
 	<panel gap="5" halign="right" weightx="1">
 		<button action="next" icon="/icons/right.png" text="Next" />
