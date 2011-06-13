@@ -34,7 +34,7 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler {
 		sentPaymentsTab = new SentPaymentsTabHandler(ui, pluginController);
 		ui.add(mainTabbedPane, sentPaymentsTab.getTab());
 
-		sendNewPaymentsTab = new SendNewPaymentsTabHandler(ui);
+		sendNewPaymentsTab = new SendNewPaymentsTabHandler(ui, pluginController);
 		ui.add(mainTabbedPane, sendNewPaymentsTab.getTab());
 
 		importNewPaymentsTab = new ImportNewPaymentsTabHandler(ui);
