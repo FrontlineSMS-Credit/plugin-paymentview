@@ -1,9 +1,7 @@
 package org.creditsms.plugins.paymentview;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import net.frontlinesms.data.DuplicateKeyException;
@@ -73,17 +71,18 @@ public class DemoData {
 			Client c = new Client(names[0], names[1], phoneNumber);
 			getClientDao().saveClient(c);
 			return c;
-		}
+	}
 	
 	private void createDummyIncomingPayment(String paymentBy,
 			String phoneNumber, String timePaid, BigDecimal amountPaid,
-			String accountNumber) {
+			String accountNumber, Target target) {
 		IncomingPayment i = new IncomingPayment();
 		i.setAmountPaid(amountPaid);
 		Account myAcc = getAccountDao().getAccountByAccountNumber(accountNumber);
 		i.setAccount(myAcc);
 		i.setPaymentBy(paymentBy);
 		i.setPhoneNumber(phoneNumber);
+		i.setTarget(target);
 		i.setTimePaid(new Date(Long.parseLong(timePaid)));
 		try {
 			getIncomingPaymentDao().saveIncomingPayment(i);
@@ -134,28 +133,6 @@ public class DemoData {
 		s.setTargetName(targetName);
 		 	
 		getServiceItemDao().saveServiceItem(s);
-	}
-	
-	private void createDummyTargets(ServiceItem targetItem, String accountNumber, String endDate, String startDate){
-		Target t = new Target();
-		t.setAccount(getAccountDao().getAccountByAccountNumber(accountNumber));
-		//t.setEndDate(new Date(Long.parseLong(endDate)));
-		//t.setStartDate(new Date(Long.parseLong(startDate)));
-		
-		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		try { 
-			Date startDater = df.parse(startDate);  
-			Date endDater = df.parse(endDate);
-			t.setStartDate(startDater);
-			t.setEndDate(endDater);
-			t.setCompletedDate(null);
-			t.setServiceItem(targetItem);
-			getTargetDao().saveTarget(t);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
 	}
 	
 	/**
@@ -211,10 +188,49 @@ public class DemoData {
 		createDummyClient("Wambui Waweru", "+254720144545");
 		createDummyClient("Lavender Akoth", "+254725565345");
 		createDummyClient("Sammy Kitonyi", "+254724412345");
-		
+
 		createDummyServiceItem_Targets("Solar Panel", "120000");
-		createDummyServiceItem_Targets("Solar Panel Generator", "320000");
+		createDummyServiceItem_Targets("Solar Generator", "320000");
 		createDummyServiceItem_Targets("Bore Hole", "10000");
+		
+		//createDummyTargets()
+		
+		ServiceItem si = new ServiceItem();
+		si = getServiceItemDao().getServiceItemsByName("Solar Panel").get(0);
+		
+		Calendar calendar1 = Calendar.getInstance();
+		calendar1.set(Calendar.HOUR_OF_DAY, 0);  
+		calendar1.set(Calendar.MINUTE, 0);  
+		calendar1.set(Calendar.SECOND, 0);  
+		calendar1.set(Calendar.MILLISECOND, 0);
+		Date startDate = calendar1.getTime();
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DATE, 14);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);  
+		calendar.set(Calendar.MINUTE, 0);  
+		calendar.set(Calendar.SECOND, 0);  
+		calendar.set(Calendar.MILLISECOND, 0); 
+		Date endDate = calendar.getTime();
+
+		Client clnt = getClientDao().getClientByPhoneNumber("+254724574645");
+		Target tgt = createDummyTargets(si,createDummyAccount(clnt, "00001"), startDate, endDate);
+		
+		createDummyIncomingPayment("Alice Wangare", "+254724574645", "1300560000000", new BigDecimal("4500.00"), "00001", tgt);
+		createDummyIncomingPayment("Alice Wangare", "+254724574645", "1300560000100", new BigDecimal("1300.00"), "00001", tgt);
+		createDummyIncomingPayment("Alice Wangare", "+254724574645", "1300560000200", new BigDecimal("1200.00"), "00001", tgt);
+		createDummyIncomingPayment("Alice Wangare", "+254724574645", "1300560200300", new BigDecimal("7400.00"), "00001", tgt);
+
+		Client clnt1 = getClientDao().getClientByPhoneNumber("+254720547355");
+		Target tgt1 = createDummyTargets(si,createDummyAccount(clnt1, "00002"), startDate, endDate);
+		
+		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560000000", new BigDecimal("14500.00"), "00002", tgt1);
+		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560000100", new BigDecimal("11300.00"), "00002", tgt1);
+		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560000200", new BigDecimal("11200.00"), "00002", tgt1);
+		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560200300", new BigDecimal("37400.00"), "00002", tgt1);
+		
+		Client clnt2 = getClientDao().getClientByPhoneNumber("+254725452345");
+		Target tgt2 = createDummyTargets(si,createDummyAccount(clnt2, "00003"), startDate, endDate);
 		
 		/*
 		createDummyServiceItem_Targets("Solar Panel", "120000", new String[][]{{"232492474","24/08/2011", "24/05/2011"},{"9923623","24/08/2011", "24/05/2011"}});
@@ -239,6 +255,35 @@ public class DemoData {
 		createDummyOutgoingPayment("Charlene Nyambura", "+254720123426", "1302000034896", new BigDecimal("500.00"), "24343423");
 		createDummyOutgoingPayment("Phanice Nafula", "+254720145345", "1302000500896", new BigDecimal("4200.00"), "27434523");
 		*/
+	}
+	
+	private Account createDummyAccount(Client client, String accountNumber) {
+	
+		Account ac = null;
+		try {
+			ac = new Account(accountNumber);
+			ac.setClient(client);
+			ac.setActiveAccount(true);
+			getAccountDao().saveAccount(ac);
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return ac;
+	}
+	
+	private Target createDummyTargets(ServiceItem targetItem, Account accnt, Date startDate, Date endDate){
+		Target t = new Target();
+		t.setAccount(accnt);
+		try { 
+			t.setStartDate(startDate);
+			t.setEndDate(endDate);
+			t.setCompletedDate(null);
+			t.setServiceItem(targetItem);
+			getTargetDao().saveTarget(t);
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return t;
 	}
 	
 	public AccountDao getAccountDao() {

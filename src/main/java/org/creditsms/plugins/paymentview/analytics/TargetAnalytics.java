@@ -115,7 +115,7 @@ public class TargetAnalytics {
 	    long diff = endTime - startTime;
 		long targetDays = diff / (1000 * 60 * 60 * 24);
 		
-		return targetDays;
+		return targetDays +1;
 	}
 	
 	public Long getDaysRemaining(long tartgetId){

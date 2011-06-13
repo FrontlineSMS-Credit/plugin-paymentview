@@ -2,6 +2,8 @@ package org.creditsms.plugins.paymentview.analytics;
 
 import java.util.Date;
 
+import net.frontlinesms.data.DuplicateKeyException;
+
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
@@ -19,7 +21,12 @@ public class TargetPayBillProcess  extends TargetCreationProcess{
 		if (canCreateTarget()){
 			// create new account
 			this.setAccount(new Account(createAccountNumber(), client, false));
-			this.getAccountDao().saveAccount(this.getAccount());
+			try {
+				this.getAccountDao().saveAccount(this.getAccount());
+			} catch (DuplicateKeyException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			// create new target
 			this.setTarget(new Target(targetStartDate, targetEndDate, serviceItem, this.account));
             this.getTargetDao().saveTarget(this.getTarget());
