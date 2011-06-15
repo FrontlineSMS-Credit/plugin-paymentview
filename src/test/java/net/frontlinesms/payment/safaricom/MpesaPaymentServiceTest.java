@@ -8,6 +8,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -166,7 +167,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	
 	
 
-	public void testCheckBalance() throws PaymentServiceException, SMSLibDeviceException {
+	public void testCheckBalance() throws PaymentServiceException, SMSLibDeviceException, IOException {
 		// setup
 		StkRequest myAccountMenuItemRequest = myAccountMenuItem.getRequest();
 		StkMenuItem showBalanceMenuItem = mockMenuItem("Show balance");
@@ -194,7 +195,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		inOrder.verify(cService).stkRequest(pinRequiredRequest, "1234");
 	}
 	
-	public void testMakePayment() throws PaymentServiceException, SMSLibDeviceException {
+	public void testMakePayment() throws PaymentServiceException, SMSLibDeviceException, IOException {
 		// setup
 		StkRequest sendMoneyMenuItemRequest = sendMoneyMenuItem.getRequest();
 		StkInputRequiremnent phoneNumberRequired = mockInputRequirement("Enter phone no.");

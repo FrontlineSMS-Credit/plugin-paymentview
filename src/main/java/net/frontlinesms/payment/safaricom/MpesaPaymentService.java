@@ -1,5 +1,6 @@
 package net.frontlinesms.payment.safaricom;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
@@ -73,7 +74,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	private TargetAnalytics targetAnalytics;
 	
 //> STK & PAYMENT ACCOUNT
-	public void checkBalance() throws PaymentServiceException {
+	public void checkBalance() throws PaymentServiceException, IOException {
 		try {
 			StkMenu mPesaMenu = getMpesaMenu();
 			StkMenu myAccountMenu = (StkMenu) cService.stkRequest(mPesaMenu
@@ -91,9 +92,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}
 	}
 
-	private StkMenu getMpesaMenu() throws PaymentServiceException {
+	private StkMenu getMpesaMenu() throws PaymentServiceException, IOException {
 		try {
-			StkMenu rootMenu = (StkMenu) cService.stkRequest(StkRequest.getRootMenu());
+			StkMenu rootMenu = (StkMenu) cService.stkRequest(StkRequest.GET_ROOT_MENU);
 			return (StkMenu) cService.stkRequest(rootMenu.getRequest("M-PESA"));
 		} catch (SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
@@ -101,7 +102,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	}
 
 	public void makePayment(Account account, BigDecimal amount)
-			throws PaymentServiceException {
+			throws PaymentServiceException, IOException {
 		try {
 			StkMenu mPesaMenu = getMpesaMenu();
 			StkResponse sendMoneyResponse = cService.stkRequest(mPesaMenu.getRequest("Send money"));
