@@ -63,15 +63,9 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	public void addClient() {
 		ui.add(new EditClientHandler(ui, pluginController, this).getDialog());
 	}
-
-	public void analyseClient() {
-		// TODO Auto-generated method stub
-	}
-
 	
 	public void customizeClientDB() {
-		ui.add(new CustomizeClientDBHandler(ui, customFieldDao, this)
-				.getDialog());
+		ui.add(new CustomizeClientDBHandler(pluginController, customFieldDao, this).getDialog());
 	}
 
 	public void deleteClient() {
