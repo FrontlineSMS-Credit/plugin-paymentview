@@ -1,17 +1,18 @@
 package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs;
 
-import java.math.BigDecimal;
-
-import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
-import org.creditsms.plugins.paymentview.data.repository.AccountDao;
-import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
-import org.smslib.SMSLibDeviceException;
-import org.smslib.stk.StkMenu;
-
+import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
+import net.frontlinesms.payment.safaricom.MpesaPersonalService;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
+
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
+
+import static org.mockito.Mockito.mock;
 
 public class SendPaymentAuthDialogHandler implements ThinletUiEventHandler {
 
@@ -20,11 +21,19 @@ public class SendPaymentAuthDialogHandler implements ThinletUiEventHandler {
 	private UiGeneratorController ui;
 	private OutgoingPayment outgoingPayment;
 	private OutgoingPaymentDao outgoingPaymentDao;
+	private ClientDao clientDao;
+	
+	//TODO WARNING this dev is specific to Mpesa!!!
+	private PaymentService paymentService;
 
 	public SendPaymentAuthDialogHandler(final UiGeneratorController ui, PaymentViewPluginController pluginController, OutgoingPayment outgoingPayment) {
 		this.ui = ui;
 		this.outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
+		this.clientDao = pluginController.getClientDao();
 		this.outgoingPayment = outgoingPayment;
+		
+		paymentService = mock(MpesaPersonalService.class);
+		
 		init();
 	}
 
@@ -53,13 +62,19 @@ public class SendPaymentAuthDialogHandler implements ThinletUiEventHandler {
 			System.out.println("msisdn:" + outgoingPayment.getPhoneNumber());
 			System.out.println("amount:" + outgoingPayment.getAmountPaid());
 			System.out.println("confirmationCode:" + outgoingPayment.getConfirmationCode());
-			System.out.println("amount:" + outgoingPayment.getNotes());
-			//save inDB
+			System.out.println("notes:" + outgoingPayment.getNotes());
+			//save the outgoing payment in DB
 			outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
+			
+			//TODO this dev is specific to Mpesa
+
 			//send payment
+			Client client = clientDao.getClientByPhoneNumber(outgoingPayment.getPhoneNumber());
+			paymentService.makePayment(client, outgoingPayment.getAmountPaid());
 			
 			//update DB
-			
+			outgoingPayment.setStatus(OutgoingPayment.Status.UNCONFIRMED);
+			outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
 
 			
 		} catch (IllegalArgumentException ex) {
@@ -74,16 +89,6 @@ public class SendPaymentAuthDialogHandler implements ThinletUiEventHandler {
 		
 		ui.removeDialog(dialog);
 		ui.infoMessage("The outgoing payment has been created and sent");
-		
-		// save outgoing payment into DB
-		// stkRequest to send payment
-//		try {
-//			StkMenu mPesaMenu = getMpesaMenu();
-//			
-//		} catch (SMSLibDeviceException ex) {
-//			throw new PaymentServiceException(ex);
-//		}
-
 	}
 }
 
