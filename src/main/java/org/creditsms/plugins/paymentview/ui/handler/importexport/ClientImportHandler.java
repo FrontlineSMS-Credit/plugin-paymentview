@@ -23,13 +23,12 @@ import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
 public class ClientImportHandler extends ImportDialogHandler {
-	private static final String COMPONENT_ACCOUNTS = "cbAccounts";
 	private static final String COMPONENT_CB_NAME = "cbName";
 	private static final String COMPONENT_CB_PHONE = "cbPhone";
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_IMPORTING_SELECTED_CLIENTS = "plugins.paymentview.message.importing.selected.client";
 	/** i18n Text Key: "Active" */
-	private static final String UI_FILE_OPTIONS_PANEL_CLIENT = "/ui/plugins/paymentview/importexport/pnClientDetails.xml";
+	private static final String UI_FILE_OPTIONS_PANEL_CLIENT = "/ui/plugins/paymentview/importexport/pnImportClientDetails.xml";
 
 	private ClientDao clientDao;
 // > INSTANCE PROPERTIES

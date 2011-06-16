@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.events.EventObserver;
+import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
@@ -15,7 +18,7 @@ import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
 
-public class SelectTargetSavingsHandler extends BasePanelHandler {
+public class SelectTargetSavingsHandler extends BasePanelHandler implements EventObserver {
 	private static final String CMB_SERVICE_ITEMS = "cmbServiceItems";
 	private static final String XML_STEP_SELECT_TARGET_SAVING = "/ui/plugins/paymentview/analytics/viewdashboard/stepselectservice.xml";
 	
@@ -33,6 +36,7 @@ public class SelectTargetSavingsHandler extends BasePanelHandler {
 		this.serviceItemDao = pluginController.getServiceItemDao(); 
 		this.viewDashBoardTabHandler = viewDashBoardTabHandler;
 		this.loadPanel(XML_STEP_SELECT_TARGET_SAVING);
+		ui.getFrontlineController().getEventBus().registerObserver(this);
 		init();
 	}
 
@@ -77,5 +81,16 @@ public class SelectTargetSavingsHandler extends BasePanelHandler {
 	
 	public ServiceItem getAttachedServiceItem() {
 		return attachedServiceItem;
+	}
+
+	public void notify(FrontlineEventNotification notification) {
+		if (!(notification instanceof EntitySavedNotification)) {
+			return;
+		}
+
+		Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
+		if (entity instanceof ServiceItem) {
+			this.refresh();
+		}
 	}
 }

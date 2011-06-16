@@ -6,7 +6,6 @@
 		
 		<label text="Current Savings target" />
 		<panel weightx="1"/>
-		<button icon="/icons/refresh.png" action="refresh"/>
 		
 		<panel name="pnl_tbl_serviceItem_holder" weightx="1" weighty="1" colspan="3" columns="1">
 			<table name="tbl_serviceItem" weightx="1" weighty="1">

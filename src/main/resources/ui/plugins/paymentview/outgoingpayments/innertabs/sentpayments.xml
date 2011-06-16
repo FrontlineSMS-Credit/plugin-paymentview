@@ -18,14 +18,6 @@
 			</table>
 		</panel>		
 		<panel gap="5" left="5" bottom="5" weightx="1">			
-			<combobox width="300" colspan="2" name="cmb_mobilePaymentAccount" 
-			text="i18n.plugins.paymentview.combobox.selectmobilepaymentaccount" weightx="1">
-				<choice text="Display All"/>
-				<choice text="Safaricom Mpesa"/>
-				<choice text="Aitel Zap"/>
-				<choice text="Orange Money"/>
-				<choice text="Yu Cash"/>
-			</combobox>			
 			<panel weightx="1"/>
 			<panel weightx="1"/>
 			<button colspan="1" icon="/icons/export.png" action="exportPayments" name="btn_export" text="i18n.action.export" />

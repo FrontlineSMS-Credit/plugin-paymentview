@@ -3,6 +3,9 @@ package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.events.EventObserver;
+import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
@@ -14,7 +17,7 @@ import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateNewServiceItemHandler;
 
-public class ConfigureServiceTabHandler extends BaseTabHandler implements PagedComponentItemProvider{
+public class ConfigureServiceTabHandler extends BaseTabHandler implements PagedComponentItemProvider, EventObserver{
 
 	private static final String COMPONENT_SERVICE_ITEM_TABLE = "tbl_serviceItem";
 	private static final String COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE = "pnl_tbl_serviceItem_holder";
@@ -37,6 +40,8 @@ public class ConfigureServiceTabHandler extends BaseTabHandler implements PagedC
 		this.serviceItemDao = pluginController.getServiceItemDao();
 		configureServiceTab = ui.find(tabAnalytics, TAB_CONFIGURE_SERVICE);
 		this.init();
+		
+		ui.getFrontlineController().getEventBus().registerObserver(this);
 	}
 
 	public void createNew() {
@@ -102,6 +107,17 @@ public class ConfigureServiceTabHandler extends BaseTabHandler implements PagedC
 		ui.add(row, ui.createTableCell(serviceItem.getTargetName()));
 		ui.add(row, ui.createTableCell(serviceItem.getAmount().toString()));
 		return row;
+	}
+
+	public void notify(FrontlineEventNotification notification) {
+		if (!(notification instanceof EntitySavedNotification)) {
+			return;
+		}
+
+		Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
+		if (entity instanceof ServiceItem) {
+			this.refresh();
+		}
 	}
 
 }
