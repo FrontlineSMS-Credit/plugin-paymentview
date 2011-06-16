@@ -76,6 +76,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 
 			if (lineValues[i].equals(InternationalisationUtils
 					.getI18nString(PaymentPluginConstants.COMMON_PHONE))) {
+				uiController.setWidth(cell, 100);
 			}
 
 			this.uiController.add(row, cell);
@@ -87,7 +88,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 		int columnCount = 0;
 		for (Object checkbox : getCheckboxes()) {
 			if (this.uiController.isSelected(checkbox)) {
-				String attributeName = this.uiController.getText(checkbox);				
+				String attributeName = this.uiController.getText(checkbox);
 				if (uiController.getName(checkbox).equals(COMPONENT_CB_NAME)) {
 					//TODO: take care of this hack... Separate names?
 					this.uiController.add(header, this.uiController.createColumn(InternationalisationUtils
@@ -141,20 +142,16 @@ public class ClientImportHandler extends ImportDialogHandler {
 
 	protected Object getRow(String[] lineValues) {
 		Object row = this.uiController.createTableRow();
-		addClientCells(row, lineValues);
+		this.uiController.add(row, this.uiController.createTableCell(""));
+		addClientCells(row, lineValues);		
 		return row;
 	}
 
 	protected CsvRowFormat getRowFormatForClient() {
 		CsvRowFormat rowFormat = new CsvRowFormat();
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME,
-				COMPONENT_CB_NAME);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME,
-				COMPONENT_CB_NAME);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_PHONE,
-				COMPONENT_ACCOUNTS);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS,
-				COMPONENT_CB_PHONE);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME, COMPONENT_CB_NAME);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME, COMPONENT_CB_NAME);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS, COMPONENT_CB_PHONE);
 		
 		for(CustomField cf : customFieldDao.getAllActiveUsedCustomFields()){
 			addMarker(rowFormat, PaymentViewUtils.getMarkerFromString(cf.getReadableName()),

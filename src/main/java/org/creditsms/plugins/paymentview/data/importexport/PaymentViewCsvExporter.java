@@ -43,7 +43,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 	 */
 	public static void exportClients(File exportFile,
 			Collection<Client> clients, CustomFieldDao customFieldDao,
-			CustomValueDao customValueDao, CsvRowFormat clientFormat, AccountDao accountDao)
+			CustomValueDao customValueDao, CsvRowFormat clientFormat)
 			throws IOException {
 		LOG.trace("ENTER");
 		LOG.debug("Client format [" + clientFormat + "]");
@@ -90,8 +90,6 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 				items.add(PaymentViewCsvUtils.MARKER_CLIENT_PHONE);
 				items.add(client.getPhoneNumber());
 				items.add(PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS);
-				items.add(PaymentViewUtils.accountsAsString(
-						accountDao.getAccountsByClientId(client.getId()), ACCOUNTS_DELIMITER));
 
 				if (!usedCustomFields.isEmpty()) {
 					CustomField curr = null;

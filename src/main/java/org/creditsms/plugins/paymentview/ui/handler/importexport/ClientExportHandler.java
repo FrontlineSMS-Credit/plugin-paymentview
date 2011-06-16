@@ -30,8 +30,8 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 
 	private ClientDao clientDao;
 	private CustomFieldDao customFieldDao;
-	private AccountDao accountDao;
 	private CustomValueDao customValueDao;
+	private List<Client> selected;
 	
 
 	public ClientExportHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
@@ -39,13 +39,21 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 		this.clientDao = pluginController.getClientDao();
 		this.customFieldDao = pluginController.getCustomFieldDao();
 		this.customValueDao = pluginController.getCustomValueDao();
-		this.accountDao = pluginController.getAccountDao();
+	}
+	
+	public ClientExportHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, List<Client> selected) {
+		this(ui, pluginController);
+		this.selected = selected;
 	}
 
 	@Override
 	public void doSpecialExport(String dataPath) throws IOException {
 		log.debug("Exporting all clients..");
-		exportClients(this.clientDao.getAllClients(), dataPath);
+		if (selected == null) {
+			exportClients(this.clientDao.getAllClients(), dataPath);
+		}else{
+			exportClients(selected, dataPath);
+		}
 	}
 
 	@Override
@@ -77,7 +85,7 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 		log.debug("Row Format [" + rowFormat + "]");
 
 		PaymentViewCsvExporter.exportClients(new File(filename), clients,
-				customFieldDao, customValueDao, rowFormat, accountDao);
+				customFieldDao, customValueDao, rowFormat);
 		uiController.setStatus(InternationalisationUtils
 				.getI18nString(MESSAGE_EXPORT_TASK_SUCCESSFUL));
 		this.uiController.infoMessage(InternationalisationUtils

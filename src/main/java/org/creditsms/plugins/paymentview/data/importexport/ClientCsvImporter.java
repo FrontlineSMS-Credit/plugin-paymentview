@@ -2,8 +2,7 @@ package org.creditsms.plugins.paymentview.data.importexport;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import net.frontlinesms.csv.CsvImportReport;
 import net.frontlinesms.csv.CsvImporter;
@@ -11,7 +10,9 @@ import net.frontlinesms.csv.CsvParseException;
 import net.frontlinesms.csv.CsvRowFormat;
 
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
-import org.creditsms.plugins.paymentview.data.domain.Account;
+import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.CustomField;
+import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
@@ -28,20 +29,6 @@ public class ClientCsvImporter extends CsvImporter {
 	// > CONSTRUCTORS
 	public ClientCsvImporter(File importFile) throws CsvParseException {
 		super(importFile);
-	}
-
-	private Collection<Account> getAccountsFromString(String strAccounts) {
-		String[] accounts = strAccounts.split(",");
-
-		Collection<Account> set_accounts = new ArrayList<Account>(
-				accounts.length);
-		for (String account : accounts) {
-			if (account.length() == 0)
-				continue;
-			set_accounts.add(new Account(account));
-		}
-
-		return set_accounts;
 	}
 
 	// > IMPORT METHODS
@@ -64,22 +51,17 @@ public class ClientCsvImporter extends CsvImporter {
 			CsvRowFormat rowFormat, CustomFieldDao customFieldDao, CustomValueDao customValueDao) {
 		log.trace("ENTER");
 
-		for (String[] lineValues : this.getRawValues()) {
-			String firstname = rowFormat.getOptionalValue(lineValues,
+		for (String[] lineValue : this.getRawValues()) {
+			String firstname = rowFormat.getOptionalValue(lineValue,
 					PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME);
-			String otherName = rowFormat.getOptionalValue(lineValues,
+			String otherName = rowFormat.getOptionalValue(lineValue,
 					PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME);
-			String phonenumber = rowFormat.getOptionalValue(lineValues,
+			String phonenumber = rowFormat.getOptionalValue(lineValue,
 					PaymentViewCsvUtils.MARKER_CLIENT_PHONE);
-			String accounts = rowFormat.getOptionalValue(lineValues,
-					PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS);
 
-			/*Client c = new Client(firstname, otherName, phonenumber);
-			for (Account a : getAccountsFromString(accounts)) {
-				c.addAccount(a);
-			}
+			Client c = new Client(firstname, otherName, phonenumber);
 			clientDao.saveClient(c);
-			*/
+			
 			
 			//FIXME: Ability to take in custom fields and data.
 			/*
@@ -88,42 +70,19 @@ public class ClientCsvImporter extends CsvImporter {
 			 * 3. Else, pick the custom field to use.
 			 * 4. Import the data into these new fields.
 			 */
-			/*
-			List<CustomField> allCustomFields = customFieldDao
-					.getAllActiveUsedCustomFields();
+			
+			List<CustomField> allCustomFields = customFieldDao.getAllActiveUsedCustomFields();
+			List<CustomValue> allCustomValues = customValueDao .getCustomValuesByClientId(c.getId());
 
 			if (!allCustomFields.isEmpty()) {
 				for (CustomField cf : allCustomFields) {
-					List<CustomValue> cvs = customValueDao
-							.getCustomValuesByClientId(c.getId());
-					CustomValue cv = null;
-
-					for (CustomValue _cv : cvs) {
-						if (_cv.getCustomField().equals(cf)) {
-							cv = _cv;
+					for (CustomValue cv : allCustomValues) {
+						if (cv.getCustomField().equals(cf)) {
+							rowFormat.getOptionalValue(lineValue, cv.getStrValue());
 						}
-
-					}
-					if (cv == null) {
-						cv = new CustomValue(ui.getText(customComponents
-								.get(cf)), cf, c);
-						try {
-							customValueDao.saveCustomValue(cv);
-						} catch (DuplicateKeyException e) {
-							throw new RuntimeException(e);
-						}
-					} else {
-						cv.setStrValue(ui.getText(customComponents.get(cf)));
-
-						try {
-							customValueDao.updateCustomValue(cv);
-						} catch (DuplicateKeyException e) {
-							throw new RuntimeException(e);
-						}
-					}
+					} 
 				}
 			}
-			*/
 
 		}
 

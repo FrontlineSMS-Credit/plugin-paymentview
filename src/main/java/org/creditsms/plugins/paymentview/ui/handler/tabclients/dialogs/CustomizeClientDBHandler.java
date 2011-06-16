@@ -92,9 +92,8 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 
 	public void refreshList() {
 		ui.removeAll(listCustomFields);
-		int count=0;
 		for (CustomField cf : customFieldDao.getAllActiveUsedCustomFields()) {
-			addListItem(cf, ++count);
+			addListItem(cf, ++c);
 		}
 	}
 

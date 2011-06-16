@@ -1,5 +1,8 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabclients;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.UiGeneratorControllerConstants;
@@ -83,8 +86,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	}
 
 	public void editClient() {
-		Object[] selectedClients = this.ui
-				.getSelectedItems(clientsTableComponent);
+		Object[] selectedClients = this.ui.getSelectedItems(clientsTableComponent);
 		for (Object selectedClient : selectedClients) {
 			Client c = (Client) ui.getAttachedObject(selectedClient);
 			ui.add(new EditClientHandler(ui, c, pluginController, this).getDialog());
@@ -92,8 +94,13 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	}
 
 	public void exportClient() {
-		new ClientExportHandler(ui, pluginController)
-				.showWizard();
+		Object[] selectedItems = ui.getSelectedItems(clientsTableComponent);
+		List<Client> attachedClients = new ArrayList<Client>();
+		for(Object selectedItem : selectedItems){
+			attachedClients.add(ui.getAttachedObject(selectedItem, Client.class));
+		}
+
+		new ClientExportHandler(ui, pluginController, attachedClients).showWizard();
 		this.refresh();
 	}
 

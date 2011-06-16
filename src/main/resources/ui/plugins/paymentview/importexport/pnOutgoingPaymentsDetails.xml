@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<panel name="pnInfo" bottom="5" columns="3" gap="5" left="5" right="5" top="5" weightx="1" weighty="1">
-	<checkbox action="columnCheckboxChanged" icon="/icons/user.png"	name="cbPaymentTo" selected="true" text="i18n.plugins.paymentview.common.name" />
-	<checkbox action="columnCheckboxChanged" icon="/icons/user.png" name="cbPhoneNumber" selected="true" text="i18n.common.phone.number" />
-	<checkbox action="columnCheckboxChanged" icon="/icons/money.png" name="cbAmountPaid" selected="true" text="i18n.plugins.paymentview.common.amountpaid" />
-	<checkbox action="columnCheckboxChanged" icon="/icons/time.png" name="cbTimePaid" selected="true" text="i18n.plugins.paymentview.common.timepaid" />
-	<checkbox action="columnCheckboxChanged" icon="/icons/time.png" name="cbNotes" selected="true" text="i18n.common.notes" />
-	<checkbox action="columnCheckboxChanged" icon="/icons/time.png" name="cbConfirmation" selected="true" text="i18n.plugins.paymentview.common.confirmation" />
+<panel  bottom="5" columns="1" gap="5" left="5" right="5" top="5" weightx="1" weighty="1">
+	<panel weightx="1">
+		<label font="11 Bold" text="The import file extension has to be of type CSV (*.csv)"/>
+	</panel>
+	<panel name="pnInfo" columns="3" gap="5" weightx="1" weighty="1">
+		<checkbox action="columnCheckboxChanged" icon="/icons/user.png"	name="cbPaymentTo" selected="true" text="i18n.plugins.paymentview.common.name" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/user.png" name="cbPhoneNumber" selected="true" text="i18n.common.phone.number" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/money.png" name="cbAmountPaid" selected="true" text="i18n.plugins.paymentview.common.amountpaid" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/time.png" name="cbTimePaid" selected="true" text="i18n.plugins.paymentview.common.timepaid" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/time.png" name="cbNotes" selected="true" text="i18n.common.notes" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/time.png" name="cbConfirmation" selected="true" text="i18n.plugins.paymentview.common.confirmation" />
+	</panel>
 </panel>
