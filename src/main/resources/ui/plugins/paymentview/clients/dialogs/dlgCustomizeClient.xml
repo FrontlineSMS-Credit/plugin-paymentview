@@ -6,13 +6,17 @@
 
 	<panel weightx="1" weighty="1" name="parentPnlFields" columns="1" gap="15">
 		<panel name="pnlFields" weightx="1" weighty="1" columns="3" gap="15"/>
-		<panel name="pnlCustomFields" weightx="1" weighty="1" columns="1">
+		<panel name="pnlCustomFields" weightx="1" weighty="1" columns="1" border="true"
+		text="Custom Fields" left="4" right="4" bottom="4" gap="5">
 			<list name="lstCustomFields" weightx="1" weighty="1"/>
+			<panel weightx="1" weighty="1" columns="3">
+				<button icon="/icons/tick.png"  name="btAddField" action="showOtherFieldDialog" text="Add Field" />
+				<panel weightx="1"/>
+				<button icon="/icons/tick.png" name="btAddField" text="Remove Field" />
+			</panel>
 		</panel>
 	</panel>
-	<panel weightx="1" weighty="1"/>		
 	<panel weightx="1">
-		<button icon="/icons/tick.png" action="showOtherFieldDialog" name="btAddField" text="Add Field" />
 		<panel weightx="1"/>
 		<button icon="/icons/cross.png" action="removeDialog" name="btClose" text="Close" />
 	</panel>

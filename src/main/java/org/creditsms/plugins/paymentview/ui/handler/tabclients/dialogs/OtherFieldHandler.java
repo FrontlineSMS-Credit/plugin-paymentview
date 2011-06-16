@@ -32,6 +32,7 @@ public class OtherFieldHandler implements ThinletUiEventHandler {
 		CustomField customField = new CustomField();
 		customField.setReadableName(fieldName);
 		customField.setActive(true);
+		customField.setUsed(true);
 		try {
 			this.customFieldDao.saveCustomField(customField);
 		} catch (DuplicateKeyException e) {
@@ -39,7 +40,6 @@ public class OtherFieldHandler implements ThinletUiEventHandler {
 		}
 
 		this.removeDialog();
-		this.customizeClientDBHandler.refreshChoices();
 		ui.infoMessage("You have succesfully created the field '" + fieldName + "'!");
 	}
 

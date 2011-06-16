@@ -3,6 +3,9 @@ package org.creditsms.plugins.paymentview.ui.handler;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.events.EventObserver;
+import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.Icon;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -22,7 +25,7 @@ import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.springframework.util.StringUtils;
 
 public abstract class BaseClientTable implements PagedComponentItemProvider,
-		ThinletUiEventHandler {
+		ThinletUiEventHandler, EventObserver {
 	protected ComponentPagingHandler clientsTablePager;
 	protected UiGeneratorController ui;
 	protected Object tableClients;
@@ -40,6 +43,8 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 		this.customFieldDao = pluginController.getCustomFieldDao();
 		this.customValueDao = pluginController.getCustomValueDao();
 		this.accountDao = pluginController.getAccountDao();
+		
+		ui.getFrontlineController().getEventBus().registerObserver(this);
 		
 		this.clients = new ArrayList<Client>();		
 		this.init();
@@ -243,5 +248,16 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	public void setClients(List<Client> clients) {
 		this.clients = clients;
 		this.refresh();
+	}
+	
+	public void notify(FrontlineEventNotification notification) {
+		if (!(notification instanceof EntitySavedNotification)) {
+			return;
+		}
+
+		Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
+		if (entity instanceof Client) {
+			this.refresh();
+		}
 	}
 }

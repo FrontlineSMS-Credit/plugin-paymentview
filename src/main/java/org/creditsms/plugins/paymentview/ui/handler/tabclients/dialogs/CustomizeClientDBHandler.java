@@ -6,6 +6,9 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.events.EventObserver;
+import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -16,22 +19,18 @@ import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
-public class CustomizeClientDBHandler implements ThinletUiEventHandler {
+public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObserver {
 	private static final String LST_CUSTOM_FIELDS = "lstCustomFields";
-	private static final String ENTER_NEW_FIELD = "Enter New Field";
-	private static final String COMPONENT_PARENT_PNL_FIELDS = "parentPnlFields";
 	private static final String COMPONENT_PNL_FIELDS = "pnlFields";
 
 	private static final String XML_CUSTOMIZE_CLIENT_DB = "/ui/plugins/paymentview/clients/dialogs/dlgCustomizeClient.xml";
 
 	private int c;
 	private Object compPanelFields;
-	private Object compParentPanelFields;
 	private CustomFieldDao customFieldDao;
 
 	private Object dialogComponent;
 	private UiGeneratorController ui;
-	private Object combobox;
 	private ClientsTabHandler clientsTabHandler;
 	private Object listCustomFields;
 	private PaymentViewPluginController pluginController;
@@ -42,6 +41,8 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		this.ui = pluginController.getUiGeneratorController();
 		this.clientsTabHandler = clientsTabHandler;
 		this.customFieldDao = customFieldDao;
+		
+		ui.getFrontlineController().getEventBus().registerObserver(this);
 
 		init();
 	}
@@ -56,7 +57,6 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 	private void init() {
 		dialogComponent = ui.loadComponentFromFile(XML_CUSTOMIZE_CLIENT_DB, this);
 		compPanelFields = ui.find(dialogComponent, COMPONENT_PNL_FIELDS);
-		compParentPanelFields = ui.find(dialogComponent, COMPONENT_PARENT_PNL_FIELDS);
 		listCustomFields = ui.find(dialogComponent, LST_CUSTOM_FIELDS);
 
 		c = 0;
@@ -65,10 +65,8 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 				addField(PaymentViewUtils.getReadableFieldName(field.getName()));
 			}
 		}
-
-		for (CustomField cf : customFieldDao.getAllActiveUsedCustomFields()) {
-			addListItems(cf.getReadableName());
-		}
+		
+		refreshList();
 	}
 
 	public void addField(String name) {
@@ -83,31 +81,20 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 		ui.add(compPanelFields, txtfield);
 	}
 	
-	private void addListItems(String name) {
-		Object txtfield = ui.createListItem("fld" + name, name);
+	private void addListItem(CustomField cf, int count) {
+		Object txtfield = ui.createListItem("Field "+ count + " - "+ cf.getReadableName(), cf);
 		ui.add(listCustomFields, txtfield);
 	}
 
 	public void refresh() {
-		ui.remove(compPanelFields);
-		int index = ui.getIndex(this.dialogComponent, compParentPanelFields);
-		ui.remove(compParentPanelFields);
-
-		ui.add(compParentPanelFields, compPanelFields);
-		ui.add(this.dialogComponent, compParentPanelFields, index);
+		this.refreshList();
 	}
 
-	public void refreshChoices() {
-		refreshList(this.listCustomFields);
-	}
-
-	public void refreshList(Object listCustomFields) {
+	public void refreshList() {
 		ui.removeAll(listCustomFields);
-
-		for (CustomField cf : customFieldDao.getAllActiveUnusedCustomFields()) {
-			Object item = ui
-					.createComboboxChoice(cf.getReadableName(), cf);
-			ui.add(listCustomFields, item);
+		int count=0;
+		for (CustomField cf : customFieldDao.getAllActiveUsedCustomFields()) {
+			addListItem(cf, ++count);
 		}
 	}
 
@@ -157,5 +144,16 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler {
 
 	public void showOtherFieldDialog() {
 		ui.add(new OtherFieldHandler(pluginController, customFieldDao, this).getDialog());
+	}
+
+	public void notify(FrontlineEventNotification notification) {
+		if (!(notification instanceof EntitySavedNotification)) {
+			return;
+		}
+
+		Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
+		if (entity instanceof CustomField) {
+			this.refresh();
+		}
 	}
 }
