@@ -12,19 +12,24 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	private static final String XML_IMPORT_NEW_PAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/importnewpayments.xml";
 	private AccountDao accountDao;
 	private Object schedulePaymentAuthDialog;
-	private Object selectFromClientsTab;
+	private Object selectFromClientsPanel;
 	private Object sendPaymentAuthDialog;
+	
+	//KIM
+	private static final String TAB_IMPORTNEWPAYMENTS = "tab_importNewOutgoingPayments";
+	private Object importPaymentsTab;
 
-	public ImportNewPaymentsTabHandler(UiGeneratorController ui) {
+	public ImportNewPaymentsTabHandler(UiGeneratorController ui, Object tabOutgoingPayments) {
 		super(ui);
+		importPaymentsTab = ui.find(tabOutgoingPayments, TAB_IMPORTNEWPAYMENTS);//KIM
 		init();
 	}
 
 	@Override
 	protected Object initialiseTab() {
-		selectFromClientsTab = ui.loadComponentFromFile(
-				XML_IMPORT_NEW_PAYMENTS_TAB, this);
-		return selectFromClientsTab;
+		selectFromClientsPanel = ui.loadComponentFromFile(XML_IMPORT_NEW_PAYMENTS_TAB, this);
+		this.ui.add(importPaymentsTab, selectFromClientsPanel);
+		return importPaymentsTab;
 	}
 
 	@Override
@@ -42,7 +47,7 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	}
 
 	public void showSendPaymentAuthDialog() {
-		sendPaymentAuthDialog = new SendPaymentAuthDialogHandler(ui)
+		sendPaymentAuthDialog = new SendPaymentAuthDialogHandler(ui,this)
 				.getDialog();
 		ui.add(sendPaymentAuthDialog);
 	}

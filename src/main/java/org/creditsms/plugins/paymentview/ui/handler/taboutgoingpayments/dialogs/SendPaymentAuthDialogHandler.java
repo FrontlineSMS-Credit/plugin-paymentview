@@ -1,6 +1,11 @@
 package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs;
 
+import java.math.BigDecimal;
+
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
+import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.smslib.SMSLibDeviceException;
 import org.smslib.stk.StkMenu;
 
@@ -13,9 +18,13 @@ public class SendPaymentAuthDialogHandler implements ThinletUiEventHandler {
 	private static final String XML_SEND_PAYMENTAUTH_DIALOG = "/ui/plugins/paymentview/outgoingpayments/dialogs/sendPaymentAuthDialog.xml";
 	private Object dialog;
 	private UiGeneratorController ui;
+	private OutgoingPayment outgoingPayment;
+	private OutgoingPaymentDao outgoingPaymentDao;
 
-	public SendPaymentAuthDialogHandler(final UiGeneratorController ui) {
+	public SendPaymentAuthDialogHandler(final UiGeneratorController ui, PaymentViewPluginController pluginController, OutgoingPayment outgoingPayment) {
 		this.ui = ui;
+		this.outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
+		this.outgoingPayment = outgoingPayment;
 		init();
 	}
 
@@ -35,29 +44,36 @@ public class SendPaymentAuthDialogHandler implements ThinletUiEventHandler {
 	}
 
 	public void sendPayment () throws PaymentServiceException {
-		// check MSISDN, amount available?
+		//TODO check authorisation code
+		//TODO check MSISDN, amount available?
 		
 		// create outgoing payment
-//		try {
-//			final OutgoingPayment payment = new OutgoingPayment();
-//			payment.setAccount(getAccount(message));
-//			payment.setPhoneNumber(getPhoneNumber(message));
-//			payment.setAmountPaid(getAmount(message));
-//			payment.setConfirmationCode(getConfirmationCode(message));
-//			payment.setPaymentTo(getPaymentTo(message));
-//			payment.setTimePaid(getTimePaid(message));
-//			payment.setStatus(OutgoingPayment.Status.CONFIRMED);
-//				
-//			outgoingPaymentDao.saveOutgoingPayment(payment);
-//		} catch (IllegalArgumentException ex) {
-//			log.warn("Message failed to parse; likely incorrect format", ex);
-//			throw new RuntimeException(ex);
-//		} catch (Exception ex) {
-//			log.error("Unexpected exception parsing outgoing payment SMS.", ex);
-//			throw new RuntimeException(ex);
-//		}
+		try {
+
+			System.out.println("msisdn:" + outgoingPayment.getPhoneNumber());
+			System.out.println("amount:" + outgoingPayment.getAmountPaid());
+			System.out.println("confirmationCode:" + outgoingPayment.getConfirmationCode());
+			System.out.println("amount:" + outgoingPayment.getNotes());
+			//save inDB
+			outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
+			//send payment
+			
+			//update DB
+			
+
+			
+		} catch (IllegalArgumentException ex) {
+		//	log.warn("Message failed to parse; likely incorrect format", ex);
+			throw new RuntimeException(ex);
+		} catch (Exception ex) {
+		//	log.error("Unexpected exception parsing outgoing payment SMS.", ex);
+			throw new RuntimeException(ex);
+		}
 		
+		System.out.println("fin");
 		
+		ui.removeDialog(dialog);
+		ui.infoMessage("The outgoing payment has been created and sent");
 		
 		// save outgoing payment into DB
 		// stkRequest to send payment

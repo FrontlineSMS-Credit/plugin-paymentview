@@ -4,28 +4,17 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.ui.handler.BaseClientTable;
-import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.addclient.ReviewHandler;
-import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard.SelectTargetSavingsHandler;
-import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SchedulePaymentAuthDialogHandler;
-import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SendPaymentAuthDialogHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.EditClientHandler;
+import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SendNewPaymentDialogHandler;
 
 public class SelectFromClientsTabHandler extends BaseTabHandler {
-	private static final String XML_SELECT_FROM_CLIENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/selectfromclients.xml";
-	
 	private static final String PNL_CLIENT_TABLE_HOLDER = "pnlClientsTableHolder";
-
-	
-	//KIM
+	private static final String XML_SELECT_FROM_CLIENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/selectfromclients.xml";
 	private static final String TAB_SEND_NEW_OUTGOING_PAYMENTS = "tab_sendOutgoingPayments";
+	
 	private Object sendNewPaymentsTab;
-
-//	private Object currentPanel;
-//	private Object sendNewOutgoingPayments;
-	
-	
-	private Object schedulePaymentAuthDialog;
 	private Object selectFromClientsPanel;
 	private Object sendPaymentAuthDialog;
 
@@ -33,6 +22,7 @@ public class SelectFromClientsTabHandler extends BaseTabHandler {
 	private BaseClientTable clientsTableHandler;
 
 	private PaymentViewPluginController pluginController;
+	private Object clientsTableComponent;
 
 	public SelectFromClientsTabHandler(UiGeneratorController ui, Object tabOutgoingPayments, PaymentViewPluginController pluginController) {
 		super(ui);
@@ -47,15 +37,8 @@ public class SelectFromClientsTabHandler extends BaseTabHandler {
 		selectFromClientsPanel = ui.loadComponentFromFile(XML_SELECT_FROM_CLIENTS_TAB, this);
 		clientTableHolder = ui.find(selectFromClientsPanel, PNL_CLIENT_TABLE_HOLDER);
 		clientsTableHandler = new SelectClientsTableHandler(ui, pluginController);
-		
-//		clientsTab = ui.loadComponentFromFile(XML_CLIENTS_TAB, this);
-//		clientTableHolder = ui.find(clientsTab, PNL_CLIENT_TABLE_HOLDER);
-//		clientTableHandler = new ClientTableHandler(ui, pluginController, this);
-//		clientsTableComponent = clientTableHandler.getClientsTable();
-//		ui.add(clientTableHolder, clientTableHandler.getClientsTablePanel());
+		clientsTableComponent = clientsTableHandler.getClientsTable();
 		ui.add(clientTableHolder, clientsTableHandler.getClientsTablePanel());
-		//return selectFromClientsTab;
-		
 		this.ui.add(sendNewPaymentsTab, selectFromClientsPanel);
 		return sendNewPaymentsTab;
 	}
@@ -65,40 +48,23 @@ public class SelectFromClientsTabHandler extends BaseTabHandler {
 		this.clientsTableHandler.updateClientsList();
 	}
 	
-	public Object next() {
-//		selectFromClientsTab.setCurrentStepPanel(new SendNewPaymentHandler(ui, pluginController, this).getPanelComponent());
-//		
-//		if(parseDateRange()){
-//			readServiceItem();
-//			addClientTabHandler.setCurrentStepPanel(new ReviewHandler(
-//					(UiGeneratorController) ui, this.pluginController, addClientTabHandler, this).getPanelComponent());
-//		}
-		return null;
+
+	public void sendPaymentForClient() {
+		Object[] selectedClients = this.ui.getSelectedItems(clientsTableComponent);
+		Client client = null;
+		if (selectedClients.length >0 ){
+			for (Object selectedClient : selectedClients) {
+				client = (Client) ui.getAttachedObject(selectedClient);
+				System.out.println("client name" + client.getName());
+				sendPaymentAuthDialog = new SendNewPaymentDialogHandler(ui, pluginController, client).getDialog();
+				ui.add(sendPaymentAuthDialog);
+			}
+		} else {
+			ui.infoMessage("Please select a client");
+			this.refresh();
+		}
+
+
 	}
-	
-//	public void setCurrentStepPanel(Object panel) {
-//		if (currentPanel != null)
-//			ui.remove(currentPanel);
-//
-//		ui.add(clientTableHolder, panel);
-//		currentPanel = panel;
-//		SelectFromClientsTabHandler.this.refresh();
-//	}
 
-
-//	public void showSchedulePaymentAuthDialog() {
-//		schedulePaymentAuthDialog = new SchedulePaymentAuthDialogHandler(ui)
-//				.getDialog();
-//		ui.add(schedulePaymentAuthDialog);
-//	}
-//
-//	public void showSendPaymentAuthDialog() {
-//		sendPaymentAuthDialog = new SendPaymentAuthDialogHandler(ui)
-//				.getDialog();
-//		ui.add(sendPaymentAuthDialog);
-//	}
-	
-//	public void selectAll() {
-//		clientsTableHandler.selectAll();
-//	}
 }

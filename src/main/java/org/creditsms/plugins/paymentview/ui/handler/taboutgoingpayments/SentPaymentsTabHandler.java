@@ -27,6 +27,10 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	private static final String COMPONENT_SENT_PAYMENTS_TABLE = "tbl_clients";
 	private static final String COMPONENT_PANEL_SENT_PAYMENTS_TABLE = "pnl_clients";
 	private static final String XML_SENTPAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/sentpayments.xml";
+	
+	//KIM
+	private static final String TAB_SENTPAYMENTS = "tab_sentOutgoingPayments";
+	private Object sentPaymentsTab;
 
 	private AccountDao accountDao;
 	private OutgoingPaymentDao outgoingPaymentDao;
@@ -39,13 +43,14 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	private NumberFormat formatter = new DecimalFormat("#,000.00");
 	SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss a");
 	
-	private Object sentPaymentsTab;
+	private Object sentPaymentsPanel;
 	private String sentPaymentsFilter = "";
 
-	public SentPaymentsTabHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
+	public SentPaymentsTabHandler(UiGeneratorController ui, Object tabOutgoingPayments, PaymentViewPluginController pluginController) {
 		super(ui);
 		accountDao = pluginController.getAccountDao();
 		outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
+		sentPaymentsTab = ui.find(tabOutgoingPayments, TAB_SENTPAYMENTS);//KIM
 		
 		ui.getFrontlineController().getEventBus().registerObserver(this);
 		
@@ -54,12 +59,14 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 
 	private Object getRow(OutgoingPayment o) {
 		Object row = ui.createTableRow();
-		ui.add(row,	ui.createTableCell(o.getPaymentTo()));
+		//TO DO
+	//	ui.add(row,	ui.createTableCell(o.getPaymentTo()));
 		ui.add(row, ui.createTableCell(o.getPhoneNumber()));
 		ui.add(row, ui.createTableCell(formatter.format(o.getAmountPaid())));
 		ui.add(row, ui.createTableCell(df.format(new Date(o.getTimePaid()))));
 		ui.add(row, ui.createTableCell(tf.format(new Date(o.getTimePaid()))));
-		ui.add(row, ui.createTableCell(o.getAccount().getAccountNumber()));
+		//ui.add(row, ui.createTableCell(o.getAccount().getAccountNumber()));
+		ui.add(row, ui.createTableCell(12345));
 		ui.add(row, ui.createTableCell(o.getNotes()));
 		return row;
 	}
@@ -79,14 +86,14 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	 */
 	@Override
 	protected Object initialiseTab() {
-		sentPaymentsTab = ui.loadComponentFromFile(XML_SENTPAYMENTS_TAB, this);
+		sentPaymentsPanel = ui.loadComponentFromFile(XML_SENTPAYMENTS_TAB, this);
 		
-		sentPaymentsTableComponent = ui.find(sentPaymentsTab, COMPONENT_SENT_PAYMENTS_TABLE);
+		sentPaymentsTableComponent = ui.find(sentPaymentsPanel, COMPONENT_SENT_PAYMENTS_TABLE);
 		sentPaymentsTablePager = new ComponentPagingHandler(ui, this, sentPaymentsTableComponent);
-		pnlSentPaymentsTableComponent = ui.find(sentPaymentsTab, COMPONENT_PANEL_SENT_PAYMENTS_TABLE);
+		pnlSentPaymentsTableComponent = ui.find(sentPaymentsPanel, COMPONENT_PANEL_SENT_PAYMENTS_TABLE);
 		
 		this.ui.add(pnlSentPaymentsTableComponent, this.sentPaymentsTablePager.getPanel());
-		
+		this.ui.add(sentPaymentsTab, sentPaymentsPanel);
 		return sentPaymentsTab;
 	}
 

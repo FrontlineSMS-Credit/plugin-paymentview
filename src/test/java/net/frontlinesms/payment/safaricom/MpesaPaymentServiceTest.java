@@ -273,7 +273,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		payment.setConfirmationCode(confirmationCode);
 		payment.setTimePaid(getTimestamp(datetime));
 		payment.setStatus(status);
-		payment.setPaymentTo(payTo);
+		//payment.setPaymentTo(payTo);
 		
 		// then
 		WaitingJob.waitForEvent();
