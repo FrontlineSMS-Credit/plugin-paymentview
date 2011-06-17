@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.data.events.EntityUpdatedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -17,8 +18,10 @@ import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.OutgoingPaymentsExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.OutgoingPaymentsImportHandler;
@@ -34,6 +37,7 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 
 	private AccountDao accountDao;
 	private OutgoingPaymentDao outgoingPaymentDao;
+	private ClientDao clientDao;
 
 	private Object sentPaymentsTableComponent;
 	private ComponentPagingHandler sentPaymentsTablePager;
@@ -46,10 +50,12 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	private Object sentPaymentsPanel;
 	private String sentPaymentsFilter = "";
 
+
 	public SentPaymentsTabHandler(UiGeneratorController ui, Object tabOutgoingPayments, PaymentViewPluginController pluginController) {
 		super(ui);
 		accountDao = pluginController.getAccountDao();
 		outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
+		clientDao = pluginController.getClientDao();
 		sentPaymentsTab = ui.find(tabOutgoingPayments, TAB_SENTPAYMENTS);//KIM
 		
 		ui.getFrontlineController().getEventBus().registerObserver(this);
@@ -57,17 +63,21 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 		init();
 	}
 
-	private Object getRow(OutgoingPayment o) {
+	private Object getRow(OutgoingPayment outgoingPayment) {
 		Object row = ui.createTableRow();
 		//TO DO
 	//	ui.add(row,	ui.createTableCell(o.getPaymentTo()));
-		ui.add(row, ui.createTableCell(o.getPhoneNumber()));
-		ui.add(row, ui.createTableCell(formatter.format(o.getAmountPaid())));
-		ui.add(row, ui.createTableCell(df.format(new Date(o.getTimePaid()))));
-		ui.add(row, ui.createTableCell(tf.format(new Date(o.getTimePaid()))));
-		//ui.add(row, ui.createTableCell(o.getAccount().getAccountNumber()));
-		ui.add(row, ui.createTableCell(12345));
-		ui.add(row, ui.createTableCell(o.getNotes()));
+		Client client = clientDao.getClientByPhoneNumber(outgoingPayment.getPhoneNumber());
+		
+		ui.add(row, ui.createTableCell(client.getName()));
+		ui.add(row, ui.createTableCell(outgoingPayment.getPhoneNumber()));
+		ui.add(row, ui.createTableCell(formatter.format(outgoingPayment.getAmountPaid())));
+		ui.add(row, ui.createTableCell(df.format(new Date(outgoingPayment.getTimePaid()))));
+		ui.add(row, ui.createTableCell(tf.format(new Date(outgoingPayment.getTimePaid()))));
+		ui.add(row, ui.createTableCell(outgoingPayment.getStatus().toString()));
+		ui.add(row, ui.createTableCell(outgoingPayment.getConfirmationCode()));
+		ui.add(row, ui.createTableCell(outgoingPayment.getPaymentId()));
+		ui.add(row, ui.createTableCell(outgoingPayment.getNotes()));
 		return row;
 	}
 
@@ -139,13 +149,19 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	}
 
 	public void notify(FrontlineEventNotification notification) {
-		if (!(notification instanceof EntitySavedNotification)) {
+		if (!(notification instanceof EntitySavedNotification) && !(notification instanceof EntityUpdatedNotification)) {
 			return;
-		}
-
-		Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
-		if (entity instanceof OutgoingPayment) {
-			this.refresh();
+		} else {
+			Object entity;
+			if (notification instanceof EntitySavedNotification){
+				entity = ((EntitySavedNotification) notification).getDatabaseEntity();
+				this.refresh();
+			} else {
+				if (notification instanceof EntityUpdatedNotification){
+					entity = ((EntityUpdatedNotification) notification).getDatabaseEntity();
+					this.refresh();
+				}
+			}
 		}
 	}
 }

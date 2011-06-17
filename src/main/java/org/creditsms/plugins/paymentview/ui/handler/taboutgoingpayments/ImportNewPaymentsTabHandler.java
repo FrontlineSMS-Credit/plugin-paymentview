@@ -47,6 +47,8 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	}
 
 	public void showSendPaymentAuthDialog() {
+		//TODO construct a list of outgoingpayments
+		
 		sendPaymentAuthDialog = new SendPaymentAuthDialogHandler(ui,this)
 				.getDialog();
 		ui.add(sendPaymentAuthDialog);

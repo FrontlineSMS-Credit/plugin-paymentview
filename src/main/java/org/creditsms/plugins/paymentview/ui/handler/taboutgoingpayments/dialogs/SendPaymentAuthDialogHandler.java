@@ -4,6 +4,7 @@ package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.TooManyListenersException;
 
 import net.frontlinesms.payment.PaymentService;
@@ -29,18 +30,19 @@ public class SendPaymentAuthDialogHandler implements ThinletUiEventHandler {
 	private static final String XML_SEND_PAYMENTAUTH_DIALOG = "/ui/plugins/paymentview/outgoingpayments/dialogs/sendPaymentAuthDialog.xml";
 	private Object dialog;
 	private UiGeneratorController ui;
-	private OutgoingPayment outgoingPayment;
+	//private OutgoingPayment outgoingPayment;
+	private List<OutgoingPayment> outgoingPaymentList;
 	private OutgoingPaymentDao outgoingPaymentDao;
 	private ClientDao clientDao;
 	
 	//TODO WARNING this dev is specific to Mpesa!!!
 	private PaymentService paymentService;
 
-	public SendPaymentAuthDialogHandler(final UiGeneratorController ui, PaymentViewPluginController pluginController, OutgoingPayment outgoingPayment, String opMobilePaymentSystem) {
+	public SendPaymentAuthDialogHandler(final UiGeneratorController ui, PaymentViewPluginController pluginController, List<OutgoingPayment> outgoingPaymentList, String opMobilePaymentSystem) {
 		this.ui = ui;
 		this.outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
 		this.clientDao = pluginController.getClientDao();
-		this.outgoingPayment = outgoingPayment;
+		this.outgoingPaymentList = outgoingPaymentList;
 		paymentService = pluginController.getPaymentServices().get(0); //TODO this is non sense - pick up the right paymentService from the list initialised in enterPin.java
 		init();
 
@@ -65,28 +67,30 @@ public class SendPaymentAuthDialogHandler implements ThinletUiEventHandler {
 		//TODO check authorisation code
 		//TODO check MSISDN, amount available?
 		
-		// create outgoing payment
+		// save the outgoing payment list
+		// for the import - maybe the outgoingPaymentList would already have been saved in outgoingPayment table
 		try {
-			
+			if (!outgoingPaymentList.isEmpty()){
+				for (OutgoingPayment outgoingPayment : outgoingPaymentList) {
+					System.out.println("msisdn:" + outgoingPayment.getPhoneNumber());
+					System.out.println("amount:" + outgoingPayment.getAmountPaid());
+					System.out.println("confirmationCode:" + outgoingPayment.getConfirmationCode());
+					System.out.println("notes:" + outgoingPayment.getNotes());
+					//save the outgoing payment in DB
+					outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
 
-			System.out.println("msisdn:" + outgoingPayment.getPhoneNumber());
-			System.out.println("amount:" + outgoingPayment.getAmountPaid());
-			System.out.println("confirmationCode:" + outgoingPayment.getConfirmationCode());
-			System.out.println("notes:" + outgoingPayment.getNotes());
-			//save the outgoing payment in DB
-			outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
+					//send payment
+					Client client = clientDao.getClientByPhoneNumber(outgoingPayment.getPhoneNumber());
+					// TODO ERROR: the paymentService list is initialised in enterPin.java - 
+					// BUT the CService has an atHandler as CATHandler and not as CATHandler_Wavecom_stk
+					//paymentService.makePayment(client, outgoingPayment.getAmountPaid());
+					
+					//update DB
+					outgoingPayment.setStatus(OutgoingPayment.Status.UNCONFIRMED);
+					outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
+				}
+			}
 
-			//send payment
-			Client client = clientDao.getClientByPhoneNumber(outgoingPayment.getPhoneNumber());
-			// TODO ERROR: the paymentService list is initialised in enterPin.java - 
-			// BUT the CService has an atHandler as CATHandler and not as CATHandler_Wavecom_stk
-			paymentService.makePayment(client, outgoingPayment.getAmountPaid());
-			
-			//update DB
-			outgoingPayment.setStatus(OutgoingPayment.Status.UNCONFIRMED);
-			outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
-
-			
 		} catch (IllegalArgumentException ex) {
 		//	log.warn("Message failed to parse; likely incorrect format", ex);
 			throw new RuntimeException(ex);

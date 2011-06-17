@@ -1,6 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -27,6 +28,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 
 //	private AccountDao accountDao;
 	private OutgoingPayment outgoingPayment;
+	private List<OutgoingPayment> outgoingPaymentList;
 	
 	//UI fields
 	private Object fieldOpName;
@@ -56,6 +58,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 		this.pluginController = pluginController;
 //		this.accountDao = pluginController.getAccountDao();
 		this.client = client;
+		this.outgoingPaymentList = new ArrayList<OutgoingPayment>();
 		initialise();
 		refresh();
 	}
@@ -97,12 +100,15 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 				outgoingPayment.setStatus(OutgoingPayment.Status.CREATED);
 				outgoingPayment.setPaymentId(ui.getText(fieldOpPaymentId));
 				outgoingPayment.setConfirmationCode("");
+				
+				outgoingPaymentList.add(outgoingPayment);
 	
 				//TODO the account would have to be filled when specifications are clear!!!!!!!!!!!!!!!1
 				//System.out.println("account:"+accountDao.getAccountsByClientId(client.getId()).get(0).getAccountNumber());
 	
-				sendPaymentAuthDialog = new SendPaymentAuthDialogHandler(ui, pluginController, outgoingPayment, ui.getText(fieldOpMobilePaymentSystem)).getDialog();
+				sendPaymentAuthDialog = new SendPaymentAuthDialogHandler(ui, pluginController, outgoingPaymentList, ui.getText(fieldOpMobilePaymentSystem)).getDialog();
 				ui.add(sendPaymentAuthDialog);
+				ui.remove(dialogComponent);
 			} else {
 				ui.infoMessage("Please set up a mobile payment account in the setting tab.");
 			}
