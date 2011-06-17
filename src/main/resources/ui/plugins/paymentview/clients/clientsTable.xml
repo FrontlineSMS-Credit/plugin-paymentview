@@ -12,7 +12,7 @@
 		<button icon="/icons/search.png" text="i18n.common.search"
 			action="filterClients" />
 	</panel>
-	<table delete="showConfirmationDialog('deleteClient')" colspan="10" selection="multiple"
+	<table perform="editClient" delete="showConfirmationDialog('deleteClient')" colspan="10" selection="multiple"
 		name="tbl_clientList" width="1000" weightx="1" weighty="1" tooltip="Right-click for options">
 		<popupmenu name="menu">
 			<menuitem action="editClient" icon="/icons/edit.png" name="miEditClient"

@@ -1,6 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.addclient;
 
 
+import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.ui.UiGeneratorController;
@@ -11,6 +12,7 @@ import org.creditsms.plugins.paymentview.analytics.TargetCreationProcess;
 import org.creditsms.plugins.paymentview.analytics.TargetPayBillProcess;
 import org.creditsms.plugins.paymentview.analytics.TargetStandardProcess;
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
 
 public class ReviewHandler extends BasePanelHandler {
@@ -103,5 +105,17 @@ public class ReviewHandler extends BasePanelHandler {
 
 	public void createSettings() {
 		previous();
+	}
+
+	public ServiceItem getSelectedServiceItem() {
+		return previousCreateSettingsHandler.getSelectedServiceItem();
+	}
+
+	public Date getStartDate() {
+		return previousCreateSettingsHandler.getStartDate();
+	}
+
+	public Date getEndDate() {
+		return previousCreateSettingsHandler.getEndDate();
 	}
 }

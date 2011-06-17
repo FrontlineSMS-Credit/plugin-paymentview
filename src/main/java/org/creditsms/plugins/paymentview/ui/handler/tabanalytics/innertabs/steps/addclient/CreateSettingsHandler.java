@@ -198,7 +198,6 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 			return;
 		}else{
 			this.addChoices();
-			ui.add(cmbtargets, ui.createComboboxChoice(ENTER_NEW_TARGET, ENTER_NEW_TARGET));
 		}
 	}
 }

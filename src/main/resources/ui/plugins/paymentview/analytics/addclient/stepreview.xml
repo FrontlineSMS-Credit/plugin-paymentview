@@ -21,9 +21,10 @@
 		<panel columns="1" gap="5" right="10" weightx="1" weighty="1">
 			<panel weightx="1" weighty="1" columns="1" gap="5" name="pnlClientTableHolder">			
 			</panel>
-			<label name="toSave" 	text="To Save: " />
-			<label name="startDate" text="Starting On: " />
-			<label name="endDate" 	text="Ending On: " />
+			<label name="clientName" 	text="Client name: " />
+			<label name="toSave" 		text="To save: " />
+			<label name="startDate" 	text="Starting on: " />
+			<label name="endDate" 		text="Ending on: " />
 		</panel>
 	</panel>
 	<panel gap="5" halign="right" weightx="1">
