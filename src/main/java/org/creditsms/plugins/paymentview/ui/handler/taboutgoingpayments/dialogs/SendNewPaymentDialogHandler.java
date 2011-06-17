@@ -75,7 +75,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	protected void refresh(){
 		ui.setText(fieldOpName, this.getClientObj().getName());
 		ui.setText(fieldOpMsisdn, this.getClientObj().getPhoneNumber());
-		ui.setText(fieldOpMobilePaymentSystem, "M-PESA");
+		ui.setText(fieldOpMobilePaymentSystem, "MpesaPersonalService");
 	}
 
 	public void showScheduleNewPaymentsAuthDialog() {
@@ -87,20 +87,25 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 
 	public void showSendNewPaymentsAuthDialog() {
 		try {
-			outgoingPayment = new OutgoingPayment();
-			outgoingPayment.setPhoneNumber(ui.getText(fieldOpMsisdn));
-			outgoingPayment.setAmountPaid(new BigDecimal(ui.getText(fieldOpAmount)));
-			outgoingPayment.setTimePaid(Calendar.getInstance().getTime());
-			outgoingPayment.setNotes(ui.getText(fieldOpNotes));
-			outgoingPayment.setStatus(OutgoingPayment.Status.CREATED);
-			outgoingPayment.setPaymentId(ui.getText(fieldOpPaymentId));
-			outgoingPayment.setConfirmationCode("");
-
-			//TODO the account would have to be filled when specifications are clear!!!!!!!!!!!!!!!1
-			//System.out.println("account:"+accountDao.getAccountsByClientId(client.getId()).get(0).getAccountNumber());
-
-			sendPaymentAuthDialog = new SendPaymentAuthDialogHandler(ui, pluginController, outgoingPayment).getDialog();
-			ui.add(sendPaymentAuthDialog);
+			
+			if (pluginController.getPaymentServices().size()>0){
+				outgoingPayment = new OutgoingPayment();
+				outgoingPayment.setPhoneNumber(ui.getText(fieldOpMsisdn));
+				outgoingPayment.setAmountPaid(new BigDecimal(ui.getText(fieldOpAmount)));
+				outgoingPayment.setTimePaid(Calendar.getInstance().getTime());
+				outgoingPayment.setNotes(ui.getText(fieldOpNotes));
+				outgoingPayment.setStatus(OutgoingPayment.Status.CREATED);
+				outgoingPayment.setPaymentId(ui.getText(fieldOpPaymentId));
+				outgoingPayment.setConfirmationCode("");
+	
+				//TODO the account would have to be filled when specifications are clear!!!!!!!!!!!!!!!1
+				//System.out.println("account:"+accountDao.getAccountsByClientId(client.getId()).get(0).getAccountNumber());
+	
+				sendPaymentAuthDialog = new SendPaymentAuthDialogHandler(ui, pluginController, outgoingPayment, ui.getText(fieldOpMobilePaymentSystem)).getDialog();
+				ui.add(sendPaymentAuthDialog);
+			} else {
+				ui.infoMessage("Please set up a mobile payment account in the setting tab.");
+			}
 		} catch (NumberFormatException ex){
 			ui.infoMessage("Please enter an amount");
 		}

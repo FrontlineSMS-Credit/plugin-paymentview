@@ -1,5 +1,8 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings;
 
+import java.io.IOException;
+import java.util.TooManyListenersException;
+
 import net.frontlinesms.messaging.sms.modem.SmsModem;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -7,6 +10,13 @@ import net.frontlinesms.ui.UiGeneratorController;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.SettingsTabHandler;
+import org.smslib.CService;
+import org.smslib.DebugException;
+import org.smslib.SMSLibDeviceException;
+
+import serial.NoSuchPortException;
+import serial.PortInUseException;
+import serial.UnsupportedCommOperationException;
 
 public class EnterPin extends BaseDialog {
 	private static final String DLG_VERIFICATION_CODE = "dlgVerificationCode";
@@ -42,9 +52,30 @@ public class EnterPin extends BaseDialog {
 				MpesaPaymentService paymentService = previousMobilePaymentService.getPaymentService();
 				paymentService.setPin(pin);
 				paymentService.setSmsService((SmsModem) previousMobilePaymentService.getSmsService());
-				
+				//KIM TO MAKE TEST WORK AT THE MOMENT
+				CService cService = new CService("COM1", 9600, "Wavecom", "Stk", null);
+				try {
+					cService.connect();
+				} catch (PortInUseException e) {
+					e.printStackTrace();
+				} catch (NoSuchPortException e) {
+					e.printStackTrace();
+				} catch (UnsupportedCommOperationException e) {
+					e.printStackTrace();
+				} catch (SMSLibDeviceException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (TooManyListenersException e) {
+					e.printStackTrace();
+				} catch (DebugException e) {
+					e.printStackTrace();
+				}
+
+				paymentService.setCService(cService);
+				//END KIM TO MAKE TEST WORK AT THE MOMENT - to check with Alex
+				//paymentService.setCService(((SmsModem) previousMobilePaymentService.getSmsService()).getCService());	//KIM		
 				paymentService.setPluginController(pluginController);
-				
 				
 				removeDialog();
 				pluginController.showAuthorizationCodeDialog(methodToBeCalled, this);

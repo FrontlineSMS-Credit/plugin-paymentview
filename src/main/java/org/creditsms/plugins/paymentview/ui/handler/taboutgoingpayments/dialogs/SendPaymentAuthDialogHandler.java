@@ -1,8 +1,13 @@
 package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs;
 
+
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.TooManyListenersException;
+
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
-import net.frontlinesms.payment.safaricom.MpesaPersonalService;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -11,8 +16,13 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
+import org.smslib.CService;
+import org.smslib.DebugException;
+import org.smslib.SMSLibDeviceException;
 
-import static org.mockito.Mockito.mock;
+import serial.NoSuchPortException;
+import serial.PortInUseException;
+import serial.UnsupportedCommOperationException;
 
 public class SendPaymentAuthDialogHandler implements ThinletUiEventHandler {
 
@@ -26,15 +36,14 @@ public class SendPaymentAuthDialogHandler implements ThinletUiEventHandler {
 	//TODO WARNING this dev is specific to Mpesa!!!
 	private PaymentService paymentService;
 
-	public SendPaymentAuthDialogHandler(final UiGeneratorController ui, PaymentViewPluginController pluginController, OutgoingPayment outgoingPayment) {
+	public SendPaymentAuthDialogHandler(final UiGeneratorController ui, PaymentViewPluginController pluginController, OutgoingPayment outgoingPayment, String opMobilePaymentSystem) {
 		this.ui = ui;
 		this.outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
 		this.clientDao = pluginController.getClientDao();
 		this.outgoingPayment = outgoingPayment;
-		
-		paymentService = mock(MpesaPersonalService.class);
-		
+		paymentService = pluginController.getPaymentServices().get(0); //TODO this is non sense - pick up the right paymentService from the list initialised in enterPin.java
 		init();
+
 	}
 
 	public Object getDialog() {
@@ -58,6 +67,7 @@ public class SendPaymentAuthDialogHandler implements ThinletUiEventHandler {
 		
 		// create outgoing payment
 		try {
+			
 
 			System.out.println("msisdn:" + outgoingPayment.getPhoneNumber());
 			System.out.println("amount:" + outgoingPayment.getAmountPaid());
@@ -65,11 +75,11 @@ public class SendPaymentAuthDialogHandler implements ThinletUiEventHandler {
 			System.out.println("notes:" + outgoingPayment.getNotes());
 			//save the outgoing payment in DB
 			outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
-			
-			//TODO this dev is specific to Mpesa
 
 			//send payment
 			Client client = clientDao.getClientByPhoneNumber(outgoingPayment.getPhoneNumber());
+			// TODO ERROR: the paymentService list is initialised in enterPin.java - 
+			// BUT the CService has an atHandler as CATHandler and not as CATHandler_Wavecom_stk
 			paymentService.makePayment(client, outgoingPayment.getAmountPaid());
 			
 			//update DB
