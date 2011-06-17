@@ -60,14 +60,10 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 					PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER);
 			String amountPaid = rowFormat.getOptionalValue(lineValues,
 					PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID);
-			String timePaid = rowFormat.getOptionalValue(lineValues,
-					PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID);
 			String account = rowFormat.getOptionalValue(lineValues,
 					PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT);
 			String notes = rowFormat.getOptionalValue(lineValues,
 					PaymentViewCsvUtils.MARKER_OUTGOING_NOTES);
-			String status = rowFormat.getOptionalValue(lineValues,
-					PaymentViewCsvUtils.MARKER_OUTGOING_CONFIRMATION);
 
 			Account acc;
 			acc = new Account(account);
@@ -79,9 +75,7 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 			}
 
 			OutgoingPayment outgoingPayment = new OutgoingPayment(phoneNumber,
-					new BigDecimal(amountPaid), new Date(
-							Long.parseLong(timePaid)), acc, notes,
-					Status.getStatusFromString(status));
+					new BigDecimal(amountPaid), acc, notes);
 			outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
 
 		}

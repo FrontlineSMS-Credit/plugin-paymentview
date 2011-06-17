@@ -124,6 +124,11 @@ public class OutgoingPayment {
 				status);
 	}
 
+	public OutgoingPayment(String phoneNumber, BigDecimal amountPaid, 
+			Account account, String notes) {
+		this(phoneNumber, amountPaid, null, account, notes,null);
+	}
+	
 	public OutgoingPayment(String phoneNumber, BigDecimal amountPaid,
 			long timePaid, Account account, String notes, Status status) {
 		

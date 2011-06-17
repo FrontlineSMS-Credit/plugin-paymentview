@@ -30,7 +30,7 @@ public class OutgoingPaymentsExportHandler extends
 	private static final String COMPONENT_CB_TIME_PAID = "cbTimePaid";
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_EXPORTING_SELECTED_CONTACTS = "plugins.paymentview.message.exporting.selected.client";
-	private static final String UI_FILE_OPTIONS_PANEL_OUTGOING_PAYMENT = "/ui/plugins/paymentview/importexport/pnOutgoingPaymentsDetails.xml";
+	private static final String UI_FILE_OPTIONS_PANEL_OUTGOING_PAYMENT = "/ui/plugins/paymentview/importexport/pnExportOutgoingPaymentsDetails.xml";
 
 	private OutgoingPaymentDao outgoingPaymentDao;
 

@@ -26,9 +26,6 @@ public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
 	private static final String COMPONENT_CB_OUTGOING_CONFIRMATION = "cbConfirmation";
 	private static final String COMPONENT_CB_OUTGOING_NOTES = "cbNotes";
 	private static final String COMPONENT_CB_PHONE_NUMBER = "cbPhoneNumber";
-	private static final String COMPONENT_CB_TIME_PAID = "cbTimePaid";
-	/** i18n Text Key: "Active" */
-	private static final String I18N_COMMON_ACTIVE = "common.active";
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_IMPORTING_SELECTED_CLIENTS = "Import Clients";
 	private static final String UI_FILE_OPTIONS_PANEL_CONTACT = "/ui/plugins/paymentview/importexport/pnOutgoingPaymentsDetails.xml";
@@ -75,13 +72,7 @@ public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
 		for (Object checkbox : getCheckboxes()) {
 			if (this.uiController.isSelected(checkbox)) {
 				String attributeName = this.uiController.getText(checkbox);
-				if (this.uiController.getName(checkbox).equals(
-						COMPONENT_CB_STATUS)) {
-					attributeName = InternationalisationUtils
-							.getI18nString(I18N_COMMON_ACTIVE);
-				}
-				this.uiController.add(header, this.uiController.createColumn(
-						attributeName, attributeName));//
+				this.uiController.add(header, this.uiController.createColumn(attributeName, attributeName));
 				++columnCount;
 			}
 		}
@@ -137,8 +128,6 @@ public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
 				COMPONENT_CB_ACCOUNT);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
 				COMPONENT_CB_AMOUNT_PAID);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,
-				COMPONENT_CB_TIME_PAID);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_OUTGOING_NOTES,
 				COMPONENT_CB_OUTGOING_NOTES);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_OUTGOING_CONFIRMATION,
