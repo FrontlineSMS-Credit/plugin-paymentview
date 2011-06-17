@@ -11,7 +11,7 @@
 	<combobox columns="50" name="cmbSelectPaymentService" colspan="2" text="Select" editable ="false"/>
 
 	<panel colspan="3" weightx="1">
-		<button icon="/icons/keywords.png" text="Advanced"
+		<button icon="/icons/cross.png" text="Cancel"
 			action="removeDialog" />
 		<panel weightx="1" />
 		<button icon="/icons/right.png" text="Next"

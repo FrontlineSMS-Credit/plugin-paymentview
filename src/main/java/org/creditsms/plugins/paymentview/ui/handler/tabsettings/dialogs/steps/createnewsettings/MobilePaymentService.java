@@ -55,22 +55,26 @@ public class MobilePaymentService extends BaseDialog {
 	}
 
 	public void next(Object cmbSelectPaymentService, Object cmbDevices) {
-		int selectedIndex = ui.getSelectedIndex(cmbSelectPaymentService);
-		if (selectedIndex < 0){
-			ui.alert("Please Select a Payment Service to Use.");
+		int paymentServiceSelectedIndex = ui.getSelectedIndex(cmbSelectPaymentService);
+		int devicesSelectedIndex = ui.getSelectedIndex(cmbDevices);
+		
+		if (paymentServiceSelectedIndex < 0){
+			ui.alert("Please Select a Payment Service to Use!");
+		}else if (devicesSelectedIndex < 0){
+			ui.alert("Please select a device!");
 		}else{
-			smsService = ui.getAttachedObject(ui.getItem(cmbDevices, ui.getSelectedIndex(cmbDevices)), SmsService.class);
+			smsService = ui.getAttachedObject(ui.getItem(cmbDevices, devicesSelectedIndex), SmsService.class);
 			if(smsService == null){
-				throw new RuntimeException("No Device Selected.");
+				ui.alert("No Device Found!");
 			}
-			paymentService = ui.getAttachedObject(ui.getItem(cmbSelectPaymentService, selectedIndex), MpesaPaymentService.class);
+			paymentService = ui.getAttachedObject(ui.getItem(cmbSelectPaymentService, paymentServiceSelectedIndex), MpesaPaymentService.class);
 			if (paymentService != null) {
 				EnterPin accountType = new EnterPin(ui, pluginController, this);
 				accountType.showDialog();
 				cleanUp();
 				removeDialog();
 			}else{
-				throw new RuntimeException("Null Payment Service.");
+				ui.alert("Null Payment Service!");
 			}
 		}
 	}
