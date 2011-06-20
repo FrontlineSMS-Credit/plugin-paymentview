@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
@@ -29,6 +31,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 //	private AccountDao accountDao;
 	private OutgoingPayment outgoingPayment;
 	private List<OutgoingPayment> outgoingPaymentList;
+	private PaymentService paymentService;
 	
 	//UI fields
 	private Object fieldOpName;
@@ -89,32 +92,53 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	}
 
 	public void showSendNewPaymentsAuthDialog() {
-		try {
+
+		if (pluginController.getPaymentServices().size()>0){
 			
-			if (pluginController.getPaymentServices().size()>0){
-				outgoingPayment = new OutgoingPayment();
-				outgoingPayment.setPhoneNumber(ui.getText(fieldOpMsisdn));
-				outgoingPayment.setAmountPaid(new BigDecimal(ui.getText(fieldOpAmount)));
-				outgoingPayment.setTimePaid(Calendar.getInstance().getTime());
-				outgoingPayment.setNotes(ui.getText(fieldOpNotes));
-				outgoingPayment.setStatus(OutgoingPayment.Status.CREATED);
-				outgoingPayment.setPaymentId(ui.getText(fieldOpPaymentId));
-				outgoingPayment.setConfirmationCode("");
-				
-				outgoingPaymentList.add(outgoingPayment);
-	
-				//TODO the account would have to be filled when specifications are clear!!!!!!!!!!!!!!!1
-				//System.out.println("account:"+accountDao.getAccountsByClientId(client.getId()).get(0).getAccountNumber());
-	
-				sendPaymentAuthDialog = new SendPaymentAuthDialogHandler(ui, pluginController, outgoingPaymentList, ui.getText(fieldOpMobilePaymentSystem)).getDialog();
-				ui.add(sendPaymentAuthDialog);
-				ui.remove(dialogComponent);
+			// get the correct payment service in the paymentServices list
+			if (!pluginController.getPaymentServices().isEmpty()){
+				int itemPaymentServices=0;
+				boolean flag = false;
+				//to pick up the right paymentService from the list initialised in enterPin.java
+				while(!flag && itemPaymentServices<pluginController.getPaymentServices().size()){
+					opMobilePaymentSystem = ui.getText(fieldOpMobilePaymentSystem);
+					flag = pluginController.getPaymentServices().get(itemPaymentServices).getClass().toString().contains(opMobilePaymentSystem);
+					if (flag){
+						paymentService = pluginController.getPaymentServices().get(itemPaymentServices); 
+					}
+					itemPaymentServices++;
+				}
+				// error message for paymentService
+				if (!flag){
+					ui.infoMessage("The payment service "+opMobilePaymentSystem+ " has not been configured in the setting tab.");
+				} else {
+					try {
+						outgoingPayment = new OutgoingPayment();
+						outgoingPayment.setPhoneNumber(ui.getText(fieldOpMsisdn));
+						outgoingPayment.setAmountPaid(new BigDecimal(ui.getText(fieldOpAmount)));
+						outgoingPayment.setTimePaid(Calendar.getInstance().getTime());
+						outgoingPayment.setNotes(ui.getText(fieldOpNotes));
+						outgoingPayment.setStatus(OutgoingPayment.Status.CREATED);
+						outgoingPayment.setPaymentId(ui.getText(fieldOpPaymentId));
+						outgoingPayment.setConfirmationCode("");
+						
+						outgoingPaymentList.add(outgoingPayment);
+			
+						//TODO the account would have to be filled when specifications are clear!!!!!!!!!!!!!!!1
+						//System.out.println("account:"+accountDao.getAccountsByClientId(client.getId()).get(0).getAccountNumber());
+			
+						sendPaymentAuthDialog = new SendPaymentAuthDialogHandler(ui, pluginController, outgoingPaymentList, paymentService).getDialog();
+						ui.add(sendPaymentAuthDialog);
+						ui.remove(dialogComponent);
+					} catch (NumberFormatException ex){
+						ui.infoMessage("Please enter an amount");
+					}
+				}
 			} else {
 				ui.infoMessage("Please set up a mobile payment account in the setting tab.");
 			}
-		} catch (NumberFormatException ex){
-			ui.infoMessage("Please enter an amount");
 		}
+
 	}
 	
 	public OutgoingPayment getOutgoingPayment() {

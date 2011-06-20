@@ -38,12 +38,12 @@ public class SendPaymentAuthDialogHandler implements ThinletUiEventHandler {
 	//TODO WARNING this dev is specific to Mpesa!!!
 	private PaymentService paymentService;
 
-	public SendPaymentAuthDialogHandler(final UiGeneratorController ui, PaymentViewPluginController pluginController, List<OutgoingPayment> outgoingPaymentList, String opMobilePaymentSystem) {
+	public SendPaymentAuthDialogHandler(final UiGeneratorController ui, PaymentViewPluginController pluginController, List<OutgoingPayment> outgoingPaymentList, PaymentService paymentService) {
 		this.ui = ui;
 		this.outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
 		this.clientDao = pluginController.getClientDao();
 		this.outgoingPaymentList = outgoingPaymentList;
-		paymentService = pluginController.getPaymentServices().get(0); //TODO this is non sense - pick up the right paymentService from the list initialised in enterPin.java
+		this.paymentService = paymentService;		
 		init();
 
 	}
@@ -68,7 +68,6 @@ public class SendPaymentAuthDialogHandler implements ThinletUiEventHandler {
 		//TODO check MSISDN, amount available?
 		
 		// save the outgoing payment list
-		// for the import - maybe the outgoingPaymentList would already have been saved in outgoingPayment table
 		try {
 			if (!outgoingPaymentList.isEmpty()){
 				for (OutgoingPayment outgoingPayment : outgoingPaymentList) {
