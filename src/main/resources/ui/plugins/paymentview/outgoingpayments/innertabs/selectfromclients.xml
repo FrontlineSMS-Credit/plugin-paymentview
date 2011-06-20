@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tab name="tab_selectFromClients"
-	text="i18n.plugins.paymentview.tab.outgoingpayments.selectfromclients.text">
+<!-- tab name="tab_selectFromClients"
+	text="i18n.plugins.paymentview.tab.outgoingpayments.selectfromclients.text" -->
 	<panel columns="1" gap="10" weightx="1" weighty="1">
 		<panel columns="1" gap="5" left="5" right="5" top="5" weightx="1"
 			weighty="1" name="pnlClientsTableHolder">
@@ -9,12 +9,9 @@
 					text="i18n.plugins.paymentview.tab.outgoingpayments.selectfromclients.title" />
 			</panel>
 		</panel>
-		<panel gap="5" left="5" right="5" bottom="5" halign="right"
-			weightx="1">
-			<button icon="/icons/recipient_number.png" action="showSendPaymentAuthDialog"
-				name="btn_sendPaymentToSelection" text="i18n.plugins.paymentview.action.sendpaymentnow" />
-			<button icon="/icons/time.png" name="btn_schedulePaymentToSelection"
-				action="showSchedulePaymentAuthDialog" text="i18n.plugins.paymentview.action.schedulepayment" />
+		<panel halign="right" weightx="1">
+			<button icon="/icons/right.png" action="sendPaymentForClient" name="btnNext"
+				text="Send New Payment" />
 		</panel>
 	</panel>
-</tab>
+<!--/tab  -->

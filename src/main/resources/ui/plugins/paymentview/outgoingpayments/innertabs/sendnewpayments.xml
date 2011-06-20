@@ -18,7 +18,7 @@
 					text="i18n.plugins.paymentview.common.phonenumber" />
 				<textfield name="txt_Phone" colspan="2" columns="30" />
 
-				<label icon="/icons/phone.png" name="lbl_Name"
+				<label icon="/icons/phone.png" name="lbl_Verify_Phone"
 					text="i18n.plugins.paymentview.common.phonenumber.verify" />
 				<textfield name="txt_verifyPhoneNumber" colspan="2"
 					columns="30" />

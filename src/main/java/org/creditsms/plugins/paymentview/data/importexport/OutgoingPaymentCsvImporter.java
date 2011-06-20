@@ -78,10 +78,11 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 				e.printStackTrace();
 			}
 
+//TODO: last arguemtn --> paymetnID
 			OutgoingPayment outgoingPayment = new OutgoingPayment(phoneNumber,
 					new BigDecimal(amountPaid), new Date(
 							Long.parseLong(timePaid)), acc, notes,
-					Status.getStatusFromString(status));
+					Status.getStatusFromString(status), "");
 			outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
 
 		}

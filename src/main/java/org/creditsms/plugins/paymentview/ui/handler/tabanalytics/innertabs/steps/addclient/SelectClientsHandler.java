@@ -8,7 +8,6 @@ import net.frontlinesms.ui.handler.BasePanelHandler;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.SelectClientsTableHandler;
 
 public class SelectClientsHandler extends BasePanelHandler {
 	private static final String PNL_CLIENTS_TABLE_HOLDER = "pnlClientsTableHolder";

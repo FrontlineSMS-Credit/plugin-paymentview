@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name="tab_outgoingPayments" text="i18n.plugins.paymentview.tab.outgoingpayments.text" icon="/icons/user_sender.png">
-	<tabbedpane name="tabbedPaneMain" placement="left" weightx="1" weighty="1"/>
+	<tabbedpane name="tabbedPaneMain" placement="left" >
+		<tab name="tab_sentOutgoingPayments" text="i18n.plugins.paymentview.tab.outgoingpayments.sentpayments.text"/>			
+		<tab name="tab_importNewOutgoingPayments" text="Import New Payments"/>
+		<tab name="tab_sendOutgoingPayments" text="i18n.plugins.paymentview.tab.outgoingpayments.selectfromclients.text"/>
+	</tabbedpane>
 </tab>

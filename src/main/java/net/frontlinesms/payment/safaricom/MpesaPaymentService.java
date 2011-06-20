@@ -1,5 +1,6 @@
 package net.frontlinesms.payment.safaricom;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
@@ -23,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.domain.Account;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
@@ -76,10 +78,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	public void checkBalance() throws PaymentServiceException {
 		try {
 			StkMenu mPesaMenu = getMpesaMenu();
-			StkMenu myAccountMenu = (StkMenu) cService.stkRequest(mPesaMenu
-					.getRequest("My account"));
-			StkResponse getBalanceResponse = cService.stkRequest(myAccountMenu
-					.getRequest("Show balance"));
+			StkMenu myAccountMenu = (StkMenu) cService.stkRequest(mPesaMenu.getRequest("My account"));
+			StkResponse getBalanceResponse = cService.stkRequest(myAccountMenu.getRequest("Show balance"));
 			assert getBalanceResponse instanceof StkInputRequiremnent;
 			StkInputRequiremnent pinRequired = (StkInputRequiremnent) getBalanceResponse;
 			assert pinRequired.getText().contains("Enter PIN");
@@ -88,24 +88,44 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			// TODO wait for response...
 		} catch (SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
+		} catch (IOException e) {
+			throw new PaymentServiceException(e);
 		}
 	}
 
 	private StkMenu getMpesaMenu() throws PaymentServiceException {
+		System.out.println("KIMMMMMMMMMMMMMMMM IN getMpesaMenu");
+		
 		try {
-			StkMenu rootMenu = (StkMenu) cService.stkRequest(StkRequest.getRootMenu());
-			return (StkMenu) cService.stkRequest(rootMenu.getRequest("M-PESA"));
+			StkResponse stkResponse = cService.stkRequest(StkRequest.GET_ROOT_MENU);
+			StkMenu rootMenu = null;
+			
+			if (stkResponse instanceof StkMenu) {
+				rootMenu = (StkMenu) stkResponse;
+			}else{
+				throw new PaymentServiceException("StkResponse Error Returned.");
+			}
+			
+			return  (StkMenu)cService.stkRequest(rootMenu.getRequest("M-PESA"));
 		} catch (SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
+		} catch (IOException e) {
+			throw new PaymentServiceException(e);
 		}
 	}
 
-	public void makePayment(Account account, BigDecimal amount)
+//	public void makePayment(Account account, BigDecimal amount)
+	public void makePayment(Client client, BigDecimal amount) //KIM
 			throws PaymentServiceException {
+		System.out.println("KIMMMMMMMMMMMMMMMMM makepayment before getMpesaMenu");
 		try {
+			
+			
 			StkMenu mPesaMenu = getMpesaMenu();
+			System.out.println("KIMMMMMMMMMMMMMMMMM makepayment after getMpesaMenu");
 			StkResponse sendMoneyResponse = cService.stkRequest(mPesaMenu.getRequest("Send money"));
-			String phoneNumber = account.getClient().getPhoneNumber();
+			//String phoneNumber = account.getClient().getPhoneNumber();
+			String phoneNumber = client.getPhoneNumber();
 
 			StkRequest phoneNumberRequest = ((StkInputRequiremnent) sendMoneyResponse).getRequest();
 			StkResponse phoneNumberResponse = cService.stkRequest(phoneNumberRequest, phoneNumber);
@@ -117,6 +137,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			cService.stkRequest(pinRequest, this.pin);
 		} catch (SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
+		} catch (IOException e) {
+			throw new PaymentServiceException(e);
 		}
 	}
 
