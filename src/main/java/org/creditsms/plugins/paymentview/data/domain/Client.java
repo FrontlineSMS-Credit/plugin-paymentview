@@ -161,7 +161,7 @@ public class Client {
 	}
 
 	// > Helper Methods
-	public String getName() {
+	public String getFullName() {
 		return "" + this.firstName + " " + this.otherName;
 	}
 	

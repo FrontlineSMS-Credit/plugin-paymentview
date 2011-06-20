@@ -48,7 +48,7 @@ public class ReviewClientTableHandler extends BaseClientTable{
 			Object selectedItem = ui.getSelectedItem(this.tableClients);
 			Client attachedClient = ui.getAttachedObject(selectedItem, Client.class);
 			
-			ui.setText(ui.find(LBL_CLIENT_NAME), NAME + attachedClient.getName());
+			ui.setText(ui.find(LBL_CLIENT_NAME), NAME + attachedClient.getFullName());
 			ui.setText(ui.find(LBL_TO_SAVE) , TO_SAVE + reviewHandler.getSelectedServiceItem().getAmount().toString());
 			ui.setText(ui.find(LBL_START_DATE) , STARTING_ON + sdf.format(reviewHandler.getStartDate()));
 			ui.setText(ui.find(LBL_END_DATE) , ENDING_ON + sdf.format(reviewHandler.getEndDate()));

@@ -103,7 +103,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 				
 				List<Client> temp = new ArrayList<Client>(); 
 				for (Client c : subList) {
-					if (c.getName().equalsIgnoreCase(filter)) {
+					if (c.getFullName().equalsIgnoreCase(filter)) {
 						temp.add(c);
 					}
 				}

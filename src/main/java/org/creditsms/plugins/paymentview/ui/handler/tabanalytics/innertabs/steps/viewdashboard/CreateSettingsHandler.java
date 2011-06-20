@@ -71,7 +71,7 @@ public class CreateSettingsHandler extends BasePanelHandler {
 		for(Target target : targetLst){
 			
 			Object row = ui.createTableRow(client);		
-			Object name = ui.createTableCell(client.getName());
+			Object name = ui.createTableCell(client.getFullName());
 			
 			Object amountSaved = ui.createTableCell(targetAnalytics.getAmountSaved(target.getId()).toString());
 			Object daysRemaining = ui.createTableCell(targetAnalytics.getDaysRemaining(target.getId()).toString());

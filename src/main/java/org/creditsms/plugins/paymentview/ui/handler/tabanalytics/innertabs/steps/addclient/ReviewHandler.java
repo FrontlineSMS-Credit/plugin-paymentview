@@ -58,10 +58,10 @@ public class ReviewHandler extends BasePanelHandler {
 				
 				if(targetCreationProcess.canCreateTarget()){
 					targetCreationProcess.createTarget();
-					ui.alert("New target created for client "+client.getFirstName()+" "+client.getName()+".");
+					ui.alert("New target created for client " + client.getFullName()+".");
 				}else{
-					ui.alert("The client "+client.getFirstName()+" "+client.getName()
-							+" already has a standart payment active target.");
+					ui.alert("The client "+client.getFullName()
+							+" already has an active standart payment target.");
 				}
 			}else if(PAYMENT_PROCESS.equals("PayBillPaymentService")){
 				TargetCreationProcess targetCreationProcess = new TargetPayBillProcess(
@@ -69,7 +69,7 @@ public class ReviewHandler extends BasePanelHandler {
 						previousCreateSettingsHandler.getEndDate(), 
 						previousCreateSettingsHandler.getSelectedServiceItem(), pluginController);
 					targetCreationProcess.createTarget();
-					ui.alert("New target created for client "+client.getFirstName()+" "+client.getName()+".");
+					ui.alert("New target created for client "+ client.getFullName()+ ".");
 			}
 		}
 	}
