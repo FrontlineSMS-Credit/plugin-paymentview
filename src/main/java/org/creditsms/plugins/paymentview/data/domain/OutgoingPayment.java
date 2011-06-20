@@ -14,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.IndexColumn;
+
 import net.frontlinesms.data.EntityField;
 
 /**
@@ -25,16 +27,19 @@ import net.frontlinesms.data.EntityField;
 @Table(name = OutgoingPayment.TABLE_NAME)
 public class OutgoingPayment {
 	public static final String TABLE_NAME = "Outgoingpayment";
+	public static final String FIELD_ID = "id";
 	public static final String FIELD_TIME_PAID = "timePaid";
-	public static final String FIELD_PAYMENT_TO = "paymentTo";
+	public static final String FIELD_TIME_CONFIRMED = "timeConfirmed";
 	public static final String FIELD_PHONE_NUMBER = "phoneNumber";
 	public static final String FIELD_AMOUNT_PAID = "amountPaid";
 	public static final String FIELD_CONFIRMATION_CODE = "confirmationCode";
 	public static final String FIELD_NOTES = "notes";
+	public static final String FIELD_PAYMENT_ID = "paymentId";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", nullable = false, unique = true)
+	@IndexColumn(name = FIELD_ID)
+	@Column(name = FIELD_ID, nullable = false, unique = true)
 	private long id;
 
 	@Column(name = FIELD_AMOUNT_PAID, nullable = false, unique = false)
@@ -49,22 +54,26 @@ public class OutgoingPayment {
 	@Column(name = FIELD_NOTES, nullable = true, unique = false)
 	private String notes;
 
+	@Column(name = FIELD_PAYMENT_ID, nullable = true, unique = false)
+	private String paymentId;	
+
 	@Column(name = FIELD_PHONE_NUMBER, nullable = false, unique = false)
 	private String phoneNumber;
-	
-	@Column(name = FIELD_PAYMENT_TO, nullable = true)
-	private String paymentTo;
 
 	@Column(name = FIELD_TIME_PAID, nullable = false, unique = false)
-	private long timePaid;
+	private Long timePaid;
 	
+	@Column(name = FIELD_TIME_CONFIRMED, nullable = true, unique = false)
+	private Long timeConfirmed;
+
 	public enum Field implements EntityField<OutgoingPayment> {
 		AMOUNT_PAID(FIELD_AMOUNT_PAID),
 		CONFIRMATION_CODE(FIELD_CONFIRMATION_CODE),
-		PAYMENT_TO(FIELD_PAYMENT_TO),
 		PHONE_NUMBER(FIELD_PHONE_NUMBER),
 		TIME_PAID(FIELD_TIME_PAID),
-		NOTES(FIELD_NOTES);
+		TIME_CONFIRMED(FIELD_TIME_CONFIRMED),
+		NOTES(FIELD_NOTES),
+		PAYMENT_ID(FIELD_PAYMENT_ID);
 		
 		/** name of a field */
 		private final String fieldName;
@@ -78,18 +87,17 @@ public class OutgoingPayment {
 	}
 
 	@ManyToOne
-	@JoinColumn(name = "accountId", nullable = true)
-	private Account account;
+	@JoinColumn(name = "accountId", nullable = true)//TBC - outgoing payment only for standard one(not for paybill -> so only one account is set per user)
+	private Account account;//TBC
 
 	/** Empty constructor required for hibernate. */
 	public OutgoingPayment() {
 	}
 
 	public static enum Status {
-		UNSENT("Unsent","/icons/sms_receive.png"),
-		SENT("Sent", "/icons/sms_send.png"),
-		ERROR("Error", "/icons/error.png"),
-		CONFIRMED("Confirmed", "/icons/tick.png");
+		CREATED("Created","/icons/sms_created.png"),
+		UNCONFIRMED("Unconfirmed", "/icons/sms_unconfirmed.png"),
+		CONFIRMED("Confirmed", "/icons/sms_confirmed.png");
 
 		private String status;
 		private String icon;
@@ -119,9 +127,9 @@ public class OutgoingPayment {
 	}
 
 	public OutgoingPayment(String phoneNumber, BigDecimal amountPaid,
-			Date timePaid, Account account, String notes, Status status) {
+			Date timePaid, Account account, String notes, Status status, String paymentId) {
 		this(phoneNumber, amountPaid, timePaid.getTime(), account, notes,
-				status);
+				status, paymentId);
 	}
 
 	public OutgoingPayment(String phoneNumber, BigDecimal amountPaid, 
@@ -130,15 +138,19 @@ public class OutgoingPayment {
 	}
 	
 	public OutgoingPayment(String phoneNumber, BigDecimal amountPaid,
-			long timePaid, Account account, String notes, Status status) {
+			long timePaid, Account account, String notes, Status status, String paymentId) {
 		
 		this.phoneNumber = phoneNumber;
 		this.amountPaid = amountPaid;
 		this.timePaid = timePaid;
+		this.timeConfirmed = null;
 		this.account = account;
 		this.notes = notes;
 		this.status = status;
+		this.paymentId = paymentId;
 	}
+
+
 
 	public Account getAccount() {
 		return account;
@@ -203,19 +215,21 @@ public class OutgoingPayment {
 	public void setStatus(Status status) {
 		this.status = status;
 	}
-
-	/**
-	 * @param paymentTo the paymentTo to set
-	 */
-	public void setPaymentTo(String paymentTo) {
-		this.paymentTo = paymentTo;
+	
+	public Long getTimeConfirmed() {
+		return timeConfirmed;
 	}
 
-	/**
-	 * @return the paymentTo
-	 */
-	public String getPaymentTo() {
-		return paymentTo;
+	public void setTimeConfirmed(Long timeConfirmed) {
+		this.timeConfirmed = timeConfirmed;
+	}
+	
+	public String getPaymentId() {
+		return paymentId;
+	}
+
+	public void setPaymentId(String paymentId) {
+		this.paymentId = paymentId;
 	}
 	
 	@Override
@@ -223,8 +237,8 @@ public class OutgoingPayment {
 		return "OutgoingPayment [id=" + id + ", amountPaid=" + amountPaid
 				+ ", status=" + status + ", confirmationCode="
 				+ confirmationCode + ", notes=" + notes + ", phoneNumber="
-				+ phoneNumber + ", timePaid=" + timePaid + ", paymentTo="+ paymentTo + ", account="
-				+ account + "]";
+				+ phoneNumber + ", timePaid=" + timePaid + ", account="
+				+ account + ", paymentId=" + paymentId + "]";
 	}
 
 	/* (non-Javadoc)
@@ -239,8 +253,6 @@ public class OutgoingPayment {
 		result = prime
 				* result
 				+ ((confirmationCode == null) ? 0 : confirmationCode.hashCode());
-		result = prime * result
-				+ ((paymentTo == null) ? 0 : paymentTo.hashCode());
 		result = prime * result
 				+ ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
@@ -274,11 +286,11 @@ public class OutgoingPayment {
 		} else if (!confirmationCode.equals(other.confirmationCode)) {
 			return false;
 		}
-		if (paymentTo == null) {
-			if (other.paymentTo != null) {
+		if (paymentId == null) {
+			if (other.paymentId != null) {
 				return false;
 			}
-		} else if (!paymentTo.equals(other.paymentTo)) {
+		} else if (!paymentId.equals(other.paymentId)) {
 			return false;
 		}
 		if (phoneNumber == null) {
@@ -292,6 +304,10 @@ public class OutgoingPayment {
 			return false;
 		}
 		if (timePaid != other.timePaid) {
+			return false;
+		}
+		
+		if (timeConfirmed != other.timeConfirmed) {
 			return false;
 		}
 		return true;
