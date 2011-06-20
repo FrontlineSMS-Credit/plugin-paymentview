@@ -8,9 +8,13 @@
 package org.creditsms.plugins.paymentview;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.frontlinesms.BuildProperties;
 import net.frontlinesms.FrontlineSMS;
+import net.frontlinesms.payment.PaymentService;
+import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
@@ -62,7 +66,8 @@ public class PaymentViewPluginController extends BasePluginController
 	private UiGeneratorController ui;
 	private Method authorizationAction;
 	private ThinletUiEventHandler authorizationEventListener;
-
+	
+	private List<MpesaPaymentService> paymentServices;
 	/**
 	 * @see net.frontlinesms.plugins.PluginController#deinit()
 	 */
@@ -78,6 +83,9 @@ public class PaymentViewPluginController extends BasePluginController
 	public void init(FrontlineSMS frontlineController,
 			ApplicationContext applicationContext)
 			throws PluginInitialisationException {
+		
+		paymentServices = new ArrayList<MpesaPaymentService>();
+		
 		// Initialize the DAO for the domain objects
 		clientDao 			= (ClientDao) applicationContext.getBean("clientDao");
 		accountDao 			= (AccountDao) applicationContext.getBean("accountDao");
@@ -186,5 +194,9 @@ public class PaymentViewPluginController extends BasePluginController
 
 	public TargetAnalytics getTargetAnalytics() {
 		return targetAnalytics;
+	}
+
+	public List<MpesaPaymentService> getPaymentServices() {
+		return paymentServices;
 	}
 }

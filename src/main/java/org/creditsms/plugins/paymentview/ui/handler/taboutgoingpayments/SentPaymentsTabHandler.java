@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.data.events.EntityUpdatedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -17,8 +18,10 @@ import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.OutgoingPaymentsExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.OutgoingPaymentsImportHandler;
@@ -27,9 +30,14 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	private static final String COMPONENT_SENT_PAYMENTS_TABLE = "tbl_clients";
 	private static final String COMPONENT_PANEL_SENT_PAYMENTS_TABLE = "pnl_clients";
 	private static final String XML_SENTPAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/sentpayments.xml";
+	
+	//KIM
+	private static final String TAB_SENTPAYMENTS = "tab_sentOutgoingPayments";
+	private Object sentPaymentsTab;
 
 	private AccountDao accountDao;
 	private OutgoingPaymentDao outgoingPaymentDao;
+	private ClientDao clientDao;
 
 	private Object sentPaymentsTableComponent;
 	private ComponentPagingHandler sentPaymentsTablePager;
@@ -39,28 +47,37 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	private NumberFormat formatter = new DecimalFormat("#,000.00");
 	SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss a");
 	
-	private Object sentPaymentsTab;
+	private Object sentPaymentsPanel;
 	private String sentPaymentsFilter = "";
 
-	public SentPaymentsTabHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
+
+	public SentPaymentsTabHandler(UiGeneratorController ui, Object tabOutgoingPayments, PaymentViewPluginController pluginController) {
 		super(ui);
 		accountDao = pluginController.getAccountDao();
 		outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
+		clientDao = pluginController.getClientDao();
+		sentPaymentsTab = ui.find(tabOutgoingPayments, TAB_SENTPAYMENTS);//KIM
 		
 		ui.getFrontlineController().getEventBus().registerObserver(this);
 		
 		init();
 	}
 
-	private Object getRow(OutgoingPayment o) {
+	private Object getRow(OutgoingPayment outgoingPayment) {
 		Object row = ui.createTableRow();
-		ui.add(row,	ui.createTableCell(o.getPaymentTo()));
-		ui.add(row, ui.createTableCell(o.getPhoneNumber()));
-		ui.add(row, ui.createTableCell(formatter.format(o.getAmountPaid())));
-		ui.add(row, ui.createTableCell(df.format(new Date(o.getTimePaid()))));
-		ui.add(row, ui.createTableCell(tf.format(new Date(o.getTimePaid()))));
-		ui.add(row, ui.createTableCell(o.getAccount().getAccountNumber()));
-		ui.add(row, ui.createTableCell(o.getNotes()));
+		//TO DO
+	//	ui.add(row,	ui.createTableCell(o.getPaymentTo()));
+		Client client = clientDao.getClientByPhoneNumber(outgoingPayment.getPhoneNumber());
+		
+		ui.add(row, ui.createTableCell(client.getName()));
+		ui.add(row, ui.createTableCell(outgoingPayment.getPhoneNumber()));
+		ui.add(row, ui.createTableCell(formatter.format(outgoingPayment.getAmountPaid())));
+		ui.add(row, ui.createTableCell(df.format(new Date(outgoingPayment.getTimePaid()))));
+		ui.add(row, ui.createTableCell(tf.format(new Date(outgoingPayment.getTimePaid()))));
+		ui.add(row, ui.createTableCell(outgoingPayment.getStatus().toString()));
+		ui.add(row, ui.createTableCell(outgoingPayment.getConfirmationCode()));
+		ui.add(row, ui.createTableCell(outgoingPayment.getPaymentId()));
+		ui.add(row, ui.createTableCell(outgoingPayment.getNotes()));
 		return row;
 	}
 
@@ -79,14 +96,14 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	 */
 	@Override
 	protected Object initialiseTab() {
-		sentPaymentsTab = ui.loadComponentFromFile(XML_SENTPAYMENTS_TAB, this);
+		sentPaymentsPanel = ui.loadComponentFromFile(XML_SENTPAYMENTS_TAB, this);
 		
-		sentPaymentsTableComponent = ui.find(sentPaymentsTab, COMPONENT_SENT_PAYMENTS_TABLE);
+		sentPaymentsTableComponent = ui.find(sentPaymentsPanel, COMPONENT_SENT_PAYMENTS_TABLE);
 		sentPaymentsTablePager = new ComponentPagingHandler(ui, this, sentPaymentsTableComponent);
-		pnlSentPaymentsTableComponent = ui.find(sentPaymentsTab, COMPONENT_PANEL_SENT_PAYMENTS_TABLE);
+		pnlSentPaymentsTableComponent = ui.find(sentPaymentsPanel, COMPONENT_PANEL_SENT_PAYMENTS_TABLE);
 		
 		this.ui.add(pnlSentPaymentsTableComponent, this.sentPaymentsTablePager.getPanel());
-		
+		this.ui.add(sentPaymentsTab, sentPaymentsPanel);
 		return sentPaymentsTab;
 	}
 
@@ -132,13 +149,19 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	}
 
 	public void notify(FrontlineEventNotification notification) {
-		if (!(notification instanceof EntitySavedNotification)) {
+		if (!(notification instanceof EntitySavedNotification) && !(notification instanceof EntityUpdatedNotification)) {
 			return;
-		}
-
-		Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
-		if (entity instanceof OutgoingPayment) {
-			this.refresh();
+		} else {
+			Object entity;
+			if (notification instanceof EntitySavedNotification){
+				entity = ((EntitySavedNotification) notification).getDatabaseEntity();
+				this.refresh();
+			} else {
+				if (notification instanceof EntityUpdatedNotification){
+					entity = ((EntityUpdatedNotification) notification).getDatabaseEntity();
+					this.refresh();
+				}
+			}
 		}
 	}
 }

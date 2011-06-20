@@ -56,7 +56,10 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	protected static final String ACCOUNTNUMBER_2_1 = "0700000021";
 	protected static final String ACCOUNTNUMBER_2_2 = "0700000022";
 	
-	protected E mpesaPaymentService;
+	private Client client0;
+	private Client client1;
+	private Client client2;
+	
 	private CService cService;
 	
 	private StkMenuItem myAccountMenuItem;
@@ -156,16 +159,18 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		
 		//when(targetAnalytics.isStatusGood(target.getId)).thenReturn(1);
 		
-		mockClient(0, PHONENUMBER_0, Collections.EMPTY_SET);
-		mockClient(1, PHONENUMBER_1, accounts1);
-		mockClient(2, PHONENUMBER_2, accounts2);
+	    client0 = mockClient(0, PHONENUMBER_0, Collections.EMPTY_SET);
+	    client1 = mockClient(1, PHONENUMBER_1, accounts1);
+	    client2 = mockClient(2, PHONENUMBER_2, accounts2);
 	}
 	
-	private void mockClient(long id, String phoneNumber, Set<Account> accounts) {
+	private Client mockClient(long id, String phoneNumber, Set<Account> accounts) {
 		Client c = mock(Client.class);
 		when(c.getId()).thenReturn(id);
 		when(clientDao.getClientByPhoneNumber(phoneNumber)).thenReturn(c);
 		when(accountDao.getAccountsByClientId(id)).thenReturn(new ArrayList<Account>(accounts));
+		when(c.getPhoneNumber()).thenReturn("0712345678");//KIM
+		return c;
 	}
 	
 	
@@ -205,20 +210,24 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		// setup
 		StkRequest sendMoneyMenuItemRequest = mpesaMenu.getRequest("Send money");
 		StkInputRequiremnent phoneNumberRequired = mockInputRequirement("Enter phone no.");
-		when(cService.stkRequest(sendMoneyMenuItemRequest)).thenReturn(phoneNumberRequired);		
+		when(cService.stkRequest(sendMoneyMenuItemRequest)).thenReturn(phoneNumberRequired);
+		
 		StkRequest phoneNumberRequest = phoneNumberRequired.getRequest();
 		StkInputRequiremnent amountRequired = mockInputRequirement("Enter amount");
 		when(cService.stkRequest(phoneNumberRequest, "0712345678")).thenReturn(amountRequired);
+		
 		StkRequest amountRequest = amountRequired.getRequest();
 		StkInputRequiremnent pinRequired = mockInputRequirement("Enter PIN");
 		when(cService.stkRequest(amountRequest, "500")).thenReturn(pinRequired);
+		
 		StkRequest pinRequiredRequest = pinRequired.getRequest();
 		
 		// given
 		mpesaPaymentService.setPin("1234");
 		
 		// when
-		mpesaPaymentService.makePayment(mockAccount(), new BigDecimal("500"));
+		//mpesaPaymentService.makePayment(mockAccount(), new BigDecimal("500"));
+		mpesaPaymentService.makePayment(client1, new BigDecimal("500"));
 		
 		// then
 		InOrder inOrder = inOrder(cService);
@@ -273,7 +282,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		payment.setConfirmationCode(confirmationCode);
 		payment.setTimePaid(getTimestamp(datetime));
 		payment.setStatus(status);
-		payment.setPaymentTo(payTo);
+		//payment.setPaymentTo(payTo);
 		
 		// then
 		WaitingJob.waitForEvent();

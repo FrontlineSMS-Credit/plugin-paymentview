@@ -50,10 +50,11 @@ public class MpesaPersonalService extends MpesaPaymentService {
 					payment.setPhoneNumber(getPhoneNumber(message));
 					payment.setAmountPaid(getAmount(message));
 					payment.setConfirmationCode(getConfirmationCode(message));
-					payment.setPaymentTo(getPaymentTo(message));
+//					payment.setPaymentTo(getPaymentTo(message));
 					payment.setTimePaid(getTimePaid(message));
 					payment.setStatus(OutgoingPayment.Status.CONFIRMED);
 						
+					//TODO -> should retrieve the saved unconfirmed outgoingpayment
 					outgoingPaymentDao.saveOutgoingPayment(payment);
 				} catch (IllegalArgumentException ex) {
 					log.warn("Message failed to parse; likely incorrect format", ex);

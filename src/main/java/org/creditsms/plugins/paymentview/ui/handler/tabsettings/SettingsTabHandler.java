@@ -1,8 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.frontlinesms.messaging.FrontlineMessagingServiceStatus;
 import net.frontlinesms.messaging.mms.email.MmsEmailServiceStatus;
 import net.frontlinesms.messaging.sms.SmsService;
@@ -21,8 +18,6 @@ public class SettingsTabHandler extends BaseTabHandler {
 	private static final String COMPONENT_SETTINGS_TABLE = "tbl_accounts";
 	private static final String XML_SETTINGS_TAB = "/ui/plugins/paymentview/settings/settingsTab.xml";
 
-	private List<MpesaPaymentService> paymentServices;
-
 	private Object settingsTab;
 	private Object settingsTableComponent;
 	private final PaymentViewPluginController pluginController;
@@ -30,8 +25,6 @@ public class SettingsTabHandler extends BaseTabHandler {
 	public SettingsTabHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui);
 		this.pluginController = pluginController;
-		
-		this.paymentServices = new ArrayList<MpesaPaymentService>(0);
 		init();
 	}
 
@@ -47,8 +40,8 @@ public class SettingsTabHandler extends BaseTabHandler {
 	}
 	
 	public void addPaymentService(MpesaPaymentService paymentService) {
-		if (!paymentServices.contains(paymentService)){
-			paymentServices.add(paymentService);
+		if (!pluginController.getPaymentServices().contains(paymentService)){
+			pluginController.getPaymentServices().add(paymentService);
 		}else{
 			ui.getFrontlineController().getEventBus().unregisterObserver(paymentService);
 			paymentService = null;
@@ -98,7 +91,7 @@ public class SettingsTabHandler extends BaseTabHandler {
 	@Override
 	public void refresh() {
 		ui.removeAll(settingsTableComponent);
-		for(MpesaPaymentService paymentService : paymentServices){
+		for(MpesaPaymentService paymentService : pluginController.getPaymentServices()){
 			ui.add(settingsTableComponent, getRow(paymentService));
 		}
 	}
@@ -119,12 +112,12 @@ public class SettingsTabHandler extends BaseTabHandler {
 			for (Object selectedClient : selectedItems) {
 				MpesaPaymentService m = ui.getAttachedObject(selectedClient, MpesaPaymentService.class);
 				ui.getFrontlineController().getEventBus().unregisterObserver(m);
-				paymentServices.remove(m);
+				pluginController.getPaymentServices().remove(m);
 				m = null;
 			}
 			
 			ui.removeDialog(ui.find(UiGeneratorControllerConstants.COMPONENT_CONFIRM_DIALOG));
-			ui.infoMessage("You have succesfully deleted from the operator!");
+			ui.infoMessage("You have successfully deleted from the operator!");
 			this.refresh();
 		}
 	}
