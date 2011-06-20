@@ -75,6 +75,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	private PaymentViewPluginController pluginController;
 	private UiGeneratorController ui;
 	private TargetAnalytics targetAnalytics;
+	private E mpesaPaymentService;
 	
 	
 	@Override
