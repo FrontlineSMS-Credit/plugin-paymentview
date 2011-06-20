@@ -51,30 +51,7 @@ public class EnterPin extends BaseDialog {
 			if(checkValidityOfPinFields(pin, vPin)){
 				MpesaPaymentService paymentService = previousMobilePaymentService.getPaymentService();
 				paymentService.setPin(pin);
-				paymentService.setSmsService((SmsModem) previousMobilePaymentService.getSmsService());
-				//KIM TO MAKE TEST WORK AT THE MOMENT
-				CService cService = new CService("COM1", 9600, "Wavecom", "Stk", null);
-				try {
-					cService.connect();
-				} catch (PortInUseException e) {
-					e.printStackTrace();
-				} catch (NoSuchPortException e) {
-					e.printStackTrace();
-				} catch (UnsupportedCommOperationException e) {
-					e.printStackTrace();
-				} catch (SMSLibDeviceException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (TooManyListenersException e) {
-					e.printStackTrace();
-				} catch (DebugException e) {
-					e.printStackTrace();
-				}
-
-				paymentService.setCService(cService);
-				//END KIM TO MAKE TEST WORK AT THE MOMENT - to check with Alex
-				//paymentService.setCService(((SmsModem) previousMobilePaymentService.getSmsService()).getCService());	//KIM		
+				paymentService.setSmsService((SmsModem) previousMobilePaymentService.getSmsService());	
 				paymentService.setPluginController(pluginController);
 				
 				removeDialog();

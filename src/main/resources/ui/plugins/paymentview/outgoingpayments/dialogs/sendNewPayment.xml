@@ -24,8 +24,7 @@
 
 				<label name="lbl_MobilePaymentSystem"
 					text="i18n.plugins.paymentview.common.mobilepaymentsystem" />
-				<textfield name="txt_MobilePaymentSystem" colspan="2" columns="30" />
-				<!-- combobox name="cmb_MobilePaymentSystem" columns="30" colspan="2" / -->
+				<combobox name="cmb_MobilePaymentSystem" columns="30" colspan="2" />
 
 				<label icon="/icons/key.png" name="lbl_PaymentID"
 					text="i18n.plugins.paymentview.common.paymentid" />

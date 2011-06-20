@@ -13,13 +13,14 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 //import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
+import org.smslib.CService;
 
 public class SendNewPaymentDialogHandler extends BaseDialog {
 	private static final String XML_SEND_NEW_PAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/dialogs/sendNewPayment.xml";
 	private static final String COMPONENT_TEXT_OP_NAME = "txt_Name";
 	private static final String COMPONENT_TEXT_OP_MSISDN = "txt_Phone";
 	private static final String COMPONENT_TEXT_OP_AMOUNT = "txt_Amount";
-	private static final String COMPONENT_TEXT_OP_MOBILE_PAYMENT_SYSTEM = "txt_MobilePaymentSystem";
+	private static final String COMPONENT_CMB_OP_MOBILE_PAYMENT_SYSTEM = "cmb_MobilePaymentSystem";
 	private static final String COMPONENT_TEXT_OP_PAYMENT_ID = "txt_PaymentID";
 	private static final String COMPONENT_TEXT_OP_NOTES = "txt_Notes";
 	
@@ -37,7 +38,6 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	private Object fieldOpName;
 	private Object fieldOpMsisdn;
 	private Object fieldOpAmount;
-	private Object fieldOpMobilePaymentSystem;
 	private Object fieldOpPaymentId;
 	private Object fieldOpNotes;
 	
@@ -52,6 +52,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	//private Object compPanelFields;
 	private Client client;
 	private PaymentViewPluginController pluginController;
+	private Object cmbOpMobilePaymentSystem;
 
 
 
@@ -73,7 +74,8 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 		fieldOpName = ui.find(dialogComponent, COMPONENT_TEXT_OP_NAME);
 		fieldOpMsisdn = ui.find(dialogComponent, COMPONENT_TEXT_OP_MSISDN);
 		fieldOpAmount = ui.find(dialogComponent, COMPONENT_TEXT_OP_AMOUNT);
-		fieldOpMobilePaymentSystem = ui.find(dialogComponent, COMPONENT_TEXT_OP_MOBILE_PAYMENT_SYSTEM);
+		cmbOpMobilePaymentSystem = ui.find(dialogComponent, COMPONENT_CMB_OP_MOBILE_PAYMENT_SYSTEM);
+		ui.add(cmbOpMobilePaymentSystem,ui.createComboboxChoice("Safaricom Mpesa", PaymentService.PaymentServiceType.SAFARICOMMPESA) );
 		fieldOpPaymentId = ui.find(dialogComponent, COMPONENT_TEXT_OP_PAYMENT_ID);
 		fieldOpNotes = ui.find(dialogComponent, COMPONENT_TEXT_OP_NOTES);
 	}
@@ -81,7 +83,8 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	protected void refresh(){
 		ui.setText(fieldOpName, this.getClientObj().getName());
 		ui.setText(fieldOpMsisdn, this.getClientObj().getPhoneNumber());
-		ui.setText(fieldOpMobilePaymentSystem, "MpesaPersonalService");
+		ui.setSelectedIndex(cmbOpMobilePaymentSystem, 0);
+		ui.setText(cmbOpMobilePaymentSystem, "Safaricom Mpesa");
 	}
 
 	public void showScheduleNewPaymentsAuthDialog() {
@@ -92,53 +95,49 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	}
 
 	public void showSendNewPaymentsAuthDialog() {
-
-		if (pluginController.getPaymentServices().size()>0){
-			
-			// get the correct payment service in the paymentServices list
-			if (!pluginController.getPaymentServices().isEmpty()){
-				int itemPaymentServices=0;
-				boolean flag = false;
-				//to pick up the right paymentService from the list initialised in enterPin.java
-				while(!flag && itemPaymentServices<pluginController.getPaymentServices().size()){
-					opMobilePaymentSystem = ui.getText(fieldOpMobilePaymentSystem);
-					flag = pluginController.getPaymentServices().get(itemPaymentServices).getClass().toString().contains(opMobilePaymentSystem);
-					if (flag){
-						paymentService = pluginController.getPaymentServices().get(itemPaymentServices); 
-					}
-					itemPaymentServices++;
+		// get the correct payment service in the paymentServices list
+		if (!pluginController.getPaymentServices().isEmpty()){
+			int itemPaymentServices=0;
+			boolean flag = false;
+			opMobilePaymentSystem = ((PaymentService.PaymentServiceType) ui.getAttachedObject(ui.getSelectedItem(cmbOpMobilePaymentSystem))).getType();
+			System.out.println("payment service combobox:" + ((PaymentService.PaymentServiceType) ui.getAttachedObject(ui.getSelectedItem(cmbOpMobilePaymentSystem))).getType());
+			//to pick up the right paymentService from the list initialised in enterPin.java
+			while(!flag && itemPaymentServices<pluginController.getPaymentServices().size()){
+				flag = pluginController.getPaymentServices().get(itemPaymentServices).getClass().toString().contains(opMobilePaymentSystem);
+				if (flag){
+					paymentService = pluginController.getPaymentServices().get(itemPaymentServices); 
 				}
-				// error message for paymentService
-				if (!flag){
-					ui.infoMessage("The payment service "+opMobilePaymentSystem+ " has not been configured in the setting tab.");
-				} else {
-					try {
-						outgoingPayment = new OutgoingPayment();
-						outgoingPayment.setPhoneNumber(ui.getText(fieldOpMsisdn));
-						outgoingPayment.setAmountPaid(new BigDecimal(ui.getText(fieldOpAmount)));
-						outgoingPayment.setTimePaid(Calendar.getInstance().getTime());
-						outgoingPayment.setNotes(ui.getText(fieldOpNotes));
-						outgoingPayment.setStatus(OutgoingPayment.Status.CREATED);
-						outgoingPayment.setPaymentId(ui.getText(fieldOpPaymentId));
-						outgoingPayment.setConfirmationCode("");
-						
-						outgoingPaymentList.add(outgoingPayment);
-			
-						//TODO the account would have to be filled when specifications are clear!!!!!!!!!!!!!!!1
-						//System.out.println("account:"+accountDao.getAccountsByClientId(client.getId()).get(0).getAccountNumber());
-			
-						sendPaymentAuthDialog = new SendPaymentAuthDialogHandler(ui, pluginController, outgoingPaymentList, paymentService).getDialog();
-						ui.add(sendPaymentAuthDialog);
-						ui.remove(dialogComponent);
-					} catch (NumberFormatException ex){
-						ui.infoMessage("Please enter an amount");
-					}
-				}
-			} else {
-				ui.infoMessage("Please set up a mobile payment account in the setting tab.");
+				itemPaymentServices++;
 			}
+			// Error message if the selected payment service has not been set
+			if (!flag){
+				ui.infoMessage("The payment service " + opMobilePaymentSystem + " has not been configured in the setting tab.");
+			} else {
+				try {					
+					outgoingPayment = new OutgoingPayment();
+					outgoingPayment.setPhoneNumber(ui.getText(fieldOpMsisdn));
+					outgoingPayment.setAmountPaid(new BigDecimal(ui.getText(fieldOpAmount)));
+					outgoingPayment.setTimePaid(Calendar.getInstance().getTime());
+					outgoingPayment.setNotes(ui.getText(fieldOpNotes));
+					outgoingPayment.setStatus(OutgoingPayment.Status.CREATED);
+					outgoingPayment.setPaymentId(ui.getText(fieldOpPaymentId));
+					outgoingPayment.setConfirmationCode("");
+					
+					outgoingPaymentList.add(outgoingPayment);
+		
+					//TODO the account would have to be filled when specifications are clear!!!!!!!!!!!!!!!1
+					//System.out.println("account:"+accountDao.getAccountsByClientId(client.getId()).get(0).getAccountNumber());
+		
+					sendPaymentAuthDialog = new SendPaymentAuthDialogHandler(ui, pluginController, outgoingPaymentList, paymentService).getDialog();
+					ui.add(sendPaymentAuthDialog);
+					//ui.remove(dialogComponent);
+				} catch (NumberFormatException ex){
+					ui.infoMessage("Please enter an amount");
+				}
+			}
+		} else {
+			ui.infoMessage("Please set up a mobile payment account in the setting tab.");
 		}
-
 	}
 	
 	public OutgoingPayment getOutgoingPayment() {
