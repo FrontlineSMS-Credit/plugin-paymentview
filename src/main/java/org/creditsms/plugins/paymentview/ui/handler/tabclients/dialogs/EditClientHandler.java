@@ -25,7 +25,7 @@ public class EditClientHandler extends BaseDialog{
 	private static final String COMPONENT_TEXT_FIRST_NAME = "fldFirstName";
 	private static final String COMPONENT_TEXT_OTHER_NAME = "fldOtherName";
 	private static final String COMPONENT_TEXT_PHONE_NUMBER = "fldPhoneNumber";
-	private static final String XML_EDIT_CLIENT = "/ui/plugins/paymentview/clients/dialogs/dlgEditClient.xml";
+	private static String XML_EDIT_CLIENT = "/ui/plugins/paymentview/clients/dialogs/dlgEditClient.xml";
 
 //>DAOs
 	private ClientDao clientDao;
@@ -49,7 +49,8 @@ public class EditClientHandler extends BaseDialog{
 
 	private boolean editMode;
 	
-	public EditClientHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, ClientsTabHandler clientsTabHandler) {
+	public EditClientHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, ClientsTabHandler clientsTabHandler,
+			boolean newClient) {
 		super(ui);
 		this.clientDao = pluginController.getClientDao();
 		this.clientsTabHandler = clientsTabHandler;
@@ -57,6 +58,13 @@ public class EditClientHandler extends BaseDialog{
 		this.customFieldDao = pluginController.getCustomFieldDao();
 		this.accountDao = pluginController.getAccountDao();
 		this.editMode = false;
+		
+		if (newClient){
+			XML_EDIT_CLIENT = "/ui/plugins/paymentview/clients/dialogs/dlgViewClient.xml";
+		}else{
+			XML_EDIT_CLIENT = "/ui/plugins/paymentview/clients/dialogs/dlgEditClient.xml";
+		}
+		
 		init();
 		refresh();
 	}
@@ -71,6 +79,9 @@ public class EditClientHandler extends BaseDialog{
 		this.clientDao = pluginController.getClientDao();
 		this.accountDao = pluginController.getAccountDao();
 		this.editMode = true;
+		
+		XML_EDIT_CLIENT = "/ui/plugins/paymentview/clients/dialogs/dlgEditClient.xml";
+		
 		init();
 		refresh();
 	}

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <panel weightx="1" weighty="1" columns="1" gap="5" left="5"
 	name="pnl_tbl_clientList" right="5" top="5" width="100">
-	<table action="showFooter" colspan="10" name="tbl_clientList" width="1000" weightx="1" weighty="1">
+	<table action="showFooter" action="showFooter" colspan="10" name="tbl_clientList" width="1000" weightx="1" weighty="1">
 	</table>
 </panel>

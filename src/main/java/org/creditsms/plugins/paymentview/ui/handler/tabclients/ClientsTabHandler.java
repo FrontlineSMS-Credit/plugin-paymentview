@@ -64,7 +64,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 //> ACTION HANDLERS
 	
 	public void addClient() {
-		ui.add(new EditClientHandler(ui, pluginController, this).getDialog());
+		ui.add(new EditClientHandler(ui, pluginController, this, true).getDialog());
 	}
 	
 	public void customizeClientDB() {

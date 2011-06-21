@@ -1,6 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard;
 
-//import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +15,7 @@ import org.creditsms.plugins.paymentview.ui.handler.BaseSelectClientTableHandler
 
 public class SelectClientsTableHandler extends BaseSelectClientTableHandler {
 	private static final String TBL_CLIENTS = "tbl_clients";
-	private static final String XML_CLIENTS_TABLE = "/ui/plugins/paymentview/outgoingpayments/innertabs/clientsTable.xml";
+	private static final String XML_CLIENTS_TABLE = "/ui/plugins/paymentview/analytics/viewdashboard/clientsTable.xml";
 	private final ServiceItem serviceItem;
 	private final TargetDao targetDao;
 	
