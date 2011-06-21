@@ -56,6 +56,8 @@ public class MpesaPersonalService extends MpesaPaymentService {
 						
 						//Update outgoing payment
 						outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
+					} else {
+						pvLog.warn("No unconfirmed outgoing payment for the following confirmation message: " + message.getTextContent());
 					}
 				} catch (IllegalArgumentException ex) {
 					log.warn("Message failed to parse; likely incorrect format", ex);
