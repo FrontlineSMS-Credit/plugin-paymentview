@@ -303,11 +303,8 @@ public class OutgoingPayment {
 		if (status != other.status) {
 			return false;
 		}
-		if (timePaid != other.timePaid) {
-			return false;
-		}
 		
-		if (timeConfirmed != other.timeConfirmed) {
+		if (!timeConfirmed.equals(other.timeConfirmed)) {
 			return false;
 		}
 		return true;

@@ -94,8 +94,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	}
 
 	private StkMenu getMpesaMenu() throws PaymentServiceException, IOException {
-		System.out.println("KIMMMMMMMMMMMMMMMM IN getMpesaMenu");
-		
 		try {
 			StkResponse stkResponse = cService.stkRequest(StkRequest.GET_ROOT_MENU);
 			StkMenu rootMenu = null;
@@ -118,7 +116,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		try {
 			StkMenu mPesaMenu = getMpesaMenu();
 			StkResponse sendMoneyResponse = cService.stkRequest(mPesaMenu.getRequest("Send money"));
-			//String phoneNumber = account.getClient().getPhoneNumber();
 			String phoneNumber = client.getPhoneNumber();
 
 			StkRequest phoneNumberRequest = ((StkInputRequiremnent) sendMoneyResponse).getRequest();

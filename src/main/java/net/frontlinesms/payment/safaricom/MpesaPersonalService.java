@@ -1,5 +1,6 @@
 package net.frontlinesms.payment.safaricom;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,22 +41,24 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	}
 	
 	private void processOutgoingPayment(final FrontlineMessage message) {
-		//The Payment should be fetched from the DB;
-		//So as to be updated as confirmed
 		new FrontlineUiUpateJob() {
 			public void run() {
-				try {
-					final OutgoingPayment payment = new OutgoingPayment();
-					payment.setAccount(getAccount(message));
-					payment.setPhoneNumber(getPhoneNumber(message));
-					payment.setAmountPaid(getAmount(message));
-					payment.setConfirmationCode(getConfirmationCode(message));
-//					payment.setPaymentTo(getPaymentTo(message));
-					payment.setTimePaid(getTimePaid(message));
-					payment.setStatus(OutgoingPayment.Status.CONFIRMED);
+				try {				
+					// Retrieve the corresponding outgoing payment with status UNCONFIRMED
+					List<OutgoingPayment> outgoingPayments = outgoingPaymentDao.getOutgoingPaymentsByPhoneNumberAndAmountPaid(getPhoneNumber(message),
+							new BigDecimal(getAmount(message).toString()), OutgoingPayment.Status.UNCONFIRMED);
+
+					if (!outgoingPayments.isEmpty()){					
+						final OutgoingPayment outgoingPayment = outgoingPayments.get(0);
+						outgoingPayment.setConfirmationCode(getConfirmationCode(message));
+						outgoingPayment.setTimeConfirmed(getTimePaid(message).getTime());
+						outgoingPayment.setStatus(OutgoingPayment.Status.CONFIRMED);
 						
-					//TODO -> should retrieve the saved unconfirmed outgoingpayment
-					outgoingPaymentDao.saveOutgoingPayment(payment);
+						//Update outgoing payment
+						outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
+					} else {
+						pvLog.warn("No unconfirmed outgoing payment for the following confirmation message: " + message.getTextContent());
+					}
 				} catch (IllegalArgumentException ex) {
 					log.warn("Message failed to parse; likely incorrect format", ex);
 					throw new RuntimeException(ex);
