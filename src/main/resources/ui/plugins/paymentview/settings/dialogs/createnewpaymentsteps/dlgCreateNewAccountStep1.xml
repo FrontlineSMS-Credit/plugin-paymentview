@@ -15,6 +15,6 @@
 			action="removeDialog" />
 		<panel weightx="1" />
 		<button icon="/icons/right.png" text="Next"
-			action="next(cmbSelectPaymentService, cmbDevices)" />
+			action="next" />
 	</panel>
 </dialog>
