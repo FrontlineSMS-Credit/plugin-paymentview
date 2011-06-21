@@ -94,8 +94,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	}
 
 	private StkMenu getMpesaMenu() throws PaymentServiceException {
-		System.out.println("KIMMMMMMMMMMMMMMMM IN getMpesaMenu");
-		
 		try {
 			StkResponse stkResponse = cService.stkRequest(StkRequest.GET_ROOT_MENU);
 			StkMenu rootMenu = null;
@@ -114,17 +112,11 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}
 	}
 
-//	public void makePayment(Account account, BigDecimal amount)
-	public void makePayment(Client client, BigDecimal amount) //KIM
+	public void makePayment(Client client, BigDecimal amount)
 			throws PaymentServiceException {
-		System.out.println("KIMMMMMMMMMMMMMMMMM makepayment before getMpesaMenu");
 		try {
-			
-			
 			StkMenu mPesaMenu = getMpesaMenu();
-			System.out.println("KIMMMMMMMMMMMMMMMMM makepayment after getMpesaMenu");
 			StkResponse sendMoneyResponse = cService.stkRequest(mPesaMenu.getRequest("Send money"));
-			//String phoneNumber = account.getClient().getPhoneNumber();
 			String phoneNumber = client.getPhoneNumber();
 
 			StkRequest phoneNumberRequest = ((StkInputRequiremnent) sendMoneyResponse).getRequest();

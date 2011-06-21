@@ -130,7 +130,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 		
 					sendPaymentAuthDialog = new SendPaymentAuthDialogHandler(ui, pluginController, outgoingPaymentList, paymentService).getDialog();
 					ui.add(sendPaymentAuthDialog);
-					//ui.remove(dialogComponent);
+					ui.remove(dialogComponent);
 				} catch (NumberFormatException ex){
 					ui.infoMessage("Please enter an amount");
 				}
