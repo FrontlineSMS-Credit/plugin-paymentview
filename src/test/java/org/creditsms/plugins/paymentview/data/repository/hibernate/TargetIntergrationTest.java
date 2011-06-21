@@ -101,11 +101,9 @@ public class TargetIntergrationTest extends HibernateTestCase{
 		try { 
 			Date startDate = df.parse(startDateStr);  
 			Date endDate = df.parse(endDateStr);
-			//Date completeDate = df.parse(completeDateStr);
 			tgt.setStartDate(startDate);
 			tgt.setEndDate(endDate);
 			tgt.setCompletedDate(null);
-			System.out.println(tgt.getCompletedDate());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

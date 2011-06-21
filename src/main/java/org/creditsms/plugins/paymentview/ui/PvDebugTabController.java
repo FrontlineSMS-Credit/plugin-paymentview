@@ -61,8 +61,6 @@ public class PvDebugTabController extends BaseTabHandler implements
 	 */
 	@Override
 	public void refresh() {
-		System.out.println("refresh()");
-
 		Object connectedDevicesList = getConnectedDevicesList();
 		ui.removeAll(connectedDevicesList);
 		for(SmsService s : this.smsServiceManager.getAll()) {

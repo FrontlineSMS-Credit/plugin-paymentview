@@ -90,7 +90,6 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		calendar1.set(Calendar.MINUTE, 0);  
 		calendar1.set(Calendar.SECOND, 0);  
 		calendar1.set(Calendar.MILLISECOND, 0);
-		System.out.println("today:"+calendar1.get(Calendar.DAY_OF_MONTH));
 		Date startDate = calendar1.getTime();
 		
 		Calendar calendar = Calendar.getInstance();
@@ -99,7 +98,6 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		calendar.set(Calendar.MINUTE, 0);  
 		calendar.set(Calendar.SECOND, 0);  
 		calendar.set(Calendar.MILLISECOND, 0);
-		System.out.println("end day:"+calendar.get(Calendar.DAY_OF_MONTH));
 		Date endDate = calendar.getTime();
 
 		Account acc = getAccountNumber("104");
