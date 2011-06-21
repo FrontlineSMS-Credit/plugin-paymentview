@@ -6,7 +6,7 @@
 			weighty="1" name="pnlClientsTableHolder">
 			<panel weightx="1" >
 				<label font="20 bold" name="lbl_banner"
-					text="i18n.plugins.paymentview.tab.outgoingpayments.selectfromclients.title" />
+					text="i18n.plugins.paymentview.tab.outgoingpayments.sendnewpayments.title" />
 			</panel>
 			<button icon="/icons/refresh.png" action="refresh"/>
 		</panel>
