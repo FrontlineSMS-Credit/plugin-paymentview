@@ -114,14 +114,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}
 	}
 
-//	public void makePayment(Account account, BigDecimal amount)
-	public void makePayment(Client client, BigDecimal amount) //KIM
-		System.out.println("KIMMMMMMMMMMMMMMMMM makepayment before getMpesaMenu");
+	public void makePayment(Client client, BigDecimal amount) throws PaymentServiceException {
 		try {
-			
-			
 			StkMenu mPesaMenu = getMpesaMenu();
-			System.out.println("KIMMMMMMMMMMMMMMMMM makepayment after getMpesaMenu");
 			StkResponse sendMoneyResponse = cService.stkRequest(mPesaMenu.getRequest("Send money"));
 			//String phoneNumber = account.getClient().getPhoneNumber();
 			String phoneNumber = client.getPhoneNumber();

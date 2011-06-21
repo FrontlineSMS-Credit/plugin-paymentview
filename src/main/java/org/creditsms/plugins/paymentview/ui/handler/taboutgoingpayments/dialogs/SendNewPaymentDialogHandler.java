@@ -81,7 +81,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	}
 	
 	protected void refresh(){
-		ui.setText(fieldOpName, this.getClientObj().getName());
+		ui.setText(fieldOpName, this.getClientObj().getFullName());
 		ui.setText(fieldOpMsisdn, this.getClientObj().getPhoneNumber());
 		ui.setSelectedIndex(cmbOpMobilePaymentSystem, 0);
 		ui.setText(cmbOpMobilePaymentSystem, "Safaricom Mpesa");

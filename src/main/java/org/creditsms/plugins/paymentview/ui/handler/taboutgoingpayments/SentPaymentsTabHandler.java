@@ -69,7 +69,7 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	//	ui.add(row,	ui.createTableCell(o.getPaymentTo()));
 		Client client = clientDao.getClientByPhoneNumber(outgoingPayment.getPhoneNumber());
 		
-		ui.add(row, ui.createTableCell(client.getName()));
+		ui.add(row, ui.createTableCell(client.getFullName()));
 		ui.add(row, ui.createTableCell(outgoingPayment.getPhoneNumber()));
 		ui.add(row, ui.createTableCell(formatter.format(outgoingPayment.getAmountPaid())));
 		ui.add(row, ui.createTableCell(df.format(new Date(outgoingPayment.getTimePaid()))));

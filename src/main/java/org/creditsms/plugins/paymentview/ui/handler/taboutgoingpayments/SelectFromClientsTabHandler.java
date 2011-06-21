@@ -55,7 +55,6 @@ public class SelectFromClientsTabHandler extends BaseTabHandler {
 		if (selectedClients.length >0 ){
 			for (Object selectedClient : selectedClients) {
 				client = (Client) ui.getAttachedObject(selectedClient);
-				System.out.println("client name" + client.getName());
 				sendPaymentAuthDialog = new SendNewPaymentDialogHandler(ui, pluginController, client).getDialog();
 				ui.add(sendPaymentAuthDialog);
 			}
