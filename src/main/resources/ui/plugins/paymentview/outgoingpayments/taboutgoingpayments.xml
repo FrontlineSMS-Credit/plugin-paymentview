@@ -3,6 +3,6 @@
 	<tabbedpane name="tabbedPaneMain" placement="left" >
 		<tab name="tab_sentOutgoingPayments" text="i18n.plugins.paymentview.tab.outgoingpayments.sentpayments.text"/>			
 		<tab name="tab_importNewOutgoingPayments" text="Import New Payments"/>
-		<tab name="tab_sendOutgoingPayments" text="i18n.plugins.paymentview.tab.outgoingpayments.selectfromclients.text"/>
+		<tab name="tab_sendOutgoingPayments" text="i18n.plugins.paymentview.tab.outgoingpayments.sendnewpayments.text"/>
 	</tabbedpane>
 </tab>
