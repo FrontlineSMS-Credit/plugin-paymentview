@@ -33,8 +33,8 @@
 			<panel weightx="1"/>		
 			<!--<button action="updateAccountBalance" icon="/icons/connection.png" halign="right" name="btn_export"
 				text="i18n.plugins.paymentview.action.updateaccountbalance" /> -->
-			<button action="updateAuthCode" icon="/icons/connection.png" halign="right" name="btn_authcode"
-				text="Update Authorization Code" />
+			<button action="updateAuthCode" halign="right" name="btn_authcode"
+				text="Set Authorization Code" />
 		</panel>
 	</panel>
 </tab>

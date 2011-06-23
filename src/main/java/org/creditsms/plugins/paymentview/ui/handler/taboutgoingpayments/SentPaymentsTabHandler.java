@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.data.events.EntityUpdatedNotification;
 import net.frontlinesms.events.EventObserver;
@@ -149,18 +150,13 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	}
 
 	public void notify(FrontlineEventNotification notification) {
-		if (!(notification instanceof EntitySavedNotification) && !(notification instanceof EntityUpdatedNotification)) {
+		if (!(notification instanceof DatabaseEntityNotification)) {
 			return;
 		} else {
 			Object entity;
-			if (notification instanceof EntitySavedNotification){
-				entity = ((EntitySavedNotification) notification).getDatabaseEntity();
+			if (notification instanceof DatabaseEntityNotification){
+				entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
 				this.refresh();
-			} else {
-				if (notification instanceof EntityUpdatedNotification){
-					entity = ((EntityUpdatedNotification) notification).getDatabaseEntity();
-					this.refresh();
-				}
 			}
 		}
 	}

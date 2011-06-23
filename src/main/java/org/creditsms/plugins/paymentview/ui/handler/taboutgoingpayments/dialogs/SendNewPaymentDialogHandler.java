@@ -1,19 +1,20 @@
 package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import net.frontlinesms.payment.PaymentService;
+import net.frontlinesms.payment.PaymentServiceException;
+import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
-//import org.creditsms.plugins.paymentview.data.repository.AccountDao;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
+import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
-import org.smslib.CService;
 
 public class SendNewPaymentDialogHandler extends BaseDialog {
 	private static final String XML_SEND_NEW_PAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/dialogs/sendNewPayment.xml";
@@ -24,15 +25,8 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	private static final String COMPONENT_TEXT_OP_PAYMENT_ID = "txt_PaymentID";
 	private static final String COMPONENT_TEXT_OP_NOTES = "txt_Notes";
 	
-	
 	private Object schedulePaymentAuthDialog;
-	private Object sendPaymentAuthDialog;
-	
-
-//	private AccountDao accountDao;
 	private OutgoingPayment outgoingPayment;
-	private List<OutgoingPayment> outgoingPaymentList;
-	private PaymentService paymentService;
 	
 	//UI fields
 	private Object fieldOpName;
@@ -53,16 +47,16 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	private Client client;
 	private PaymentViewPluginController pluginController;
 	private Object cmbOpMobilePaymentSystem;
-
-
-
+	private OutgoingPaymentDao outgoingPaymentDao;
+	private MpesaPaymentService paymentService;
+	private ClientDao clientDao;
 
 	public SendNewPaymentDialogHandler(UiGeneratorController ui,PaymentViewPluginController pluginController, Client client) {
 		super(ui);
 		this.pluginController = pluginController;
-//		this.accountDao = pluginController.getAccountDao();
+		outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
+		clientDao = pluginController.getClientDao();
 		this.client = client;
-		this.outgoingPaymentList = new ArrayList<OutgoingPayment>();
 		initialise();
 		refresh();
 	}
@@ -89,7 +83,6 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 
 	public void showScheduleNewPaymentsAuthDialog() {
 		//TODO checks amount is A NUMBER
-		
 		schedulePaymentAuthDialog = new SchedulePaymentAuthDialogHandler(ui).getDialog();
 		ui.add(schedulePaymentAuthDialog);
 	}
@@ -123,13 +116,11 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 					outgoingPayment.setPaymentId(ui.getText(fieldOpPaymentId));
 					outgoingPayment.setConfirmationCode("");
 					
-					outgoingPaymentList.add(outgoingPayment);
-		
 					//TODO the account would have to be filled when specifications are clear!!!!!!!!!!!!!!!1
 					//System.out.println("account:"+accountDao.getAccountsByClientId(client.getId()).get(0).getAccountNumber());
 		
-					sendPaymentAuthDialog = new SendPaymentAuthDialogHandler(ui, pluginController, outgoingPaymentList, paymentService).getDialog();
-					ui.add(sendPaymentAuthDialog);
+					new AuthorisationCodeHandler(ui, pluginController).showAuthorizationCodeDialog("sendPayment", this);
+					
 					ui.remove(dialogComponent);
 				} catch (NumberFormatException ex){
 					ui.infoMessage("Please enter an amount");
@@ -138,6 +129,31 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 		} else {
 			ui.infoMessage("Please set up a mobile payment account in the setting tab.");
 		}
+	}
+	
+
+
+	public void sendPayment() throws PaymentServiceException {
+		//TODO check MSISDN, amount available?
+		
+		// save the outgoing payment list
+		try {
+				//save the outgoing payment in DB
+				outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
+
+				//send payment
+				Client client = clientDao.getClientByPhoneNumber(outgoingPayment.getPhoneNumber());
+				paymentService.makePayment(client, outgoingPayment.getAmountPaid());
+				
+				// update the outgoing payment in DB
+				outgoingPayment.setStatus(OutgoingPayment.Status.UNCONFIRMED);
+				outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
+		} catch (IllegalArgumentException ex) {
+			throw new RuntimeException(ex);
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+		ui.infoMessage("The outgoing payment has been created and successfully sent");
 	}
 	
 	public OutgoingPayment getOutgoingPayment() {

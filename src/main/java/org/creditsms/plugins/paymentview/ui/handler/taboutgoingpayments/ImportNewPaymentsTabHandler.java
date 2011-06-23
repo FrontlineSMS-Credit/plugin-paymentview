@@ -6,7 +6,6 @@ import net.frontlinesms.ui.handler.BaseTabHandler;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.OutgoingPaymentsImportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SchedulePaymentAuthDialogHandler;
-import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SendPaymentAuthDialogHandler;
 
 public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	private static final String XML_IMPORT_NEW_PAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/importnewpayments.xml";

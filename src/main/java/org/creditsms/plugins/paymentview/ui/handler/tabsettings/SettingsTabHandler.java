@@ -12,6 +12,7 @@ import net.frontlinesms.ui.handler.BaseTabHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.UpdateAuthorizationCodeDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings.MobilePaymentService;
 
 public class SettingsTabHandler extends BaseTabHandler {
@@ -101,7 +102,7 @@ public class SettingsTabHandler extends BaseTabHandler {
 	}
 	
 	public void updateAuthCode() {
-		// TODO Auto-generated method stub
+		new UpdateAuthorizationCodeDialog(ui, pluginController).showDialog();
 	}
 	
 	public void deleteAccount() {

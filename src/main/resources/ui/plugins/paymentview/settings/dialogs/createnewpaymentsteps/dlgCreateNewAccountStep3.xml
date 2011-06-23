@@ -2,7 +2,7 @@
 <dialog bottom="9"
 	columns="3" gap="15" left="9" name="dlgVerificationCode"
 	right="9" text="Authorization Code"
-	top="9" resizable="true" modal="true">
+	top="9" resizable="true" modal="true" closable="true" close="removeDialog(this)">
 
 	<label text="Enter Authorization Code" />
 	<passwordfield name="authCode" colspan="2" columns="15" text="" />

@@ -8,15 +8,9 @@ import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.SettingsTabHandler;
-import org.smslib.CService;
-import org.smslib.DebugException;
-import org.smslib.SMSLibDeviceException;
-
-import serial.NoSuchPortException;
-import serial.PortInUseException;
-import serial.UnsupportedCommOperationException;
 
 public class EnterPin extends BaseDialog {
 	private static final String DLG_VERIFICATION_CODE = "dlgVerificationCode";
@@ -55,7 +49,7 @@ public class EnterPin extends BaseDialog {
 				paymentService.setPluginController(pluginController);
 				
 				removeDialog();
-				pluginController.showAuthorizationCodeDialog(methodToBeCalled, this);
+				new AuthorisationCodeHandler(ui, pluginController).showAuthorizationCodeDialog(methodToBeCalled, this);
 			}else{
 				ui.alert("Invalid! Please Re-enter the PIN numbers again.");
 			}
@@ -67,7 +61,7 @@ public class EnterPin extends BaseDialog {
 		this.getSettingsTabHandler().refresh();
 		
 		ui.alert("The Payment service has been created successfully!");
-		removeDialog(ui.find(DLG_VERIFICATION_CODE));
+		
 	}
 	
 	MpesaPaymentService getPaymentService() {

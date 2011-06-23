@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<dialog bottom="9" close="removeDialog(this)" 
-	columns="3" gap="15" left="9" name="clientDetailsDialog"
-	right="9" text="Create Alert"
-	top="9" resizable="true" modal="true" closable="true">
+<dialog bottom="9"  
+	columns="3" gap="10" left="9" name="clientDetailsDialog"
+	right="9" text="Update Authorization Code"
+	top="9" resizable="true" modal="true" closable="true" close="removeDialog(this)">
 	
-	<label text="Enter Existing Authorization Code" />
-	<textfield colspan="2" columns="15" text="Select Mobile Payment Service" />
+	<label text="Existing Authorization Code" />
+	<passwordfield name="existing" colspan="2" columns="20" />
 	<panel colspan="3" weightx="1"/>
-	<label text="Enter New Authorization Code" />
-	<textfield colspan="2" columns="15" text="Select Mobile Payment Service" />
+	<label text="New Authorization Code" />
+	<passwordfield name="newcode" colspan="2" columns="20"  />
 	<label text="Verify New Authorization Code" />
-	<textfield colspan="2" columns="15" text="Select Mobile Payment Service" />
+	<passwordfield name="verifynew" colspan="2" columns="20" />
 
 	<panel colspan="3" weightx="1">
 		<button icon="/icons/tick.png" text="Cancel"
 			action="removeDialog" />
 		<panel weightx="1" />
 		<button icon="/icons/tick.png" text="Update"
-			action="removeDialog" />
+			action="updateAuthCode(existing.text, newcode.text, verifynew.text)" />
 	</panel>
 </dialog>

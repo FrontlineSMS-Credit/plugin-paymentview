@@ -7,19 +7,19 @@ import net.frontlinesms.resources.UserHomeFilePropertySet;
 
 import org.smslib.util.HexUtils;
 
-final class AuthorizationProperties extends UserHomeFilePropertySet {
+public final class AuthorizationProperties extends UserHomeFilePropertySet {
 	private static final String KEY_AUTH_CODE = "auth.code";
 	private static final AuthorizationProperties INSTANCE = new AuthorizationProperties(); 
 	
-	AuthorizationProperties() {
+	private AuthorizationProperties() {
 		super("payment-view");
 	}
 	
-	void setAuthCode(byte[] hashedAuthCode) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+	public void setAuthCode(byte[] hashedAuthCode) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		setProperty(KEY_AUTH_CODE, HexUtils.encode(hashedAuthCode));
 	}
 	
-	byte[] getHashedAuthCode() {
+	public byte[] getHashedAuthCode() {
 		byte jt[] = getPropertyAsByteArray(KEY_AUTH_CODE);
 		return jt;
 	}
