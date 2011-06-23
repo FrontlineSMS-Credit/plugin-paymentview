@@ -1,7 +1,8 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs;
 
+import java.util.List;
+
 import net.frontlinesms.data.DuplicateKeyException;
-import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -15,20 +16,20 @@ public class OtherFieldHandler implements ThinletUiEventHandler {
 
 	private Object dialogComponent;
 	private UiGeneratorController ui;
-	private CustomizeClientDBHandler customizeClientDBHandler;
+	private int c;
 
 	public OtherFieldHandler(PaymentViewPluginController pluginController,
 			CustomFieldDao customFieldDao,
-			CustomizeClientDBHandler customizeClientDBHandler) {
+			int c) {
+		this.c = c;
 		this.ui = pluginController.getUiGeneratorController();
 		this.customFieldDao = customFieldDao;
-		this.customizeClientDBHandler = customizeClientDBHandler;
 		
 		init();
 		refresh();
 	}
 
-	public void createField(String fieldName) {
+	public void createField(String fieldName) throws DuplicateKeyException {
 		CustomField customField = new CustomField();
 		customField.setReadableName(fieldName);
 		customField.setActive(true);
@@ -36,7 +37,12 @@ public class OtherFieldHandler implements ThinletUiEventHandler {
 		try {
 			this.customFieldDao.saveCustomField(customField);
 		} catch (DuplicateKeyException e) {
-			throw new RuntimeException(e);
+			List<CustomField> customFields = customFieldDao.getCustomFieldsByReadableName(fieldName);
+			if (customFields.size() == 1){
+				customField = customFields.get(0);
+				customField.setUsed(true);
+				this.customFieldDao.updateCustomField(customField);
+			}
 		}
 
 		this.removeDialog();
@@ -62,6 +68,7 @@ public class OtherFieldHandler implements ThinletUiEventHandler {
 
 	public void init() {
 		dialogComponent = ui.loadComponentFromFile(XML_OTHER_FIELD, this);
+		ui.setText(dialogComponent, "Field "+ ++c +" - Other Field");
 	}
 
 	public void refresh() {

@@ -3,7 +3,7 @@ package org.creditsms.plugins.paymentview.ui.handler;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.Icon;
@@ -159,9 +159,11 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 
 		if (!allCustomFields.isEmpty()) {
 			for (CustomField cf : allCustomFields) {
-				for (CustomValue cv : allCustomValues) {
-					if (cv.getCustomField().equals(cf)) {
-						ui.add(row, ui.createTableCell(cv.getStrValue()));
+				if (cf.isUsed() & cf.isActive()){
+					for (CustomValue cv : allCustomValues) {
+						if (cv.getCustomField().equals(cf)) {
+							ui.add(row, ui.createTableCell(cv.getStrValue()));
+						}
 					}
 				}
 			}
@@ -251,13 +253,15 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	}
 	
 	public void notify(FrontlineEventNotification notification) {
-		if (!(notification instanceof EntitySavedNotification)) {
+		if (!(notification instanceof DatabaseEntityNotification)) {
 			return;
 		}
 
-		Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
+		Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
 		if (entity instanceof Client) {
 			this.refresh();
+		}else if (entity instanceof CustomField) {
+			revalidateTable();
 		}
 	}
 }

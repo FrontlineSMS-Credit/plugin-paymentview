@@ -61,6 +61,7 @@ public class SelectClientsHandler extends BasePanelHandler {
 
 	public void previous() {
 		addClientTabHandler.setCurrentStepPanel(previousSelectTargetSavingsHandler.getPanelComponent());
+		((UiGeneratorController)ui).getFrontlineController().getEventBus().unregisterObserver(selectClientsTableHandler);
 	}
 
 	public void selectService() {

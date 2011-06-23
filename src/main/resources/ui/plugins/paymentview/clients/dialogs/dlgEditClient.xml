@@ -16,8 +16,10 @@
 	</panel>
 
 	<panel weightx="1" weighty="1" columns="1" gap="2">
-		<label text="Accounts"/>
-		<list name="fldAccounts" selection="multiple" weightx="1" weighty="1"/>
+		<panel name="pnlCustomFields" weightx="1" weighty="1" columns="1" border="true"
+		text="Accounts" left="4" right="4" bottom="4" gap="5">
+			<list name="fldAccounts" selection="multiple" weightx="1" weighty="1"/>
+		</panel>
 	</panel>
 
 	<panel colspan="3" weightx="1">

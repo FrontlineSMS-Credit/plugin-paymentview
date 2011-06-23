@@ -10,7 +10,7 @@ public class SelectClientsTableHandler extends BaseSelectClientTableHandler {
 	private static final String XML_CLIENTS_TABLE = "/ui/plugins/paymentview/analytics/addclient/clientsTable.xml";
 	
 	public SelectClientsTableHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
-		super(ui, pluginController);		
+		super(ui, pluginController);
 	}
 
 	@Override

@@ -160,6 +160,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 
 	public void previous() {
 		addClientTabHandler.setCurrentStepPanel(previousSelectClientsHandler.getPanelComponent());
+		((UiGeneratorController)ui).getFrontlineController().getEventBus().unregisterObserver(this);
 	}
 
 	public void targetedSavings() {

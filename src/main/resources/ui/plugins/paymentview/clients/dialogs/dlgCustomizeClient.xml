@@ -12,7 +12,7 @@
 			<panel weightx="1" weighty="1" columns="3">
 				<button icon="/icons/tick.png"  name="btAddField" action="showOtherFieldDialog" text="Add Field" />
 				<panel weightx="1"/>
-				<button icon="/icons/tick.png" name="btAddField" text="Remove Field" />
+				<button icon="/icons/tick.png" name="btnRemoveField" action="removeField(lstCustomFields)" text="Remove Field" />
 			</panel>
 		</panel>
 	</panel>

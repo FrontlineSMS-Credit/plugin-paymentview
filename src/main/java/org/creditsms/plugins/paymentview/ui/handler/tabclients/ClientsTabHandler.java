@@ -68,7 +68,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	}
 	
 	public void customizeClientDB() {
-		ui.add(new CustomizeClientDBHandler(pluginController, customFieldDao, this).getDialog());
+		ui.add(new CustomizeClientDBHandler(pluginController, customFieldDao).getDialog());
 	}
 
 	public void deleteClient() {
@@ -112,9 +112,5 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	
 	public final void showConfirmationDialog(String methodToBeCalled){
 		this.ui.showConfirmationDialog(methodToBeCalled, this);
-	}
-
-	public void revalidateTable() {
-		this.clientTableHandler.revalidateTable();
 	}
 }

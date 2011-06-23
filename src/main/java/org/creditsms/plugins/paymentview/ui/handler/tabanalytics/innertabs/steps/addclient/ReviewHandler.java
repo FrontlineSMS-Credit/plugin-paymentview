@@ -86,6 +86,7 @@ public class ReviewHandler extends BasePanelHandler {
 //> WIZARD NAVIGATORS
 	public void previous() {
 		addClientTabHandler.setCurrentStepPanel(previousCreateSettingsHandler.getPanelComponent());
+		((UiGeneratorController)ui).getFrontlineController().getEventBus().unregisterObserver(clientTableHandler);
 	}
 	
 	public void selectService() {

@@ -6,7 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 
 import net.frontlinesms.data.DuplicateKeyException;
-import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.ThinletUiEventHandler;
@@ -16,7 +16,6 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
 public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObserver {
@@ -25,21 +24,22 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 
 	private static final String XML_CUSTOMIZE_CLIENT_DB = "/ui/plugins/paymentview/clients/dialogs/dlgCustomizeClient.xml";
 
-	private int c;
+	
+	private int mainFieldCounter;
+	private int customFieldCounter;
+	
 	private Object compPanelFields;
 	private CustomFieldDao customFieldDao;
 
 	private Object dialogComponent;
 	private UiGeneratorController ui;
-	private ClientsTabHandler clientsTabHandler;
 	private Object listCustomFields;
 	private PaymentViewPluginController pluginController;
 
 	public CustomizeClientDBHandler(PaymentViewPluginController pluginController,
-			CustomFieldDao customFieldDao, ClientsTabHandler clientsTabHandler) {
+			CustomFieldDao customFieldDao) {
 		this.pluginController = pluginController;
 		this.ui = pluginController.getUiGeneratorController();
-		this.clientsTabHandler = clientsTabHandler;
 		this.customFieldDao = customFieldDao;
 		
 		ui.getFrontlineController().getEventBus().registerObserver(this);
@@ -59,7 +59,9 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 		compPanelFields = ui.find(dialogComponent, COMPONENT_PNL_FIELDS);
 		listCustomFields = ui.find(dialogComponent, LST_CUSTOM_FIELDS);
 
-		c = 0;
+		customFieldCounter = 0;
+		mainFieldCounter = 0;
+		
 		for (Field field : Client.class.getDeclaredFields()) {
 			if (field.isAnnotationPresent(Column.class) && (!field.isAnnotationPresent(Id.class))) {
 				addField(PaymentViewUtils.getReadableFieldName(field.getName()));
@@ -70,7 +72,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 	}
 
 	public void addField(String name) {
-		Object label = ui.createLabel("Field " + ++c);
+		Object label = ui.createLabel("Field " + ++mainFieldCounter);
 		Object txtfield = ui.createTextfield("fld" + name, name);
 
 		ui.setColspan(txtfield, 2);
@@ -92,9 +94,14 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 
 	public void refreshList() {
 		ui.removeAll(listCustomFields);
+		customFieldCounter = mainFieldCounter;
 		for (CustomField cf : customFieldDao.getAllActiveUsedCustomFields()) {
-			addListItem(cf, ++c);
+			addListItem(cf, ++customFieldCounter);
 		}
+		if (customFieldCounter == mainFieldCounter){
+			++customFieldCounter;
+		}
+			
 	}
 
 	public void addNewField(Object fieldCombo) {
@@ -119,11 +126,19 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 			ui.setEditable(txtField, false);
 		}
 	}
+	
+	public void removeField(Object lstCustomFields) throws DuplicateKeyException {
+		Object selectedItem = ui.getSelectedItem(lstCustomFields);
+		CustomField attachedCustomField = ui.getAttachedObject(selectedItem, CustomField.class);
+		
+		attachedCustomField.setUsed(false);
+		customFieldDao.updateCustomField(attachedCustomField);
+	};
 
 	/** Remove the dialog from view. */
 	public void removeDialog() {
 		this.removeDialog(this.dialogComponent);
-		clientsTabHandler.revalidateTable();
+		ui.getFrontlineController().getEventBus().unregisterObserver(this);
 	}
 
 	/** Remove a dialog from view. */
@@ -142,15 +157,15 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 	}
 
 	public void showOtherFieldDialog() {
-		ui.add(new OtherFieldHandler(pluginController, customFieldDao, this).getDialog());
+		ui.add(new OtherFieldHandler(pluginController, customFieldDao, customFieldCounter).getDialog());
 	}
 
 	public void notify(FrontlineEventNotification notification) {
-		if (!(notification instanceof EntitySavedNotification)) {
+		if (!(notification instanceof DatabaseEntityNotification)) {
 			return;
 		}
 
-		Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
+		Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
 		if (entity instanceof CustomField) {
 			this.refresh();
 		}

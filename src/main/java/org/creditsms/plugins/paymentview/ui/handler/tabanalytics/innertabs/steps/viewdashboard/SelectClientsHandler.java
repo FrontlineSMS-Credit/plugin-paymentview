@@ -64,6 +64,7 @@ public class SelectClientsHandler extends BasePanelHandler {
 	public void previous() {
 		viewDashBoardTabHandler
 				.setCurrentStepPanel(previousSelectTargetSavingsHandler.getPanelComponent());
+		((UiGeneratorController)ui).getFrontlineController().getEventBus().unregisterObserver(selectClientsTableHandler);
 	}
 
 	public void refresh() {
