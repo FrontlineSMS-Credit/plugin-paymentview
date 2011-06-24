@@ -25,7 +25,7 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler {
 	protected Object initialiseTab() {
 		outgoingPaymentsTab = ui.loadComponentFromFile(XML_OUTGOINGPAYMENTS_TAB, this);
 		sentPaymentsTab = new SentPaymentsTabHandler(ui, outgoingPaymentsTab,pluginController);
-		importNewPaymentsTab = new ImportNewPaymentsTabHandler(ui, outgoingPaymentsTab);
+		importNewPaymentsTab = new ImportNewPaymentsTabHandler(ui, outgoingPaymentsTab, pluginController);
 		selectFromClientsTab = new SelectFromClientsTabHandler(ui, outgoingPaymentsTab, pluginController);
 
 		return outgoingPaymentsTab;

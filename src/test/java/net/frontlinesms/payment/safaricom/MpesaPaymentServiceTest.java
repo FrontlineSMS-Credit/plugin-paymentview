@@ -57,9 +57,9 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	protected static final String ACCOUNTNUMBER_2_1 = "0700000021";
 	protected static final String ACCOUNTNUMBER_2_2 = "0700000022";
 	
-	private Client client0;
-	private Client client1;
-	private Client client2;
+	protected Client CLIENT_0;
+	protected Client CLIENT_1;
+	protected Client CLIENT_2;
 	
 	private CService cService;
 	
@@ -93,13 +93,12 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		setUpDaos();
 
 		StkMenuItem mpesaMenuItem = mockMenuItem("M-PESA", 129, 21);
-		
 		StkMenu rootMenu = new StkMenu("Safaricom", "Safaricom+", mpesaMenuItem);
 		when((StkMenu)cService.stkRequest(StkRequest.GET_ROOT_MENU)).thenReturn(rootMenu);
 		
+		sendMoneyMenuItem = mockMenuItem("Send money");
 		myAccountMenuItem = mockMenuItem("My account");
 		mpesaMenuItemRequest = rootMenu.getRequest("M-PESA");
-		sendMoneyMenuItem = mockMenuItem("Send money");
 		mpesaMenu = new StkMenu("M-PESA",
 				sendMoneyMenuItem , "Withdraw cash", "Buy airtime",
 				"Pay Bill", "Buy Goods", "ATM Withdrawal", myAccountMenuItem);
@@ -158,16 +157,15 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		
 		mpesaPaymentService.setPluginController(pluginController);
 		
+		//Set up accounts, targets and clients
 		Set<Account> accounts1 = mockAccounts(ACCOUNTNUMBER_1_1);
 		Set<Target> targets1 = mockTargets(accounts1);
 		Set<Account> accounts2 = mockAccounts(ACCOUNTNUMBER_2_1, ACCOUNTNUMBER_2_2);
 		Set<Target> targets2 = mockTargets(accounts2);
 		
-		//when(targetAnalytics.isStatusGood(target.getId)).thenReturn(1);
-		
-	    client0 = mockClient(0, PHONENUMBER_0, Collections.EMPTY_SET);
-	    client1 = mockClient(1, PHONENUMBER_1, accounts1);
-	    client2 = mockClient(2, PHONENUMBER_2, accounts2);
+	    CLIENT_0 = mockClient(0, PHONENUMBER_0, Collections.EMPTY_SET);
+	    CLIENT_1 = mockClient(1, PHONENUMBER_1, accounts1);
+	    CLIENT_2 = mockClient(2, PHONENUMBER_2, accounts2);
 	}
 	
 	private Client mockClient(long id, String phoneNumber, Set<Account> accounts) {
@@ -175,7 +173,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		when(c.getId()).thenReturn(id);
 		when(clientDao.getClientByPhoneNumber(phoneNumber)).thenReturn(c);
 		when(accountDao.getAccountsByClientId(id)).thenReturn(new ArrayList<Account>(accounts));
-		when(c.getPhoneNumber()).thenReturn("0712345678");//KIM
+		when(c.getPhoneNumber()).thenReturn(phoneNumber);
 		return c;
 	}
 	
@@ -218,7 +216,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		
 		StkRequest phoneNumberRequest = phoneNumberRequired.getRequest();
 		StkInputRequiremnent amountRequired = mockInputRequirement("Enter amount");
-		when(cService.stkRequest(phoneNumberRequest, "0712345678")).thenReturn(amountRequired);
+		when(cService.stkRequest(phoneNumberRequest, PHONENUMBER_1)).thenReturn(amountRequired);
 		
 		StkRequest amountRequest = amountRequired.getRequest();
 		StkInputRequiremnent pinRequired = mockInputRequirement("Enter PIN");
@@ -230,15 +228,14 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		mpesaPaymentService.setPin("1234");
 		
 		// when
-		//mpesaPaymentService.makePayment(mockAccount(), new BigDecimal("500"));
-		mpesaPaymentService.makePayment(client1, new BigDecimal("500"));
+		mpesaPaymentService.makePayment(CLIENT_1, new BigDecimal("500"));
 		
 		// then
 		InOrder inOrder = inOrder(cService);
 		inOrder.verify(cService).stkRequest(StkRequest.GET_ROOT_MENU);
 		inOrder.verify(cService).stkRequest(mpesaMenuItemRequest);
 		inOrder.verify(cService).stkRequest(sendMoneyMenuItemRequest);
-		inOrder.verify(cService).stkRequest(phoneNumberRequest , "0712345678");
+		inOrder.verify(cService).stkRequest(phoneNumberRequest , PHONENUMBER_1);
 		inOrder.verify(cService).stkRequest(amountRequest , "500");
 		inOrder.verify(cService).stkRequest(pinRequiredRequest , "1234");
 	}
@@ -280,7 +277,9 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		mpesaPaymentService.notify(mockMessageNotification("MPESA", messageText));
 		
 		OutgoingPayment payment = new OutgoingPayment();
-		payment.setPhoneNumber(phoneNo);
+		Set<Account> myAccounts = mockAccounts(accountNumber);
+		Client myClient = mockClient(1, phoneNo, myAccounts);
+		payment.setClient(myClient);
 		payment.setAmountPaid(new BigDecimal(amount));
 		
 		payment.setConfirmationCode(confirmationCode);
@@ -331,7 +330,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 				"New Utility balance is Ksh50,802\n" +
 				"Time: 05/04/2011 14:45:34");
 		
-		// Genuinie PayBill message from correct number, but with bad date (29 Undecimber)
+		// Genuine PayBill message from correct number, but with bad date (29 Undecimber)
 		testFakedIncomingPayment("MPESA", "BHT57U225XXX Confirmed.\n"
 				+ "on 29/13/11 at 1:45 PM\n"
 				+ "Ksh123 received from ELLY 254723908002.\n"

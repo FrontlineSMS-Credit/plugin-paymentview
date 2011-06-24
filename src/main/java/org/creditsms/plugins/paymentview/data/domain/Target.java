@@ -75,7 +75,7 @@ public class Target {
 	public Target() {
 	}
 	
-	//NEW CONSTRUCTOR KIM
+	//NEW CONSTRUCTOR
 	public Target(Date targetStartDate,Date targetEndDate, ServiceItem serviceItem, Account account) {
 		this.startDate = targetStartDate.getTime();
 		this.endDate = targetEndDate.getTime();

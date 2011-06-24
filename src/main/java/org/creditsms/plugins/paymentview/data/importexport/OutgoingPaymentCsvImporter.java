@@ -2,7 +2,6 @@ package org.creditsms.plugins.paymentview.data.importexport;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.Date;
 
 import net.frontlinesms.csv.CsvImportReport;
 import net.frontlinesms.csv.CsvImporter;
@@ -12,9 +11,10 @@ import net.frontlinesms.data.DuplicateKeyException;
 
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Account;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
-import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment.Status;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 
 /**
@@ -51,7 +51,7 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 	 * @param rowFormat
 	 */
 	public CsvImportReport importOutgoingPayments(
-			OutgoingPaymentDao outgoingPaymentDao, AccountDao accountDao,
+			OutgoingPaymentDao outgoingPaymentDao, AccountDao accountDao, ClientDao clientDao,
 			CsvRowFormat rowFormat) {
 		log.trace("ENTER");
 
@@ -75,7 +75,8 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 			}
 
 //TODO: last arguemtn --> paymetnID
-			OutgoingPayment outgoingPayment = new OutgoingPayment(phoneNumber,
+			Client client = clientDao.getClientByPhoneNumber(phoneNumber);
+			OutgoingPayment outgoingPayment = new OutgoingPayment(client,
 					new BigDecimal(amountPaid), acc, notes);
 			outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
 

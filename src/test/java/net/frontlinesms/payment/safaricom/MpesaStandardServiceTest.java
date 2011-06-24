@@ -7,9 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
-
 import net.frontlinesms.data.DuplicateKeyException;
-
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 
 public class MpesaStandardServiceTest extends MpesaPaymentServiceTest<MpesaPersonalService> {
@@ -23,7 +21,7 @@ public class MpesaStandardServiceTest extends MpesaPaymentServiceTest<MpesaPerso
 	
 	protected void init() {
 		OutgoingPayment outgoingPayment = new OutgoingPayment();
-		outgoingPayment.setPhoneNumber(PHONENUMBER_1);
+		outgoingPayment.setClient(CLIENT_1);
 		outgoingPayment.setAmountPaid(new BigDecimal("1235"));
 		outgoingPayment.setConfirmationCode("BC77RI604");
 		outgoingPayment.setStatus(OutgoingPayment.Status.UNCONFIRMED);
@@ -36,7 +34,7 @@ public class MpesaStandardServiceTest extends MpesaPaymentServiceTest<MpesaPerso
 		mockOutgoingPaymentsDao(PHONENUMBER_1, new BigDecimal("1235"), OUTGOING_LIST_1);
 		mockOutgoingPaymentsDao(PHONENUMBER_2, new BigDecimal("1235"), new ArrayList<OutgoingPayment>());
 	}
-
+	
 	private void mockOutgoingPaymentsDao(String phoneNumber, BigDecimal amountPaid, List<OutgoingPayment> Return_List) {
 		when(outgoingPaymentDao.getOutgoingPaymentsByPhoneNumberAndAmountPaid
 				(phoneNumber, amountPaid, OutgoingPayment.Status.UNCONFIRMED)

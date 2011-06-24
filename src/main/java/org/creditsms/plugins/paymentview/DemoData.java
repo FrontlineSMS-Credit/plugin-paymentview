@@ -102,7 +102,8 @@ public class DemoData {
 		
 		Account myAcc = getAccountDao().getAccountByAccountNumber(accountNumber);
 		o.setAccount(myAcc);
-		o.setPhoneNumber(phoneNumber);
+		Client myClient = getClientDao().getClientByPhoneNumber(phoneNumber);
+		o.setClient(myClient);
 	
 		o.setTimePaid(new Date(Long.parseLong(timePaid)));
 		try {

@@ -18,6 +18,7 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.importexport.OutgoingPaymentCsvImporter;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 
 public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
@@ -31,15 +32,18 @@ public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
 	private static final String UI_FILE_OPTIONS_PANEL_CONTACT = "/ui/plugins/paymentview/importexport/pnOutgoingPaymentsDetails.xml";
 
 	private AccountDao accountDao;
+	private ClientDao clientDao;
 	private int columnCount;
 	// > INSTANCE PROPERTIES
 	private OutgoingPaymentCsvImporter importer;
 	private OutgoingPaymentDao outgoingPaymentDao;
 
+
 	public OutgoingPaymentsImportHandler(UiGeneratorController ui,
-			AccountDao accountDao) {
+			AccountDao accountDao, ClientDao clientDao) {
 		super(ui);
 		this.accountDao = accountDao;
+		this.clientDao = clientDao;
 	}
 
 	private void addIncomingPaymentCells(Object row, String[] lineValues) {
@@ -83,7 +87,7 @@ public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
 	protected void doSpecialImport(String dataPath) {
 		CsvRowFormat rowFormat = getRowFormatForIncomingPayment();
 		this.importer.importOutgoingPayments(this.outgoingPaymentDao,
-				this.accountDao, rowFormat);
+				this.accountDao,this.clientDao, rowFormat);
 		// this.uiController.refreshContactsTab();
 		this.uiController.infoMessage(InternationalisationUtils
 				.getI18nString(I18N_IMPORT_SUCCESSFUL));

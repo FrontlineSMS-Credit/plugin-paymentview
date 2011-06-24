@@ -40,9 +40,7 @@ public class HibernateOutgoingPaymentDao extends
 
 	public List<OutgoingPayment> getOutgoingPaymentsByClientId(long clientId) {
 		DetachedCriteria criteria = super.getCriterion();
-		DetachedCriteria accountCriteria = criteria.createCriteria("account");
-		DetachedCriteria clientCriteria = accountCriteria
-				.createCriteria("client");
+		DetachedCriteria clientCriteria = criteria.createCriteria("client");
 		clientCriteria.add(Restrictions.eq("id", clientId));
 		return super.getList(criteria);
 	}
@@ -87,7 +85,8 @@ public class HibernateOutgoingPaymentDao extends
 
 	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(String phoneNo) {
 		DetachedCriteria criteria = super.getCriterion();
-		criteria.add(Restrictions.eq("phoneNumber", phoneNo));
+		DetachedCriteria clientCriteria = criteria.createCriteria("client");
+		clientCriteria.add(Restrictions.eq("phoneNumber", phoneNo));
 		return super.getList(criteria);
 	}
 
@@ -99,10 +98,10 @@ public class HibernateOutgoingPaymentDao extends
 	
 	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNumberAndAmountPaid(String phoneNo, BigDecimal amountPaid, OutgoingPayment.Status status){
 		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
-		criteria.add(Restrictions.eq("phoneNumber", phoneNo));
 		criteria.add(Restrictions.eq("amountPaid", amountPaid));
 		criteria.add(Restrictions.eq("status", status));
-		
+		DetachedCriteria clientCriteria = criteria.createCriteria("client");
+		clientCriteria.add(Restrictions.eq("phoneNumber", phoneNo));
 		return super.getList(criteria);
 	}
 

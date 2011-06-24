@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.data.events.DatabaseEntityNotification;
-import net.frontlinesms.data.events.EntitySavedNotification;
-import net.frontlinesms.data.events.EntityUpdatedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -19,7 +17,6 @@ import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
@@ -32,13 +29,12 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	private static final String COMPONENT_PANEL_SENT_PAYMENTS_TABLE = "pnl_clients";
 	private static final String XML_SENTPAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/sentpayments.xml";
 	
-	//KIM
 	private static final String TAB_SENTPAYMENTS = "tab_sentOutgoingPayments";
 	private Object sentPaymentsTab;
 
 	private AccountDao accountDao;
-	private OutgoingPaymentDao outgoingPaymentDao;
 	private ClientDao clientDao;
+	private OutgoingPaymentDao outgoingPaymentDao;
 
 	private Object sentPaymentsTableComponent;
 	private ComponentPagingHandler sentPaymentsTablePager;
@@ -52,12 +48,13 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	private String sentPaymentsFilter = "";
 
 
+
 	public SentPaymentsTabHandler(UiGeneratorController ui, Object tabOutgoingPayments, PaymentViewPluginController pluginController) {
 		super(ui);
 		accountDao = pluginController.getAccountDao();
 		outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
 		clientDao = pluginController.getClientDao();
-		sentPaymentsTab = ui.find(tabOutgoingPayments, TAB_SENTPAYMENTS);//KIM
+		sentPaymentsTab = ui.find(tabOutgoingPayments, TAB_SENTPAYMENTS);
 		
 		ui.getFrontlineController().getEventBus().registerObserver(this);
 		
@@ -66,12 +63,8 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 
 	private Object getRow(OutgoingPayment outgoingPayment) {
 		Object row = ui.createTableRow();
-		//TO DO
-	//	ui.add(row,	ui.createTableCell(o.getPaymentTo()));
-		Client client = clientDao.getClientByPhoneNumber(outgoingPayment.getPhoneNumber());
-		
-		ui.add(row, ui.createTableCell(client.getFullName()));
-		ui.add(row, ui.createTableCell(outgoingPayment.getPhoneNumber()));
+		ui.add(row, ui.createTableCell(outgoingPayment.getClient().getFullName()));
+		ui.add(row, ui.createTableCell(outgoingPayment.getClient().getPhoneNumber()));
 		ui.add(row, ui.createTableCell(formatter.format(outgoingPayment.getAmountPaid())));
 		ui.add(row, ui.createTableCell(df.format(new Date(outgoingPayment.getTimePaid()))));
 		ui.add(row, ui.createTableCell(tf.format(new Date(outgoingPayment.getTimePaid()))));
@@ -88,7 +81,7 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	}
 
 	public void importPayments() {
-		new OutgoingPaymentsImportHandler(ui, accountDao).showWizard();
+		new OutgoingPaymentsImportHandler(ui, accountDao, clientDao).showWizard();
 		this.refresh();
 	}
 

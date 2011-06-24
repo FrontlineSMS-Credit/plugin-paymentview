@@ -26,7 +26,7 @@ public class SelectFromClientsTabHandler extends BaseTabHandler {
 	public SelectFromClientsTabHandler(UiGeneratorController ui, Object tabOutgoingPayments, PaymentViewPluginController pluginController) {
 		super(ui);
 		this.pluginController = pluginController;
-		sendNewPaymentsTab = ui.find(tabOutgoingPayments, TAB_SEND_NEW_OUTGOING_PAYMENTS);//KIM
+		sendNewPaymentsTab = ui.find(tabOutgoingPayments, TAB_SEND_NEW_OUTGOING_PAYMENTS);
 		init();
 		refresh();
 	}

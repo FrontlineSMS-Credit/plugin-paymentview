@@ -30,7 +30,7 @@ public class OutgoingPayment {
 	public static final String FIELD_ID = "id";
 	public static final String FIELD_TIME_PAID = "timePaid";
 	public static final String FIELD_TIME_CONFIRMED = "timeConfirmed";
-	public static final String FIELD_PHONE_NUMBER = "phoneNumber";
+	public static final String FIELD_CLIENT = "client";
 	public static final String FIELD_AMOUNT_PAID = "amountPaid";
 	public static final String FIELD_CONFIRMATION_CODE = "confirmationCode";
 	public static final String FIELD_NOTES = "notes";
@@ -57,9 +57,11 @@ public class OutgoingPayment {
 	@Column(name = FIELD_PAYMENT_ID, nullable = true, unique = false)
 	private String paymentId;	
 
-	@Column(name = FIELD_PHONE_NUMBER, nullable = false, unique = false)
-	private String phoneNumber;
-
+	@ManyToOne
+	@JoinColumn(name = FIELD_CLIENT, nullable = false, unique = false)
+	private Client client;
+	
+	
 	@Column(name = FIELD_TIME_PAID, nullable = false, unique = false)
 	private Long timePaid;
 	
@@ -69,7 +71,7 @@ public class OutgoingPayment {
 	public enum Field implements EntityField<OutgoingPayment> {
 		AMOUNT_PAID(FIELD_AMOUNT_PAID),
 		CONFIRMATION_CODE(FIELD_CONFIRMATION_CODE),
-		PHONE_NUMBER(FIELD_PHONE_NUMBER),
+		CLIENT(FIELD_CLIENT),
 		TIME_PAID(FIELD_TIME_PAID),
 		TIME_CONFIRMED(FIELD_TIME_CONFIRMED),
 		NOTES(FIELD_NOTES),
@@ -126,21 +128,21 @@ public class OutgoingPayment {
 		}
 	}
 
-	public OutgoingPayment(String phoneNumber, BigDecimal amountPaid,
-			Date timePaid, Account account, String notes, Status status, String paymentId) {
-		this(phoneNumber, amountPaid, timePaid.getTime(), account, notes,
+	public OutgoingPayment(Client client, BigDecimal amountPaid,
+	Date timePaid, Account account, String notes, Status status, String paymentId) {
+		this(client, amountPaid, timePaid.getTime(), account, notes,
 				status, paymentId);
 	}
-
-	public OutgoingPayment(String phoneNumber, BigDecimal amountPaid, 
-			Account account, String notes) {
-		this(phoneNumber, amountPaid, null, account, notes,null,"");
-	}
 	
-	public OutgoingPayment(String phoneNumber, BigDecimal amountPaid,
-			long timePaid, Account account, String notes, Status status, String paymentId) {
-		
-		this.phoneNumber = phoneNumber;
+	public OutgoingPayment(Client client, BigDecimal amountPaid, 
+		Account account, String notes) {
+		this(client, amountPaid, null, account, notes,null,"");
+	}
+
+	public OutgoingPayment(Client client, BigDecimal amountPaid,
+		long timePaid, Account account, String notes, Status status, String paymentId) {
+	
+		this.client = client;
 		this.amountPaid = amountPaid;
 		this.timePaid = timePaid;
 		this.timeConfirmed = null;
@@ -149,7 +151,6 @@ public class OutgoingPayment {
 		this.status = status;
 		this.paymentId = paymentId;
 	}
-
 
 
 	public Account getAccount() {
@@ -172,10 +173,10 @@ public class OutgoingPayment {
 		return notes;
 	}
 
-	public String getPhoneNumber() {
-		return phoneNumber;
+	public Client getClient() {
+		return client;
 	}
-
+	
 	public Long getTimePaid() {
 		return this.timePaid;
 	}
@@ -200,8 +201,8 @@ public class OutgoingPayment {
 		this.notes = notes;
 	}
 
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
+	public void setClient(Client client) {
+		this.client = client;
 	}
 
 	public void setTimePaid(Date timePaid) {
@@ -237,7 +238,7 @@ public class OutgoingPayment {
 		return "OutgoingPayment [id=" + id + ", amountPaid=" + amountPaid
 				+ ", status=" + status + ", confirmationCode="
 				+ confirmationCode + ", notes=" + notes + ", phoneNumber="
-				+ phoneNumber + ", timePaid=" + timePaid + ", account="
+				+ client.getPhoneNumber() + ", timePaid=" + timePaid + ", account="
 				+ account + ", paymentId=" + paymentId + "]";
 	}
 
@@ -254,7 +255,7 @@ public class OutgoingPayment {
 				* result
 				+ ((confirmationCode == null) ? 0 : confirmationCode.hashCode());
 		result = prime * result
-				+ ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
+				+ ((client.getPhoneNumber() == null) ? 0 : client.getPhoneNumber().hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		result = prime * result + (int) (timePaid ^ (timePaid >>> 32));
 		return result;
@@ -293,11 +294,11 @@ public class OutgoingPayment {
 		} else if (!paymentId.equals(other.paymentId)) {
 			return false;
 		}
-		if (phoneNumber == null) {
-			if (other.phoneNumber != null) {
+		if (client == null) {
+			if (other.client != null) {
 				return false;
 			}
-		} else if (!phoneNumber.equals(other.phoneNumber)) {
+		} else if (client.getId()!=(other.client.getId())) {
 			return false;
 		}
 		if (status != other.status) {

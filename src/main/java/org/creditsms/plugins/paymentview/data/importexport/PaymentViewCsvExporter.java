@@ -202,7 +202,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 			for (OutgoingPayment outgoingPayment : outgoingPayments) {
 				CsvUtils.writeLine(out, outgoingPaymentFormat,
 						PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER,
-						outgoingPayment.getPhoneNumber(),
+						outgoingPayment.getClient().getPhoneNumber(),
 						PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
 						outgoingPayment.getAmountPaid().toString(),
 						PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,

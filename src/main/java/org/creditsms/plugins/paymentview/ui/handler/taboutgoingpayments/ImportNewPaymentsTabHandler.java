@@ -3,24 +3,27 @@ package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.OutgoingPaymentsImportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SchedulePaymentAuthDialogHandler;
 
 public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	private static final String XML_IMPORT_NEW_PAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/importnewpayments.xml";
 	private AccountDao accountDao;
+	private ClientDao clientDao;
 	private Object schedulePaymentAuthDialog;
 	private Object selectFromClientsPanel;
 	private Object sendPaymentAuthDialog;
-	
-	//KIM
 	private static final String TAB_IMPORTNEWPAYMENTS = "tab_importNewOutgoingPayments";
 	private Object importPaymentsTab;
 
-	public ImportNewPaymentsTabHandler(UiGeneratorController ui, Object tabOutgoingPayments) {
+	public ImportNewPaymentsTabHandler(UiGeneratorController ui, Object tabOutgoingPayments, PaymentViewPluginController pluginController) {
 		super(ui);
-		importPaymentsTab = ui.find(tabOutgoingPayments, TAB_IMPORTNEWPAYMENTS);//KIM
+		accountDao = pluginController.getAccountDao();
+		clientDao = pluginController.getClientDao();
+		importPaymentsTab = ui.find(tabOutgoingPayments, TAB_IMPORTNEWPAYMENTS);
 		init();
 	}
 
@@ -36,7 +39,7 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	}
 
 	public void showImportWizard(String typeName) {
-		new OutgoingPaymentsImportHandler(ui, accountDao).showWizard();
+		new OutgoingPaymentsImportHandler(ui, accountDao, clientDao).showWizard();
 	}
 
 	public void showSchedulePaymentAuthDialog() {

@@ -11,7 +11,6 @@ import net.frontlinesms.ui.UiGeneratorController;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
@@ -49,13 +48,11 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	private Object cmbOpMobilePaymentSystem;
 	private OutgoingPaymentDao outgoingPaymentDao;
 	private MpesaPaymentService paymentService;
-	private ClientDao clientDao;
 
 	public SendNewPaymentDialogHandler(UiGeneratorController ui,PaymentViewPluginController pluginController, Client client) {
 		super(ui);
 		this.pluginController = pluginController;
 		outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
-		clientDao = pluginController.getClientDao();
 		this.client = client;
 		initialise();
 		refresh();
@@ -108,7 +105,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 			} else {
 				try {					
 					outgoingPayment = new OutgoingPayment();
-					outgoingPayment.setPhoneNumber(ui.getText(fieldOpMsisdn));
+					outgoingPayment.setClient(client);
 					outgoingPayment.setAmountPaid(new BigDecimal(ui.getText(fieldOpAmount)));
 					outgoingPayment.setTimePaid(Calendar.getInstance().getTime());
 					outgoingPayment.setNotes(ui.getText(fieldOpNotes));
@@ -135,17 +132,9 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 
 	public void sendPayment() throws PaymentServiceException {
 		//TODO check MSISDN, amount available?
-		
-		// save the outgoing payment list
 		try {
-				//save the outgoing payment in DB
 				outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
-
-				//send payment
-				Client client = clientDao.getClientByPhoneNumber(outgoingPayment.getPhoneNumber());
 				paymentService.makePayment(client, outgoingPayment.getAmountPaid());
-				
-				// update the outgoing payment in DB
 				outgoingPayment.setStatus(OutgoingPayment.Status.UNCONFIRMED);
 				outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
 		} catch (IllegalArgumentException ex) {
