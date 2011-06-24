@@ -1,5 +1,6 @@
 package net.frontlinesms.payment;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
@@ -29,6 +30,6 @@ public interface PaymentService {
 		}
 	}
 	
-//	void makePayment(Account account, BigDecimal amount) throws PaymentServiceException;
 	void makePayment(Client client, BigDecimal amount) throws PaymentServiceException;
+	void checkBalance() throws PaymentServiceException, IOException;
 }
