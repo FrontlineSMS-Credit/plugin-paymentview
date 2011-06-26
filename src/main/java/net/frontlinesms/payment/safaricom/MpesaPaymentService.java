@@ -155,7 +155,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		//I have overrided this function...
 		if (isValidIncomingPaymentConfirmation(message)) {
 			processIncomingPayment(message);
-			return;
 		}
 	}
 
@@ -278,7 +277,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			return false;
 		}
 		
-			
 		if (other.getClass().getName().equals(this.getClass().getName())){ 
 			return true;
 		}

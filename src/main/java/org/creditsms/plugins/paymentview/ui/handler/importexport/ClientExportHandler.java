@@ -100,11 +100,12 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 	public void showWizard() {
 		List<CustomField> allCustomFields = this.customFieldDao
 				.getAllActiveUsedCustomFields();
+		Object pnInfo = uiController.find(optionsPanel, "pnInfo");
 		if (!allCustomFields.isEmpty()) {
 			for (CustomField cf : allCustomFields) {
 					Object checkbox = uiController.createCheckbox(cf.getCamelCaseName(),
 							cf.getReadableName(), true);
-					uiController.add(optionsPanel, checkbox);
+					uiController.add(pnInfo, checkbox);
 			}
 		}
 		super.showWizard();

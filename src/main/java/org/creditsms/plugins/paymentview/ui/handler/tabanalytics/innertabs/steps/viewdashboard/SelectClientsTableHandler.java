@@ -54,14 +54,11 @@ public class SelectClientsTableHandler extends BaseSelectClientTableHandler {
 		List<Target> tgtLst = this.targetDao.getTargetsByServiceItemByClient(serviceItem.getId(), client.getId());
 		
 		for(int i=0; i<tgtLst.size(); i++){
-			boolean added = false;
 			for(int j=0; j<accountNumbers.size();j++){
 				if(tgtLst.get(i).getAccount().getAccountNumber().equals(accountNumbers.get(j))){
-					added = true;
+					accountNumbers.add(tgtLst.get(i).getAccount().getAccountNumber());
+					break;
 				}
-			}
-			if(!added){
-				accountNumbers.add(tgtLst.get(i).getAccount().getAccountNumber());
 			}
 		}
 		return accountNumbers;

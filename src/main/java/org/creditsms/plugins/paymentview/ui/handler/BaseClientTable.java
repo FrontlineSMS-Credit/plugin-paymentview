@@ -9,6 +9,7 @@ import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.Icon;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
@@ -252,16 +253,20 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 		this.refresh();
 	}
 	
-	public void notify(FrontlineEventNotification notification) {
-		if (!(notification instanceof DatabaseEntityNotification)) {
-			return;
-		}
-
-		Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
-		if (entity instanceof Client) {
-			this.refresh();
-		}else if (entity instanceof CustomField) {
-			revalidateTable();
-		}
+	public void notify(final FrontlineEventNotification notification) {
+		new FrontlineUiUpateJob() {
+			public void run() {
+				if (!(notification instanceof DatabaseEntityNotification)) {
+					return;
+				}
+		
+				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
+				if (entity instanceof Client) {
+					BaseClientTable.this.refresh();
+				}else if (entity instanceof CustomField) {
+					revalidateTable();
+				}
+			}
+		}.execute();
 	}
 }

@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
@@ -136,14 +138,18 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 //> INCOMING PAYMENT NOTIFICATION...
 	@SuppressWarnings("rawtypes")
-	public void notify(FrontlineEventNotification notification) {
-		if (!(notification instanceof EntitySavedNotification)) {
-			return;
-		}
-
-		Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
-		if (entity instanceof IncomingPayment) {
-			this.refresh();
-		}
+	public void notify(final FrontlineEventNotification notification) {
+		new FrontlineUiUpateJob() {
+			public void run() {
+				if (!(notification instanceof DatabaseEntityNotification)) {
+					return;
+				}
+		
+				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
+				if (entity instanceof IncomingPayment) {
+					IncomingPaymentsTabHandler.this.refresh();
+				}
+			}
+		}.execute();
 	}
 }

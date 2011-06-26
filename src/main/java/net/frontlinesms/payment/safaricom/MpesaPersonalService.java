@@ -32,7 +32,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	
 //>BEGIN - OUTGOING PAYMENT REGION	
 	@Override
-	public void processMessage(final FrontlineMessage message) {
+	protected void processMessage(final FrontlineMessage message) {
 		super.processMessage(message);
 		
 		if (isValidOutgoingPaymentConfirmation(message)) {
@@ -45,10 +45,11 @@ public class MpesaPersonalService extends MpesaPaymentService {
 			public void run() {
 				try {				
 					// Retrieve the corresponding outgoing payment with status UNCONFIRMED
-					List<OutgoingPayment> outgoingPayments = outgoingPaymentDao.getOutgoingPaymentsByPhoneNumberAndAmountPaid(getPhoneNumber(message),
+					List<OutgoingPayment> outgoingPayments = 
+						outgoingPaymentDao.getByPhoneNumberAndAmountPaid(getPhoneNumber(message),
 							new BigDecimal(getAmount(message).toString()), OutgoingPayment.Status.UNCONFIRMED);
 
-					if (!outgoingPayments.isEmpty()){					
+					if (!outgoingPayments.isEmpty()){				
 						final OutgoingPayment outgoingPayment = outgoingPayments.get(0);
 						outgoingPayment.setConfirmationCode(getConfirmationCode(message));
 						outgoingPayment.setTimeConfirmed(getTimePaid(message).getTime());
@@ -68,17 +69,6 @@ public class MpesaPersonalService extends MpesaPaymentService {
 				}
 			}
 		}.execute();
-	}
-	
-	private String getPaymentTo(FrontlineMessage message) {
-		try {
-	        String nameAndPhone = getFirstMatch(message, "Ksh[,|[0-9]]+ sent to ([A-Za-z ]+) 2547[0-9]{8}");
-	        String nameWKshSentTo = nameAndPhone.split(AMOUNT_PATTERN+SENT_TO)[1];
-	        String names = getFirstMatch(nameWKshSentTo,PAID_BY_PATTERN).trim();
-	        return names;
-		} catch(ArrayIndexOutOfBoundsException ex) {
-			throw new IllegalArgumentException(ex);
-		}
 	}
 	
 	private boolean isValidOutgoingPaymentConfirmation(FrontlineMessage message) {

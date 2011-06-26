@@ -65,7 +65,7 @@ public interface OutgoingPaymentDao {
 	/**
 	 * returns OutgoingPayment(s) by phone number and amount paid (Time paid desc)
 	 * */
-	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNumberAndAmountPaid(String phoneNo,
+	public List<OutgoingPayment> getByPhoneNumberAndAmountPaid(String phoneNo,
 			BigDecimal amountPaid, OutgoingPayment.Status status);
 
 	/**

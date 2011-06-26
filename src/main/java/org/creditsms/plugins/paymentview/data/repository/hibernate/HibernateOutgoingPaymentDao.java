@@ -96,7 +96,7 @@ public class HibernateOutgoingPaymentDao extends
 		return null;
 	}
 	
-	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNumberAndAmountPaid(String phoneNo, BigDecimal amountPaid, OutgoingPayment.Status status){
+	public List<OutgoingPayment> getByPhoneNumberAndAmountPaid(String phoneNo, BigDecimal amountPaid, OutgoingPayment.Status status){
 		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.eq("amountPaid", amountPaid));
 		criteria.add(Restrictions.eq("status", status));

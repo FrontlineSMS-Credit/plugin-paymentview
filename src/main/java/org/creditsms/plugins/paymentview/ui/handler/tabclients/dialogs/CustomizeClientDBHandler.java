@@ -11,6 +11,7 @@ import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
@@ -93,38 +94,45 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 	}
 
 	public void refreshList() {
-		ui.removeAll(listCustomFields);
-		customFieldCounter = mainFieldCounter;
-		for (CustomField cf : customFieldDao.getAllActiveUsedCustomFields()) {
-			addListItem(cf, ++customFieldCounter);
-		}
-		if (customFieldCounter == mainFieldCounter){
-			++customFieldCounter;
-		}
-			
+		new FrontlineUiUpateJob() {
+			public void run() {
+				ui.removeAll(listCustomFields);
+				customFieldCounter = mainFieldCounter;
+				for (CustomField cf : customFieldDao.getAllActiveUsedCustomFields()) {
+					addListItem(cf, ++customFieldCounter);
+				}
+				if (customFieldCounter == mainFieldCounter){
+					++customFieldCounter;
+				}
+			}
+		}.execute();
 	}
 
-	public void addNewField(Object fieldCombo) {
-		CustomField cf = (CustomField) ui.getAttachedObject(ui
-				.getSelectedItem(fieldCombo));
-		if (cf != null) {
-			int index = ui.getIndex(compPanelFields, fieldCombo);
-			ui.remove(fieldCombo);
-			Object txtField = ui.createTextfield(ui.getName(fieldCombo),
-					cf.getReadableName());
-
-			cf.setUsed(true);
-
-			try {
-				customFieldDao.updateCustomField(cf);
-			} catch (DuplicateKeyException e) {
-				new RuntimeException(e);
+	public void addNewField(final Object fieldCombo) {
+		new FrontlineUiUpateJob() {
+			public void run() {
+				CustomField cf = (CustomField) ui.getAttachedObject(ui
+						.getSelectedItem(fieldCombo));
+				if (cf != null) {
+					int index = ui.getIndex(compPanelFields, fieldCombo);
+					ui.remove(fieldCombo);
+					Object txtField = ui.createTextfield(ui.getName(fieldCombo),
+							cf.getReadableName());
+		
+					cf.setUsed(true);
+		
+					try {
+						customFieldDao.updateCustomField(cf);
+					} catch (DuplicateKeyException e) {
+						new RuntimeException(e);
+					}
+					ui.add(compPanelFields, txtField, index);
+					ui.setColspan(txtField, 2);
+					ui.setColumns(txtField, 50);
+					ui.setEditable(txtField, false);
+				}
 			}
-			ui.add(compPanelFields, txtField, index);
-			ui.setColspan(txtField, 2);
-			ui.setColumns(txtField, 50);
-			ui.setEditable(txtField, false);
-		}
+		}.execute();
 	}
 	
 	public void removeField(Object lstCustomFields) throws DuplicateKeyException {
@@ -160,14 +168,18 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 		ui.add(new OtherFieldHandler(pluginController, customFieldDao, customFieldCounter).getDialog());
 	}
 
-	public void notify(FrontlineEventNotification notification) {
-		if (!(notification instanceof DatabaseEntityNotification)) {
-			return;
-		}
-
-		Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
-		if (entity instanceof CustomField) {
-			this.refresh();
-		}
+	public void notify(final FrontlineEventNotification notification) {
+		new FrontlineUiUpateJob() {
+			public void run() {
+				if (!(notification instanceof DatabaseEntityNotification)) {
+					return;
+				}
+		
+				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
+				if (entity instanceof CustomField) {
+					CustomizeClientDBHandler.this.refresh();
+				}
+			}
+		}.execute();
 	}
 }
