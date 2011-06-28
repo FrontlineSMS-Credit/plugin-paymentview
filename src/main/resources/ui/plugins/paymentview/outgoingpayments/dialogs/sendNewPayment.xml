@@ -38,8 +38,8 @@
 			weightx="1">
 			<button icon="/icons/recipient_number.png" name="btn_SendPaymentNow"
 				action="showSendNewPaymentsAuthDialog" text="i18n.plugins.paymentview.action.sendpaymentnow" />
-			<button icon="/icons/time.png" name="btn_SchedulePayment"
-				action="showScheduleNewPaymentsAuthDialog" text="i18n.plugins.paymentview.action.schedulepayment" />
+			<!--  <button icon="/icons/time.png" name="btn_SchedulePayment"
+				action="showScheduleNewPaymentsAuthDialog" text="i18n.plugins.paymentview.action.schedulepayment" /> -->
 			<button icon="/icons/cross.png" text="i18n.action.cancel"
 				action="removeDialog" />
 		</panel>
