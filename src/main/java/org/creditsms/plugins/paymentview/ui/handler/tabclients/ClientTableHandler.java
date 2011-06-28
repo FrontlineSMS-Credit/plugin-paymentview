@@ -1,13 +1,8 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabclients;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.ui.handler.BaseClientTable;
 
 public class ClientTableHandler extends BaseClientTable {

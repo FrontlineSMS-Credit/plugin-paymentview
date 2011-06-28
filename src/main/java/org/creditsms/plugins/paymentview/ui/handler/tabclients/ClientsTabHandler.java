@@ -112,8 +112,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	}
 
 	public void importClient() {
-		new ClientImportHandler(ui, this, clientDao, this.customFieldDao,
-				this.customValueDao).showWizard();
+		new ClientImportHandler(pluginController, this).showWizard();
 		this.refresh();
 	}
 	

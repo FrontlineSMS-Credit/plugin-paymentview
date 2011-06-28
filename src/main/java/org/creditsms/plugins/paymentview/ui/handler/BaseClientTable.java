@@ -261,7 +261,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 				}
 		
 				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
-				if (entity instanceof Client) {
+				if (entity instanceof Client || entity instanceof Account) {
 					BaseClientTable.this.refresh();
 				}else if (entity instanceof CustomField) {
 					revalidateTable();
