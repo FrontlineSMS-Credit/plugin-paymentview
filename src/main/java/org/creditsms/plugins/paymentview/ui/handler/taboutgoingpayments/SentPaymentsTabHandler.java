@@ -11,6 +11,7 @@ import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
@@ -142,15 +143,20 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 		this.sentPaymentsTablePager.refresh();
 	}
 
-	public void notify(FrontlineEventNotification notification) {
-		if (!(notification instanceof DatabaseEntityNotification)) {
-			return;
-		} else {
-			Object entity;
-			if (notification instanceof DatabaseEntityNotification){
-				entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
-				this.refresh();
+	public void notify(final FrontlineEventNotification notification) {
+		new FrontlineUiUpateJob() {
+			public void run() {
+				if (!(notification instanceof DatabaseEntityNotification)) {
+					return;
+				} else {
+					if (notification instanceof DatabaseEntityNotification){
+						Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
+						if (entity instanceof OutgoingPayment) {
+							SentPaymentsTabHandler.this.refresh();
+						}
+					}
+				}
 			}
-		}
+		}.execute();
 	}
 }

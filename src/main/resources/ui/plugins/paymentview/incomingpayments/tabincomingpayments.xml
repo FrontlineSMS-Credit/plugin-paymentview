@@ -5,8 +5,6 @@
 		<panel columns="2" gap="5" name="pnl_clients" weightx="1"
 			weighty="1">
 			<label text="Incoming Payments" font="20 Bold" weightx="1"/>
-			<button icon="/icons/refresh.png" action="refresh"/>
-			
 			<table name="tbl_clients" weightx="1" weighty="1" colspan="2">
 				<header>
 					<column text="Name" width="200" icon="/icons/user.png" />

@@ -16,4 +16,5 @@ public class PaymentViewCsvUtils extends CsvUtils {
 	public static final String MARKER_INCOMING_TIME_PAID = "${time_paid}";
 	public static final String MARKER_OUTGOING_CONFIRMATION = "${confirmation}";
 	public static final String MARKER_OUTGOING_NOTES = "${notes}";
+	public static final String MARKER_PAYMENT_BY = "${payment_by}";
 }
