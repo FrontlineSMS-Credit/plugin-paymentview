@@ -78,7 +78,6 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 
 	public void exportPayments() {
 		new OutgoingPaymentsExportHandler(ui, outgoingPaymentDao).showWizard();
-		this.refresh();
 	}
 
 	public void importPayments() {

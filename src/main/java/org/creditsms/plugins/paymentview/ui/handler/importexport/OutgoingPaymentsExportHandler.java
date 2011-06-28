@@ -21,13 +21,10 @@ import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 public class OutgoingPaymentsExportHandler extends
 		ExportDialogHandler<OutgoingPayment> {
 
-	private static final String COMPONENT_CB_ACCOUNT = "cbAccount";
 	private static final String COMPONENT_CB_AMOUNT_PAID = "cbAmountPaid";
-	private static final String COMPONENT_CB_OUTGOING_CONFIRMATION = "cbConfirmation";
 	private static final String COMPONENT_CB_OUTGOING_NOTES = "cbNotes";
-	/** i18n Text Key: "Active" */
 	private static final String COMPONENT_CB_PHONE_NUMBER = "cbPhoneNumber";
-	private static final String COMPONENT_CB_TIME_PAID = "cbTimePaid";
+	private static final String COMPONENT_CB_CLIENT_NAME = "cbClient";
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_EXPORTING_SELECTED_CONTACTS = "plugins.paymentview.message.exporting.selected.client";
 	private static final String UI_FILE_OPTIONS_PANEL_OUTGOING_PAYMENT = "/ui/plugins/paymentview/importexport/pnExportOutgoingPaymentsDetails.xml";
@@ -43,8 +40,7 @@ public class OutgoingPaymentsExportHandler extends
 	@Override
 	public void doSpecialExport(String dataPath) throws IOException {
 		log.debug("Exporting all contacts..");
-		exportOutgoingPayment(this.outgoingPaymentDao.getAllOutgoingPayments(),
-				dataPath);
+		exportOutgoingPayment(this.outgoingPaymentDao.getAllOutgoingPayments(), dataPath);
 	}
 
 	@Override
@@ -90,18 +86,10 @@ public class OutgoingPaymentsExportHandler extends
 
 	protected CsvRowFormat getRowFormatForClient() {
 		CsvRowFormat rowFormat = new CsvRowFormat();
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER,
-				COMPONENT_CB_PHONE_NUMBER);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT,
-				COMPONENT_CB_ACCOUNT);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
-				COMPONENT_CB_AMOUNT_PAID);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,
-				COMPONENT_CB_TIME_PAID);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_OUTGOING_NOTES,
-				COMPONENT_CB_OUTGOING_NOTES);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_OUTGOING_CONFIRMATION,
-				COMPONENT_CB_OUTGOING_CONFIRMATION);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_NAME, COMPONENT_CB_CLIENT_NAME);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER, COMPONENT_CB_PHONE_NUMBER);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID, COMPONENT_CB_AMOUNT_PAID);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_OUTGOING_NOTES, COMPONENT_CB_OUTGOING_NOTES);
 		return rowFormat;
 	}
 
