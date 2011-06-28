@@ -7,7 +7,6 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 public class OutgoingPaymentsTabHandler extends BaseTabHandler {
 
 	private static final String XML_OUTGOINGPAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/taboutgoingpayments.xml";
-
 	private ImportNewPaymentsTabHandler importNewPaymentsTab;
 	private Object outgoingPaymentsTab;
 

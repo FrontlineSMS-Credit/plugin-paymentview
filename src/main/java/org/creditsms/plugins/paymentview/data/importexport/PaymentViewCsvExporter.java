@@ -29,6 +29,7 @@ import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
@@ -41,7 +42,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 	 * @throws IOException
 	 */
 	public static void exportClients(File exportFile,
-			Collection<Client> clients, CustomFieldDao customFieldDao,
+			Collection<Client> clients, AccountDao accountDao,CustomFieldDao customFieldDao,
 			CustomValueDao customValueDao, CsvRowFormat clientFormat)
 			throws IOException {
 		LOG.trace("ENTER");
@@ -54,8 +55,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 			out = new Utf8FileWriter(exportFile);
 			List<CustomField> usedCustomFields = customFieldDao
 					.getAllActiveUsedCustomFields();
-			List<String> items = new ArrayList<String>(
-					(usedCustomFields.size() * 2) + 8);
+			List<String> items = new ArrayList<String>(usedCustomFields.size());
 
 			items.add(PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME);
 			items.add(InternationalisationUtils
@@ -73,8 +73,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 				items.add(cf.getReadableName());
 			}
 			String[] str = new String[items.size()];
-			CsvUtils
-					.writeLine(out, clientFormat, items.toArray(str));
+			CsvUtils.writeLine(out, clientFormat, items.toArray(str));
 
 			for (Client client : clients) {
 				List<CustomValue> allCustomValues = customValueDao
@@ -89,6 +88,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 				items.add(PaymentViewCsvUtils.MARKER_CLIENT_PHONE);
 				items.add(client.getPhoneNumber());
 				items.add(PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS);
+				items.add(PaymentViewUtils.accountsAsString(accountDao.getAccountsByClientId(client.getId()), "; "));
 
 				if (!usedCustomFields.isEmpty()) {
 					CustomField curr = null;
@@ -111,8 +111,8 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 				}
 
 				str = new String[items.size()];
-				CsvUtils.writeLine(out, clientFormat,
-						items.toArray(str));
+				str = items.toArray(str);
+				CsvUtils.writeLine(out, clientFormat, str);
 			}
 		} finally {
 			if (out != null)
