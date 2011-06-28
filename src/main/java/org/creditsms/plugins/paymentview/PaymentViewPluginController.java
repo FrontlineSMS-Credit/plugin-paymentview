@@ -8,7 +8,6 @@
 package org.creditsms.plugins.paymentview;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +105,6 @@ public class PaymentViewPluginController extends BasePluginController
 			try {
 				AuthorizationProperties.getInstance().
 				setAuthCode(AuthorizationChecker.getHash(AuthorizationChecker.ITERATION_NUMBER, authCode, AuthorizationChecker.getSalt()));
-				System.out.println("Set up password by default.");
 			} catch (NoSuchAlgorithmException e) {
 				e.printStackTrace();
 			} catch (UnsupportedEncodingException e) {
