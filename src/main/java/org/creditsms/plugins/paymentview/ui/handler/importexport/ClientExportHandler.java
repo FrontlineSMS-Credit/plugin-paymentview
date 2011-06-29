@@ -122,8 +122,6 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 				COMPONENT_CB_NAME);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_PHONE,
 				COMPONENT_CB_PHONE);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS,
-				COMPONENT_ACCOUNTS);
 		
 		for(CustomField cf : customFieldDao.getAllActiveUsedCustomFields()){
 			addMarker(rowFormat, PaymentViewUtils.getMarkerFromString(cf.getReadableName()),

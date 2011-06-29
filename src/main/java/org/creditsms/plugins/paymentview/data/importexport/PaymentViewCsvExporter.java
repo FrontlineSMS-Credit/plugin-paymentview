@@ -64,8 +64,6 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 					.getI18nString(COMMON_OTHER_NAME));
 			items.add(PaymentViewCsvUtils.MARKER_CLIENT_PHONE);
 			items.add(InternationalisationUtils.getI18nString(COMMON_PHONE));
-			items.add(PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS);
-			items.add(InternationalisationUtils.getI18nString(COMMON_ACCOUNTS));
 
 			for (CustomField cf : usedCustomFields) {
 				items.add(PaymentViewUtils.getMarkerFromString(cf.getReadableName()));

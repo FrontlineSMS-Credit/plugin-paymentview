@@ -8,6 +8,7 @@ import net.frontlinesms.csv.CsvImportReport;
 import net.frontlinesms.csv.CsvImporter;
 import net.frontlinesms.csv.CsvParseException;
 import net.frontlinesms.csv.CsvRowFormat;
+import net.frontlinesms.data.DuplicateKeyException;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
@@ -15,8 +16,10 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 import org.hibernate.NonUniqueObjectException;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 
 /**
  * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
@@ -43,27 +46,38 @@ public class ClientCsvImporter extends CsvImporter {
 	 * @param rowFormat
 	 * @param customFieldDao 
 	 * @param customValueDao 
+	 * @throws DuplicateKeyException 
 	 * @throws IOException
 	 *             If there was a problem accessing the file
 	 * @throws CsvParseException
 	 *             If there was a problem with the format of the file
 	 */
+	/**
+	 * @param clientDao
+	 * @param rowFormat
+	 * @param pluginController
+	 * @return
+	 * @throws DuplicateKeyException
+	 */
 	public CsvImportReport importClients(ClientDao clientDao,
-			CsvRowFormat rowFormat, PaymentViewPluginController pluginController) {
+			CsvRowFormat rowFormat, PaymentViewPluginController pluginController) throws DuplicateKeyException {
 		log.trace("ENTER");
 
 		for (String[] lineValue : this.getRawValues()) {
 			String firstname = rowFormat.getOptionalValue(lineValue, PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME);
 			String otherName = rowFormat.getOptionalValue(lineValue, PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME);
 			String phonenumber = rowFormat.getOptionalValue(lineValue, PaymentViewCsvUtils.MARKER_CLIENT_PHONE);
+			
 
 			Client c = new Client(firstname, otherName, phonenumber);
 			try{
 				clientDao.saveClient(c);
-			}catch (ConstraintViolationException e){
-				pluginController.getUiGeneratorController().alert("You are attempting to add a Duplicate Client, or Phone Number.");
-			}catch (NonUniqueObjectException e){
-				pluginController.getUiGeneratorController().alert("You are attempting to add a Duplicate Client, or Phone Number.");
+			}catch (Exception e){
+				if (e instanceof NonUniqueObjectException
+						|| e instanceof DataIntegrityViolationException
+						|| e instanceof ConstraintViolationException){
+					throw new DuplicateKeyException("You are attempting to import a duplicate phone number: "+phonenumber);
+				}
 			}
 			
 			//FIXME: Ability to take in custom fields and data.
@@ -75,15 +89,12 @@ public class ClientCsvImporter extends CsvImporter {
 			 */
 			
 			List<CustomField> allCustomFields = pluginController.getCustomFieldDao().getAllActiveUsedCustomFields();
-			List<CustomValue> allCustomValues = pluginController.getCustomValueDao().getCustomValuesByClientId(c.getId());
 
 			if (!allCustomFields.isEmpty()) {
 				for (CustomField cf : allCustomFields) {
-					for (CustomValue cv : allCustomValues) {
-						if (cv.getCustomField().equals(cf)) {
-							rowFormat.getOptionalValue(lineValue, cv.getStrValue());
-						}
-					} 
+					String strValue = rowFormat.getOptionalValue(lineValue, PaymentViewUtils.getMarkerFromString(cf.getReadableName()));
+					CustomValue cv = new CustomValue(strValue, cf, c);
+					pluginController.getCustomValueDao().saveCustomValue(cv);
 				}
 			}
 
