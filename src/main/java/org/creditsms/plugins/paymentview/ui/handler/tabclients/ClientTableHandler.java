@@ -1,5 +1,4 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabclients;
-
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;

@@ -18,6 +18,7 @@ import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
@@ -150,7 +151,7 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 				} else {
 					if (notification instanceof DatabaseEntityNotification){
 						Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
-						if (entity instanceof OutgoingPayment) {
+						if (entity instanceof OutgoingPayment || entity instanceof Client) {
 							SentPaymentsTabHandler.this.refresh();
 						}
 					}

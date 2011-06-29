@@ -9,9 +9,11 @@ import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.Order;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
 public class HibernateOutgoingPaymentDao extends
@@ -31,13 +33,17 @@ public class HibernateOutgoingPaymentDao extends
 	
 	public List<OutgoingPayment> getAllOutgoingPayments(int startIndex,
 			int limit) {
-		return super.getAll(startIndex, limit);
+		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria clientCriteria = criteria.createCriteria("client");
+		clientCriteria.add(Restrictions.eq("active",
+				Boolean.TRUE));
+		return super.getList(criteria, startIndex, limit);
 	}
 	
 	public int getOutgoingPaymentsCount() {
 		return super.countAll();
 	}
-
+	
 	public List<OutgoingPayment> getOutgoingPaymentsByClientId(long clientId) {
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria clientCriteria = criteria.createCriteria("client");
@@ -86,7 +92,11 @@ public class HibernateOutgoingPaymentDao extends
 	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(String phoneNo) {
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria clientCriteria = criteria.createCriteria("client");
-		clientCriteria.add(Restrictions.eq("phoneNumber", phoneNo));
+		clientCriteria.add(Restrictions
+				.disjunction()
+				.add(Restrictions.eq("phoneNumber", phoneNo))
+				.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
+						Boolean.TRUE)));
 		return super.getList(criteria);
 	}
 

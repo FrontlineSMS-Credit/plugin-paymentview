@@ -27,6 +27,7 @@ public class Client {
 	private static final String FIELD_FIRST_NAME = "firstName";
 	private static final String FIELD_OTHER_NAME = "otherName";
 	private static final String FIELD_PHONE_NUMBER = "phoneNumber";
+	private static final String FIELD_ACTIVE = "active";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +43,9 @@ public class Client {
 
 	@Column(name = FIELD_PHONE_NUMBER, nullable = false, unique = true)
 	private String phoneNumber;
+	
+	@Column(name = FIELD_ACTIVE)
+	private boolean active = true;
 
 	//@OneToMany(fetch = FetchType.EAGER)
 	//private Set<Account> accounts = new HashSet<Account>();
@@ -53,7 +57,8 @@ public class Client {
 		ID(FIELD_ID),
 		FIRST_NAME(FIELD_FIRST_NAME),
 		OTHER_NAME(FIELD_OTHER_NAME),
-		PHONE_NUMBER(FIELD_PHONE_NUMBER);
+		PHONE_NUMBER(FIELD_PHONE_NUMBER),
+		ACTIVE(FIELD_ACTIVE);
 		
 		/** name of a field */
 		private final String fieldName;
@@ -121,6 +126,14 @@ public class Client {
 		return phoneNumber;
 	}
 
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

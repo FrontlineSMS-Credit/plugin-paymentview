@@ -28,6 +28,18 @@ public interface ClientDao {
 	 * @return
 	 */
 	public List<Client> getAllClients(int startIndex, int limit);
+	
+	/**
+	 * Returns all active clients from a particular start index with a maximum number
+	 * of returned clients set.
+	 * 
+	 * @param startIndex
+	 *            index of the first client to fetch
+	 * @param limit
+	 *            Maximum number of clients to fetch from the start index
+	 * @return
+	 */
+	public List<Client> getAllActiveClients(int startIndex, int limit);
 
 	/**
 	 * Returns a client with the same id as the passed id

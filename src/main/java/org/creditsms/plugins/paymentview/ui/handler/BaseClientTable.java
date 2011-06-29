@@ -84,7 +84,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 			if (!filter.trim().isEmpty()) {
 				return this.clientDao.getClientsByName(filter, startIndex, limit);
 			}else{
-				return this.clientDao.getAllClients(startIndex, limit);
+				return this.clientDao.getAllActiveClients(startIndex, limit);
 			}
 		}else{
 			//FIXME: Make this stable

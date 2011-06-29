@@ -209,8 +209,19 @@ public class EditClientHandler extends BaseDialog{
 				String phone = ui.getText(fieldPhoneNumber);
 				//test if phoneNumber already linked to another client
 				Client clientInDb = clientDao.getClientByPhoneNumber(phone);
-				if (clientInDb!=null){
-					ui.infoMessage("The phone number " + phone + " is already set up for "+ clientInDb.getFullName() + ".");
+				if (clientInDb!=null ){
+					if (clientInDb.isActive()){
+						ui.infoMessage("The phone number " + phone + " is already set up for "+ clientInDb.getFullName() + ".");
+					} else {
+						//TODO: Make sure that the user is active if we add a client that has same phone number...
+						//ui.showConfirmationDialog("An inactive client with this phone number '" + phone + "' exists." +
+						//		"Would you like to reactivate it?", "", this);
+						removeDialog();
+						ui.infoMessage("The phone number " + phone + " was previously set up for "+ clientInDb.getFullName() + " and will be reactivated.");
+						clientInDb.setActive(true);
+						this.clientDao.updateClient(clientInDb);
+					}
+					
 				} else {
 					Client client = new Client(fn, on, phone);
 					this.clientDao.saveClient(client);

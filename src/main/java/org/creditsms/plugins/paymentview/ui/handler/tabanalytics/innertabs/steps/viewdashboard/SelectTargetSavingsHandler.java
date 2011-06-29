@@ -71,7 +71,9 @@ public class SelectTargetSavingsHandler extends BasePanelHandler implements Even
 			for(Target target : targets){
 				Account a = target.getAccount();
 				if ((a != null) & (a.getClient() != null)) {
-					clients_serviceItems.put(a.getClient(), target.getServiceItem());
+					if (a.getClient().isActive()){
+						clients_serviceItems.put(a.getClient(), target.getServiceItem());
+					}
 				} 	
 			}
 			viewDashBoardTabHandler.setCurrentStepPanel(new SelectClientsHandler(

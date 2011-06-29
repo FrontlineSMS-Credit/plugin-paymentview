@@ -5,6 +5,7 @@ import java.util.List;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
@@ -40,9 +41,9 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements
 		criteria.add(Restrictions.eq("phoneNumber", phoneNumber));
 		return super.getUnique(criteria);
 	}
-
+	
 	public int getClientCount() {
-		return super.getAll().size();
+		return getAllActiveClients().size();
 	}
 
 	public List<Client> getClientsByName(String clientName) {
@@ -52,7 +53,9 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements
 						.add(Restrictions.ilike("firstName", clientName.trim(),
 								MatchMode.ANYWHERE))
 						.add(Restrictions.ilike("otherName", clientName.trim(),
-								MatchMode.ANYWHERE)));
+								MatchMode.ANYWHERE))
+								.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
+										Boolean.TRUE)));
 		return super.getList(criteria);
 	}
 
@@ -64,7 +67,24 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements
 						.add(Restrictions.ilike("firstName", clientName.trim(),
 								MatchMode.ANYWHERE))
 						.add(Restrictions.ilike("otherName", clientName.trim(),
-								MatchMode.ANYWHERE)));
+								MatchMode.ANYWHERE))
+						.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
+										Boolean.TRUE)));
+		return super.getList(criteria, startIndex, limit);
+	}
+
+	public List<Client> getAllActiveClients() {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
+				Boolean.TRUE));
+		return super.getList(criteria);
+	}
+	
+	public List<Client> getAllActiveClients(int startIndex,
+			int limit) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
+				Boolean.TRUE));
 		return super.getList(criteria, startIndex, limit);
 	}
 
