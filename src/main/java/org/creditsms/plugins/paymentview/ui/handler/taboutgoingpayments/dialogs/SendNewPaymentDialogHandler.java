@@ -134,7 +134,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 		//TODO check MSISDN, amount available?
 		try {
 				outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
-				paymentService.makePayment(client, outgoingPayment.getAmountPaid());
+				//paymentService.makePayment(client, outgoingPayment.getAmountPaid());
 				outgoingPayment.setStatus(OutgoingPayment.Status.UNCONFIRMED);
 				outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
 		} catch (IllegalArgumentException ex) {
