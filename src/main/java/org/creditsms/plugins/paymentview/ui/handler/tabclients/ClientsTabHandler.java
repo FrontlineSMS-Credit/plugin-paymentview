@@ -95,18 +95,24 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 
 	public void exportClient() {
 		Object[] selectedItems = ui.getSelectedItems(clientsTableComponent);
-		List<Client> attachedClients = new ArrayList<Client>();
-		for(Object selectedItem : selectedItems){
-			attachedClients.add(ui.getAttachedObject(selectedItem, Client.class));
+		if (selectedItems.length <= 0){
+			exportClients(clientDao.getAllClients());
+		}else{
+			List<Client> clients = new ArrayList<Client>(selectedItems.length);
+			for (Object o : selectedItems) {
+				clients.add(ui.getAttachedObject(o, Client.class));
+			}
+			exportClients(clients);
 		}
-
-		new ClientExportHandler(ui, pluginController, attachedClients).showWizard();
+	}
+	
+	private void exportClients(List<Client> clients){
+		new ClientExportHandler(ui, pluginController, clients).showWizard();
 		this.refresh();
 	}
 
 	public void importClient() {
-		new ClientImportHandler(ui, this, clientDao, this.customFieldDao,
-				this.customValueDao).showWizard();
+		new ClientImportHandler(pluginController, this).showWizard();
 		this.refresh();
 	}
 	

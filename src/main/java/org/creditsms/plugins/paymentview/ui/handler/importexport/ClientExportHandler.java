@@ -14,6 +14,7 @@ import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.importexport.PaymentViewCsvExporter;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
@@ -31,6 +32,7 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 	private CustomFieldDao customFieldDao;
 	private CustomValueDao customValueDao;
 	private List<Client> selected;
+	private AccountDao accountDao;
 	
 
 	public ClientExportHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
@@ -38,6 +40,7 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 		this.clientDao = pluginController.getClientDao();
 		this.customFieldDao = pluginController.getCustomFieldDao();
 		this.customValueDao = pluginController.getCustomValueDao();
+		accountDao = pluginController.getAccountDao();
 	}
 	
 	public ClientExportHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, List<Client> selected) {
@@ -84,7 +87,7 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 		log.debug("Row Format [" + rowFormat + "]");
 
 		PaymentViewCsvExporter.exportClients(new File(filename), clients,
-				customFieldDao, customValueDao, rowFormat);
+				accountDao, customFieldDao, customValueDao, rowFormat);
 		uiController.setStatus(InternationalisationUtils
 				.getI18nString(MESSAGE_EXPORT_TASK_SUCCESSFUL));
 		this.uiController.infoMessage(InternationalisationUtils

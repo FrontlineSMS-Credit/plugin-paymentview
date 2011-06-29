@@ -8,16 +8,15 @@ import java.util.List;
 import net.frontlinesms.csv.CsvImporter;
 import net.frontlinesms.csv.CsvParseException;
 import net.frontlinesms.csv.CsvRowFormat;
-import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.importexport.ImportDialogHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.importexport.ClientCsvImporter;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
 import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
@@ -35,17 +34,16 @@ public class ClientImportHandler extends ImportDialogHandler {
 	private final ClientsTabHandler clientsTabHandler;
 	private int columnCount;
 	private ClientCsvImporter importer;
-	private CustomValueDao customDataDao;
 	private CustomFieldDao customFieldDao;
+	private final PaymentViewPluginController pluginController;
 
-	public ClientImportHandler(UiGeneratorController ui,
-			ClientsTabHandler clientsTabHandler, ClientDao clientDao,
-			CustomFieldDao customFieldDao, CustomValueDao customDataDao) {
-		super(ui);
-		this.clientDao = clientDao;
+	public ClientImportHandler(
+			PaymentViewPluginController pluginController, ClientsTabHandler clientsTabHandler) {
+		super(pluginController.getUiGeneratorController());
+		this.pluginController = pluginController;
+		this.clientDao = pluginController.getClientDao();
 		this.clientsTabHandler = clientsTabHandler;
-		this.customFieldDao = customFieldDao;
-		this.customDataDao = customDataDao;
+		this.customFieldDao = pluginController.getCustomFieldDao();
 	}
 
 	@Override
@@ -108,7 +106,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 	@Override
 	protected void doSpecialImport(String dataPath) {
 		CsvRowFormat rowFormat = getRowFormatForClient();
-		this.importer.importClients(this.clientDao, rowFormat, customFieldDao, customDataDao);
+		this.importer.importClients(this.clientDao, rowFormat, pluginController); 
 
 		this.clientsTabHandler.refresh();
 		this.uiController.infoMessage(InternationalisationUtils
