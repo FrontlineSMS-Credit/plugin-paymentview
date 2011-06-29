@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.data.events.DatabaseEntityNotification;
-import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;

@@ -8,6 +8,7 @@ import java.util.List;
 import net.frontlinesms.csv.CsvImporter;
 import net.frontlinesms.csv.CsvParseException;
 import net.frontlinesms.csv.CsvRowFormat;
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.ui.handler.importexport.ImportDialogHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
@@ -106,11 +107,15 @@ public class ClientImportHandler extends ImportDialogHandler {
 	@Override
 	protected void doSpecialImport(String dataPath) {
 		CsvRowFormat rowFormat = getRowFormatForClient();
-		this.importer.importClients(this.clientDao, rowFormat, pluginController); 
-
-		this.clientsTabHandler.refresh();
-		this.uiController.infoMessage(InternationalisationUtils
-				.getI18nString(I18N_IMPORT_SUCCESSFUL));
+		try{
+			this.importer.importClients(this.clientDao, rowFormat, pluginController);
+			this.clientsTabHandler.refresh();
+			this.uiController.infoMessage(InternationalisationUtils
+					.getI18nString(I18N_IMPORT_SUCCESSFUL));
+		} catch (DuplicateKeyException e) {
+			pluginController.getUiGeneratorController().
+			alert(e.getMessage());
+		}
 	}
 
 	protected List<Object> getCheckboxes() {
@@ -149,7 +154,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 		CsvRowFormat rowFormat = new CsvRowFormat();
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME, COMPONENT_CB_NAME);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME, COMPONENT_CB_NAME);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS, COMPONENT_CB_PHONE);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_PHONE, COMPONENT_CB_PHONE);
 		
 		for(CustomField cf : customFieldDao.getAllActiveUsedCustomFields()){
 			addMarker(rowFormat, PaymentViewUtils.getMarkerFromString(cf.getReadableName()),
