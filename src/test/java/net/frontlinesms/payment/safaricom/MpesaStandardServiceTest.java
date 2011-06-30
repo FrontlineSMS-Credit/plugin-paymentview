@@ -37,6 +37,7 @@ public class MpesaStandardServiceTest extends MpesaPaymentServiceTest<MpesaPerso
 		mockOutgoingPaymentsDao(PHONENUMBER_2, new BigDecimal("1235"), new ArrayList<OutgoingPayment>());
 	}
 
+	
 	private void mockOutgoingPaymentsDao(String phoneNumber, BigDecimal amountPaid, List<OutgoingPayment> Return_List) {
 		when(outgoingPaymentDao.getOutgoingPaymentsByPhoneNumberAndAmountPaid
 				(phoneNumber, amountPaid, OutgoingPayment.Status.UNCONFIRMED)

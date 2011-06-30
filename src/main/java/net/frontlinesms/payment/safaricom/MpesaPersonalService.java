@@ -51,7 +51,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 					if (!outgoingPayments.isEmpty()){					
 						final OutgoingPayment outgoingPayment = outgoingPayments.get(0);
 						outgoingPayment.setConfirmationCode(getConfirmationCode(message));
-						outgoingPayment.setTimeConfirmed(getTimePaid(message).getTime());
+						outgoingPayment.setTimeConfirmed(getTimePaid(message, true).getTime());
 						outgoingPayment.setStatus(OutgoingPayment.Status.CONFIRMED);
 						
 						//Update outgoing payment
@@ -68,17 +68,6 @@ public class MpesaPersonalService extends MpesaPaymentService {
 				}
 			}
 		}.execute();
-	}
-	
-	private String getPaymentTo(FrontlineMessage message) {
-		try {
-	        String nameAndPhone = getFirstMatch(message, "Ksh[,|.|\\d]+ sent to ([A-Za-z ]+) 2547[0-9]{8}");
-	        String nameWKshSentTo = nameAndPhone.split(AMOUNT_PATTERN+SENT_TO)[1];
-	        String names = getFirstMatch(nameWKshSentTo,PAID_BY_PATTERN).trim();
-	        return names;
-		} catch(ArrayIndexOutOfBoundsException ex) {
-			throw new IllegalArgumentException(ex);
-		}
 	}
 	
 	private boolean isValidOutgoingPaymentConfirmation(FrontlineMessage message) {
@@ -109,10 +98,19 @@ public class MpesaPersonalService extends MpesaPaymentService {
 		        throw new IllegalArgumentException(ex);
 		}
 	}	
-
+	
 	@Override
 	Date getTimePaid(FrontlineMessage message) {
-        String section1 = message.getTextContent().split("\non ")[1];
+		return getTimePaid(message, false);
+	}
+
+	Date getTimePaid(FrontlineMessage message, boolean isOutgoingPayment) {
+		String section1 = "";
+		if (isOutgoingPayment) {
+			section1 = message.getTextContent().split(" on ")[1];
+		}else{
+			section1 = message.getTextContent().split("\non ")[1];
+		}
         String datetimesection = section1.split("New M-PESA balance")[0];
         String datetime = datetimesection.replace(" at ", " ");
         
