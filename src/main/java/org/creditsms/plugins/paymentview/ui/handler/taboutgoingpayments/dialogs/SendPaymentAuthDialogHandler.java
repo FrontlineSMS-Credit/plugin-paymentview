@@ -63,14 +63,14 @@ public class SendPaymentAuthDialogHandler implements ThinletUiEventHandler {
 			Client client = clientDao.getClientByPhoneNumber(outgoingPayment.getPhoneNumber());
 			// TODO ERROR: the paymentService list is initialised in enterPin.java - 
 			// BUT the CService has an atHandler as CATHandler and not as CATHandler_Wavecom_stk
-			//paymentService.makePayment(client, outgoingPayment.getAmountPaid());
+			paymentService.makePayment(client, outgoingPayment.getAmountPaid());
 			
 			//update DB
 			outgoingPayment.setStatus(OutgoingPayment.Status.UNCONFIRMED);
 			outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
 			
 			// TODO this stuff probably shouldn't be happening directly on the UI Event Thread
-			paymentService.makePayment(client, outgoingPayment.getAmountPaid());
+			//paymentService.makePayment(client, outgoingPayment.getAmountPaid());
 		} catch (IllegalArgumentException ex) {
 		//	log.warn("Message failed to parse; likely incorrect format", ex);
 			throw new RuntimeException(ex);

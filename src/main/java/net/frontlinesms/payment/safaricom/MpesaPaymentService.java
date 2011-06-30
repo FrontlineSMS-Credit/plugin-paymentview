@@ -32,6 +32,7 @@ import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.utils.PvUtils;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
+import org.smslib.handler.ATHandler.SynchronizedWorkflow;
 import org.smslib.stk.StkInputRequiremnent;
 import org.smslib.stk.StkMenu;
 import org.smslib.stk.StkRequest;
@@ -39,7 +40,7 @@ import org.smslib.stk.StkResponse;
 
 public abstract class MpesaPaymentService implements PaymentService, EventObserver  {
 //> REGEX PATTERN CONSTANTS
-	protected static final String AMOUNT_PATTERN = "Ksh[,|\\d]+";
+	protected static final String AMOUNT_PATTERN = "Ksh[,|.|\\d]+";
 	protected static final String SENT_TO = " sent to";
 	protected static final String DATETIME_PATTERN = "d/M/yy hh:mm a";
 	protected static final String PHONE_PATTERN = "2547[\\d]{8}";
@@ -69,13 +70,23 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	public void checkBalance() throws PaymentServiceException {
 		initIfRequired();
 		try {
-			StkMenu mPesaMenu = getMpesaMenu();
-			StkMenu myAccountMenu = (StkMenu) cService.stkRequest(mPesaMenu.getRequest("My account"));
-			StkResponse getBalanceResponse = cService.stkRequest(myAccountMenu.getRequest("Show balance"));
-			assert getBalanceResponse instanceof StkInputRequiremnent;
-			StkInputRequiremnent pinRequired = (StkInputRequiremnent) getBalanceResponse;
-			assert pinRequired.getText().contains("Enter PIN");
-			StkResponse finalResponse = cService.stkRequest(pinRequired.getRequest(), this.pin);
+			final String pin = this.pin;
+			this.cService.doSynchronized(new SynchronizedWorkflow<Object>() {
+				public Object run() throws SMSLibDeviceException, IOException {
+					try {
+						StkMenu mPesaMenu = getMpesaMenu();
+						StkMenu myAccountMenu = (StkMenu) cService.stkRequest(mPesaMenu.getRequest("My account"));
+						StkResponse getBalanceResponse = cService.stkRequest(myAccountMenu.getRequest("Show balance"));
+						assert getBalanceResponse instanceof StkInputRequiremnent;
+						StkInputRequiremnent pinRequired = (StkInputRequiremnent) getBalanceResponse;
+						assert pinRequired.getText().contains("Enter PIN");
+						cService.stkRequest(pinRequired.getRequest(), pin);
+						return null;
+					} catch(PaymentServiceException ex) {
+						throw new SMSLibDeviceException(ex);
+					}
+				}
+			});
 			// TODO check finalResponse is OK
 			// TODO wait for response...
 		} catch (SMSLibDeviceException ex) {
@@ -116,8 +127,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}
 		
 		//And is of a saved message
-		Object entity = ((EntitySavedNotification) notification)
-				.getDatabaseEntity();
+		Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
 		if (!(entity instanceof FrontlineMessage)) {
 			return;
 		}

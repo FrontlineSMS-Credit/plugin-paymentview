@@ -2,9 +2,7 @@ package net.frontlinesms.payment;
 
 import java.math.BigDecimal;
 
-import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment.Status;
 
 public interface PaymentService {
 	String getPin();
