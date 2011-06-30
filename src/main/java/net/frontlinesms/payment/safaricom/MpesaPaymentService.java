@@ -120,7 +120,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 //> EVENTBUS NOTIFY
 	@SuppressWarnings("rawtypes")
 	public void notify(FrontlineEventNotification notification) {
-		//If the notification is of Importance to us
 		if (!(notification instanceof EntitySavedNotification)) {
 			return;
 		}
