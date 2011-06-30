@@ -18,16 +18,16 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	
 //> REGEX PATTERN CONSTANTS
 	private static final String STR_PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n" +
-			"You have received Ksh[,|\\d]+ ([A-Za-z ]+) 2547[\\d]{8} on " +
+			"You have received Ksh[,|.|\\d]+ from\n([A-Za-z ]+) 2547[\\d]{8}\non " +
 			"(([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) (at) ([1]?\\d:[0-5]\\d) (AM|PM)\n" +
-			"New M-PESA balance Ksh[,|\\d]+";
+			"New M-PESA balance is Ksh[,|.|\\d]+";
 	private static final Pattern PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN = Pattern.compile(STR_PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN);
 	
 	private static final String STR_PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = 
 		"[A-Z\\d]+ Confirmed.\n"+
-		"Ksh[,|\\d]+ sent to ([A-Za-z ]+) 2547[\\d]{8} on "+
+		"Ksh[,|.|\\d]+ sent to ([A-Za-z ]+) 2547[\\d]{8} on "+
 		"(([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) at ([1]?\\d:[0-5]\\d) ([A|P]M)\n"+
-		"New M-PESA balance Ksh([,|\\d]+)";
+		"New M-PESA balance Ksh([,|.|\\d]+)";
 	private static final Pattern PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = Pattern.compile(STR_PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN);
 	
 //>BEGIN - OUTGOING PAYMENT REGION	
@@ -52,7 +52,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 					if (!outgoingPayments.isEmpty()){				
 						final OutgoingPayment outgoingPayment = outgoingPayments.get(0);
 						outgoingPayment.setConfirmationCode(getConfirmationCode(message));
-						outgoingPayment.setTimeConfirmed(getTimePaid(message).getTime());
+						outgoingPayment.setTimeConfirmed(getTimePaid(message, true).getTime());
 						outgoingPayment.setStatus(OutgoingPayment.Status.CONFIRMED);
 						
 						//Update outgoing payment
@@ -91,18 +91,27 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	@Override
 	String getPaymentBy(FrontlineMessage message) {
 		try {
-	        String nameAndPhone = getFirstMatch(message, "Ksh[,|[0-9]]+ ([A-Za-z ]+) 2547[0-9]{8}");
-	        String nameWKsh = nameAndPhone.split(AMOUNT_PATTERN)[1];
+	        String nameAndPhone = getFirstMatch(message, "Ksh[,|.|\\d]+ from\n([A-Za-z ]+) 2547[0-9]{8}");
+	        String nameWKsh = nameAndPhone.split((AMOUNT_PATTERN + " from\n"))[1];
 	        String names = getFirstMatch(nameWKsh,PAID_BY_PATTERN).trim();
 	        return names;
 		} catch(ArrayIndexOutOfBoundsException ex) {
 		        throw new IllegalArgumentException(ex);
 		}
 	}	
-
+	
 	@Override
 	Date getTimePaid(FrontlineMessage message) {
-        String section1 = message.getTextContent().split(" on ")[1];
+		return getTimePaid(message, false);
+	}
+
+	Date getTimePaid(FrontlineMessage message, boolean isOutgoingPayment) {
+		String section1 = "";
+		if (isOutgoingPayment) {
+			section1 = message.getTextContent().split(" on ")[1];
+		}else{
+			section1 = message.getTextContent().split("\non ")[1];
+		}
         String datetimesection = section1.split("New M-PESA balance")[0];
         String datetime = datetimesection.replace(" at ", " ");
         
