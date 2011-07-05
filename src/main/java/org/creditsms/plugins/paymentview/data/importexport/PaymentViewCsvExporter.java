@@ -1,7 +1,6 @@
 package org.creditsms.plugins.paymentview.data.importexport;
 
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_ACCOUNT;
-import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_ACCOUNTS;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_AMOUNT_PAID;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_FIRST_NAME;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_NOTES;

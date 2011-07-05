@@ -173,7 +173,7 @@ public class DemoData {
 		createDummyClient("Justus Matanda", "+254725014545", new String[] { "42547455", "43493444" });*/
 		
 		
-		createDummyClient("Alice Wangare", "+254724574645");
+		createDummyClient("Kim Wangare", "+254704593656");
 		createDummyClient("John Kamau", "+254720547355");
 		createDummyClient("Wekalao Matanda", "+254725452345");
 		createDummyClient("Ismael Koli", "+254720445345");
@@ -214,13 +214,13 @@ public class DemoData {
 		calendar.set(Calendar.MILLISECOND, 0); 
 		Date endDate = calendar.getTime();
 
-		Client clnt = getClientDao().getClientByPhoneNumber("+254724574645");
+		Client clnt = getClientDao().getClientByPhoneNumber("+254704593656");
 		Target tgt = createDummyTargets(si,createDummyAccount(clnt, "00001"), startDate, endDate);
 		
-		createDummyIncomingPayment("Alice Wangare", "+254724574645", "1300560000000", new BigDecimal("4500.00"), "00001", tgt);
-		createDummyIncomingPayment("Alice Wangare", "+254724574645", "1300560000100", new BigDecimal("1300.00"), "00001", tgt);
-		createDummyIncomingPayment("Alice Wangare", "+254724574645", "1300560000200", new BigDecimal("1200.00"), "00001", tgt);
-		createDummyIncomingPayment("Alice Wangare", "+254724574645", "1300560200300", new BigDecimal("7400.00"), "00001", tgt);
+		createDummyIncomingPayment("Alice Wangare", "+254704593656", "1300560000000", new BigDecimal("4500.00"), "00001", tgt);
+		createDummyIncomingPayment("Alice Wangare", "+254704593656", "1300560000100", new BigDecimal("1300.00"), "00001", tgt);
+		createDummyIncomingPayment("Alice Wangare", "+254704593656", "1300560000200", new BigDecimal("1200.00"), "00001", tgt);
+		createDummyIncomingPayment("Alice Wangare", "+254704593656", "1300560200300", new BigDecimal("7400.00"), "00001", tgt);
 
 		Client clnt1 = getClientDao().getClientByPhoneNumber("+254720547355");
 		Target tgt1 = createDummyTargets(si,createDummyAccount(clnt1, "00002"), startDate, endDate);

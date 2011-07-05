@@ -2,6 +2,7 @@ package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments;
 
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
+
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 
 public class OutgoingPaymentsTabHandler extends BaseTabHandler {
