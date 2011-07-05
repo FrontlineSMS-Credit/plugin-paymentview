@@ -125,7 +125,10 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			StkResponse amountResponse = cService.stkRequest(amountRequest,	amount.toString());
 
 			StkRequest pinRequest = ((StkInputRequiremnent) amountResponse).getRequest();
-			cService.stkRequest(pinRequest, this.pin);
+			StkResponse pinResponse = cService.stkRequest(pinRequest, this.pin);
+			
+			StkRequest sendRequest = ((StkInputRequiremnent) pinResponse).getRequest();
+			cService.stkRequest(sendRequest);
 		} catch (SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
 		} catch (IOException e) {

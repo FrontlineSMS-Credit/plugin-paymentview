@@ -223,6 +223,8 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		when(cService.stkRequest(amountRequest, "500")).thenReturn(pinRequired);
 		
 		StkRequest pinRequiredRequest = pinRequired.getRequest();
+		StkInputRequiremnent pinRequiredResponse = mockInputRequirement("Send money to "+CLIENT_1.getPhoneNumber()+" Ksh500");
+		when(cService.stkRequest(pinRequiredRequest, "1234")).thenReturn(pinRequiredResponse);
 		
 		// given
 		mpesaPaymentService.setPin("1234");
