@@ -115,10 +115,10 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 
 	public void setClientFilter(String clientFilter) {
 		this.clientFilter = clientFilter;
-		filterClients();
 	}
 
-	public void filterClients() {
+	public void filterClients(String clientFilter) {
+		setClientFilter(clientFilter);
 		this.updateClientsList();
 	}
 

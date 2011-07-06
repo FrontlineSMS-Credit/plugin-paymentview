@@ -36,4 +36,8 @@ public class ClientTableHandler extends BaseClientTable {
 		clientsTabHandler.exportClient();
 	}	
 	
+	public void showDeleteConfirmationDialog(String methodToBeCalled){
+		clientsTabHandler.showDeleteConfirmationDialog(methodToBeCalled);
+	}
+	
 }
