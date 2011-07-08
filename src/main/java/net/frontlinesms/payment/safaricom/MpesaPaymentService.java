@@ -53,8 +53,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	protected final Logger log = FrontlineUtils.getLogger(this.getClass());
 	protected final Logger pvLog = PvUtils.getLogger(this.getClass());
 	private CService cService;
-	
-//> DAOs
+	StkInputRequiremnent stRequirement;
+
+	//> DAOs
 	AccountDao accountDao;
 	ClientDao clientDao;
 	TargetDao targetDao;
@@ -100,17 +101,21 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		initIfRequired();
 		try {
 			StkMenu mPesaMenu = getMpesaMenu();
-			StkResponse sendMoneyResponse = cService.stkRequest(mPesaMenu.getRequest("Send money"));
+			StkResponse sendMoneyRequest = cService.stkRequest(mPesaMenu.getRequest("Send money"));
+			StkMenu getPassPhoneNoMenu = (StkMenu) sendMoneyRequest;
+			
 			String phoneNumber = client.getPhoneNumber();
+			StkResponse inputPhoneNumber = null;
+			
+			if(getPassPhoneNoMenu.getMenuItems().size()==1){
+				inputPhoneNumber = cService.stkRequest(((StkMenu) sendMoneyRequest).getRequest("Enter phone no."), phoneNumber);
+			}else if(getPassPhoneNoMenu.getMenuItems().size()==2){
+				sendMoneyRequest = cService.stkRequest(getPassPhoneNoMenu.getRequest("Enter phone no."));
+				inputPhoneNumber = cService.stkRequest(((StkMenu) sendMoneyRequest).getRequest("Enter phone no."), phoneNumber);
+			}
+			StkResponse amountResponse = cService.stkRequest(((StkMenu) inputPhoneNumber).getRequest("Enter amount"), amount.toString());
+			StkResponse pinResponse = cService.stkRequest(((StkMenu) amountResponse).getRequest("Enter PIN"), this.pin);
 
-			StkRequest phoneNumberRequest = ((StkInputRequiremnent) sendMoneyResponse).getRequest();
-			StkResponse phoneNumberResponse = cService.stkRequest(phoneNumberRequest, phoneNumber);
-
-			StkRequest amountRequest = ((StkInputRequiremnent) phoneNumberResponse).getRequest();
-			StkResponse amountResponse = cService.stkRequest(amountRequest,	amount.toString());
-
-			StkRequest pinRequest = ((StkInputRequiremnent) amountResponse).getRequest();
-			cService.stkRequest(pinRequest, this.pin);
 		} catch (SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
 		} catch (IOException e) {
@@ -304,7 +309,15 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	public CService getCService(){
 		return cService;
 	}
+	
+	public StkInputRequiremnent getStRequirement() {
+		return stRequirement;
+	}
 
+	public void setStRequirement(StkInputRequiremnent stRequirement) {
+		this.stRequirement = stRequirement;
+	}
+	
 	public void initDaosAndServices(PaymentViewPluginController pluginController) {
 		this.accountDao = pluginController.getAccountDao();
 		this.clientDao = pluginController.getClientDao();
