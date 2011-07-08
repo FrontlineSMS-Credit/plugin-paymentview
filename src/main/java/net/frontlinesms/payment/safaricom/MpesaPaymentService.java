@@ -13,11 +13,8 @@ import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
-import net.frontlinesms.messaging.sms.SmsService;
-import net.frontlinesms.messaging.sms.modem.SmsModem;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
-import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
 import org.apache.log4j.Logger;
@@ -35,16 +32,15 @@ import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.utils.PvUtils;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
+import org.smslib.handler.ATHandler.SynchronizedWorkflow;
 import org.smslib.stk.StkInputRequiremnent;
 import org.smslib.stk.StkMenu;
 import org.smslib.stk.StkRequest;
 import org.smslib.stk.StkResponse;
 
 public abstract class MpesaPaymentService implements PaymentService, EventObserver  {
-	public static boolean TEST = false;
-	
 //> REGEX PATTERN CONSTANTS
-	protected static final String AMOUNT_PATTERN = "Ksh[,|\\d]+";
+	protected static final String AMOUNT_PATTERN = "Ksh[,|.|\\d]+";
 	protected static final String SENT_TO = " sent to";
 	protected static final String DATETIME_PATTERN = "d/M/yy hh:mm a";
 	protected static final String PHONE_PATTERN = "2547[\\d]{8}";
@@ -56,10 +52,10 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 //> INSTANCE PROPERTIES
 	protected final Logger log = FrontlineUtils.getLogger(this.getClass());
 	protected final Logger pvLog = PvUtils.getLogger(this.getClass());
-	private SmsService smsService;
 	private CService cService;
-	
-//> DAOs
+	StkInputRequiremnent stRequirement;
+
+	//> DAOs
 	AccountDao accountDao;
 	ClientDao clientDao;
 	TargetDao targetDao;
@@ -69,21 +65,29 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 //> FIELDS
 	private String pin;
 	private EventBus eventBus;
-
-	private UiGeneratorController ui;
-
 	private TargetAnalytics targetAnalytics;
 	
 //> STK & PAYMENT ACCOUNT
 	public void checkBalance() throws PaymentServiceException, IOException {
+		initIfRequired();
 		try {
-			StkMenu mPesaMenu = getMpesaMenu();
-			StkMenu myAccountMenu = (StkMenu) cService.stkRequest(mPesaMenu.getRequest("My account"));
-			StkResponse getBalanceResponse = cService.stkRequest(myAccountMenu.getRequest("Show balance"));
-			assert getBalanceResponse instanceof StkInputRequiremnent;
-			StkInputRequiremnent pinRequired = (StkInputRequiremnent) getBalanceResponse;
-			assert pinRequired.getText().contains("Enter PIN");
-			StkResponse finalResponse = cService.stkRequest(pinRequired.getRequest(), this.pin);
+			final String pin = this.pin;
+			this.cService.doSynchronized(new SynchronizedWorkflow<Object>() {
+				public Object run() throws SMSLibDeviceException, IOException {
+					try {
+						StkMenu mPesaMenu = getMpesaMenu();
+						StkMenu myAccountMenu = (StkMenu) cService.stkRequest(mPesaMenu.getRequest("My account"));
+						StkResponse getBalanceResponse = cService.stkRequest(myAccountMenu.getRequest("Show balance"));
+						assert getBalanceResponse instanceof StkInputRequiremnent;
+						StkInputRequiremnent pinRequired = (StkInputRequiremnent) getBalanceResponse;
+						assert pinRequired.getText().contains("Enter PIN");
+						cService.stkRequest(pinRequired.getRequest(), pin);
+						return null;
+					} catch(PaymentServiceException ex) {
+						throw new SMSLibDeviceException(ex);
+					}
+				}
+			});
 			// TODO check finalResponse is OK
 			// TODO wait for response...
 		} catch (SMSLibDeviceException ex) {
@@ -93,57 +97,43 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}
 	}
 
-	private StkMenu getMpesaMenu() throws PaymentServiceException, IOException {
-		try {
-			StkResponse stkResponse = cService.stkRequest(StkRequest.GET_ROOT_MENU);
-			StkMenu rootMenu = null;
-			
-			if (stkResponse instanceof StkMenu) {
-				rootMenu = (StkMenu) stkResponse;
-			}else{
-				throw new PaymentServiceException("StkResponse Error Returned.");
-			}
-			
-			return  (StkMenu)cService.stkRequest(rootMenu.getRequest("M-PESA"));
-		} catch (SMSLibDeviceException ex) {
-			throw new PaymentServiceException(ex);
-		} catch (IOException e) {
-			throw new PaymentServiceException(e);
-		}
-	}
-
 	public void makePayment(Client client, BigDecimal amount) throws PaymentServiceException {
+		initIfRequired();
 		try {
 			StkMenu mPesaMenu = getMpesaMenu();
-			StkResponse sendMoneyResponse = cService.stkRequest(mPesaMenu.getRequest("Send money"));
+			StkResponse sendMoneyRequest = cService.stkRequest(mPesaMenu.getRequest("Send money"));
+			StkMenu getPassPhoneNoMenu = (StkMenu) sendMoneyRequest;
+			
 			String phoneNumber = client.getPhoneNumber();
+			StkResponse inputPhoneNumber = null;
+			
+			if(getPassPhoneNoMenu.getMenuItems().size()==1){
+				inputPhoneNumber = cService.stkRequest(((StkMenu) sendMoneyRequest).getRequest("Enter phone no."), phoneNumber);
+			}else if(getPassPhoneNoMenu.getMenuItems().size()==2){
+				sendMoneyRequest = cService.stkRequest(getPassPhoneNoMenu.getRequest("Enter phone no."));
+				inputPhoneNumber = cService.stkRequest(((StkMenu) sendMoneyRequest).getRequest("Enter phone no."), phoneNumber);
+			}
+			StkResponse amountResponse = cService.stkRequest(((StkMenu) inputPhoneNumber).getRequest("Enter amount"), amount.toString());
+			StkResponse pinResponse = cService.stkRequest(((StkMenu) amountResponse).getRequest("Enter PIN"), this.pin);
 
-			StkRequest phoneNumberRequest = ((StkInputRequiremnent) sendMoneyResponse).getRequest();
-			StkResponse phoneNumberResponse = cService.stkRequest(phoneNumberRequest, phoneNumber);
-
-			StkRequest amountRequest = ((StkInputRequiremnent) phoneNumberResponse).getRequest();
-			StkResponse amountResponse = cService.stkRequest(amountRequest,	amount.toString());
-
-			StkRequest pinRequest = ((StkInputRequiremnent) amountResponse).getRequest();
-			cService.stkRequest(pinRequest, this.pin);
+			
+			StkRequest sendRequest = ((StkInputRequiremnent) pinResponse).getRequest();
+			cService.stkRequest(sendRequest);
 		} catch (SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
 		} catch (IOException e) {
 			throw new PaymentServiceException(e);
 		}
 	}
-
 //> EVENTBUS NOTIFY
 	@SuppressWarnings("rawtypes")
 	public void notify(FrontlineEventNotification notification) {
-		//If the notification is of Importance to us
 		if (!(notification instanceof EntitySavedNotification)) {
 			return;
 		}
 		
 		//And is of a saved message
-		Object entity = ((EntitySavedNotification) notification)
-				.getDatabaseEntity();
+		Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
 		if (!(entity instanceof FrontlineMessage)) {
 			return;
 		}
@@ -158,13 +148,12 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}
 	}
 
-	//> INCOMING MESSAGE PAYMENT PROCESSORS
+//> INCOMING MESSAGE PAYMENT PROCESSORS
 	private void processIncomingPayment(final FrontlineMessage message) {
 		new FrontlineUiUpateJob() {
 			// This probably shouldn't be a UI job,
 			// but it certainly should be done on a separate thread!
 			public void run() {
-				String alertMessage;
 				try {
 					final IncomingPayment payment = new IncomingPayment();
 					
@@ -195,30 +184,11 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 								accountDao.updateAccount(payment.getAccount());
 							}
 
-						}else{
+						} else {
 							//TODO log the unprocessed incoming message 
-							
-							alertMessage = "The account "+ account.getAccountNumber() + "of the client " 
-							+ getPaymentBy(message) + " (" + getPhoneNumber(message) + ") exists but is inactive. Please create a target";
-							
-							if (!TEST){
-								pvLog.warn("Account exists but is inactive: " + message.getTextContent());
-								ui.alert(alertMessage);
-							}else{
-								System.out.println(alertMessage);
-							}
 						}
 					} else {
 						//TODO log the unprocessed incoming message
-						alertMessage = "The client " + getPaymentBy(message) + " (" + getPhoneNumber(message) + 
-						") has not got any account set up.";						
-						if (!TEST){
-							pvLog.warn("No accounts set up for the client: " + message.getTextContent());
-							ui.alert(alertMessage);
-						}else{
-							System.out.println(alertMessage);
-						}
-
 					}
 				} catch (IllegalArgumentException ex) {
 					log.warn("Message failed to parse; likely incorrect format", ex);
@@ -283,13 +253,43 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		
 		return super.equals(other);
 	}
+
+	private StkMenu getMpesaMenu() throws PaymentServiceException {
+		try {
+			StkResponse stkResponse = cService.stkRequest(StkRequest.GET_ROOT_MENU);
+			StkMenu rootMenu = null;
+			
+			if (stkResponse instanceof StkMenu) {
+				rootMenu = (StkMenu) stkResponse;
+			} else {
+				throw new PaymentServiceException("StkResponse Error Returned.");
+			}
+			
+			return  (StkMenu)cService.stkRequest(rootMenu.getRequest("M-PESA"));
+		} catch (SMSLibDeviceException ex) {
+			throw new PaymentServiceException(ex);
+		} catch (IOException e) {
+			throw new PaymentServiceException(e);
+		}
+	}
+
 	
-//> FINALIZE
+	private void initIfRequired() throws PaymentServiceException {
+		// For now, we assume that init is always required.  If there is a clean way
+		// of identifying when it is and is not, we should perhaps implement this.
+		try {
+			this.cService.getAtHandler().stkInit();
+		} catch(Exception ex) {
+			throw new PaymentServiceException(ex);
+		}
+	}
+	
+//> FINALIZE - FIXME what does FINALIZE refer to?  this word has spedcific technical meaning in java, so please do not use
 	public void deinit(){
 		eventBus.unregisterObserver(this);
 	}
 	
-//> ACCESSORS AND MUTATORS
+//> ACCESSORS
 	public String getPin() {
 		return pin;
 	}
@@ -305,32 +305,28 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.pin = pin;
 	}
 	
-	public void setSmsService(SmsService smsService) {
-		this.smsService = smsService;
-	}
-
-	public SmsService getSmsService(){
-		return smsService;
-	}
-	
 	public void setCService(CService cService) {
 		this.cService = cService;
 	}
 
 	public CService getCService(){
-		if (smsService != null & smsService instanceof SmsModem && cService == null){
-			return ((SmsModem)smsService).getCService();
-		}
 		return cService;
 	}
+	
+	public StkInputRequiremnent getStRequirement() {
+		return stRequirement;
+	}
 
-	public void setPluginController(PaymentViewPluginController pluginController) {
+	public void setStRequirement(StkInputRequiremnent stRequirement) {
+		this.stRequirement = stRequirement;
+	}
+	
+	public void initDaosAndServices(PaymentViewPluginController pluginController) {
 		this.accountDao = pluginController.getAccountDao();
 		this.clientDao = pluginController.getClientDao();
 		this.outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
 		this.targetDao = pluginController.getTargetDao();
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
-		this.ui = pluginController.getUiGeneratorController();
 		this.targetAnalytics = pluginController.getTargetAnalytics();
 	}
 }

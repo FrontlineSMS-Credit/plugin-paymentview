@@ -5,7 +5,7 @@
 	top="9" resizable="true" modal="true" closable="true">
 	
 	<panel name="pnlFields" columns="3" weightx="1" gap="10">
-		<label icon="/icons/user.png" text="First name:" />
+		<label icon="/icons/user.png" text="First Name:" />
 		<textfield columns="50" name="fldFirstName" colspan="2" />
 		
 		<label icon="/icons/user.png" text="Second Name:" />

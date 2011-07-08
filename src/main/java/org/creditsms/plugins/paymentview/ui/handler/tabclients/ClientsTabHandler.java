@@ -3,14 +3,12 @@ package org.creditsms.plugins.paymentview.ui.handler.tabclients;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.UiGeneratorControllerConstants;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
@@ -24,6 +22,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 //> STATIC CONSTANTS
 	private static final String PNL_CLIENT_TABLE_HOLDER = "pnlClientTableHolder";
 	private static final String XML_CLIENTS_TAB = "/ui/plugins/paymentview/clients/clients.xml";
+	private static final String I18N_CONFIRM_DELETE_CLIENT = "message.confirm.delete.client";
 	
 //> INSTANCE PROPERTIES
 	private final ClientDao clientDao;
@@ -75,15 +74,19 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 
 	public void deleteClient() {
 		Object[] selectedClients = this.ui.getSelectedItems(clientsTableComponent);
+		String clientNameList = "";
 		for (Object selectedClient : selectedClients) {
 			Client attachedClient = ui.getAttachedObject(selectedClient, Client.class);
 			attachedClient.setActive(false);
+			clientNameList = clientNameList + " - " + attachedClient.getFullName();
 			clientDao.updateClient(attachedClient);
 		}
 
 		ui.removeDialog(ui
 				.find(UiGeneratorControllerConstants.COMPONENT_CONFIRM_DIALOG));
-		ui.infoMessage("You have successfully deleted client.");
+		if (selectedClients.length >0){
+			ui.infoMessage("You have successfully deleted the following client(s)"+ clientNameList + ".");	
+		}
 		this.refresh();
 	}
 
@@ -118,7 +121,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 		this.refresh();
 	}
 	
-	public final void showConfirmationDialog(String methodToBeCalled){
-		this.ui.showConfirmationDialog(methodToBeCalled, this);
+	public final void showDeleteConfirmationDialog(String methodToBeCalled){
+		this.ui.showConfirmationDialog(methodToBeCalled, this, I18N_CONFIRM_DELETE_CLIENT);
 	}
 }

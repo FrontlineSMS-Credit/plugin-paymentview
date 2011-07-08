@@ -5,7 +5,6 @@ import java.util.List;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
@@ -53,9 +52,8 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements
 						.add(Restrictions.ilike("firstName", clientName.trim(),
 								MatchMode.ANYWHERE))
 						.add(Restrictions.ilike("otherName", clientName.trim(),
-								MatchMode.ANYWHERE))
-								.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
-										Boolean.TRUE)));
+								MatchMode.ANYWHERE)));
+		criteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),Boolean.TRUE));
 		return super.getList(criteria);
 	}
 
@@ -67,9 +65,8 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements
 						.add(Restrictions.ilike("firstName", clientName.trim(),
 								MatchMode.ANYWHERE))
 						.add(Restrictions.ilike("otherName", clientName.trim(),
-								MatchMode.ANYWHERE))
-						.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
-										Boolean.TRUE)));
+								MatchMode.ANYWHERE)));
+		criteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),Boolean.TRUE));
 		return super.getList(criteria, startIndex, limit);
 	}
 

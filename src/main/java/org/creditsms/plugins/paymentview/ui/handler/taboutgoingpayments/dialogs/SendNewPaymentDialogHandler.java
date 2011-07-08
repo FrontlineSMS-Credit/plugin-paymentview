@@ -23,24 +23,24 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	private static final String COMPONENT_CMB_OP_MOBILE_PAYMENT_SYSTEM = "cmb_MobilePaymentSystem";
 	private static final String COMPONENT_TEXT_OP_PAYMENT_ID = "txt_PaymentID";
 	private static final String COMPONENT_TEXT_OP_NOTES = "txt_Notes";
-	
+
 	private Object schedulePaymentAuthDialog;
 	private OutgoingPayment outgoingPayment;
-	
+
 	//UI fields
 	private Object fieldOpName;
 	private Object fieldOpMsisdn;
 	private Object fieldOpAmount;
 	private Object fieldOpPaymentId;
 	private Object fieldOpNotes;
-	
+
 	//UI data
 	private String opMsisdn;
 	private String opAmount;
 	private String opMobilePaymentSystem;
 	private String opPaymentId;
 	private String opNotes;
-	
+
 	//UI HELPER
 	//private Object compPanelFields;
 	private Client client;
@@ -61,7 +61,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	protected void initialise() {
 		dialogComponent = ui.loadComponentFromFile(XML_SEND_NEW_PAYMENTS_TAB, this);
 		//compPanelFields = ui.find(dialogComponent, "frm_customerDetails");
-		
+
 		fieldOpName = ui.find(dialogComponent, COMPONENT_TEXT_OP_NAME);
 		fieldOpMsisdn = ui.find(dialogComponent, COMPONENT_TEXT_OP_MSISDN);
 		fieldOpAmount = ui.find(dialogComponent, COMPONENT_TEXT_OP_AMOUNT);
@@ -70,7 +70,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 		fieldOpPaymentId = ui.find(dialogComponent, COMPONENT_TEXT_OP_PAYMENT_ID);
 		fieldOpNotes = ui.find(dialogComponent, COMPONENT_TEXT_OP_NOTES);
 	}
-	
+
 	protected void refresh(){
 		ui.setText(fieldOpName, this.getClientObj().getFullName());
 		ui.setText(fieldOpMsisdn, this.getClientObj().getPhoneNumber());
@@ -112,12 +112,12 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 					outgoingPayment.setStatus(OutgoingPayment.Status.CREATED);
 					outgoingPayment.setPaymentId(ui.getText(fieldOpPaymentId));
 					outgoingPayment.setConfirmationCode("");
-					
+
 					//TODO the account would have to be filled when specifications are clear!!!!!!!!!!!!!!!1
 					//System.out.println("account:"+accountDao.getAccountsByClientId(client.getId()).get(0).getAccountNumber());
-		
+
 					new AuthorisationCodeHandler(ui, pluginController).showAuthorizationCodeDialog("sendPayment", this);
-					
+
 					ui.remove(dialogComponent);
 				} catch (NumberFormatException ex){
 					ui.infoMessage("Please enter an amount");
@@ -127,14 +127,14 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 			ui.infoMessage("Please set up a mobile payment account in the setting tab.");
 		}
 	}
-	
+
 
 
 	public void sendPayment() throws PaymentServiceException {
 		//TODO check MSISDN, amount available?
 		try {
 				outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
-				//paymentService.makePayment(client, outgoingPayment.getAmountPaid());
+				paymentService.makePayment(client, outgoingPayment.getAmountPaid());
 				outgoingPayment.setStatus(OutgoingPayment.Status.UNCONFIRMED);
 				outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
 		} catch (IllegalArgumentException ex) {
@@ -144,7 +144,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 		}
 		ui.infoMessage("The outgoing payment has been created and successfully sent");
 	}
-	
+
 	public OutgoingPayment getOutgoingPayment() {
 		return outgoingPayment;
 	}

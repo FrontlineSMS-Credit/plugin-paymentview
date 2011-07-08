@@ -8,11 +8,11 @@
 	<passwordfield colspan="2" columns="15" name="pin"  text="" action="assertMaxLength(this)"/>
 	
 	<label text="Verify Account PIN"/>
-	<passwordfield colspan="2" columns="15" name="vpin" text="" action="assertMaxLength(this)" perform="next(pin.text, vpin.text,'create')"/>
+	<passwordfield colspan="2" columns="15" name="vpin" text="" action="assertMaxLength(this)" perform="next"/>
 
 	<panel colspan="3" weightx="1">
 		<button icon="/icons/left.png" text="Previous" action="previous" />
 		<panel weightx="1" />
-		<button icon="/icons/right.png" text="Next"	action="next(pin.text,vpin.text,'create')" />
+		<button icon="/icons/right.png" text="Next"	action="next" />
 	</panel>
 </dialog>

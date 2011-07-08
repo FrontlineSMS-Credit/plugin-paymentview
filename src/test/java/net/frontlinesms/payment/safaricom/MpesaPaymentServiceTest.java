@@ -83,9 +83,6 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		//a simple hack to avoid mocking ui.alert functions
-		MpesaPaymentService.TEST = true;
-		
 		this.mpesaPaymentService = createNewTestClass();
 		this.cService = mock(CService.class);
 		mpesaPaymentService.setCService(cService);
@@ -155,7 +152,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		when(pluginController.getUiGeneratorController()).thenReturn(ui);
 		when(pluginController.getTargetAnalytics()).thenReturn(targetAnalytics);
 		
-		mpesaPaymentService.setPluginController(pluginController);
+		mpesaPaymentService.initDaosAndServices(pluginController);
 		
 		//Set up accounts, targets and clients
 		Set<Account> accounts1 = mockAccounts(ACCOUNTNUMBER_1_1);
@@ -223,6 +220,8 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		when(cService.stkRequest(amountRequest, "500")).thenReturn(pinRequired);
 		
 		StkRequest pinRequiredRequest = pinRequired.getRequest();
+		StkInputRequiremnent pinRequiredResponse = mockInputRequirement("Send money to "+CLIENT_1.getPhoneNumber()+" Ksh500");
+		when(cService.stkRequest(pinRequiredRequest, "1234")).thenReturn(pinRequiredResponse);
 		
 		// given
 		mpesaPaymentService.setPin("1234");

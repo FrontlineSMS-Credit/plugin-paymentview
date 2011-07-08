@@ -13,7 +13,6 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
 public class HibernateOutgoingPaymentDao extends
@@ -92,11 +91,9 @@ public class HibernateOutgoingPaymentDao extends
 	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(String phoneNo) {
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria clientCriteria = criteria.createCriteria("client");
-		clientCriteria.add(Restrictions
-				.disjunction()
-				.add(Restrictions.eq("phoneNumber", phoneNo))
-				.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
-						Boolean.TRUE)));
+		clientCriteria.add(Restrictions.eq("phoneNumber", phoneNo));
+		clientCriteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
+						Boolean.TRUE));
 		return super.getList(criteria);
 	}
 
