@@ -91,11 +91,9 @@ public class HibernateOutgoingPaymentDao extends
 	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(String phoneNo) {
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria clientCriteria = criteria.createCriteria("client");
-		clientCriteria.add(Restrictions
-				.disjunction()
-				.add(Restrictions.eq("phoneNumber", phoneNo))
-				.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
-						Boolean.TRUE)));
+		clientCriteria.add(Restrictions.eq("phoneNumber", phoneNo));
+		clientCriteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
+						Boolean.TRUE));
 		return super.getList(criteria);
 	}
 
