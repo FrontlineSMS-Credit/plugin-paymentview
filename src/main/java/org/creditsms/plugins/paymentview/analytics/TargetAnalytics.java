@@ -98,11 +98,22 @@ public class TargetAnalytics {
 		long endTime = targetDao.getTargetById(tartgetId).getEndDate().getTime();
 		long startTime = targetDao.getTargetById(tartgetId).getStartDate().getTime();
 		long targetDays = getDateDiffDays(startTime, endTime);
+		BigDecimal initAmntRate;
+		BigDecimal remAmntRate;
 		
-		BigDecimal initAmntRate = totalTargetCost.divide(BigDecimal.
-				valueOf(targetDays), 2, RoundingMode.HALF_UP);
-		BigDecimal remAmntRate = amountRem.divide(BigDecimal.
-				valueOf(remDays), 2, RoundingMode.HALF_UP);
+		if (targetDays>0){
+			initAmntRate = totalTargetCost.divide(BigDecimal.valueOf(targetDays), 2, RoundingMode.HALF_UP);
+		} else {
+			initAmntRate = totalTargetCost;
+		}
+		
+		if (remDays>0){
+			remAmntRate = amountRem.divide(BigDecimal.valueOf(remDays), 2, RoundingMode.HALF_UP);
+		} else {
+			remAmntRate = amountRem;
+		}
+				
+
 		
 		if(initAmntRate.compareTo(remAmntRate) >= 0){
 			return Status.ON_TRACK;
