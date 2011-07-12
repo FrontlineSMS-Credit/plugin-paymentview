@@ -20,7 +20,7 @@
 		</table>
 	</panel>
 	<panel gap="5" weightx="1">
-		<button action="createAlert" icon="/icons/task_next_execution.png" text="Create Alert" />
+		<!-- button action="createAlert" icon="/icons/task_next_execution.png" text="Create Alert" /> -->
 		<button action="export" icon="/icons/export.png" text="Export" />
 		<panel weightx="1"/>
 		<button action="previous" icon="/icons/left.png" text="Previous" />
