@@ -40,10 +40,35 @@ public class HibernateAccountDao extends BaseHibernateDao<Account> implements
 		return super.getList(criteria);
 	}
 	
+	public Account getGenericAccountsByClientId(long id) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("genericAccount", true));
+		DetachedCriteria clientCriteria = criteria.createCriteria("client");
+		clientCriteria.add(Restrictions.eq("id", id));
+		return super.getUnique(criteria);
+	}
+	
+	public List<Account> getNonGenericAccountsByClientId(long id) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("genericAccount", false));
+		DetachedCriteria clientCriteria = criteria.createCriteria("client");
+		clientCriteria.add(Restrictions.eq("id", id));
+		return super.getList(criteria);
+	}
+	
+	public List<Account> getActiveNonGenericAccountsByClientId(long id) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("activeAccount", true));
+		criteria.add(Restrictions.eq("genericAccount", false));
+		DetachedCriteria clientCriteria = criteria.createCriteria("client");
+		clientCriteria.add(Restrictions.eq("id", id));
+		return super.getList(criteria);
+	}
 
-	public List<Account> getInactiveAccountsByClientId(long clientId) {
+	public List<Account> getInactiveNonGenericAccountsByClientId(long clientId) {
 		DetachedCriteria criteria = super.getCriterion();
 		criteria.add(Restrictions.eq("activeAccount", false));
+		criteria.add(Restrictions.eq("genericAccount", false));
 		DetachedCriteria clientCriteria = criteria.createCriteria("client");
 		clientCriteria.add(Restrictions.eq("id", clientId));
 		return super.getList(criteria);

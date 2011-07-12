@@ -66,11 +66,23 @@ public class DemoData {
 		return c;
 	}*/
 	
-	private Client createDummyClient(String name, String phoneNumber) {
+	private Client createDummyClient(String name, String phoneNumber) throws DuplicateKeyException {
 			String[] names = name.split(" ");
 			Client c = new Client(names[0], names[1], phoneNumber);
 			getClientDao().saveClient(c);
+			
+			Account account = new Account(createAccountNumber(),c,false,true);
+			getAccountDao().saveAccount(account);
 			return c;
+	}
+	
+	public String createAccountNumber(){
+		int accountNumberGenerated = getAccountDao().getAccountCount()+1;
+		String accountNumberGeneratedStr = String.format("%05d", accountNumberGenerated);
+		while (getAccountDao().getAccountByAccountNumber(accountNumberGeneratedStr) != null){
+			accountNumberGeneratedStr = String.format("%05d", ++ accountNumberGenerated);
+		}
+		return accountNumberGeneratedStr;
 	}
 	
 	private void createDummyIncomingPayment(String paymentBy,
@@ -140,7 +152,7 @@ public class DemoData {
 	 * @throws DuplicateKeyException 
 	 * 
 	 */
-	private void createDummyData(){
+	private void createDummyData() throws DuplicateKeyException{
 		// Create dummy clients
 		/*createDummyClient("Alice Wangare", "+254724574645", new String[] { "4343625", "247362623" });
 		createDummyClient("John Kamau", "+254720547355", new String[] { "82666633", "23233423" });
@@ -215,23 +227,26 @@ public class DemoData {
 		Date endDate = calendar.getTime();
 
 		Client clnt = getClientDao().getClientByPhoneNumber("+254704593656");
-		Target tgt = createDummyTargets(si,createDummyAccount(clnt, "00001"), startDate, endDate);
+		String accountNumber = createAccountNumber();
+		Target tgt = createDummyTargets(si,createDummyAccount(clnt, accountNumber), startDate, endDate);
 		
-		createDummyIncomingPayment("Alice Wangare", "+254704593656", "1300560000000", new BigDecimal("4500.00"), "00001", tgt);
-		createDummyIncomingPayment("Alice Wangare", "+254704593656", "1300560000100", new BigDecimal("1300.00"), "00001", tgt);
-		createDummyIncomingPayment("Alice Wangare", "+254704593656", "1300560000200", new BigDecimal("1200.00"), "00001", tgt);
-		createDummyIncomingPayment("Alice Wangare", "+254704593656", "1300560200300", new BigDecimal("7400.00"), "00001", tgt);
+		createDummyIncomingPayment("Alice Wangare", "+254704593656", "1300560000000", new BigDecimal("4500.00"), accountNumber, tgt);
+		createDummyIncomingPayment("Alice Wangare", "+254704593656", "1300560000100", new BigDecimal("1300.00"), accountNumber, tgt);
+		createDummyIncomingPayment("Alice Wangare", "+254704593656", "1300560000200", new BigDecimal("1200.00"), accountNumber, tgt);
+		createDummyIncomingPayment("Alice Wangare", "+254704593656", "1300560200300", new BigDecimal("7400.00"), accountNumber, tgt);
 
 		Client clnt1 = getClientDao().getClientByPhoneNumber("+254720547355");
-		Target tgt1 = createDummyTargets(si,createDummyAccount(clnt1, "00002"), startDate, endDate);
+		accountNumber = createAccountNumber();
+		Target tgt1 = createDummyTargets(si,createDummyAccount(clnt1, accountNumber), startDate, endDate);
 		
-		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560000000", new BigDecimal("14500.00"), "00002", tgt1);
-		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560000100", new BigDecimal("11300.00"), "00002", tgt1);
-		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560000200", new BigDecimal("11200.00"), "00002", tgt1);
-		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560200300", new BigDecimal("37400.00"), "00002", tgt1);
+		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560000000", new BigDecimal("14500.00"), accountNumber, tgt1);
+		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560000100", new BigDecimal("11300.00"), accountNumber, tgt1);
+		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560000200", new BigDecimal("11200.00"), accountNumber, tgt1);
+		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560200300", new BigDecimal("37400.00"), accountNumber, tgt1);
 		
 		Client clnt2 = getClientDao().getClientByPhoneNumber("+254725452345");
-		Target tgt2 = createDummyTargets(si,createDummyAccount(clnt2, "00003"), startDate, endDate);
+		accountNumber = createAccountNumber();
+		Target tgt2 = createDummyTargets(si,createDummyAccount(clnt2, accountNumber), startDate, endDate);
 		
 		/*
 		createDummyServiceItem_Targets("Solar Panel", "120000", new String[][]{{"232492474","24/08/2011", "24/05/2011"},{"9923623","24/08/2011", "24/05/2011"}});
@@ -262,7 +277,7 @@ public class DemoData {
 	
 		Account ac = null;
 		try {
-			ac = new Account(accountNumber);
+			ac = new Account(accountNumber,false);
 			ac.setClient(client);
 			ac.setActiveAccount(true);
 			getAccountDao().saveAccount(ac);
@@ -338,7 +353,7 @@ public class DemoData {
 
 	
 //> STATIC METHODS
-	public static void createDemoData(ApplicationContext applicationContext){
+	public static void createDemoData(ApplicationContext applicationContext) throws DuplicateKeyException{
 		DemoData d = new DemoData(applicationContext);
 		d.createDummyData();
 	}

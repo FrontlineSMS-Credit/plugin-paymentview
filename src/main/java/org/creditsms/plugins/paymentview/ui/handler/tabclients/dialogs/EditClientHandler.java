@@ -153,7 +153,7 @@ public class EditClientHandler extends BaseDialog{
 		}
 	}
 
-	public void saveClient() {
+	public void saveClient() throws DuplicateKeyException {
 		if (editMode) {
 			this.client.setFirstName(ui.getText(fieldFirstName));
 			this.client.setOtherName(ui.getText(fieldOtherName));
@@ -171,8 +171,7 @@ public class EditClientHandler extends BaseDialog{
 	
 				if (!allCustomFields.isEmpty()) {
 					for (CustomField cf : allCustomFields) {
-						List<CustomValue> cvs = customValueDao
-								.getCustomValuesByClientId(client.getId());
+						List<CustomValue> cvs = customValueDao.getCustomValuesByClientId(client.getId());
 						CustomValue cv = null;
 	
 						for (CustomValue _cv : cvs) {
@@ -182,8 +181,7 @@ public class EditClientHandler extends BaseDialog{
 	
 						}
 						if (cv == null) {
-							cv = new CustomValue(ui.getText(customComponents
-									.get(cf)), cf, client);
+							cv = new CustomValue(ui.getText(customComponents.get(cf)), cf, client);
 							try {
 								customValueDao.saveCustomValue(cv);
 							} catch (DuplicateKeyException e) {
@@ -240,11 +238,27 @@ public class EditClientHandler extends BaseDialog{
 							}
 						}
 					}
+					
+					Account account = new Account(createAccountNumber(),client,false,true);
+					this.accountDao.saveAccount(account);
 					removeDialog();
 					clientsTabHandler.refresh();
 				}
 		}
 
+	}
+	
+	/**
+	 * 
+	 * @return a generic account number
+	 */
+	public String createAccountNumber(){
+		int accountNumberGenerated = this.accountDao.getAccountCount()+1;
+		String accountNumberGeneratedStr = String.format("%05d", accountNumberGenerated);
+		while (this.accountDao.getAccountByAccountNumber(accountNumberGeneratedStr) != null){
+			accountNumberGeneratedStr = String.format("%05d", ++ accountNumberGenerated);
+		}
+		return accountNumberGeneratedStr;
 	}
 
 	/** 

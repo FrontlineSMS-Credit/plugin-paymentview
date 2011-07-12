@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -153,12 +154,12 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 				try {
 					final IncomingPayment payment = new IncomingPayment();
 					
-					// check account existence
+					// retrieve applicable account if the client exists
 					Account account = getAccount(message);
 					
 					if (account != null){
 						Target tgt = targetDao.getActiveTargetByAccount(account.getAccountNumber());
-						if (tgt != null){
+						if (tgt != null){//account is a non generic one
 							payment.setAccount(account);
 							payment.setTarget(tgt);
 							payment.setPhoneNumber(getPhoneNumber(message));
@@ -181,10 +182,50 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							}
 
 						} else {
-							//TODO log the unprocessed incoming message 
+							//account is a generic one(standard) or a non-generic without any active target(paybill)
+							payment.setAccount(account);
+							payment.setTarget(null);
+							payment.setPhoneNumber(getPhoneNumber(message));
+							payment.setAmountPaid(getAmount(message));
+							payment.setConfirmationCode(getConfirmationCode(message));
+							payment.setPaymentBy(getPaymentBy(message));
+							payment.setTimePaid(getTimePaid(message));
+							
+							incomingPaymentDao.saveIncomingPayment(payment);
 						}
 					} else {
-						//TODO log the unprocessed incoming message
+					// paybill - account does not exist (typing error) but client exists
+					if (clientDao.getClientByPhoneNumber(getPhoneNumber(message))!=null){
+						//save the incoming payment in generic account
+						account = accountDao.getGenericAccountsByClientId(clientDao.getClientByPhoneNumber(getPhoneNumber(message)).getId());
+						pvLog.warn("The account does not exist for this client. Incoming payment has been saved in generic account. "+ message.getTextContent());
+					} else {
+						// client does not exist in the database -> create client and generic account
+						String paymentBy = getPaymentBy(message);
+						String[] names = paymentBy.split(" ");
+						String firstName = "";
+						String otherName = "";
+						if (names.length == 2){
+						firstName = paymentBy.split(" ")[0];
+						otherName = paymentBy.split(" ")[1];
+						} else {
+							otherName = paymentBy;
+						}
+						Client client = new Client(firstName,otherName,getPhoneNumber(message));
+						clientDao.saveClient(client);
+						account = new Account(createAccountNumber(),client,false,true);
+						accountDao.saveAccount(account);
+					}
+					
+					payment.setAccount(account);
+					payment.setTarget(null);
+					payment.setPhoneNumber(getPhoneNumber(message));
+					payment.setAmountPaid(getAmount(message));
+					payment.setConfirmationCode(getConfirmationCode(message));
+					payment.setPaymentBy(getPaymentBy(message));
+					payment.setTimePaid(getTimePaid(message));
+					incomingPaymentDao.saveIncomingPayment(payment);
+						
 					}
 				} catch (IllegalArgumentException ex) {
 					log.warn("Message failed to parse; likely incorrect format", ex);
@@ -316,5 +357,18 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.targetDao = pluginController.getTargetDao();
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.targetAnalytics = pluginController.getTargetAnalytics();
+	}
+	
+	/**
+	 * 
+	 * @return a generic account number
+	 */
+	public String createAccountNumber(){
+		int accountNumberGenerated = this.accountDao.getAccountCount()+1;
+		String accountNumberGeneratedStr = String.format("%05d", accountNumberGenerated);
+		while (this.accountDao.getAccountByAccountNumber(accountNumberGeneratedStr) != null){
+			accountNumberGeneratedStr = String.format("%05d", ++ accountNumberGenerated);
+		}
+		return accountNumberGeneratedStr;
 	}
 }

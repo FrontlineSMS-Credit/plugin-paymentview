@@ -15,6 +15,7 @@ import java.util.List;
 
 import net.frontlinesms.BuildProperties;
 import net.frontlinesms.FrontlineSMS;
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.plugins.BasePluginController;
@@ -111,7 +112,12 @@ public class PaymentViewPluginController extends BasePluginController
 		
 		// If not a production build, and database is empty, add test data
 		if(BuildProperties.getInstance().isSnapshot() && clientDao.getClientCount()==0) {
-			DemoData.createDemoData(applicationContext);
+			try {
+				DemoData.createDemoData(applicationContext);
+			} catch (DuplicateKeyException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

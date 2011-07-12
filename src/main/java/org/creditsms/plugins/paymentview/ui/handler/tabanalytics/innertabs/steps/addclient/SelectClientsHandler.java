@@ -53,10 +53,14 @@ public class SelectClientsHandler extends BasePanelHandler {
 		return super.getPanelComponent();
 	}
 
-	public void next() {
-		addClientTabHandler.setCurrentStepPanel(new CreateSettingsHandler(
-				(UiGeneratorController) ui, this.pluginController, addClientTabHandler, this)
-				.getPanelComponent());
+	public void next() {	
+		if (this.getSelectedClients().size()==0){
+			ui.infoMessage("Please select a client");
+		} else {
+			addClientTabHandler.setCurrentStepPanel(new CreateSettingsHandler(
+					(UiGeneratorController) ui, this.pluginController, addClientTabHandler, this)
+					.getPanelComponent());
+		}
 	}
 
 	public void previous() {

@@ -41,10 +41,25 @@ public interface AccountDao {
 	public List<Account> getAccountsByClientId(long clientId);
 	
 	/**
+	 * returns generic account belonging to a client
+	 **/
+	public Account getGenericAccountsByClientId(long clientId);
+	
+	/**
+	 * returns all non-generic accounts belonging to a client
+	 **/
+	public List<Account> getNonGenericAccountsByClientId(long clientId);
+	
+	/**
+	 * returns all active non-generic accounts belonging to a client
+	 **/
+	public List<Account> getActiveNonGenericAccountsByClientId(long clientId);
+	
+	/**
 	 * return all the inactive accounts belonging to a client
 	 **/
 	
-	public List<Account> getInactiveAccountsByClientId(long clientId);
+	public List<Account> getInactiveNonGenericAccountsByClientId(long clientId);
 
 	/**
 	 * returns all the client accounts existing in the database

@@ -64,7 +64,8 @@ public class IncomingPaymentCsvImporter extends CsvImporter {
 					PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT);
 			Account acc;
 
-			acc = new Account(account);
+			//TODO - no client linked to the account????????????????????
+			acc = new Account(account,false);
 			try {
 				accountDao.saveAccount(acc);
 			} catch (DuplicateKeyException e) {

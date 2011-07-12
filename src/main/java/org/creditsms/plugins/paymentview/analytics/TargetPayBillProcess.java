@@ -20,7 +20,7 @@ public class TargetPayBillProcess  extends TargetCreationProcess{
 		// Check if there are any accounts linked to the client
 		if (canCreateTarget()){
 			// create new account
-			this.setAccount(new Account(createAccountNumber(), client, false));
+			this.setAccount(new Account(createAccountNumber(), client, false, false));
 			try {
 				this.getAccountDao().saveAccount(this.getAccount());
 			} catch (DuplicateKeyException e) {
@@ -33,7 +33,7 @@ public class TargetPayBillProcess  extends TargetCreationProcess{
             this.getAccount().setActiveAccount(true);
             this.getAccountDao().updateAccount(this.getAccount());
 		} else{
-			this.setAccount(inactiveAccounts.get(0));
+			this.setAccount(inactiveNonGenericAccounts.get(0));
 			this.setTarget(new Target(targetStartDate, targetEndDate, serviceItem, this.account));
             this.getTargetDao().saveTarget(this.getTarget());
             this.getAccount().setActiveAccount(true);
@@ -42,11 +42,11 @@ public class TargetPayBillProcess  extends TargetCreationProcess{
 	}
 	
 	public boolean canCreateTarget(){
-		this.setInactiveAccounts(this.getAccountDao().
-		getInactiveAccountsByClientId(this.getClient().getId()));
+		this.setInactiveNonGenericAccounts(this.getAccountDao().
+		getInactiveNonGenericAccountsByClientId(this.getClient().getId()));
 		this.setTotalListAccounts(this.getAccountDao().getAccountsByClientId(
 				this.getClient().getId()));
-		if(this.getInactiveAccounts().size()==0 || this.getTotalListAccounts().size()==0){
+		if(this.getInactiveAccounts().size()==0 || this.getTotalListNonGenericAccounts().size()==0){
 			return true;
 		}else{
 			return false;
