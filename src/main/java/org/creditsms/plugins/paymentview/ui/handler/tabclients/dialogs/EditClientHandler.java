@@ -21,7 +21,6 @@ import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler
 
 public class EditClientHandler extends BaseDialog{
 //> CONSTANTS
-	private static final String COMPONENT_LIST_ACCOUNTS = "fldAccounts";
 	private static final String COMPONENT_TEXT_FIRST_NAME = "fldFirstName";
 	private static final String COMPONENT_TEXT_OTHER_NAME = "fldOtherName";
 	private static final String COMPONENT_TEXT_PHONE_NUMBER = "fldPhoneNumber";
@@ -37,7 +36,6 @@ public class EditClientHandler extends BaseDialog{
 	
 //> UI FIELDS
 	private Object fieldFirstName;
-	private Object fieldListAccounts;
 	private Object fieldOtherName;
 	private Object fieldPhoneNumber;
 
@@ -86,10 +84,6 @@ public class EditClientHandler extends BaseDialog{
 		refresh();
 	}
 
-	private Object createListItem(Account acc) {
-		return ui.createListItem(acc.getAccountNumber(), acc, true);
-	}
-
 	public void init() {
 		dialogComponent = ui.loadComponentFromFile(XML_EDIT_CLIENT, this);
 		compPanelFields = ui.find(dialogComponent, "pnlFields");
@@ -98,7 +92,6 @@ public class EditClientHandler extends BaseDialog{
 		fieldPhoneNumber = ui
 				.find(dialogComponent, COMPONENT_TEXT_PHONE_NUMBER);
 		fieldOtherName = ui.find(dialogComponent, COMPONENT_TEXT_OTHER_NAME);
-		fieldListAccounts = ui.find(dialogComponent, COMPONENT_LIST_ACCOUNTS);
 
 		List<CustomField> allUsedCustomFields = customFieldDao
 				.getAllActiveUsedCustomFields();
@@ -147,9 +140,9 @@ public class EditClientHandler extends BaseDialog{
 				}
 			}
 
-			for (Account acc : this.accountDao.getAccountsByClientId(getClientObj().getId())) {
-				ui.add(fieldListAccounts, createListItem(acc));
-			}
+//			for (Account acc : this.accountDao.getAccountsByClientId(getClientObj().getId())) {
+//				ui.add(fieldListAccounts, createListItem(acc));
+//			}
 		}
 	}
 

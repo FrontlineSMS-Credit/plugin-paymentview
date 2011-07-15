@@ -16,7 +16,6 @@ import net.frontlinesms.ui.handler.PagedListDetails;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
@@ -59,16 +58,9 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 
 		ui.add(row, ui.createTableCell(incomingPayment.getPaymentBy()));
 		ui.add(row, ui.createTableCell(incomingPayment.getPhoneNumber()));
-		ui.add(row, ui.createTableCell(getAccount(incomingPayment)));
 		ui.add(row, ui.createTableCell(incomingPayment.getAmountPaid().toPlainString()));
 		ui.add(row, ui.createTableCell(InternationalisationUtils.getDatetimeFormat().format(new Date(incomingPayment.getTimePaid()))));
 		return row;
-	}
-
-	private String getAccount(IncomingPayment incomingPayment) {
-		Account account = incomingPayment.getAccount();
-		String accountNumber = account.getAccountNumber();
-		return accountNumber;
 	}
 
 	public void importPayments() {

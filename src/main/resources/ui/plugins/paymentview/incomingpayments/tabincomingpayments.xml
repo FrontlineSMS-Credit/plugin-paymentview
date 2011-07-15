@@ -9,7 +9,6 @@
 				<header>
 					<column text="Name" width="200" icon="/icons/user.png" />
 					<column text="Phone" width="150" icon="/icons/phone.png" />
-					<column text="Account" width="100" />
 					<column text="Amount" width="100" icon="/icons/money.png" />
 					<column text="Date" width="100" icon="/icons/date.png" />
 				</header>
