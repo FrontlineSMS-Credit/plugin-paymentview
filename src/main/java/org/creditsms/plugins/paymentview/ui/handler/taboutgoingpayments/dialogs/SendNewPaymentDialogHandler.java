@@ -134,15 +134,24 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 		//TODO check MSISDN, amount available?
 		try {
 				outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
-				paymentService.makePayment(client, outgoingPayment.getAmountPaid());
-				outgoingPayment.setStatus(OutgoingPayment.Status.UNCONFIRMED);
+				boolean paymentStatus = paymentService.makePayment(client, outgoingPayment.getAmountPaid());
+				
+				if (paymentStatus){
+					outgoingPayment.setStatus(OutgoingPayment.Status.UNCONFIRMED);
+				} else {
+					outgoingPayment.setStatus(OutgoingPayment.Status.ERROR);
+				}
 				outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
+				if(paymentStatus){
+					ui.infoMessage("The outgoing payment has been created and successfully sent");
+				}else{
+					ui.infoMessage("Error Occured");
+				}
 		} catch (IllegalArgumentException ex) {
 			throw new RuntimeException(ex);
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
-		ui.infoMessage("The outgoing payment has been created and successfully sent");
 	}
 
 	public OutgoingPayment getOutgoingPayment() {

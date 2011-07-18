@@ -43,6 +43,8 @@ import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.mockito.InOrder;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
+import org.smslib.handler.ATHandler;
+import org.smslib.handler.CATHandler_Wavecom_Stk;
 import org.smslib.stk.StkInputRequiremnent;
 import org.smslib.stk.StkMenu;
 import org.smslib.stk.StkMenuItem;
@@ -62,6 +64,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	protected Client CLIENT_2;
 	
 	private CService cService;
+	private CATHandler_Wavecom_Stk aTHandler;
 	
 	private StkMenuItem myAccountMenuItem;
 	private StkRequest mpesaMenuItemRequest;
@@ -85,6 +88,8 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		
 		this.mpesaPaymentService = createNewTestClass();
 		this.cService = mock(CService.class);
+		this.aTHandler = mock(CATHandler_Wavecom_Stk.class);
+		when(cService.getAtHandler()).thenReturn(aTHandler);
 		mpesaPaymentService.setCService(cService);
 		
 		setUpDaos();
@@ -192,9 +197,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		// given
 		mpesaPaymentService.setPin("1234");
 		
-		// when
 		mpesaPaymentService.checkBalance();
-		
 		// then
 		InOrder inOrder = inOrder(cService);
 		inOrder.verify(cService).stkRequest(StkRequest.GET_ROOT_MENU);

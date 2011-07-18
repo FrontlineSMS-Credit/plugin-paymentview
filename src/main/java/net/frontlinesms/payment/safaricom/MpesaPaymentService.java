@@ -97,7 +97,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}
 	}
 
-	public void makePayment(Client client, BigDecimal amount) throws PaymentServiceException {
+	public boolean makePayment(Client client, BigDecimal amount) throws PaymentServiceException {
 		initIfRequired();
 		try {
 			StkMenu mPesaMenu = getMpesaMenu();
@@ -114,11 +114,12 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 				inputPhoneNumber = cService.stkRequest(((StkMenu) sendMoneyRequest).getRequest("Enter phone no."), phoneNumber);
 			}
 			StkResponse amountResponse = cService.stkRequest(((StkMenu) inputPhoneNumber).getRequest("Enter amount"), amount.toString());
-			StkResponse pinResponse = cService.stkRequest(((StkMenu) amountResponse).getRequest("Enter PIN"), this.pin);
-
-			
-			StkRequest sendRequest = ((StkInputRequiremnent) pinResponse).getRequest();
-			cService.stkRequest(sendRequest);
+			StkResponse finalResponse = cService.stkRequest(((StkMenu) amountResponse).getRequest("Enter PIN"), this.pin);
+			if(((StkMenu) finalResponse).getMenuItems().get(0).getText().contains("ERROR")){
+				return false;
+			}else{
+				return true;
+			}
 		} catch (SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
 		} catch (IOException e) {
