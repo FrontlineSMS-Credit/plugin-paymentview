@@ -46,7 +46,6 @@ public class EnterPinDialog extends BaseDialog {
 			paymentService.setPin(pin);
 			paymentService.setCService(modem.getCService());
 			paymentService.initDaosAndServices(pluginController);
-			pluginController.setPaymentService(paymentService);
 			
 			removeDialog();
 			new AuthorisationCodeHandler(ui, pluginController).showAuthorizationCodeDialog("create", this);
@@ -57,6 +56,7 @@ public class EnterPinDialog extends BaseDialog {
 	
 	public void create() {
 		ui.getFrontlineController().getEventBus().registerObserver(paymentService);
+		pluginController.setPaymentService(paymentService);
 		ui.alert("The Payment service has been created successfully!");
 		removeDialog(ui.find(DLG_VERIFICATION_CODE));
 	}

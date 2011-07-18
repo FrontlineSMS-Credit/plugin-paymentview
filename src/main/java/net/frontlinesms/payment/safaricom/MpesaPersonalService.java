@@ -23,6 +23,9 @@ public class MpesaPersonalService extends MpesaPaymentService {
 			"New M-PESA balance is Ksh[,|.|\\d]+";
 	private static final Pattern PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN = Pattern.compile(STR_PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN);
 	
+	private static final String STR_MPESA_PAYMENT_FAILURE_PATTERN = "";
+	private static final Pattern MPESA_PAYMENT_FAILURE_PATTERN = Pattern.compile(STR_MPESA_PAYMENT_FAILURE_PATTERN);
+	
 	private static final String STR_PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = 
 		"[A-Z\\d]+ Confirmed.\n"+
 		"Ksh[,|.|\\d]+ sent to ([A-Za-z ]+) 2547[\\d]{8} on "+
@@ -37,9 +40,15 @@ public class MpesaPersonalService extends MpesaPaymentService {
 		
 		if (isValidOutgoingPaymentConfirmation(message)) {
 			processOutgoingPayment(message);
+		}else if (isFailedMpesaPayment(message)){
+			
 		}
 	}
 	
+	private boolean isFailedMpesaPayment(final FrontlineMessage message) {
+		return MPESA_PAYMENT_FAILURE_PATTERN.matcher(message.getTextContent()).matches();
+	}
+
 	private void processOutgoingPayment(final FrontlineMessage message) {
 		new FrontlineUiUpateJob() {
 			public void run() {
