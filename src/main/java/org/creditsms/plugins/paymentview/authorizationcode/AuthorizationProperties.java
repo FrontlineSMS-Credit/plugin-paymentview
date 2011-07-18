@@ -1,8 +1,5 @@
 package org.creditsms.plugins.paymentview.authorizationcode;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
-
 import net.frontlinesms.resources.UserHomeFilePropertySet;
 
 import org.smslib.util.HexUtils;
@@ -15,7 +12,7 @@ public final class AuthorizationProperties extends UserHomeFilePropertySet {
 		super("payment-view");
 	}
 	
-	public void setAuthCode(byte[] hashedAuthCode) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+	private void setAuthCode(byte[] hashedAuthCode)  {
 		setProperty(KEY_AUTH_CODE, HexUtils.encode(hashedAuthCode));
 	}
 	
@@ -38,5 +35,13 @@ public final class AuthorizationProperties extends UserHomeFilePropertySet {
 
 	public static AuthorizationProperties getInstance() {
 		return INSTANCE;
+	}
+
+	public boolean isAuthCodeSet() {
+		return getHashedAuthCode() != null;
+	}
+
+	public void setAuthCode(String authCode) {
+		setAuthCode(AuthorizationChecker.getHash(AuthorizationChecker.ITERATION_NUMBER, authCode, AuthorizationChecker.getSalt()));
 	}
 }

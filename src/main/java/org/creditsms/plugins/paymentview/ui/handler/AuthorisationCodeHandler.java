@@ -1,6 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 
 import net.frontlinesms.ui.ThinletUiEventHandler;
@@ -39,24 +38,20 @@ public class AuthorisationCodeHandler extends BaseDialog{
 	}
 
  	public void authorize(String authCode, String verifyAuthCode) {
-		try {
-			if ((authCode.equals(verifyAuthCode)) & AuthorizationChecker.authenticate(authCode)){
-				if (authorizationAction != null) {
-					try {
-						authorizationAction.invoke(authorizationHandler);
-					}  catch (Exception e) {
-						throw new RuntimeException(e);
-					}finally{
-						ui.remove(dialogComponent);
-					}
-				}else{
-					throw new RuntimeException("Null AuthorizationAction!");
+		if ((authCode.equals(verifyAuthCode)) && AuthorizationChecker.authenticate(authCode)) {
+			if (authorizationAction != null) {
+				try {
+					authorizationAction.invoke(authorizationHandler);
+				}  catch (Exception e) {
+					throw new RuntimeException(e);
+				} finally {
+					ui.remove(dialogComponent);
 				}
-			}else{
-				ui.alert("Invalid Entry! Enter the Authorization Code Again.");
+			} else {
+				throw new RuntimeException("Null AuthorizationAction!");
 			}
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
+		} else {
+			ui.alert("Invalid Entry! Enter the Authorization Code Again.");
 		}
 	}
  	
