@@ -15,6 +15,8 @@ public class EnterPinDialog extends BaseDialog {
 	private final PaymentViewPluginController pluginController;
 	private final MpesaPaymentService paymentService;
 	private final SmsModem modem;
+	private Object pin;
+	private Object vpin;
 
 	public EnterPinDialog(UiGeneratorController ui, PaymentViewPluginController pluginController, MpesaPaymentService paymentService, SmsModem modem) {
 		super(ui);		
@@ -27,6 +29,9 @@ public class EnterPinDialog extends BaseDialog {
 	
 	private void init() {
 		dialogComponent = ui.loadComponentFromFile(XML_ENTER_PIN,this);
+		pin = ui.find(dialogComponent, "pin");
+		vpin = ui.find(dialogComponent, "vpin");
+		
 	}
 	
 	public void previous() {
@@ -38,7 +43,7 @@ public class EnterPinDialog extends BaseDialog {
 	}
 	
 	public void next() {
-		setUpThePaymentService(ui.getText(ui.find("pin")), ui.getText(ui.find("vpin")));
+		setUpThePaymentService(ui.getText(pin), ui.getText(vpin));
 	}
 
 	public void setUpThePaymentService(final String pin, final String vPin) {			
