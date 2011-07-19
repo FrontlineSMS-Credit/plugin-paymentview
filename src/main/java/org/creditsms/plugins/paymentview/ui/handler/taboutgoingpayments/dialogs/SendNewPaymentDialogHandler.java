@@ -148,9 +148,9 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 			outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
 			
 			if(outgoingPayment.getStatus() == OutgoingPayment.Status.ERROR) {
-				ui.infoMessage("The outgoing payment has been created and successfully sent");
-			} else {
 				ui.infoMessage("Error Occured");
+			} else {
+				ui.infoMessage("The outgoing payment has been created and successfully sent");
 			}
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
