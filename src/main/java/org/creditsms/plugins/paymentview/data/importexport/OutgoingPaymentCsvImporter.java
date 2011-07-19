@@ -65,8 +65,9 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 			String notes = rowFormat.getOptionalValue(lineValues,
 					PaymentViewCsvUtils.MARKER_OUTGOING_NOTES);
 
+			//TODO - no client linked to the account????????????????????
 			Account acc;
-			acc = new Account(account);
+			acc = new Account(account,false);
 			try {
 				accountDao.saveAccount(acc);
 			} catch (DuplicateKeyException e) {

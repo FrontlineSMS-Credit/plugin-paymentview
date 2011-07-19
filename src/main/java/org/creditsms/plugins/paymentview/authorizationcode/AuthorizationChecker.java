@@ -6,15 +6,15 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class AuthorizationChecker {
-	public final static int ITERATION_NUMBER = 1;
+	final static int ITERATION_NUMBER = 1;
 
-	public static boolean authenticate(String suppliedAuthCode) throws UnsupportedEncodingException {
+	public static boolean authenticate(String suppliedAuthCode) {
 		AuthorizationProperties authProp = AuthorizationProperties.getInstance();
 		return Arrays.equals(getHash(ITERATION_NUMBER, suppliedAuthCode, getSalt()),
 				authProp.getHashedAuthCode());
 	}
    
-	public static byte[] getSalt() {
+	static byte[] getSalt() {
 		byte[] salt = AuthorizationProperties.getInstance().getSalt();
 		if(salt == null) {
 			return new byte[]{0,1,0,1,0,1,0,1,0,1,0,1};
@@ -22,10 +22,16 @@ public class AuthorizationChecker {
 		return salt;
 	}
 
-	public static byte[] getHash(int iterationNb, String authenticationCode,
-			byte[] salt) throws UnsupportedEncodingException {
+	static byte[] getHash(int iterationNb, String authenticationCode,
+			byte[] salt) {
 		MessageDigest digest = getDigest(salt);
-		byte[] input = digest.digest(authenticationCode.getBytes("UTF-8"));
+		byte[] input;
+		try {
+			input = digest.digest(authenticationCode.getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// If UTF-8 is not supported we are in serious trouble
+			throw new IllegalStateException(e);
+		}
 		for (int i = 0; i < iterationNb; i++) {
 			digest.reset();
 			input = digest.digest(input);

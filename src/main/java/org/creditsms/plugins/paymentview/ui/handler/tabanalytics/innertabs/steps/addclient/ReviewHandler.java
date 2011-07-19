@@ -1,9 +1,12 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.addclient;
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import net.frontlinesms.payment.PaymentService;
+import net.frontlinesms.payment.safaricom.MpesaPersonalService;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
@@ -18,8 +21,8 @@ import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddCl
 public class ReviewHandler extends BasePanelHandler {
 	private static final String XML_STEP_REVIEW = "/ui/plugins/paymentview/analytics/addclient/stepreview.xml";
 	private static final String PNL_CLIENT_TABLE_HOLDER = "pnlClientTableHolder";
-	private static final String PAYMENT_PROCESS = "StandardPaymentService";
-	/*private static final String PAYMENT_PROCESS = "PayBillPaymentService";*/
+	private static String PAYMENT_PROCESS = "StandardPaymentService";
+	//private static final String PAYMENT_PROCESS = "PayBillPaymentService";
 	
 	private AddClientTabHandler addClientTabHandler;
 	private final CreateSettingsHandler previousCreateSettingsHandler;
@@ -35,8 +38,10 @@ public class ReviewHandler extends BasePanelHandler {
 		this.pluginController = pluginController;
 		this.previousCreateSettingsHandler = createSettingsHandler;
 		this.addClientTabHandler = addClientTabHandler;
-		this.selectedClients = previousCreateSettingsHandler.
-		getPreviousSelectClientsHandler().getSelectedClients();
+		this.selectedClients = new ArrayList<Client>(previousCreateSettingsHandler.getPreviousSelectClientsHandler().getSelectedClients());
+		//TODO to be modified if several phones are connected
+		PaymentService paymentService = pluginController.getPaymentService();
+		PAYMENT_PROCESS = (paymentService instanceof MpesaPersonalService? "StandardPaymentService" : "PayBillPaymentService");
 		init();
 	}
 
@@ -72,6 +77,7 @@ public class ReviewHandler extends BasePanelHandler {
 					ui.alert("New target created for client "+ client.getFullName()+ ".");
 			}
 		}
+		previousCreateSettingsHandler.getPreviousSelectClientsHandler().getSelectedClients().clear();
 	}
 
 	@Override

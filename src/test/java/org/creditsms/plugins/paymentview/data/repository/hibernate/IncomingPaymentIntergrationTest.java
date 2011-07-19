@@ -34,6 +34,7 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase{
 		IncomingPayment ip = createIncomingPayment("0725000000", "2000", "bob");
 		hibernateIncomingPaymentDao.saveIncomingPayment(ip);
 		assertEquals(1, hibernateIncomingPaymentDao.getAllIncomingPayments().size());
+		assertEquals("00001", ip.getAccount().getAccountNumber());
 	}
 
 	public void testDeletingIncomingPayment() throws DuplicateKeyException{
@@ -76,6 +77,7 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase{
 		
 		BigDecimal actualAmountPaid = actualIncomingPayments.get(0).getAmountPaid();
 		assertEquals(new BigDecimal("12000000"), actualAmountPaid);
+		assertEquals(accountNumber, actualIncomingPayments.get(0).getAccount().getAccountNumber());
 	}
 	
 	public void testGettingIncomingPaymentsByUserId() throws DuplicateKeyException{
@@ -104,17 +106,23 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase{
 	}
 
 	private IncomingPayment createIncomingPayment(String phoneNumber, String amount,
-			String by) {
+			String by) throws DuplicateKeyException {
 		return createIncomingPayment(phoneNumber, amount, by, null);
 	}
 	
 	private IncomingPayment createIncomingPayment(String phoneNumber, String amount,
-			String by, Account account) {
+			String by, Account account) throws DuplicateKeyException {
 		IncomingPayment ip = new IncomingPayment();
 		ip.setPhoneNumber(phoneNumber);
 		ip.setAmountPaid(new BigDecimal(amount));
 		ip.setPaymentBy(by);
-		if(account != null) ip.setAccount(account);
+		if(account != null) {
+			ip.setAccount(account);
+		} else {
+			Client client= createAndSaveClient(phoneNumber,by,1);
+			Account acc = createAndSaveAccount("00001",1,client);
+			ip.setAccount(acc);
+		}
 		return ip;
 	}
 	
@@ -132,12 +140,12 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase{
 		return ac;
 	}	
 	
-	private Client createAndSaveClient(String phnNumber, String firstName, int expectedAccountCount) throws DuplicateKeyException{
+	private Client createAndSaveClient(String phnNumber, String firstName, int expectedClientCount) throws DuplicateKeyException{
 		Client c = new Client();
 		c.setPhoneNumber(phnNumber);
 		c.setFirstName(firstName);
 		hibernateClientDao.saveClient(c);
-		assertEquals(expectedAccountCount, hibernateClientDao.getAllClients().size());
+		assertEquals(expectedClientCount, hibernateClientDao.getAllClients().size());
 		return c;
 	}
 }

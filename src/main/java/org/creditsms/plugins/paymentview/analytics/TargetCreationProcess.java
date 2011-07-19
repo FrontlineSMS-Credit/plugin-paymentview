@@ -27,8 +27,8 @@ public abstract class TargetCreationProcess {
 	protected ServiceItem serviceItem;
 	protected Account account;
 	protected Target target;
-	protected List<Account> inactiveAccounts;
-	protected List<Account> totalListAccounts;
+	protected List<Account> inactiveNonGenericAccounts;
+	protected List<Account> totalListNonGenericAccounts;
 	
 	public TargetCreationProcess(Client client, ServiceItem serviceItem, Date targetStartDate, Date targetEndDate, PaymentViewPluginController pluginController) {
 		this.client = client;
@@ -112,18 +112,18 @@ public abstract class TargetCreationProcess {
 		this.account = account;
 	}
 	public List<Account> getInactiveAccounts() {
-		return inactiveAccounts;
+		return inactiveNonGenericAccounts;
 	}
 
-	public void setInactiveAccounts(List<Account> inactiveAccounts) {
-		this.inactiveAccounts = inactiveAccounts;
+	public void setInactiveNonGenericAccounts(List<Account> inactiveNonGenericAccounts) {
+		this.inactiveNonGenericAccounts = inactiveNonGenericAccounts;
 	}
 
-	public List<Account> getTotalListAccounts() {
-		return totalListAccounts;
+	public List<Account> getTotalListNonGenericAccounts() {
+		return totalListNonGenericAccounts;
 	}
 
-	public void setTotalListAccounts(List<Account> totalListAccounts) {
-		this.totalListAccounts = totalListAccounts;
+	public void setTotalListAccounts(List<Account> totalListNonGenericAccounts) {
+		this.totalListNonGenericAccounts = totalListNonGenericAccounts;
 	}
 }

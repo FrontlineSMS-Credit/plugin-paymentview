@@ -64,7 +64,8 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 		mainFieldCounter = 0;
 		
 		for (Field field : Client.class.getDeclaredFields()) {
-			if (field.isAnnotationPresent(Column.class) && (!field.isAnnotationPresent(Id.class))) {
+			if (field.isAnnotationPresent(Column.class) && 
+					(!field.isAnnotationPresent(Id.class)) && (!field.getName().equals("active"))) {
 				addField(PaymentViewUtils.getReadableFieldName(field.getName()));
 			}
 		}

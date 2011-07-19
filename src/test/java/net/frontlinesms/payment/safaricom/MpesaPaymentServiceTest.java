@@ -171,6 +171,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		when(c.getId()).thenReturn(id);
 		when(clientDao.getClientByPhoneNumber(phoneNumber)).thenReturn(c);
 		when(accountDao.getAccountsByClientId(id)).thenReturn(new ArrayList<Account>(accounts));
+		when(accountDao.getActiveNonGenericAccountsByClientId(id)).thenReturn(new ArrayList<Account>(accounts));
 		when(c.getPhoneNumber()).thenReturn(phoneNumber);
 		return c;
 	}
@@ -254,6 +255,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 				
 				if(!(that instanceof IncomingPayment)) return false;
 				IncomingPayment other = (IncomingPayment) that;
+
 				return other.getPhoneNumber().equals(phoneNo) &&
 					other.getAmountPaid().equals(new BigDecimal(amount)) &&
 					other.getAccount().getAccountNumber().equals(accountNumber) &&

@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import net.frontlinesms.data.domain.FrontlineMessage;
+import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.events.EventObserver;
+import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
@@ -12,13 +16,14 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateAlertHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
 
-public class CreateSettingsHandler extends BasePanelHandler {
+public class CreateSettingsHandler extends BasePanelHandler implements EventObserver  {
 	private static final String TBL_CLIENTS = "tbl_clients";
 	private static final String XML_STEP_VIEW_CLIENTS = "/ui/plugins/paymentview/analytics/viewdashboard/stepviewclients.xml";
 	private ViewDashBoardTabHandler viewDashBoardTabHandler;
@@ -38,13 +43,18 @@ public class CreateSettingsHandler extends BasePanelHandler {
 		targetAnalytics = new TargetAnalytics();
 		targetAnalytics.setIncomingPaymentDao(pluginController.getIncomingPaymentDao());
 		targetAnalytics.setTargetDao(pluginController.getTargetDao());
-		
+		ui.getFrontlineController().getEventBus().registerObserver(this);
 		init();
 	}
 
 	private void init() {
 		this.loadPanel(XML_STEP_VIEW_CLIENTS);
 		tblClients = ui.find(this.getPanelComponent(), TBL_CLIENTS);
+		refresh();
+	}
+	
+	public void refresh() {
+		ui.removeAll(tblClients);
 		List<Client> selectedClients = previousSelectClientsHandler.getSelectedClients();
 		createRows(selectedClients);
 	}
@@ -121,5 +131,15 @@ public class CreateSettingsHandler extends BasePanelHandler {
 	
 	public void showDateSelecter(Object textField) {
 		((UiGeneratorController) ui).showDateSelecter(textField);
+	}
+	
+	public void notify(FrontlineEventNotification notification) {
+		if (!(notification instanceof EntitySavedNotification)) {
+			return;
+		}
+		Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
+		if (entity instanceof IncomingPayment) {
+			this.refresh();
+		}
 	}
 }

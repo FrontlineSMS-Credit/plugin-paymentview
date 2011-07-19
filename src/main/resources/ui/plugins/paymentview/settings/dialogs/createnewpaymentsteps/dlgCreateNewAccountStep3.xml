@@ -7,7 +7,7 @@
 	<label text="Enter Authorization Code" />
 	<passwordfield name="authCode" colspan="2" columns="15" text="" />
 	<label text="Verify Authorization Code" />
-	<passwordfield name="verifyAuthCode" colspan="2" columns="15" text="" />
+	<passwordfield name="verifyAuthCode" colspan="2" columns="15" text=""  perform="authorize(authCode.text,verifyAuthCode.text)"/>
 
 	<panel colspan="3" weightx="1">
 		<panel weightx="1" />

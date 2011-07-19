@@ -82,13 +82,18 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	}
 //>END - OUTGOING PAYMENT REGION
 	
+	/*
+	 * This function returns the active non-generic account, or the generic account if no accounts are active.
+	 */
 	@Override
 	Account getAccount(FrontlineMessage message) {
 		Client client = clientDao.getClientByPhoneNumber(getPhoneNumber(message));
 		if (client != null) {
-			List<Account> accountsByClientId = accountDao.getAccountsByClientId(client.getId());
-			if(!accountsByClientId.isEmpty()){
-				return accountsByClientId.get(0);
+			List<Account> activeNonGenericAccountsByClientId = accountDao.getActiveNonGenericAccountsByClientId(client.getId());
+			if(!activeNonGenericAccountsByClientId.isEmpty()){
+				return activeNonGenericAccountsByClientId.get(0);
+			} else {
+				return accountDao.getGenericAccountsByClientId(client.getId());
 			}
 		}
 		return null;
