@@ -33,10 +33,11 @@ import org.creditsms.plugins.paymentview.utils.PvUtils;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
 import org.smslib.handler.ATHandler.SynchronizedWorkflow;
-import org.smslib.stk.StkInputRequiremnent;
+import org.smslib.stk.StkConfirmationPrompt;
 import org.smslib.stk.StkMenu;
 import org.smslib.stk.StkRequest;
 import org.smslib.stk.StkResponse;
+import org.smslib.stk.StkValuePrompt;
 
 public abstract class MpesaPaymentService implements PaymentService, EventObserver  {
 //> REGEX PATTERN CONSTANTS
@@ -53,7 +54,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	protected final Logger log = FrontlineUtils.getLogger(this.getClass());
 	protected final Logger pvLog = PvUtils.getLogger(this.getClass());
 	private CService cService;
-	StkInputRequiremnent stRequirement;
 
 	//> DAOs
 	AccountDao accountDao;
@@ -78,9 +78,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 						StkMenu mPesaMenu = getMpesaMenu();
 						StkMenu myAccountMenu = (StkMenu) cService.stkRequest(mPesaMenu.getRequest("My account"));
 						StkResponse getBalanceResponse = cService.stkRequest(myAccountMenu.getRequest("Show balance"));
-						assert getBalanceResponse instanceof StkInputRequiremnent;
-						StkInputRequiremnent pinRequired = (StkInputRequiremnent) getBalanceResponse;
-						assert pinRequired.getText().contains("Enter PIN");
+						assert getBalanceResponse instanceof StkValuePrompt;
+						StkValuePrompt pinRequired = (StkValuePrompt) getBalanceResponse;
+						assert pinRequired.getPromptText().contains("Enter PIN");
 						cService.stkRequest(pinRequired.getRequest(), pin);
 						return null;
 					} catch(PaymentServiceException ex) {
@@ -97,29 +97,41 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}
 	}
 
-	public boolean makePayment(Client client, BigDecimal amount) throws PaymentServiceException {
+	public void makePayment(Client client, BigDecimal amount) throws PaymentServiceException {
 		initIfRequired();
 		try {
 			StkMenu mPesaMenu = getMpesaMenu();
-			StkResponse sendMoneyRequest = cService.stkRequest(mPesaMenu.getRequest("Send money"));
-			StkMenu getPassPhoneNoMenu = (StkMenu) sendMoneyRequest;
-			
-			String phoneNumber = client.getPhoneNumber();
-			StkResponse inputPhoneNumber = null;
-			
-			if(getPassPhoneNoMenu.getMenuItems().size()==1){
-				inputPhoneNumber = cService.stkRequest(((StkMenu) sendMoneyRequest).getRequest("Enter phone no."), phoneNumber);
-			}else if(getPassPhoneNoMenu.getMenuItems().size()==2){
-				sendMoneyRequest = cService.stkRequest(getPassPhoneNoMenu.getRequest("Enter phone no."));
-				inputPhoneNumber = cService.stkRequest(((StkMenu) sendMoneyRequest).getRequest("Enter phone no."), phoneNumber);
+			StkResponse sendMoneyResponse = cService.stkRequest(mPesaMenu.getRequest("Send money"));
+
+			StkValuePrompt enterPhoneNumberPrompt;
+			if(sendMoneyResponse instanceof StkMenu) {
+				enterPhoneNumberPrompt = (StkValuePrompt) cService.stkRequest(((StkMenu) sendMoneyResponse).getRequest("Enter phone no."));
+			} else {
+				enterPhoneNumberPrompt = (StkValuePrompt) sendMoneyResponse;
 			}
-			StkResponse amountResponse = cService.stkRequest(((StkMenu) inputPhoneNumber).getRequest("Enter amount"), amount.toString());
-			StkResponse finalResponse = cService.stkRequest(((StkMenu) amountResponse).getRequest("Enter PIN"), this.pin);
-			if(((StkMenu) finalResponse).getMenuItems().get(0).getText().contains("ERROR")){
-				return false;
-			}else{
-				return true;
-			}
+
+			StkResponse enterPhoneNumberResponse = cService.stkRequest(enterPhoneNumberPrompt.getRequest(), client.getPhoneNumber());
+			if(!(enterPhoneNumberResponse instanceof StkValuePrompt)) throw new RuntimeException("Phone number rejected");
+			
+			StkResponse enterAmountResponse = cService.stkRequest(((StkValuePrompt) enterPhoneNumberResponse).getRequest(), amount.toString());
+			if(!(enterAmountResponse instanceof StkValuePrompt)) throw new RuntimeException("amount rejected");
+			
+			StkResponse enterPinResponse = cService.stkRequest(((StkValuePrompt) enterAmountResponse).getRequest(), this.pin);
+			if(!(enterPinResponse instanceof StkConfirmationPrompt)) throw new RuntimeException("PIN rejected");
+			
+			StkResponse confirmationResponse = cService.stkRequest(((StkConfirmationPrompt) enterPinResponse).getRequest());
+			if(confirmationResponse == StkResponse.ERROR) throw new RuntimeException("Payment failed for some reason.");
+//			
+//			StkMenu mPesaMenu = getMpesaMenu();
+//			StkResponse sendMoneyResponse = cService.stkRequest(mPesaMenu.getRequest("Send money"));
+//			
+//			StkInputRequiremnent phoneNumberInputResponse = cService.stkRequest((StkInputRequiremnent) sendMoneyResponse.getRequest(), client.getPhoneNumber());
+//			if (phoneNumberInputResponse == null) throw new RuntimeException("Input phone number prompt not found.  Panic!");
+//			
+//			StkResponse amountResponse = cService.stkRequest(((StkMenu) inputPhoneNumber).getRequest("Enter amount"), amount.toString());
+//			StkResponse pinResponse = cService.stkRequest(((StkMenu) amountResponse).getRequest("Enter PIN"), this.pin);
+//		
+//			return !pinResponse.getText().contains("ERROR");
 		} catch (SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
 		} catch (IOException e) {
@@ -308,18 +320,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	
 	public void setCService(CService cService) {
 		this.cService = cService;
-	}
-
-	public CService getCService(){
-		return cService;
-	}
-	
-	public StkInputRequiremnent getStRequirement() {
-		return stRequirement;
-	}
-
-	public void setStRequirement(StkInputRequiremnent stRequirement) {
-		this.stRequirement = stRequirement;
 	}
 	
 	public void initDaosAndServices(PaymentViewPluginController pluginController) {

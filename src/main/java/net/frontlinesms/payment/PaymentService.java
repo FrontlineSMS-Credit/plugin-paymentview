@@ -30,6 +30,6 @@ public interface PaymentService {
 		}
 	}
 	
-	boolean makePayment(Client client, BigDecimal amount) throws PaymentServiceException;
+	void makePayment(Client client, BigDecimal amount) throws PaymentServiceException;
 	void checkBalance() throws PaymentServiceException, IOException;
 }

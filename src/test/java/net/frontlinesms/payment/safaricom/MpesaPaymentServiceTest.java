@@ -33,8 +33,6 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
-import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
-import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
@@ -43,12 +41,12 @@ import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.mockito.InOrder;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
-import org.smslib.handler.ATHandler;
 import org.smslib.handler.CATHandler_Wavecom_Stk;
-import org.smslib.stk.StkInputRequiremnent;
+import org.smslib.stk.StkConfirmationPrompt;
 import org.smslib.stk.StkMenu;
 import org.smslib.stk.StkMenuItem;
 import org.smslib.stk.StkRequest;
+import org.smslib.stk.StkValuePrompt;
 
 /** Unit tests for {@link MpesaPaymentService} */
 public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> extends BaseTestCase {
@@ -161,9 +159,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		
 		//Set up accounts, targets and clients
 		Set<Account> accounts1 = mockAccounts(ACCOUNTNUMBER_1_1);
-		Set<Target> targets1 = mockTargets(accounts1);
 		Set<Account> accounts2 = mockAccounts(ACCOUNTNUMBER_2_1, ACCOUNTNUMBER_2_2);
-		Set<Target> targets2 = mockTargets(accounts2);
 		
 	    CLIENT_0 = mockClient(0, PHONENUMBER_0, Collections.EMPTY_SET);
 	    CLIENT_1 = mockClient(1, PHONENUMBER_1, accounts1);
@@ -189,7 +185,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 				"Change PIN", "Secret word", "Language", "Update menu"); 
 		when(cService.stkRequest(myAccountMenuItemRequest)).thenReturn(myAccountMenu);
 
-		StkInputRequiremnent pinRequired = mockInputRequirement("Enter PIN", 0, 0, 4, 4, 0);
+		StkValuePrompt pinRequired = mockInputRequirement("Enter PIN", 0, 0, 4, 4, 0);
 		StkRequest pinRequiredRequest = pinRequired.getRequest();
 		StkRequest showBalanceMenuItemRequest = myAccountMenu.getRequest("Show balance");
 		when(cService.stkRequest(showBalanceMenuItemRequest)).thenReturn(pinRequired);
@@ -210,20 +206,19 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	
 	public void testMakePayment() throws PaymentServiceException, SMSLibDeviceException, IOException  {
 		// setup
-		StkRequest sendMoneyMenuItemRequest = mpesaMenu.getRequest("Send money");
-		StkInputRequiremnent phoneNumberRequired = mockInputRequirement("Enter phone no.");
-		when(cService.stkRequest(sendMoneyMenuItemRequest)).thenReturn(phoneNumberRequired);
+		StkValuePrompt phoneNumberRequired = mockInputRequirement("Enter phone no.");
+		when(cService.stkRequest(sendMoneyMenuItem)).thenReturn(phoneNumberRequired);
 		
 		StkRequest phoneNumberRequest = phoneNumberRequired.getRequest();
-		StkInputRequiremnent amountRequired = mockInputRequirement("Enter amount");
+		StkValuePrompt amountRequired = mockInputRequirement("Enter amount");
 		when(cService.stkRequest(phoneNumberRequest, PHONENUMBER_1)).thenReturn(amountRequired);
 		
 		StkRequest amountRequest = amountRequired.getRequest();
-		StkInputRequiremnent pinRequired = mockInputRequirement("Enter PIN");
+		StkValuePrompt pinRequired = mockInputRequirement("Enter PIN");
 		when(cService.stkRequest(amountRequest, "500")).thenReturn(pinRequired);
 		
 		StkRequest pinRequiredRequest = pinRequired.getRequest();
-		StkInputRequiremnent pinRequiredResponse = mockInputRequirement("Send money to "+CLIENT_1.getPhoneNumber()+" Ksh500");
+		StkConfirmationPrompt pinRequiredResponse = mockConfirmation("Send money to "+CLIENT_1.getPhoneNumber()+" Ksh500");
 		when(cService.stkRequest(pinRequiredRequest, "1234")).thenReturn(pinRequiredResponse);
 		
 		// given
@@ -236,7 +231,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		InOrder inOrder = inOrder(cService);
 		inOrder.verify(cService).stkRequest(StkRequest.GET_ROOT_MENU);
 		inOrder.verify(cService).stkRequest(mpesaMenuItemRequest);
-		inOrder.verify(cService).stkRequest(sendMoneyMenuItemRequest);
+		inOrder.verify(cService).stkRequest(sendMoneyMenuItem);
 		inOrder.verify(cService).stkRequest(phoneNumberRequest , PHONENUMBER_1);
 		inOrder.verify(cService).stkRequest(amountRequest , "500");
 		inOrder.verify(cService).stkRequest(pinRequiredRequest , "1234");
@@ -361,28 +356,23 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		return i;
 	}
 	
-	private StkInputRequiremnent mockInputRequirement(String title, int... nums) {
-		StkInputRequiremnent ir = mock(StkInputRequiremnent.class);
-		when(ir.getText()).thenReturn(title);
+	private StkValuePrompt mockInputRequirement(String title, int... nums) {
+		StkValuePrompt ir = mock(StkValuePrompt.class);
+		when(ir.getPromptText()).thenReturn(title);
 		
 		StkRequest mockRequest = mock(StkRequest.class);
 		when(ir.getRequest()).thenReturn(mockRequest);
 		return ir;
 	}
 	
-	private Account mockAccount() {
-		Account a = mock(Account.class);
-		when(a.getAccountId()).thenReturn(Long.valueOf(123456789));
+	private StkConfirmationPrompt mockConfirmation(String title) {
+		StkConfirmationPrompt ir = mock(StkConfirmationPrompt.class);
+		when(ir.getPromptText()).thenReturn(title);
 		
-		Client c = mock(Client.class);
-		when(c.getPhoneNumber()).thenReturn("0712345678");
-		
-		when(a.getClient()).thenReturn(c);
-		
-		return a;
+		StkRequest mockRequest = mock(StkRequest.class);
+		when(ir.getRequest()).thenReturn(mockRequest);
+		return ir;
 	}
-	
-
 	
 	private EntitySavedNotification<FrontlineMessage> mockMessageNotification(String from, String text) {
 		FrontlineMessage m = mock(FrontlineMessage.class);
@@ -401,41 +391,6 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		}
 		return new HashSet<Account>(accounts);
 	}
-	
-	private Set<Target> mockTargets(Set<Account> mockAccounts) {
-		ArrayList<Target> targets = new ArrayList<Target>();
-		for (Account account :  mockAccounts) {
-			ServiceItem svsItem = mock(ServiceItem.class);
-			svsItem.setAmount(new BigDecimal("8900"));
-			svsItem.setTargetName("PUMP");
-			
-			Target target = mock(Target.class);
-			when(target.getAccount()).thenReturn(account);
-			when(targetDao.getActiveTargetByAccount(account.getAccountNumber())).thenReturn(target);
-			when(target.getServiceItem()).thenReturn(svsItem);
-			when(target.getId()).thenReturn((long)1234);
-			targets.add(target);
-		}
-		return new HashSet<Target>(targets);
-	}
-	
-	private Set<Target> mockTargetAnalytics(Set<Account> mockAccounts) {
-		ArrayList<Target> targets = new ArrayList<Target>();
-		for (Account account :  mockAccounts) {
-			ServiceItem svsItem = mock(ServiceItem.class);
-			svsItem.setAmount(new BigDecimal("8900"));
-			svsItem.setTargetName("PUMP");
-			
-			Target target = mock(Target.class);
-			when(target.getAccount()).thenReturn(account);
-			when(targetDao.getActiveTargetByAccount(account.getAccountNumber())).thenReturn(target);
-			when(target.getServiceItem()).thenReturn(svsItem);
-			when(target.getId()).thenReturn((long)1234);
-			targets.add(target);
-		}
-		return new HashSet<Target>(targets);
-	}
-	
 }
 
 class WaitingJob extends FrontlineUiUpateJob {
