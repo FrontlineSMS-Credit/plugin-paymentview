@@ -121,23 +121,13 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			
 			StkResponse confirmationResponse = cService.stkRequest(((StkConfirmationPrompt) enterPinResponse).getRequest());
 			if(confirmationResponse == StkResponse.ERROR) throw new RuntimeException("Payment failed for some reason.");
-//			
-//			StkMenu mPesaMenu = getMpesaMenu();
-//			StkResponse sendMoneyResponse = cService.stkRequest(mPesaMenu.getRequest("Send money"));
-//			
-//			StkInputRequiremnent phoneNumberInputResponse = cService.stkRequest((StkInputRequiremnent) sendMoneyResponse.getRequest(), client.getPhoneNumber());
-//			if (phoneNumberInputResponse == null) throw new RuntimeException("Input phone number prompt not found.  Panic!");
-//			
-//			StkResponse amountResponse = cService.stkRequest(((StkMenu) inputPhoneNumber).getRequest("Enter amount"), amount.toString());
-//			StkResponse pinResponse = cService.stkRequest(((StkMenu) amountResponse).getRequest("Enter PIN"), this.pin);
-//		
-//			return !pinResponse.getText().contains("ERROR");
 		} catch (SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
 		} catch (IOException e) {
 			throw new PaymentServiceException(e);
 		}
 	}
+
 //> EVENTBUS NOTIFY
 	@SuppressWarnings("rawtypes")
 	public void notify(FrontlineEventNotification notification) {
