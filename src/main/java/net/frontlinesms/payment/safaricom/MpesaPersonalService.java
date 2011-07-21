@@ -13,6 +13,7 @@ import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.payment.balance.BalanceProperties;
 
 public class MpesaPersonalService extends MpesaPaymentService {
 	
@@ -33,7 +34,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	
 	private static final Pattern PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = Pattern.compile(STR_PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN);
 	private static final String STR_BALANCE_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n"
-		+ "Your M-PESA balance was Ksh([,|.|\\d]+\n"
+		+ "Your M-PESA balance was Ksh([,|.|\\d]+)\n"
 		+ "on (([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) at ([1]?\\d:[0-5]\\d) ([A|P]M)";
 	
 	private static final Pattern BALANCE_REGEX_PATTERN = Pattern.compile(STR_BALANCE_REGEX_PATTERN);
@@ -41,6 +42,22 @@ public class MpesaPersonalService extends MpesaPaymentService {
 //>BEGIN - OUTGOING PAYMENT REGION	
 	protected boolean isValidBalanceMessage(FrontlineMessage message){
 		return BALANCE_REGEX_PATTERN.matcher(message.getTextContent()).matches();
+	}
+	
+	protected void processBalance(final FrontlineMessage message){
+		new FrontlineUiUpateJob() {
+			// This probably shouldn't be a UI job,
+			// but it certainly should be done on a separate thread!
+			public void run() {
+				String confirmationMessage = getConfirmationCode(message);
+				BigDecimal balance = getAmount(message);
+				Date datetime = getTimePaid(message);
+				
+				BalanceProperties.getInstance().setBalance(balance);
+				BalanceProperties.getInstance().setDateTime(datetime);
+				BalanceProperties.getInstance().setConfirmationCode(confirmationMessage);
+			}
+		}.execute();
 	}
 	
 	@Override

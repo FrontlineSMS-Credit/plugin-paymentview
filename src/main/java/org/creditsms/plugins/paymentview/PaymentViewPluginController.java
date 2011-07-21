@@ -23,7 +23,6 @@ import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
-import org.creditsms.plugins.paymentview.authorizationcode.AuthorizationProperties;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
@@ -33,6 +32,7 @@ import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
+import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.AuthorizationProperties;
 import org.springframework.context.ApplicationContext;
 
 /**

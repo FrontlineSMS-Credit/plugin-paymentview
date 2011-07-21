@@ -29,6 +29,7 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
+import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.payment.balance.BalanceProperties;
 import org.creditsms.plugins.paymentview.utils.PvUtils;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
@@ -83,6 +84,11 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 						StkValuePrompt pinRequired = (StkValuePrompt) getBalanceResponse;
 						assert pinRequired.getPromptText().contains("Enter PIN");
 						cService.stkRequest(pinRequired.getRequest(), pin);
+						
+						//TODO: Now update the balance after the check this after that...
+						BigDecimal balance = new BigDecimal("0");
+						//Replace `balance` with the real balance from the Modem request
+						BalanceProperties.getInstance().setBalance(balance);
 						return null;
 					} catch(PaymentServiceException ex) {
 						throw new SMSLibDeviceException(ex);
@@ -150,7 +156,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		if (isValidIncomingPaymentConfirmation(message)) {
 			processIncomingPayment(message);
 		}else if (isValidBalanceMessage(message)){
-			
+			processBalance(message);
 		} 
 	}
 
@@ -254,6 +260,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		return isMessageTextValid(message.getTextContent());
 	}
 	
+	abstract void processBalance(FrontlineMessage message);
 	abstract Date getTimePaid(FrontlineMessage message);
 	abstract boolean isMessageTextValid(String message);
 	abstract Account getAccount(FrontlineMessage message);
@@ -360,6 +367,10 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		return balance;
 	}
 	
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance;
+	}
+	
 	public void initDaosAndServices(PaymentViewPluginController pluginController) {
 		this.accountDao = pluginController.getAccountDao();
 		this.clientDao = pluginController.getClientDao();
@@ -367,6 +378,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.targetDao = pluginController.getTargetDao();
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.targetAnalytics = pluginController.getTargetAnalytics();
+		this.balance = BalanceProperties.getInstance().getBalance();
 	}
 	
 	/**

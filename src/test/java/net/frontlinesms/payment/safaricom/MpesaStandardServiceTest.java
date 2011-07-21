@@ -75,6 +75,12 @@ public class MpesaStandardServiceTest extends MpesaPaymentServiceTest<MpesaPerso
 				"yohan mwenyewe alibamba", "3/5/11 8:35 PM");
 	}
 	
+	public void testBalanceProcessing(){
+		testBalanceProcessing("NB56GF6JK Confirmed.\n" +
+			"Your M-PESA balance was Ksh1,235\n" +
+			"on 12/2/11 at 12:23 AM",
+		"1235", "NB56GF6JK", "12/2/11 12:23 AM");
+	}
 
 	@Override
 	String[] getValidMessagesText() {

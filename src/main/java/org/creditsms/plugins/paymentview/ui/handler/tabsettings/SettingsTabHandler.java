@@ -1,5 +1,9 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
+import java.io.IOException;
+
+import net.frontlinesms.payment.PaymentService;
+import net.frontlinesms.payment.PaymentServiceException;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
@@ -50,8 +54,15 @@ public class SettingsTabHandler extends BaseTabHandler {
 		}
 	}
 
-	public void updateAccountBalance() {
-		// TODO Auto-generated method stub
+	public void updateAccountBalance() throws PaymentServiceException, IOException {
+		Object selectedItem = this.ui.getSelectedItem(settingsTableComponent);
+		if (selectedItem != null) {
+			PaymentService __paymentService = ui.getAttachedObject(selectedItem, PaymentService.class);
+			__paymentService.checkBalance();
+			ui.alert("Request has been sent. The Account balance will be updated shortly.");
+		}else{
+			ui.alert("Please select an account to update balance.");
+		}
 	}
 	
 	public void updateAuthCode() {

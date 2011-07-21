@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
+import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 
@@ -29,6 +30,16 @@ public class MpesaPayBillService extends MpesaPaymentService {
 	private static final Pattern BALANCE_REGEX_PATTERN = Pattern.compile(STR_BALANCE_REGEX_PATTERN);
 	protected boolean isValidBalanceMessage(FrontlineMessage message){
 		return BALANCE_REGEX_PATTERN.matcher(message.getTextContent()).matches();
+	}
+	
+	protected void processBalance(FrontlineMessage message){
+		new FrontlineUiUpateJob() {
+			// This probably shouldn't be a UI job,
+			// but it certainly should be done on a separate thread!
+			public void run() {
+				
+			}
+		}.execute();
 	}
 	
 	@Override

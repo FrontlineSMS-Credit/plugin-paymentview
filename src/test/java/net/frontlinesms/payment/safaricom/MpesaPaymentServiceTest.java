@@ -290,6 +290,16 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		verify(outgoingPaymentDao).updateOutgoingPayment(payment);
 	}
 	
+	protected void testBalanceProcessing(String messageText, String amount,
+			String confimation_message, String date_time) {
+		mpesaPaymentService.notify(mockMessageNotification("MPESA", messageText));
+		
+		WaitingJob.waitForEvent();
+		//verify(mpesaPaymentService).setBalance(new BigDecimal(amount));
+		assertEquals(mpesaPaymentService.getBalance(), new BigDecimal(amount));
+		
+	}
+	
 	private Date getTimestamp(String dateString) {
 		try {
 			return new SimpleDateFormat("d/M/yy hh:mm a").parse(dateString);
