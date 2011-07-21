@@ -145,7 +145,21 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	}
 	
 //> WIZARD NAVIGATORS
-	public void next() {
+	public void next() {	
+		//Check Service,start and end date set up
+		if (ui.getSelectedItem(cmbtargets) == null) {
+			ui.infoMessage("Please enter a savings target/goal.");
+			return;
+		}
+		if (ui.getText(txtStartDate).equals("")) {
+			ui.infoMessage("Please enter a start date.");
+			return;
+		}
+		if (ui.getText(txtEndDate).equals("")) {
+			ui.infoMessage("Please enter an end date.");
+			return;
+		}
+		
 		if(parseDateRange()){
 			readServiceItem();
 			addClientTabHandler.setCurrentStepPanel(new ReviewHandler(

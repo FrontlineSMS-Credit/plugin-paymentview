@@ -55,7 +55,7 @@ public class IncomingPayment {
 	private Account account;
 	
 	@ManyToOne
-	@JoinColumn(name = FIELD_TARGET)
+	@JoinColumn(name = FIELD_TARGET, nullable = true) //nullable if payment for generic account
 	private Target target;
 
 	public enum Field implements EntityField<IncomingPayment> {

@@ -8,7 +8,6 @@ import net.frontlinesms.ui.UiGeneratorController;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
-import org.springframework.util.StringUtils;
 
 public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 
@@ -42,10 +41,6 @@ public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 		ui.setIcon(phone, "/icons/phone.png");
 		ui.add(header, phone);
 	
-		Object accounts = ui.createColumn("Account(s)", "accounts");
-		ui.setWidth(accounts, 100);
-		ui.add(header, accounts);
-	
 		List<CustomField> allCustomFields = this.customFieldDao
 				.getAllActiveUsedCustomFields();
 		if (!allCustomFields.isEmpty()) {
@@ -71,11 +66,6 @@ public abstract class BaseSelectClientTableHandler extends BaseClientTable {
 				ui.createTableCell(client.getFirstName() + " "
 						+ client.getOtherName()));
 		ui.add(row, ui.createTableCell(client.getPhoneNumber()));
-		
-		List<String> accountNumbers = getAccounts(client);
-		
-		ui.add(row, ui.createTableCell(StringUtils
-				.arrayToCommaDelimitedString(accountNumbers.toArray())));
 		
 		ui.setAttachedObject(row, client);
 		return addCustomData(client, row);

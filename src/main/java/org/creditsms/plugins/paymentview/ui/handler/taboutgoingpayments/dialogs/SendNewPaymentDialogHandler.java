@@ -3,11 +3,13 @@ package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs
 import java.math.BigDecimal;
 import java.util.Calendar;
 
+import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 
+import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
@@ -23,6 +25,8 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	private static final String COMPONENT_CMB_OP_MOBILE_PAYMENT_SYSTEM = "cmb_MobilePaymentSystem";
 	private static final String COMPONENT_TEXT_OP_PAYMENT_ID = "txt_PaymentID";
 	private static final String COMPONENT_TEXT_OP_NOTES = "txt_Notes";
+	
+	private final Logger log = FrontlineUtils.getLogger(getClass());
 
 	private Object schedulePaymentAuthDialog;
 	private OutgoingPayment outgoingPayment;
@@ -133,16 +137,24 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	public void sendPayment() throws PaymentServiceException {
 		//TODO check MSISDN, amount available?
 		try {
-				outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
+			outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
+			try {
 				paymentService.makePayment(client, outgoingPayment.getAmountPaid());
 				outgoingPayment.setStatus(OutgoingPayment.Status.UNCONFIRMED);
-				outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
-		} catch (IllegalArgumentException ex) {
-			throw new RuntimeException(ex);
+			} catch(Exception ex) {
+				log.warn("Payment failed.", ex);
+				outgoingPayment.setStatus(OutgoingPayment.Status.ERROR);
+			}
+			outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
+			
+			if(outgoingPayment.getStatus() == OutgoingPayment.Status.ERROR) {
+				ui.infoMessage("Error Occured");
+			} else {
+				ui.infoMessage("The outgoing payment has been created and successfully sent");
+			}
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
-		ui.infoMessage("The outgoing payment has been created and successfully sent");
 	}
 
 	public OutgoingPayment getOutgoingPayment() {

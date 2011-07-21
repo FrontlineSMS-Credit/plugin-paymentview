@@ -99,7 +99,8 @@ public class OutgoingPayment {
 	public static enum Status {
 		CREATED("Created","/icons/sms_created.png"),
 		UNCONFIRMED("Unconfirmed", "/icons/sms_unconfirmed.png"),
-		CONFIRMED("Confirmed", "/icons/sms_confirmed.png");
+		CONFIRMED("Confirmed", "/icons/sms_confirmed.png"),
+		ERROR("Error", "/icons/error.png");
 
 		private String status;
 		private String icon;

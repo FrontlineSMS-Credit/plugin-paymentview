@@ -23,7 +23,6 @@ import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
-import org.springframework.util.StringUtils;
 
 public abstract class BaseClientTable implements PagedComponentItemProvider,
 		ThinletUiEventHandler, EventObserver {
@@ -135,12 +134,6 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 						+ client.getOtherName()));
 		ui.add(row, ui.createTableCell(client.getPhoneNumber()));
 
-		List<String> accountNumbers = new ArrayList<String>(this.accountDao.getAccountsByClientId(client
-				.getId()).size());
-		accountNumbers = getAccounts(client);
-
-		ui.add(row, ui.createTableCell(StringUtils
-				.arrayToCommaDelimitedString(accountNumbers.toArray())));
 		return addCustomData(client, row);
 	}
 
@@ -199,11 +192,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 		ui.setWidth(phone, 150);
 		ui.setIcon(phone, Icon.PHONE_NUMBER);
 		ui.add(header, phone);
-
-		Object accounts = ui.createColumn("Account(s)", "accounts");
-		ui.setWidth(accounts, 100);
-		ui.add(header, accounts);
-
+		
 		List<CustomField> allCustomFields = this.customFieldDao
 				.getAllActiveUsedCustomFields();
 		if (!allCustomFields.isEmpty()) {

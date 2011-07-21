@@ -46,9 +46,9 @@ public class MpesaStandardServiceTest extends MpesaPaymentServiceTest<MpesaPerso
 	
 	
 	public void testOutgoingPaymentProcessing() throws DuplicateKeyException {
-		testOutgoingPaymentProcessing("BC77RI604 Confirmed.\n" +
-				"Ksh1,235 sent to DACON OMONDI 254723908001 on 22/5/11 at 10:35 PM\n" +
-				"New M-PESA balance Ksh1,236",
+		testOutgoingPaymentProcessing("BC77RI604 Confirmed. " +
+				"Ksh1,235 sent to DACON OMONDI +254723908001 on 22/5/11 at 10:35 PM " +
+				"New M-PESA balance is Ksh1,236",
 				PHONENUMBER_1, ACCOUNTNUMBER_1_1, "1235", "BC77RI604",
 				"DACON OMONDI", "22/5/11 10:35 PM", OutgoingPayment.Status.CONFIRMED);
 	}

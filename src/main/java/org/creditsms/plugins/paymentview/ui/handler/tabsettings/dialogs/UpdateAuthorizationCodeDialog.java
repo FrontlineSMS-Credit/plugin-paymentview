@@ -28,8 +28,9 @@ public class UpdateAuthorizationCodeDialog extends BaseDialog{
 		if (AuthorizationChecker.authenticate(existing)){
 			if (newcode.length()>0 || verifynew.length()>0){
 				if (newcode.equals(verifynew)){
-					AuthorizationProperties.getInstance().
-					setAuthCode(AuthorizationChecker.getHash(AuthorizationChecker.ITERATION_NUMBER, newcode, AuthorizationChecker.getSalt()));
+					AuthorizationProperties authProperties = AuthorizationProperties.getInstance();
+					authProperties.setAuthCode(newcode);
+					authProperties.saveToDisk();
 					
 					ui.infoMessage("Authorization code has been successfully updated.");
 					ui.remove(dialogComponent);
@@ -39,11 +40,8 @@ public class UpdateAuthorizationCodeDialog extends BaseDialog{
 			} else {
 				ui.infoMessage("The authorisation code cannot be empty.");
 			}
-
-			
 		} else {
 			ui.infoMessage("Wrong existing code. Please re-enter the existing code.");
 		}
-		
 	}
 }

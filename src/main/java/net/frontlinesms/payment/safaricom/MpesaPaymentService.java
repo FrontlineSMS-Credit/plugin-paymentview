@@ -33,10 +33,11 @@ import org.creditsms.plugins.paymentview.utils.PvUtils;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
 import org.smslib.handler.ATHandler.SynchronizedWorkflow;
-import org.smslib.stk.StkInputRequiremnent;
+import org.smslib.stk.StkConfirmationPrompt;
 import org.smslib.stk.StkMenu;
 import org.smslib.stk.StkRequest;
 import org.smslib.stk.StkResponse;
+import org.smslib.stk.StkValuePrompt;
 
 public abstract class MpesaPaymentService implements PaymentService, EventObserver  {
 //> REGEX PATTERN CONSTANTS
@@ -53,7 +54,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	protected final Logger log = FrontlineUtils.getLogger(this.getClass());
 	protected final Logger pvLog = PvUtils.getLogger(this.getClass());
 	private CService cService;
-	StkInputRequiremnent stRequirement;
 
 	//> DAOs
 	AccountDao accountDao;
@@ -78,9 +78,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 						StkMenu mPesaMenu = getMpesaMenu();
 						StkMenu myAccountMenu = (StkMenu) cService.stkRequest(mPesaMenu.getRequest("My account"));
 						StkResponse getBalanceResponse = cService.stkRequest(myAccountMenu.getRequest("Show balance"));
-						assert getBalanceResponse instanceof StkInputRequiremnent;
-						StkInputRequiremnent pinRequired = (StkInputRequiremnent) getBalanceResponse;
-						assert pinRequired.getText().contains("Enter PIN");
+						assert getBalanceResponse instanceof StkValuePrompt;
+						StkValuePrompt pinRequired = (StkValuePrompt) getBalanceResponse;
+						assert pinRequired.getPromptText().contains("Enter PIN");
 						cService.stkRequest(pinRequired.getRequest(), pin);
 						return null;
 					} catch(PaymentServiceException ex) {
@@ -101,30 +101,33 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		initIfRequired();
 		try {
 			StkMenu mPesaMenu = getMpesaMenu();
-			StkResponse sendMoneyRequest = cService.stkRequest(mPesaMenu.getRequest("Send money"));
-			StkMenu getPassPhoneNoMenu = (StkMenu) sendMoneyRequest;
-			
-			String phoneNumber = client.getPhoneNumber();
-			StkResponse inputPhoneNumber = null;
-			
-			if(getPassPhoneNoMenu.getMenuItems().size()==1){
-				inputPhoneNumber = cService.stkRequest(((StkMenu) sendMoneyRequest).getRequest("Enter phone no."), phoneNumber);
-			}else if(getPassPhoneNoMenu.getMenuItems().size()==2){
-				sendMoneyRequest = cService.stkRequest(getPassPhoneNoMenu.getRequest("Enter phone no."));
-				inputPhoneNumber = cService.stkRequest(((StkMenu) sendMoneyRequest).getRequest("Enter phone no."), phoneNumber);
-			}
-			StkResponse amountResponse = cService.stkRequest(((StkMenu) inputPhoneNumber).getRequest("Enter amount"), amount.toString());
-			StkResponse pinResponse = cService.stkRequest(((StkMenu) amountResponse).getRequest("Enter PIN"), this.pin);
+			StkResponse sendMoneyResponse = cService.stkRequest(mPesaMenu.getRequest("Send money"));
 
+			StkValuePrompt enterPhoneNumberPrompt;
+			if(sendMoneyResponse instanceof StkMenu) {
+				enterPhoneNumberPrompt = (StkValuePrompt) cService.stkRequest(((StkMenu) sendMoneyResponse).getRequest("Enter phone no."));
+			} else {
+				enterPhoneNumberPrompt = (StkValuePrompt) sendMoneyResponse;
+			}
+
+			StkResponse enterPhoneNumberResponse = cService.stkRequest(enterPhoneNumberPrompt.getRequest(), client.getPhoneNumber());
+			if(!(enterPhoneNumberResponse instanceof StkValuePrompt)) throw new RuntimeException("Phone number rejected");
 			
-			StkRequest sendRequest = ((StkInputRequiremnent) pinResponse).getRequest();
-			cService.stkRequest(sendRequest);
+			StkResponse enterAmountResponse = cService.stkRequest(((StkValuePrompt) enterPhoneNumberResponse).getRequest(), amount.toString());
+			if(!(enterAmountResponse instanceof StkValuePrompt)) throw new RuntimeException("amount rejected");
+			
+			StkResponse enterPinResponse = cService.stkRequest(((StkValuePrompt) enterAmountResponse).getRequest(), this.pin);
+			if(!(enterPinResponse instanceof StkConfirmationPrompt)) throw new RuntimeException("PIN rejected");
+			
+			StkResponse confirmationResponse = cService.stkRequest(((StkConfirmationPrompt) enterPinResponse).getRequest());
+			if(confirmationResponse == StkResponse.ERROR) throw new RuntimeException("Payment failed for some reason.");
 		} catch (SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
 		} catch (IOException e) {
 			throw new PaymentServiceException(e);
 		}
 	}
+
 //> EVENTBUS NOTIFY
 	@SuppressWarnings("rawtypes")
 	public void notify(FrontlineEventNotification notification) {
@@ -157,12 +160,12 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 				try {
 					final IncomingPayment payment = new IncomingPayment();
 					
-					// check account existence
+					// retrieve applicable account if the client exists
 					Account account = getAccount(message);
 					
 					if (account != null){
 						Target tgt = targetDao.getActiveTargetByAccount(account.getAccountNumber());
-						if (tgt != null){
+						if (tgt != null){//account is a non generic one
 							payment.setAccount(account);
 							payment.setTarget(tgt);
 							payment.setPhoneNumber(getPhoneNumber(message));
@@ -185,10 +188,50 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							}
 
 						} else {
-							//TODO log the unprocessed incoming message 
+							//account is a generic one(standard) or a non-generic without any active target(paybill)
+							payment.setAccount(account);
+							payment.setTarget(null);
+							payment.setPhoneNumber(getPhoneNumber(message));
+							payment.setAmountPaid(getAmount(message));
+							payment.setConfirmationCode(getConfirmationCode(message));
+							payment.setPaymentBy(getPaymentBy(message));
+							payment.setTimePaid(getTimePaid(message));
+							
+							incomingPaymentDao.saveIncomingPayment(payment);
 						}
 					} else {
-						//TODO log the unprocessed incoming message
+					// paybill - account does not exist (typing error) but client exists
+					if (clientDao.getClientByPhoneNumber(getPhoneNumber(message))!=null){
+						//save the incoming payment in generic account
+						account = accountDao.getGenericAccountsByClientId(clientDao.getClientByPhoneNumber(getPhoneNumber(message)).getId());
+						pvLog.warn("The account does not exist for this client. Incoming payment has been saved in generic account. "+ message.getTextContent());
+					} else {
+						// client does not exist in the database -> create client and generic account
+						String paymentBy = getPaymentBy(message);
+						String[] names = paymentBy.split(" ");
+						String firstName = "";
+						String otherName = "";
+						if (names.length == 2){
+						firstName = paymentBy.split(" ")[0];
+						otherName = paymentBy.split(" ")[1];
+						} else {
+							otherName = paymentBy;
+						}
+						Client client = new Client(firstName,otherName,getPhoneNumber(message));
+						clientDao.saveClient(client);
+						account = new Account(createAccountNumber(),client,false,true);
+						accountDao.saveAccount(account);
+					}
+					
+					payment.setAccount(account);
+					payment.setTarget(null);
+					payment.setPhoneNumber(getPhoneNumber(message));
+					payment.setAmountPaid(getAmount(message));
+					payment.setConfirmationCode(getConfirmationCode(message));
+					payment.setPaymentBy(getPaymentBy(message));
+					payment.setTimePaid(getTimePaid(message));
+					incomingPaymentDao.saveIncomingPayment(payment);
+						
 					}
 				} catch (IllegalArgumentException ex) {
 					log.warn("Message failed to parse; likely incorrect format", ex);
@@ -308,18 +351,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	public void setCService(CService cService) {
 		this.cService = cService;
 	}
-
-	public CService getCService(){
-		return cService;
-	}
-	
-	public StkInputRequiremnent getStRequirement() {
-		return stRequirement;
-	}
-
-	public void setStRequirement(StkInputRequiremnent stRequirement) {
-		this.stRequirement = stRequirement;
-	}
 	
 	public void initDaosAndServices(PaymentViewPluginController pluginController) {
 		this.accountDao = pluginController.getAccountDao();
@@ -328,5 +359,18 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.targetDao = pluginController.getTargetDao();
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.targetAnalytics = pluginController.getTargetAnalytics();
+	}
+	
+	/**
+	 * 
+	 * @return a generic account number
+	 */
+	public String createAccountNumber(){
+		int accountNumberGenerated = this.accountDao.getAccountCount()+1;
+		String accountNumberGeneratedStr = String.format("%05d", accountNumberGenerated);
+		while (this.accountDao.getAccountByAccountNumber(accountNumberGeneratedStr) != null){
+			accountNumberGeneratedStr = String.format("%05d", ++ accountNumberGenerated);
+		}
+		return accountNumberGeneratedStr;
 	}
 }

@@ -25,6 +25,7 @@ public class Account {
 	private static final String FIELD_CLIENT = "clientId";
 	private static final String FIELD_ID = "id";
 	private static final String FIELD_ACTIVE_ACCOUNT = "activeAccount";
+	private static final String FIELD_GENERIC_ACCOUNT = "genericAccount";
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +36,10 @@ public class Account {
 	private String accountNumber;
 	@Column(name = FIELD_ACTIVE_ACCOUNT)
 	private boolean activeAccount;
+	@Column(name = FIELD_GENERIC_ACCOUNT)
+	private boolean genericAccount;
+
+
 
 	@ManyToOne
 	@JoinColumn(name = FIELD_CLIENT, nullable = true)
@@ -48,6 +53,7 @@ public class Account {
 		ID(FIELD_ID),
 		ACCOUNT_NUMBER(FIELD_ACCOUNT_NUMBER),
 		ACTIVE_ACCOUNT(FIELD_ACTIVE_ACCOUNT),
+		GENERIC_ACCOUNT(FIELD_GENERIC_ACCOUNT),
 		CLIENT(FIELD_CLIENT);
 		
 		/** name of a field */
@@ -61,21 +67,17 @@ public class Account {
 		public String getFieldName() { return this.fieldName; }
 	}
 	
-	public Account(String accountNumber) {
+	public Account(String accountNumber, Boolean genericAccount) {
 		this.accountNumber = accountNumber;
 		this.activeAccount = false;
-	}
-
-	public Account(String accountNumber, Client client) {
-		this.accountNumber = accountNumber;
-		this.client = client;
-		this.activeAccount = false;
+		this.genericAccount = genericAccount;
 	}
 	
-	public Account(String accountNumber, Client client, Boolean activeAccount) {
+	public Account(String accountNumber, Client client, Boolean activeAccount, Boolean genericAccount) {
 		this.accountNumber = accountNumber;
 		this.client = client;
 		this.activeAccount = activeAccount;
+		this.genericAccount = genericAccount;
 	}
 
 	public long getAccountId() {
@@ -108,6 +110,14 @@ public class Account {
 
 	public void setClient(Client client) {
 		this.client = client;
+	}
+	
+	public void setGenericAccount(boolean genericAccount) {
+		this.genericAccount = genericAccount;
+	}
+	
+	public boolean isGenericAccount() {
+		return genericAccount;
 	}
 
 	@Override

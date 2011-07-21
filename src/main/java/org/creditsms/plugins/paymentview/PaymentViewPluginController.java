@@ -7,14 +7,13 @@
  */
 package org.creditsms.plugins.paymentview;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import net.frontlinesms.BuildProperties;
 import net.frontlinesms.FrontlineSMS;
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.plugins.BasePluginController;
@@ -24,7 +23,6 @@ import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
-import org.creditsms.plugins.paymentview.authorizationcode.AuthorizationChecker;
 import org.creditsms.plugins.paymentview.authorizationcode.AuthorizationProperties;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
@@ -97,21 +95,18 @@ public class PaymentViewPluginController extends BasePluginController
 		targetAnalytics.setTargetDao(targetDao);
 		
 		// Default authorisation code set up to password if none
-		if(AuthorizationProperties.getInstance().getHashedAuthCode() == null){
-			String authCode = "password";
-			try {
-				AuthorizationProperties.getInstance().
-				setAuthCode(AuthorizationChecker.getHash(AuthorizationChecker.ITERATION_NUMBER, authCode, AuthorizationChecker.getSalt()));
-			} catch (NoSuchAlgorithmException e) {
-				e.printStackTrace();
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
+		if(!AuthorizationProperties.getInstance().isAuthCodeSet()){
+			AuthorizationProperties.getInstance().setAuthCode("password");
 		}
 		
 		// If not a production build, and database is empty, add test data
 		if(BuildProperties.getInstance().isSnapshot() && clientDao.getClientCount()==0) {
-			DemoData.createDemoData(applicationContext);
+			try {
+				DemoData.createDemoData(applicationContext);
+			} catch (DuplicateKeyException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
