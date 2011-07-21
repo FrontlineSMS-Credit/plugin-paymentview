@@ -2,6 +2,7 @@ package net.frontlinesms.payment.safaricom;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -13,9 +14,9 @@ import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
+import net.frontlinesms.payment.PaymentJob;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
-import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
 import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
@@ -29,6 +30,7 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
+import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.payment.balance.Balance;
 import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.payment.balance.BalanceProperties;
 import org.creditsms.plugins.paymentview.utils.PvUtils;
 import org.smslib.CService;
@@ -65,7 +67,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	
 //> FIELDS
 	private String pin;
-	private BigDecimal balance;
+	protected Balance balance;
 	private EventBus eventBus;
 	private TargetAnalytics targetAnalytics;
 	
@@ -84,11 +86,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 						StkValuePrompt pinRequired = (StkValuePrompt) getBalanceResponse;
 						assert pinRequired.getPromptText().contains("Enter PIN");
 						cService.stkRequest(pinRequired.getRequest(), pin);
-						
-						//TODO: Now update the balance after the check this after that...
-						BigDecimal balance = new BigDecimal("0");
-						//Replace `balance` with the real balance from the Modem request
-						BalanceProperties.getInstance().setBalance(balance);
 						return null;
 					} catch(PaymentServiceException ex) {
 						throw new SMSLibDeviceException(ex);
@@ -162,7 +159,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 
 //> INCOMING MESSAGE PAYMENT PROCESSORS
 	private void processIncomingPayment(final FrontlineMessage message) {
-		new FrontlineUiUpateJob() {
+		new PaymentJob() {
 			// This probably shouldn't be a UI job,
 			// but it certainly should be done on a separate thread!
 			public void run() {
@@ -363,12 +360,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.cService = cService;
 	}
 	
-	public BigDecimal getBalance() {
+	public Balance getBalance() {
 		return balance;
-	}
-	
-	public void setBalance(BigDecimal balance) {
-		this.balance = balance;
 	}
 	
 	public void initDaosAndServices(PaymentViewPluginController pluginController) {
@@ -378,7 +371,11 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.targetDao = pluginController.getTargetDao();
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.targetAnalytics = pluginController.getTargetAnalytics();
-		this.balance = BalanceProperties.getInstance().getBalance();
+		try {
+			this.balance = BalanceProperties.getInstance().getBalance();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**

@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.ui.events.FrontlineUiUpateJob;
+import net.frontlinesms.payment.PaymentJob;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 
@@ -33,9 +33,7 @@ public class MpesaPayBillService extends MpesaPaymentService {
 	}
 	
 	protected void processBalance(FrontlineMessage message){
-		new FrontlineUiUpateJob() {
-			// This probably shouldn't be a UI job,
-			// but it certainly should be done on a separate thread!
+		new PaymentJob() {
 			public void run() {
 				
 			}

@@ -8,12 +8,11 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.ui.events.FrontlineUiUpateJob;
+import net.frontlinesms.payment.PaymentJob;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
-import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.payment.balance.BalanceProperties;
 
 public class MpesaPersonalService extends MpesaPaymentService {
 	
@@ -45,17 +44,13 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	}
 	
 	protected void processBalance(final FrontlineMessage message){
-		new FrontlineUiUpateJob() {
-			// This probably shouldn't be a UI job,
-			// but it certainly should be done on a separate thread!
+		new PaymentJob() {
 			public void run() {
-				String confirmationMessage = getConfirmationCode(message);
-				BigDecimal balance = getAmount(message);
-				Date datetime = getTimePaid(message);
+				balance.setBalance(getAmount(message));
+				balance.setConfirmationMessage(getConfirmationCode(message));
+				balance.setDateTime(getTimePaid(message));
 				
-				BalanceProperties.getInstance().setBalance(balance);
-				BalanceProperties.getInstance().setDateTime(datetime);
-				BalanceProperties.getInstance().setConfirmationCode(confirmationMessage);
+				balance.updateBalance();
 			}
 		}.execute();
 	}
@@ -76,7 +71,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	}
 
 	private void processOutgoingPayment(final FrontlineMessage message) {
-		new FrontlineUiUpateJob() {
+		new PaymentJob() {
 			public void run() {
 				try {				
 					// Retrieve the corresponding outgoing payment with status UNCONFIRMED
