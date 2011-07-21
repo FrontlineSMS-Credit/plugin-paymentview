@@ -7,11 +7,13 @@ import net.frontlinesms.payment.safaricom.MpesaPersonalService;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.paymentsettings.PaymentSettingsProperties;
 import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
 
 public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog {
 	private static final String XML_MOBILE_PAYMENT_SERVICE = "/ui/plugins/paymentview/settings/dialogs/createnewpaymentsteps/dlgCreateNewAccountStep1.xml";
 	private final PaymentViewPluginController pluginController;
+	private PaymentSettingsProperties paymentSettingsProp = PaymentSettingsProperties.getInstance();
 
 	public MobilePaymentServiceSettingsInitialisationDialog(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui);
@@ -44,8 +46,7 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 		
 		MpesaPaymentService mpesaPaybill = new MpesaPayBillService();
 		Object comboboxChoice2 = ui.createComboboxChoice(mpesaPaybill.toString(), mpesaPaybill);
-		
-		
+
 		ui.add(cmbSelectPaymentService, comboboxChoice1);
 		ui.add(cmbSelectPaymentService, comboboxChoice2);
 	}
@@ -58,9 +59,18 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 		} else {
 			EnterPinDialog enterPinDialog = new EnterPinDialog(ui, pluginController, getPaymentService(), getModem());
 			enterPinDialog.showDialog();
+			persistePaymentSeviceNModemPro(getPaymentService(), getModem());
 			cleanUp();
 			removeDialog();
 		}
+	}
+	
+	private void persistePaymentSeviceNModemPro(MpesaPaymentService mPS, SmsModem sMm){
+		paymentSettingsProp.setTempPaymentService(mPS.toString());
+		System.out.println("*******************************************"+sMm.getSerial().toString());
+		String modemSerial = (String) sMm.getSerial().toString();
+		paymentSettingsProp.setTempSmsModem(modemSerial);
+		paymentSettingsProp.saveToDisk();
 	}
 	
 	private void cleanUp() {
@@ -91,11 +101,13 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 	}
 	
 	SmsModem getModem() {
+		paymentSettingsProp.setTempSmsModem(ui.getSelectedItem(getModemCombobox()).toString());
+		paymentSettingsProp.saveToDisk();
 		return ui.getAttachedObject(ui.getSelectedItem(getModemCombobox()), SmsModem.class);
 	}
 
 	private Object getModemCombobox() {
-		return ui.find("cmbDevices");
+		return ui.find(dialogComponent, "cmbDevices");
 	}
 
 	public void setModem(SmsModem modem) {

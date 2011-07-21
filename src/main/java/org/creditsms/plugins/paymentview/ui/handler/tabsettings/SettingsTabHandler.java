@@ -1,6 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
-import net.frontlinesms.payment.safaricom.MpesaPaymentService;
+import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
@@ -33,18 +33,15 @@ public class SettingsTabHandler extends BaseTabHandler {
 		return settingsTab;
 	}
 	
-	public Object getRow(MpesaPaymentService paymentService) {
+	public Object getRow(PaymentService paymentService) {
 		Object row = ui.createTableRow(paymentService);
-		ui.add(row, "Hi there is something configured here.  I deleted the details.");
 		return row;
 	}
 
 	@Override
 	public void refresh() {
 		ui.removeAll(settingsTableComponent);
-		for(MpesaPaymentService paymentService : pluginController.getPaymentServices()){
-			ui.add(settingsTableComponent, getRow(paymentService));
-		}
+		ui.add(settingsTableComponent, getRow(this.pluginController.getPaymentService()));
 	}
 
 	public void updateAccountBalance() {

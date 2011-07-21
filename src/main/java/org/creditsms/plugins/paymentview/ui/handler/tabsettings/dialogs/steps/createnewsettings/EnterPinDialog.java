@@ -5,6 +5,7 @@ import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.paymentsettings.PaymentSettingsProperties;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
 
@@ -17,6 +18,7 @@ public class EnterPinDialog extends BaseDialog {
 	private final SmsModem modem;
 	private Object pin;
 	private Object vpin;
+	private PaymentSettingsProperties paymentSettingsPropPin = PaymentSettingsProperties.getInstance();
 
 	public EnterPinDialog(UiGeneratorController ui, PaymentViewPluginController pluginController, MpesaPaymentService paymentService, SmsModem modem) {
 		super(ui);		
@@ -51,7 +53,7 @@ public class EnterPinDialog extends BaseDialog {
 			paymentService.setPin(pin);
 			paymentService.setCService(modem.getCService());
 			paymentService.initDaosAndServices(pluginController);
-			
+			persistPaymentService(pin);
 			removeDialog();
 			new AuthorisationCodeHandler(ui, pluginController).showAuthorizationCodeDialog("create", this);
 		} else {
@@ -59,9 +61,22 @@ public class EnterPinDialog extends BaseDialog {
 		}
 	}
 	
+	private void persistPaymentService(String pin){
+		String paymentService = paymentSettingsPropPin.getTempPaymentService();
+		String modemSerial = paymentSettingsPropPin.getTempSmsModem();
+		paymentSettingsPropPin.setPaymentService(paymentService);
+		paymentSettingsPropPin.setSmsModem(modemSerial);
+		paymentSettingsPropPin.setPin(pin);
+		paymentSettingsPropPin.setTempPaymentService("");
+		paymentSettingsPropPin.setTempSmsModem("");
+		
+		paymentSettingsPropPin.saveToDisk();
+	}
+	
 	public void create() {
 		ui.getFrontlineController().getEventBus().registerObserver(paymentService);
 		pluginController.setPaymentService(paymentService);
+		
 		ui.alert("The Payment service has been created successfully!");
 		removeDialog(ui.find(DLG_VERIFICATION_CODE));
 	}
@@ -74,7 +89,7 @@ public class EnterPinDialog extends BaseDialog {
 	public void assertMaxLength(Object component) {
 		String text = ui.getText(component);
 		if(text.length() > EXPECTED_PIN_LENGTH) {
-			ui.setText(component, text.substring(0, EXPECTED_PIN_LENGTH - 1));
+			ui.setText(component, text.substring(0, EXPECTED_PIN_LENGTH));
 		}
 	}
 }
