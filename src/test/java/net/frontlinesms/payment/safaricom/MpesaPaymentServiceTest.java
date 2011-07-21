@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
@@ -71,7 +72,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	protected AccountDao accountDao;
 	private TargetDao targetDao;
 	private IncomingPaymentDao incomingPaymentDao;
-	private OutgoingPaymentDao outgoingPaymentDao;
+	protected OutgoingPaymentDao outgoingPaymentDao;
 	private PaymentViewPluginController pluginController;
 	private UiGeneratorController ui;
 	private TargetAnalytics targetAnalytics;
@@ -81,9 +82,6 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		
-		//a simple hack to avoid mocking ui.alert functions
-		MpesaPaymentService.TEST = true;
 		
 		this.mpesaPaymentService = createNewTestClass();
 		this.cService = mock(CService.class);
@@ -104,8 +102,11 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 				"Pay Bill", "Buy Goods", "ATM Withdrawal", myAccountMenuItem);
 		when(cService.stkRequest(mpesaMenuItemRequest)).thenReturn(mpesaMenu);	
 		
+		init();
 	}
 	
+	protected void init(){}
+
 	protected abstract E createNewTestClass();
 
 	abstract String[] getValidMessagesText();
@@ -133,6 +134,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	private void setUpDaos() {
 		incomingPaymentDao = mock(IncomingPaymentDao.class);
 		outgoingPaymentDao= mock(OutgoingPaymentDao.class);
+		
 		targetDao = mock(TargetDao.class);
 		clientDao = mock(ClientDao.class);
 		accountDao = mock(AccountDao.class);
@@ -151,7 +153,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		when(pluginController.getUiGeneratorController()).thenReturn(ui);
 		when(pluginController.getTargetAnalytics()).thenReturn(targetAnalytics);
 		
-		mpesaPaymentService.setPluginController(pluginController);
+		mpesaPaymentService.initDaosAndServices(pluginController);
 		
 		Set<Account> accounts1 = mockAccounts(ACCOUNTNUMBER_1_1);
 		Set<Target> targets1 = mockTargets(accounts1);
@@ -174,8 +176,6 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		return c;
 	}
 	
-	
-
 	public void testCheckBalance() throws PaymentServiceException, SMSLibDeviceException, IOException  {
 		// setup
 		StkRequest myAccountMenuItemRequest = mpesaMenu.getRequest("My account");
@@ -269,7 +269,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	
 	protected void testOutgoingPaymentProcessing(String messageText,
 			final String phoneNo, final String accountNumber, final String amount,
-			final String confirmationCode, final String payTo, final String datetime, final OutgoingPayment.Status status) {
+			final String confirmationCode, final String payTo, final String datetime, final OutgoingPayment.Status status) throws DuplicateKeyException {
 		// then
 		assertTrue(mpesaPaymentService instanceof EventObserver);
 		
@@ -279,15 +279,14 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		OutgoingPayment payment = new OutgoingPayment();
 		payment.setPhoneNumber(phoneNo);
 		payment.setAmountPaid(new BigDecimal(amount));
-		payment.setAccount(accountDao.getAccountByAccountNumber(accountNumber));
+		
 		payment.setConfirmationCode(confirmationCode);
-		payment.setTimePaid(getTimestamp(datetime));
+		payment.setTimeConfirmed(getTimestamp(datetime).getTime());
 		payment.setStatus(status);
-		//payment.setPaymentTo(payTo);
 		
 		// then
 		WaitingJob.waitForEvent();
-		verify(outgoingPaymentDao).saveOutgoingPayment(payment);
+		verify(outgoingPaymentDao).updateOutgoingPayment(payment);
 	}
 	
 	private Date getTimestamp(String dateString) {

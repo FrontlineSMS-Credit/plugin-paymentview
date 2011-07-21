@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.data.repository;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -61,6 +62,11 @@ public interface OutgoingPaymentDao {
 	 * */
 	public List<OutgoingPayment> getOutgoingPaymentsByTimeRange(Date startTime,
 			Date endtime);
+	/**
+	 * returns OutgoingPayment(s) by phone number and amount paid (Time paid desc)
+	 * */
+	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNumberAndAmountPaid(String phoneNo,
+			BigDecimal amountPaid, OutgoingPayment.Status status);
 
 	/**
 	 * saves an OutgoingPayment payment to the system

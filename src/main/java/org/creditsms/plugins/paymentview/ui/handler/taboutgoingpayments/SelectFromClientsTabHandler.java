@@ -6,7 +6,6 @@ import net.frontlinesms.ui.handler.BaseTabHandler;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.ui.handler.BaseClientTable;
-import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.EditClientHandler;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SendNewPaymentDialogHandler;
 
 public class SelectFromClientsTabHandler extends BaseTabHandler {
@@ -55,7 +54,6 @@ public class SelectFromClientsTabHandler extends BaseTabHandler {
 		if (selectedClients.length >0 ){
 			for (Object selectedClient : selectedClients) {
 				client = (Client) ui.getAttachedObject(selectedClient);
-				System.out.println("client name" + client.getName());
 				sendPaymentAuthDialog = new SendNewPaymentDialogHandler(ui, pluginController, client).getDialog();
 				ui.add(sendPaymentAuthDialog);
 			}
@@ -63,8 +61,5 @@ public class SelectFromClientsTabHandler extends BaseTabHandler {
 			ui.infoMessage("Please select a client");
 			this.refresh();
 		}
-
-
 	}
-
 }

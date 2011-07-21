@@ -8,7 +8,8 @@
 package org.creditsms.plugins.paymentview;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import net.frontlinesms.BuildProperties;
@@ -67,13 +68,11 @@ public class PaymentViewPluginController extends BasePluginController
 	private Method authorizationAction;
 	private ThinletUiEventHandler authorizationEventListener;
 	
-	private List<MpesaPaymentService> paymentServices;
-	/**
-	 * @see net.frontlinesms.plugins.PluginController#deinit()
-	 */
-	public void deinit() {
-		//tabController.deinit();
-	}
+	/** Currently we will allow only one payment service to be configured TO MAKE THINGS SIMPLER */
+	private MpesaPaymentService paymentService;
+	
+	/** @see net.frontlinesms.plugins.PluginController#deinit() */
+	public void deinit() {}
 
 //> CONFIG METHODS
 	/**
@@ -83,9 +82,6 @@ public class PaymentViewPluginController extends BasePluginController
 	public void init(FrontlineSMS frontlineController,
 			ApplicationContext applicationContext)
 			throws PluginInitialisationException {
-		
-		paymentServices = new ArrayList<MpesaPaymentService>();
-		
 		// Initialize the DAO for the domain objects
 		clientDao 			= (ClientDao) applicationContext.getBean("clientDao");
 		accountDao 			= (AccountDao) applicationContext.getBean("accountDao");
@@ -197,6 +193,17 @@ public class PaymentViewPluginController extends BasePluginController
 	}
 
 	public List<MpesaPaymentService> getPaymentServices() {
-		return paymentServices;
+		if(this.paymentService == null) return Collections.emptyList();
+		else {
+			return Arrays.asList(new MpesaPaymentService[] { this.paymentService });
+		}
+	}
+
+	public void setPaymentService(MpesaPaymentService paymentService) {
+		this.paymentService = paymentService;
+	}
+
+	public PaymentService getPaymentService() {
+		return this.paymentService;
 	}
 }
