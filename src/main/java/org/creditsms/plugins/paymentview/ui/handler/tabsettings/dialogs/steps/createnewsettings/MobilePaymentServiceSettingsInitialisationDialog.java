@@ -67,7 +67,6 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 	
 	private void persistePaymentSeviceNModemPro(MpesaPaymentService mPS, SmsModem sMm){
 		paymentSettingsProp.setTempPaymentService(mPS.toString());
-		System.out.println("*******************************************"+sMm.getSerial().toString());
 		String modemSerial = (String) sMm.getSerial().toString();
 		paymentSettingsProp.setTempSmsModem(modemSerial);
 		paymentSettingsProp.saveToDisk();
