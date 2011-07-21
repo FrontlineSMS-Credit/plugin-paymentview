@@ -19,6 +19,18 @@ public class MpesaPayBillService extends MpesaPaymentService {
 	
 	private static final Pattern PAYBILL_REGEX_PATTERN = Pattern.compile(STR_PAYBILL_REGEX_PATTERN);
 	
+	private static final String STR_BALANCE_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n"
+		+ "on (([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[1-3])) at ([1]?\\d:[0-5]\\d) (AM|PM)\n"
+		+ "Ksh[,|\\d]+ received from ([A-Za-z ]+) 2547[\\d]{8}.\n"
+		+ "Account Number (\\d+)\n"
+		+ "New Utility balance is Ksh[,|\\d]+\n"
+		+ "Time: ([0-2]\\d|[3][0-1])/(0[1-9]|1[0-2])/(20[1][1-2]) (([2][0-3]|[0-1]\\d):([0-5]\\d):([0-5]\\d))";
+	
+	private static final Pattern BALANCE_REGEX_PATTERN = Pattern.compile(STR_BALANCE_REGEX_PATTERN);
+	protected boolean isValidBalanceMessage(FrontlineMessage message){
+		return BALANCE_REGEX_PATTERN.matcher(message.getTextContent()).matches();
+	}
+	
 	@Override
 	Account getAccount(FrontlineMessage message) {
 		String accNumber = getFirstMatch(message, ACCOUNT_NUMBER_PATTERN);
