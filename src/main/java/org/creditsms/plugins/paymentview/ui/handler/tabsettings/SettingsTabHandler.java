@@ -2,17 +2,21 @@ package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
 import java.io.IOException;
 
+import net.frontlinesms.events.EventObserver;
+import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.UpdateAuthorizationCodeDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings.MobilePaymentServiceSettingsInitialisationDialog;
+import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance.BalanceEventNotification;
 
-public class SettingsTabHandler extends BaseTabHandler {
+public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	private static final String COMPONENT_SETTINGS_TABLE = "tbl_accounts";
 	private static final String XML_SETTINGS_TAB = "/ui/plugins/paymentview/settings/settingsTab.xml";
 
@@ -23,6 +27,8 @@ public class SettingsTabHandler extends BaseTabHandler {
 	public SettingsTabHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui);
 		this.pluginController = pluginController;
+		
+		ui.getFrontlineController().getEventBus().registerObserver(this);
 		init();
 	}
 
@@ -71,5 +77,18 @@ public class SettingsTabHandler extends BaseTabHandler {
 	
 	public void deleteAccount() {
 		// FIXME this method's contents appeared to have nothing to do with accounts
+	}
+
+	public void notify(final FrontlineEventNotification notification) {
+		new FrontlineUiUpateJob() {
+			public void run() {
+				if (!(notification instanceof BalanceEventNotification)) {
+					return;
+				}else{
+					ui.alert(((BalanceEventNotification)notification).getMessage());
+					SettingsTabHandler.this.refresh();
+				}
+			}
+		}.execute();
 	}
 }

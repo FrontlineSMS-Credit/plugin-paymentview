@@ -46,9 +46,10 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	protected void processBalance(final FrontlineMessage message){
 		new PaymentJob() {
 			public void run() {
-				balance.setBalance(getAmount(message));
+				balance.setBalanceAmount(getAmount(message));
 				balance.setConfirmationMessage(getConfirmationCode(message));
 				balance.setDateTime(getTimePaid(message));
+				balance.setBalanceUpdateMethod("Balance Enquiry");
 				
 				balance.updateBalance();
 			}
@@ -69,7 +70,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	private boolean isFailedMpesaPayment(final FrontlineMessage message) {
 		return MPESA_PAYMENT_FAILURE_PATTERN.matcher(message.getTextContent()).matches();
 	}
-
+	
 	private void processOutgoingPayment(final FrontlineMessage message) {
 		new PaymentJob() {
 			public void run() {
@@ -84,6 +85,21 @@ public class MpesaPersonalService extends MpesaPaymentService {
 						outgoingPayment.setConfirmationCode(getConfirmationCode(message));
 						outgoingPayment.setTimeConfirmed(getTimePaid(message, true).getTime());
 						outgoingPayment.setStatus(OutgoingPayment.Status.CONFIRMED);
+						
+						//Save for Anti-Fraud
+						BigDecimal tempBalanceAmount = balance.getBalanceAmount();
+						BigDecimal currentBalance = getBalance(message);
+						
+						if (!tempBalanceAmount.subtract(outgoingPayment.getAmountPaid()).equals(currentBalance)) {
+							System.err.println("--------------Fraud commited?-----------------");
+						}
+						
+						balance.setBalanceAmount(currentBalance);
+						balance.setConfirmationMessage(outgoingPayment.getConfirmationCode());
+						balance.setDateTime(new Date(outgoingPayment.getTimeConfirmed()));
+						balance.setBalanceUpdateMethod("Outgoing Payment");
+						
+						balance.updateBalance();
 						
 						//Update outgoing payment
 						outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);

@@ -2,7 +2,6 @@ package net.frontlinesms.payment.safaricom;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -30,8 +29,7 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
-import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.payment.balance.Balance;
-import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.payment.balance.BalanceProperties;
+import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance;
 import org.creditsms.plugins.paymentview.utils.PvUtils;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
@@ -125,6 +123,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			
 			StkResponse confirmationResponse = cService.stkRequest(((StkConfirmationPrompt) enterPinResponse).getRequest());
 			if(confirmationResponse == StkResponse.ERROR) throw new RuntimeException("Payment failed for some reason.");
+			//If I got Here, it means that I was successful, Right?
+			balance.setNextExpectedBalance(balance.getBalanceAmount().subtract(amount));
+			
 		} catch (SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
 		} catch (IOException e) {
@@ -203,6 +204,13 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							payment.setPaymentBy(getPaymentBy(message));
 							payment.setTimePaid(getTimePaid(message));
 							
+							balance.setBalanceAmount(getBalance(message));
+							balance.setConfirmationMessage(payment.getConfirmationCode());
+							balance.setDateTime(new Date(payment.getTimePaid()));
+							balance.setBalanceUpdateMethod("Incoming Payment");
+							
+							balance.updateBalance();
+							
 							incomingPaymentDao.saveIncomingPayment(payment);
 						}
 					} else {
@@ -269,6 +277,16 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		return new BigDecimal(amountWithKsh.substring(3).replaceAll(",", ""));
 	}
 
+	BigDecimal getBalance(FrontlineMessage message) {
+		try {
+	        String balance_part = getFirstMatch(message, "New M-PESA balance is Ksh[,|.|\\d]+");
+	        String amountWithKsh = balance_part.split(AMOUNT_PATTERN)[1];
+	        return new BigDecimal(amountWithKsh.substring(3).replaceAll(",", ""));
+		} catch(ArrayIndexOutOfBoundsException ex) {
+		        throw new IllegalArgumentException(ex);
+		}
+	}	
+	
 	String getPhoneNumber(FrontlineMessage message) {
 		return "+" + getFirstMatch(message, PHONE_PATTERN);
 	}
@@ -335,7 +353,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}
 	}
 	
-//> FINALIZE - FIXME what does FINALIZE refer to?  this word has spedcific technical meaning in java, so please do not use
+//> DESTROY
 	public void deinit(){
 		eventBus.unregisterObserver(this);
 	}
@@ -371,11 +389,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.targetDao = pluginController.getTargetDao();
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.targetAnalytics = pluginController.getTargetAnalytics();
-		try {
-			this.balance = BalanceProperties.getInstance().getBalance();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		
+		this.balance = Balance.getInstance().getLatest();
+		Balance.getInstance().setUiController(pluginController.getUiGeneratorController());
 	}
 	
 	/**

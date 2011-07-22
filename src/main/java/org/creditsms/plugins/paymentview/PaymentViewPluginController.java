@@ -14,6 +14,7 @@ import java.util.List;
 import net.frontlinesms.BuildProperties;
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.plugins.BasePluginController;
@@ -173,4 +174,13 @@ public class PaymentViewPluginController extends BasePluginController
 	public PaymentService getPaymentService() {
 		return this.paymentService;
 	}
+	
+	/*
+	public class PaymentServiceStartedNotification implements FrontlineEventNotification{
+		private MpesaPaymentService paymentService;
+		PaymentServiceStartedNotification(MpesaPaymentService paymentService){
+			this.paymentService = paymentService;
+		}
+	}
+	*/
 }

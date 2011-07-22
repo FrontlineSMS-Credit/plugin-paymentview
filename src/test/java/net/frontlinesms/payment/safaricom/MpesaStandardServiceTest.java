@@ -37,13 +37,11 @@ public class MpesaStandardServiceTest extends MpesaPaymentServiceTest<MpesaPerso
 		mockOutgoingPaymentsDao(PHONENUMBER_2, new BigDecimal("1235"), new ArrayList<OutgoingPayment>());
 	}
 	
-	
 	private void mockOutgoingPaymentsDao(String phoneNumber, BigDecimal amountPaid, List<OutgoingPayment> Return_List) {
 		when(outgoingPaymentDao.getByPhoneNumberAndAmountPaid
 				(phoneNumber, amountPaid, OutgoingPayment.Status.UNCONFIRMED)
 		).thenReturn(Return_List);
 	}
-	
 	
 	public void testOutgoingPaymentProcessing() throws DuplicateKeyException {
 		testOutgoingPaymentProcessing("BC77RI604 Confirmed. " +
