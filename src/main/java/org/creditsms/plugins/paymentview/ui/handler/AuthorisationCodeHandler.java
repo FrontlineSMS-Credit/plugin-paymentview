@@ -13,7 +13,7 @@ public class AuthorisationCodeHandler extends BaseDialog{
 	private Method authorizationAction;
 	private ThinletUiEventHandler authorizationHandler;
 	
-	public AuthorisationCodeHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
+	public AuthorisationCodeHandler(UiGeneratorController ui) {
 		super(ui);
 	}
 	

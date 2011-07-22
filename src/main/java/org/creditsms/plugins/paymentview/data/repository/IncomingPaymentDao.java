@@ -23,44 +23,48 @@ public interface IncomingPaymentDao {
 	/**
 	 * returns all the incomingPayments in the system
 	 * */
-	public int getIncomingPaymentsCount();
+	public List<IncomingPayment> getActiveIncomingPayments();
+	
+	/**
+	 * returns all the active incomingPayments in the system
+	 * */
+	public int getActiveIncomingPaymentsCount();
 
 	/**
-	 * returns all the incomingPayments in the system
+	 * returns all the active incomingPayments in the system
 	 * 
 	 * @param startingIndex
 	 * @param limit
 	 * @return
 	 */
-	public List<IncomingPayment> getAllIncomingPayments(int startingIndex,
-			int limit);
-
+	public List<IncomingPayment> getActiveIncomingPayments(int startingIndex, int limit);
+	
 	/**
 	 * returns IncomingPayment(s) by clientId
 	 * */
-	public List<IncomingPayment> getIncomingPaymentByClientId(long clientId);
+	public List<IncomingPayment> getActiveIncomingPaymentByClientId(long clientId);
 
 	/**
 	 * get and return an IncomingPayment with a specific id
 	 * */
-	public IncomingPayment getIncomingPaymentById(long incomingPaymentId);
+	public IncomingPayment getActiveIncomingPaymentById(long incomingPaymentId);
 
 	/**
 	 * returns IncomingPayment(s) by targetId
 	 * */
-	public List<IncomingPayment> getIncomingPaymentsByTarget(
+	public List<IncomingPayment> getActiveIncomingPaymentsByTarget(
 			long targetId);
 
 	/**
 	 * returns IncomingPayment(s) by accountId
 	 * */
-	public List<IncomingPayment> getIncomingPaymentsByAccountNumber(
+	public List<IncomingPayment> getActiveIncomingPaymentsByAccountNumber(
 			String accountNo);
 
 	/**
 	 * returns the last IncomingPayment(s) by accountId
 	 * */
-	public Long getLastIncomingPaymentDateByAccountNumber(
+	public Long getLastActiveIncomingPaymentDateByAccountNumber(
 			String accountNumber);
 	
 	/**
@@ -72,12 +76,12 @@ public interface IncomingPaymentDao {
 	/**
 	 * returns IncomingPayment(s) by payer
 	 * */
-	public List<IncomingPayment> getIncomingPaymentsByPayer(String payer);
+	public List<IncomingPayment> getActiveIncomingPaymentsByPayer(String payer);
 
 	/**
 	 * returns IncomingPayment(s) by phone number
 	 * */
-	public List<IncomingPayment> getIncomingPaymentsByPhoneNo(String phoneNo);
+	public List<IncomingPayment> getActiveIncomingPaymentsByPhoneNo(String phoneNo);
 
 	/**
 	 * returns IncomingPayment(s) by time range

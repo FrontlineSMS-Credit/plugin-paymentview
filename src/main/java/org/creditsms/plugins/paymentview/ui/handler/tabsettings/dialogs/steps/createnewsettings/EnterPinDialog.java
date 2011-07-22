@@ -53,7 +53,7 @@ public class EnterPinDialog extends BaseDialog {
 			paymentService.initDaosAndServices(pluginController);
 			
 			removeDialog();
-			new AuthorisationCodeHandler(ui, pluginController).showAuthorizationCodeDialog("create", this);
+			new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog("create", this);
 		} else {
 			ui.alert("Invalid! Please Re-enter the PIN numbers again.");
 		}

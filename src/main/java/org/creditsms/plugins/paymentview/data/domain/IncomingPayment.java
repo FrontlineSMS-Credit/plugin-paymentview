@@ -30,6 +30,7 @@ public class IncomingPayment {
 	public static final String FIELD_TIME_PAID = "timePaid";
 	public static final String FIELD_ACCOUNT = "account";
 	public static final String FIELD_TARGET ="target";
+	public static final String FIELD_ACTIVE ="active";
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
@@ -50,6 +51,9 @@ public class IncomingPayment {
 	@Column(name = FIELD_TIME_PAID)
 	private long timePaid;
 	
+	@Column(name = FIELD_ACTIVE, nullable = false)
+	private boolean active;
+	
 	@ManyToOne
 	@JoinColumn(name = FIELD_ACCOUNT)
 	private Account account;
@@ -65,7 +69,8 @@ public class IncomingPayment {
 		PHONE_NUMBER(FIELD_PHONE_NUMBER),
 		TIME_PAID(FIELD_TIME_PAID),
 		ACCOUNT(FIELD_ACCOUNT),
-		TARGET(FIELD_TARGET);
+		TARGET(FIELD_TARGET),
+		ACTIVE(FIELD_ACTIVE);
 		
 		/** name of a field */
 		private final String fieldName;
@@ -90,6 +95,7 @@ public class IncomingPayment {
 		this.timePaid = timePaid;
 		this.account = account;
 		this.target = target;
+		this.active = true;
 	}
 
 	public IncomingPayment(String paymentBy, String phoneNumber,
@@ -123,6 +129,10 @@ public class IncomingPayment {
 
 	public Long getTimePaid() {
 		return timePaid;
+	}
+	
+	public boolean isActive() {
+		return active;
 	}
 
 	public void setAccount(Account account) {
@@ -161,6 +171,10 @@ public class IncomingPayment {
 
 	public void setTimePaid(Date timePaid) {
 		this.timePaid = timePaid.getTime();
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	@Override

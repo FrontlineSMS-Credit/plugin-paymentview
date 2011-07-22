@@ -64,7 +64,7 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	}
 
 	private Object getRow(OutgoingPayment outgoingPayment) {
-		Object row = ui.createTableRow();
+		Object row = ui.createTableRow(outgoingPayment);
 		ui.add(row, ui.createTableCell(outgoingPayment.getClient().getFullName()));
 		ui.add(row, ui.createTableCell(outgoingPayment.getClient().getPhoneNumber()));
 		ui.add(row, ui.createTableCell(formatter.format(outgoingPayment.getAmountPaid())));

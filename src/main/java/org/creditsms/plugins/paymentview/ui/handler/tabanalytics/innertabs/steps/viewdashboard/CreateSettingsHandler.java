@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
+import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
@@ -20,6 +22,7 @@ import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.AnalyticsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateAlertHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
 
@@ -133,13 +136,20 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		((UiGeneratorController) ui).showDateSelecter(textField);
 	}
 	
-	public void notify(FrontlineEventNotification notification) {
-		if (!(notification instanceof EntitySavedNotification)) {
-			return;
-		}
-		Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
-		if (entity instanceof IncomingPayment) {
-			this.refresh();
-		}
+	public void notify(final FrontlineEventNotification notification) {
+		new FrontlineUiUpateJob() {
+			public void run() {
+				if (!(notification instanceof DatabaseEntityNotification)) {
+					return;
+				} else {
+					if (notification instanceof DatabaseEntityNotification){
+						Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
+						if (entity instanceof IncomingPayment ) {
+							CreateSettingsHandler.this.refresh();
+						}
+					}
+				}
+			}
+		}.execute();
 	}
 }
