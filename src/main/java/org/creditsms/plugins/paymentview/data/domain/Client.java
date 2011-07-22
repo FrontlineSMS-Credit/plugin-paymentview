@@ -44,7 +44,7 @@ public class Client {
 	@Column(name = FIELD_PHONE_NUMBER, nullable = false, unique = true)
 	private String phoneNumber;
 	
-	@Column(name = FIELD_ACTIVE)
+	@Column(name = FIELD_ACTIVE, nullable = false)
 	private boolean active = true;
 
 	//@OneToMany(fetch = FetchType.EAGER)
