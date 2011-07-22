@@ -59,17 +59,9 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 		} else {
 			EnterPinDialog enterPinDialog = new EnterPinDialog(ui, pluginController, getPaymentService(), getModem());
 			enterPinDialog.showDialog();
-			persistePaymentSeviceNModemPro(getPaymentService(), getModem());
 			cleanUp();
 			removeDialog();
 		}
-	}
-	
-	private void persistePaymentSeviceNModemPro(MpesaPaymentService mPS, SmsModem sMm){
-		paymentSettingsProp.setTempPaymentService(mPS.toString());
-		String modemSerial = (String) sMm.getSerial().toString();
-		paymentSettingsProp.setTempSmsModem(modemSerial);
-		paymentSettingsProp.saveToDisk();
 	}
 	
 	private void cleanUp() {
@@ -100,8 +92,6 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 	}
 	
 	SmsModem getModem() {
-		paymentSettingsProp.setTempSmsModem(ui.getSelectedItem(getModemCombobox()).toString());
-		paymentSettingsProp.saveToDisk();
 		return ui.getAttachedObject(ui.getSelectedItem(getModemCombobox()), SmsModem.class);
 	}
 

@@ -18,6 +18,7 @@ public class EnterPinDialog extends BaseDialog {
 	private final SmsModem modem;
 	private Object pin;
 	private Object vpin;
+
 	private PaymentSettingsProperties paymentSettingsPropPin = PaymentSettingsProperties.getInstance();
 
 	public EnterPinDialog(UiGeneratorController ui, PaymentViewPluginController pluginController, MpesaPaymentService paymentService, SmsModem modem) {
@@ -62,14 +63,11 @@ public class EnterPinDialog extends BaseDialog {
 	}
 	
 	private void persistPaymentService(String pin){
-		String paymentService = paymentSettingsPropPin.getTempPaymentService();
-		String modemSerial = paymentSettingsPropPin.getTempSmsModem();
+		String paymentService = this.paymentService.toString();
+		String modemSerial = this.modem.getSerial().toString();
 		paymentSettingsPropPin.setPaymentService(paymentService);
 		paymentSettingsPropPin.setSmsModem(modemSerial);
 		paymentSettingsPropPin.setPin(pin);
-		paymentSettingsPropPin.setTempPaymentService("");
-		paymentSettingsPropPin.setTempSmsModem("");
-		
 		paymentSettingsPropPin.saveToDisk();
 	}
 	
