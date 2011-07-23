@@ -23,7 +23,7 @@ public class BalancePropertiesTest extends BaseTestCase {
 		datetime = new Date();
 
 		balance.setBalanceAmount(new BigDecimal("200.00"));
-		balance.setConfirmationMessage("CCVSBB566");
+		balance.setConfirmationCode("CCVSBB566");
 		balance.setDateTime(datetime);
 		balance.setBalanceUpdateMethod("enquiry");
 	}

@@ -176,7 +176,7 @@ public class PaymentViewPluginController extends BasePluginController
 		return this.paymentService;
 	}
 
-	public Logger getLogger(Class clazz) {
+	public Logger getLogger(Class<?> clazz) {
 		return PvUtils.getLogger(clazz);
 	}
 	

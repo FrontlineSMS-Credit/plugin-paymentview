@@ -104,7 +104,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 		informUserOnFraud(currentBalance, expectedBalance, !expectedBalance.equals(currentBalance));
 		
 		balance.setBalanceAmount(currentBalance);
-		balance.setConfirmationMessage(outgoingPayment.getConfirmationCode());
+		balance.setConfirmationCode(outgoingPayment.getConfirmationCode());
 		balance.setDateTime(new Date(outgoingPayment.getTimeConfirmed()));
 		balance.setBalanceUpdateMethod("Outgoing Payment");
 		

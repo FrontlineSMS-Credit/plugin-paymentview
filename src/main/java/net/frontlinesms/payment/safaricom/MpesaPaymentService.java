@@ -267,6 +267,13 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 				try {
 					IncomingPayment incomingPayment = incomingPaymentDao.getByConfirmationCode(getReversedConfirmationCode(message));
 					incomingPayment.setActive(false);
+					
+					performPaymentReversalFraudCheck(
+						getConfirmationCode(message),
+						incomingPayment.getAmountPaid(), 
+						getReversedPaymentBalance(message)
+					);
+					
 					incomingPaymentDao.saveIncomingPayment(incomingPayment);
 				}catch (Exception e) {
 					e.printStackTrace();
@@ -276,13 +283,30 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	}
 	
 	protected void processBalance(final FrontlineMessage message){
-		//TODO: On first run, should the user be told to update the
-		//balance by making an enquiry to M-PESA, or?
 		new PaymentJob() {
 			public void run() {
 				performBalanceEnquiryFraudCheck(message);
 			}
 		}.execute();
+	}
+	
+	private void performPaymentReversalFraudCheck(String confirmationCode, BigDecimal amountPaid, BigDecimal actualBalance) {
+		BigDecimal expectedBalance = balance.getBalanceAmount().subtract(amountPaid);
+		
+		informUserOnFraud(expectedBalance, actualBalance, !expectedBalance.equals(actualBalance));
+		
+		balance.setBalanceAmount(actualBalance);
+		balance.setBalanceUpdateMethod("PaymentReversal");
+		balance.setDateTime(new Date());
+		balance.setConfirmationCode(confirmationCode);
+		
+		balance.updateBalance();
+	}
+
+	private BigDecimal getReversedPaymentBalance(FrontlineMessage message) {
+		String firstMatch = getFirstMatch(message, "[,|\\d]+Ksh");
+		String strBalance = firstMatch.replace("Ksh", "").replace(",", "");
+		return new BigDecimal(strBalance);
 	}
 	
 	private String getReversedConfirmationCode(FrontlineMessage message) {
@@ -298,7 +322,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		informUserOnFraud(expectedBalance, actualBalance, !expectedBalance.equals(actualBalance));
 		
 		balance.setBalanceAmount(actualBalance);
-		balance.setConfirmationMessage(getConfirmationCode(message));
+		balance.setConfirmationCode(getConfirmationCode(message));
 		balance.setDateTime(getTimePaid(message));
 		balance.setBalanceUpdateMethod("BalanceEnquiry");
 		balance.updateBalance();
@@ -314,7 +338,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		informUserOnFraud(currentBalance, expectedBalance, !currentBalance.equals(expectedBalance));
 		
 		balance.setBalanceAmount(currentBalance);
-		balance.setConfirmationMessage(payment.getConfirmationCode());
+		balance.setConfirmationCode(payment.getConfirmationCode());
 		balance.setDateTime(new Date(payment.getTimePaid()));
 		balance.setBalanceUpdateMethod("IncomingPayment");
 		

@@ -254,6 +254,39 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		inOrder.verify(cService).stkRequest(pinRequiredRequest , "1234");
 	}
 	
+	public void testPaymentReversalProcessing(){
+		paymentReversalProcessing(
+				"DXAH67GH9 Confirmed.\n"
+				+"Transaction BC77RI604\n"
+				+"has been reversed. Your\n"
+				+"account balance now\n"
+				+"0Ksh.",
+				"DXAH67GH9","BC77RI604");
+	}
+	
+	private void paymentReversalProcessing(String messageText,
+			final String confirmationCode, final String reversedConfirmationCode) {
+		// then
+		assertTrue(mpesaPaymentService instanceof EventObserver);
+		
+		// when
+		mpesaPaymentService.notify(mockMessageNotification("MPESA", messageText));
+		
+		// then
+		WaitingJob.waitForEvent();
+		
+		verify(incomingPaymentDao).getByConfirmationCode(reversedConfirmationCode);
+		verify(incomingPaymentDao).saveIncomingPayment(new IncomingPayment() {
+			@Override
+			public boolean equals(Object that) {
+				if(!(that instanceof IncomingPayment)) return false;
+				IncomingPayment other = (IncomingPayment) that;
+				return other.getConfirmationCode().equals(reversedConfirmationCode);
+			}
+		});
+		
+	}
+
 	protected void testIncomingPaymentProcessing(String messageText,
 			final String phoneNo, final String accountNumber, final String amount,
 			final String confirmationCode, final String payedBy, final String datetime) {

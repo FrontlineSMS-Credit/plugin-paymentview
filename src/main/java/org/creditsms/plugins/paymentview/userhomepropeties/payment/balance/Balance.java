@@ -24,7 +24,7 @@ public class Balance {
 		return confirmationCode;
 	}
 
-	public void setConfirmationMessage(String confirmationCode) {
+	public void setConfirmationCode(String confirmationCode) {
 		this.confirmationCode = confirmationCode;
 	}
 
@@ -99,7 +99,7 @@ public class Balance {
 	public void reset() {
 		setBalanceAmount(new BigDecimal(0));
 		setDateTime(new Date(0));
-		setConfirmationMessage("");
+		setConfirmationCode("");
 		setBalanceUpdateMethod("");
 		
 		updateBalance();
