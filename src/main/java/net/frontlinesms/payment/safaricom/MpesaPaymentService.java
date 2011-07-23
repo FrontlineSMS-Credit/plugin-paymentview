@@ -49,6 +49,15 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	protected static final String PAID_BY_PATTERN = "([A-Za-z ]+)";
 	protected static final String ACCOUNT_NUMBER_PATTERN = "Account Number [\\d]+";
 	protected static final String RECEIVED_FROM = "received from";
+	
+	private static final String STR_REVERSE_REGEX_PATTERN = 
+		"[A-Z0-9]+ Confirmed.\n"
+		+"Transaction [A-Z0-9]+\n"
+		+"has been reversed. Your\n"
+		+"account balance now\n"
+		+"[,|\\d]+Ksh";
+
+	private static final Pattern REVERSE_REGEX_PATTERN = Pattern.compile(STR_REVERSE_REGEX_PATTERN);
 
 //> INSTANCE PROPERTIES
 	protected final Logger log = FrontlineUtils.getLogger(this.getClass());
@@ -151,14 +160,14 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			processIncomingPayment(message);
 		}else if (isValidBalanceMessage(message)){
 			
-		} 
+		}else if (isValidReverseMessage(message)){
+			processReversePayment(message);
+		}
 	}
 
-//> INCOMING MESSAGE PAYMENT PROCESSORS
+	//> INCOMING MESSAGE PAYMENT PROCESSORS
 	private void processIncomingPayment(final FrontlineMessage message) {
 		new FrontlineUiUpateJob() {
-			// This probably shouldn't be a UI job,
-			// but it certainly should be done on a separate thread!
 			public void run() {
 				try {
 					final IncomingPayment payment = new IncomingPayment();
@@ -247,11 +256,34 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}.execute();
 	}
 	
+	private void processReversePayment(final FrontlineMessage message) {
+		new FrontlineUiUpateJob() {
+			public void run() {
+				try {
+					IncomingPayment incomingPayment = incomingPaymentDao.getByConfirmationCode(getReversedConfirmationCode(message));
+					incomingPayment.setActive(false);
+					incomingPaymentDao.saveIncomingPayment(incomingPayment);
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}.execute();
+	}
+	
+	private String getReversedConfirmationCode(FrontlineMessage message) {
+		String firstMatch = getFirstMatch(message, "Transaction [A-Z0-9]+");
+		return firstMatch.replace("Transaction ", "").trim();
+	}
+	
 	private boolean isValidIncomingPaymentConfirmation(FrontlineMessage message) {
 		if (!message.getSenderMsisdn().equals("MPESA")) {
 			return false;
 		}
 		return isMessageTextValid(message.getTextContent());
+	}
+	
+	private boolean isValidReverseMessage(FrontlineMessage message) {
+		return REVERSE_REGEX_PATTERN.matcher(message.getTextContent()).matches();
 	}
 	
 	abstract Date getTimePaid(FrontlineMessage message);
