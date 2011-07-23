@@ -1,4 +1,4 @@
-package org.creditsms.plugins.paymentview.authorizationcode;
+package org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode;
 
 import net.frontlinesms.resources.UserHomeFilePropertySet;
 
