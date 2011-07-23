@@ -1,11 +1,10 @@
 package org.creditsms.plugins.paymentview.userhomepropeties.payment.balance;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.Date;
 
+import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.FrontlineEventNotification;
-import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.utils.PvUtils;
 
@@ -15,9 +14,8 @@ public class Balance {
 	private Date dateTime;
 
 	private static final Balance INSTANCE = new Balance();
-	private UiGeneratorController uiController;
+	private EventBus eventBus;
 	private String balanceUpdateMethod;
-	private BigDecimal nextExpectedBalance;
 
 	private Balance() {
 	}
@@ -37,6 +35,10 @@ public class Balance {
 	public void setBalanceAmount(BigDecimal balanceAmount) {
 		this.balanceAmount = balanceAmount;
 	}
+	
+	public void setBalanceAmount(String balanceAmount) {
+		this.balanceAmount = new BigDecimal(balanceAmount);
+	}
 
 	public Date getDateTime() {
 		return dateTime;
@@ -49,7 +51,7 @@ public class Balance {
 	public synchronized Balance getLatest() {
 		try {
 			return BalanceProperties.getInstance().getBalance();
-		} catch (ParseException e) {
+		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
 		throw new RuntimeException("Error Reading the balance details.");
@@ -57,9 +59,8 @@ public class Balance {
 
 	public void updateBalance() {
 		BalanceProperties.getInstance().updateBalance();
-		if (uiController != null){
-			this.uiController.getFrontlineController().getEventBus()
-				.notifyObservers(new BalanceEventNotification());
+		if (eventBus != null){
+			eventBus.notifyObservers(new BalanceEventNotification());
 		}
 	}
 
@@ -67,8 +68,8 @@ public class Balance {
 		return INSTANCE;
 	}
 
-	public void setUiController(UiGeneratorController uiController) {
-		this.uiController = uiController;
+	public void setEventBus(EventBus eventBus) {
+		this.eventBus = eventBus;
 	}
 	
 	@Override
@@ -84,14 +85,6 @@ public class Balance {
 		return balanceUpdateMethod;
 	}
 	
-	public void setNextExpectedBalance(BigDecimal nextExpectedBalance) {
-		this.nextExpectedBalance = nextExpectedBalance;
-	}
-	
-	public BigDecimal getNextExpectedBalance() {
-		return nextExpectedBalance;
-	}
-
 	public class BalanceEventNotification implements FrontlineEventNotification {
 		public BalanceEventNotification() {
 		}
@@ -101,5 +94,14 @@ public class Balance {
 					.getConfirmationCode(), Balance.getInstance()
 					.getBalanceAmount().toString());
 		}
+	}
+
+	public void reset() {
+		setBalanceAmount(new BigDecimal(0));
+		setDateTime(new Date(0));
+		setConfirmationMessage("");
+		setBalanceUpdateMethod("");
+		
+		updateBalance();
 	}
 }

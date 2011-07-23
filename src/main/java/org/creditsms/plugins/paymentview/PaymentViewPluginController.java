@@ -14,7 +14,6 @@ import java.util.List;
 import net.frontlinesms.BuildProperties;
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.DuplicateKeyException;
-import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.plugins.BasePluginController;
@@ -23,6 +22,7 @@ import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
+import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
@@ -34,6 +34,7 @@ import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.AuthorizationProperties;
+import org.creditsms.plugins.paymentview.utils.PvUtils;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -173,6 +174,10 @@ public class PaymentViewPluginController extends BasePluginController
 
 	public PaymentService getPaymentService() {
 		return this.paymentService;
+	}
+
+	public Logger getLogger(Class clazz) {
+		return PvUtils.getLogger(clazz);
 	}
 	
 	/*

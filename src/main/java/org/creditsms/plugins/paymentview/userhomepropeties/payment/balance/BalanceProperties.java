@@ -1,12 +1,9 @@
 package org.creditsms.plugins.paymentview.userhomepropeties.payment.balance;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.Date;
 
 import net.frontlinesms.resources.UserHomeFilePropertySet;
-
-import org.creditsms.plugins.paymentview.utils.PvUtils;
 
 public class BalanceProperties extends UserHomeFilePropertySet {
 
@@ -24,15 +21,15 @@ public class BalanceProperties extends UserHomeFilePropertySet {
 		return INSTANCE;
 	}
 	
-	synchronized Balance getBalance() throws ParseException{
+	synchronized Balance getBalance() throws NumberFormatException{
 		if (super.getProperty(BALANCE_AMOUNT_KEY) == null){
 			return createBalanceObject("0", "", null);
 		}
 		return createBalanceObject(getProperty(BALANCE_AMOUNT_KEY), getProperty(CONFIRMATION_CODE_KEY), getPropertyAsDate(DATETIME_KEY));
 	}
 	
-	private synchronized Date getPropertyAsDate(String key) throws ParseException {
-		return PvUtils.parseDate(getProperty(key));
+	private synchronized Date getPropertyAsDate(String key) throws NumberFormatException {
+		return new Date(Long.parseLong(getProperty(key)));
 	}
 
 	private synchronized Balance createBalanceObject(String balance_amount, String confirmation_code, Date datetime){
@@ -66,6 +63,6 @@ public class BalanceProperties extends UserHomeFilePropertySet {
 	}
 
 	private synchronized void setDateTime(Date datetime) {
-		this.setProperty(DATETIME_KEY, PvUtils.formatDate(datetime));
+		this.setProperty(DATETIME_KEY, Long.toString(datetime.getTime()));
 	}
 }

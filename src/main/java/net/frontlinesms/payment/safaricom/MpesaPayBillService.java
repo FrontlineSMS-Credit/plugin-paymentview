@@ -1,6 +1,5 @@
 package net.frontlinesms.payment.safaricom;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,10 +7,8 @@ import java.util.regex.Pattern;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.payment.PaymentJob;
-import net.frontlinesms.payment.PaymentServiceException;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
-import org.creditsms.plugins.paymentview.data.domain.Client;
 
 public class MpesaPayBillService extends MpesaPaymentService {
 	private static final String STR_PAYBILL_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n"
@@ -33,11 +30,6 @@ public class MpesaPayBillService extends MpesaPaymentService {
 	private static final Pattern BALANCE_REGEX_PATTERN = Pattern.compile(STR_BALANCE_REGEX_PATTERN);
 	protected boolean isValidBalanceMessage(FrontlineMessage message){
 		return BALANCE_REGEX_PATTERN.matcher(message.getTextContent()).matches();
-	}
-	
-	@Override
-	public void makePayment(Client client, BigDecimal amount) throws PaymentServiceException {
-		throw new RuntimeException("Payment Not Allowed!");
 	}
 	
 	protected void processBalance(FrontlineMessage message){

@@ -16,7 +16,9 @@ import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 
 public class MpesaPersonalService extends MpesaPaymentService {
 	
-//> REGEX PATTERN CONSTANTS
+	private static final int BALANCE_ENQUIRY_CHARGE = 1;
+	private static final BigDecimal BD_BALANCE_ENQUIRY_CHARGE = new BigDecimal(BALANCE_ENQUIRY_CHARGE);
+	//> REGEX PATTERN CONSTANTS
 	private static final String STR_PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n" +
 			"You have received Ksh[,|.|\\d]+ from\n([A-Za-z ]+) 2547[\\d]{8}\non " +
 			"(([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) (at) ([1]?\\d:[0-5]\\d) (AM|PM)\n" +
@@ -44,16 +46,27 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	}
 	
 	protected void processBalance(final FrontlineMessage message){
+		//TODO: On first run, the user should be told to update the
+		//Balance by sending a request to M-PESA, or?
 		new PaymentJob() {
 			public void run() {
-				balance.setBalanceAmount(getAmount(message));
-				balance.setConfirmationMessage(getConfirmationCode(message));
-				balance.setDateTime(getTimePaid(message));
-				balance.setBalanceUpdateMethod("Balance Enquiry");
-				
-				balance.updateBalance();
+				performBalanceEnquiryFraudCheck(message);
 			}
 		}.execute();
+	}
+	
+	private synchronized void performBalanceEnquiryFraudCheck(final FrontlineMessage message) {
+		BigDecimal tempBalance = balance.getBalanceAmount();
+		BigDecimal expectedBalance = getAmount(message);
+		
+		BigDecimal actual = tempBalance.subtract(BD_BALANCE_ENQUIRY_CHARGE);
+		informUserOnFraud(expectedBalance, actual, !expectedBalance.equals(actual));
+		
+		balance.setBalanceAmount(expectedBalance);
+		balance.setConfirmationMessage(getConfirmationCode(message));
+		balance.setDateTime(getTimePaid(message));
+		balance.setBalanceUpdateMethod("BalanceEnquiry");
+		balance.updateBalance();
 	}
 	
 	@Override
@@ -63,7 +76,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 		if (isValidOutgoingPaymentConfirmation(message)) {
 			processOutgoingPayment(message);
 		}else if (isFailedMpesaPayment(message)){
-			
+			//FIXME:Implement?
 		}
 	}
 	
@@ -86,20 +99,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 						outgoingPayment.setTimeConfirmed(getTimePaid(message, true).getTime());
 						outgoingPayment.setStatus(OutgoingPayment.Status.CONFIRMED);
 						
-						//Save for Anti-Fraud
-						BigDecimal tempBalanceAmount = balance.getBalanceAmount();
-						BigDecimal currentBalance = getBalance(message);
-						
-						if (!tempBalanceAmount.subtract(outgoingPayment.getAmountPaid()).equals(currentBalance)) {
-							System.err.println("--------------Fraud commited?-----------------");
-						}
-						
-						balance.setBalanceAmount(currentBalance);
-						balance.setConfirmationMessage(outgoingPayment.getConfirmationCode());
-						balance.setDateTime(new Date(outgoingPayment.getTimeConfirmed()));
-						balance.setBalanceUpdateMethod("Outgoing Payment");
-						
-						balance.updateBalance();
+						performOutgoingPaymentFraudCheck(message, outgoingPayment);
 						
 						//Update outgoing payment
 						outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
@@ -107,14 +107,34 @@ public class MpesaPersonalService extends MpesaPaymentService {
 						pvLog.warn("No unconfirmed outgoing payment for the following confirmation message: " + message.getTextContent());
 					}
 				} catch (IllegalArgumentException ex) {
-					log.warn("Message failed to parse; likely incorrect format", ex);
+					pvLog.warn("Message failed to parse; likely incorrect format", ex);
 					throw new RuntimeException(ex);
 				} catch (Exception ex) {
-					log.error("Unexpected exception parsing outgoing payment SMS.", ex);
+					pvLog.error("Unexpected exception parsing outgoing payment SMS.", ex);
 					throw new RuntimeException(ex);
 				}
 			}
 		}.execute();
+	}
+	
+	synchronized void performOutgoingPaymentFraudCheck(final FrontlineMessage message,
+			final OutgoingPayment outgoingPayment) {
+		BigDecimal tempBalanceAmount = balance.getBalanceAmount();
+		
+		//check is: Let Previous Balance be p, Current Balance be c and Amount sent be a
+		//c == p - a
+		//It might be wise that
+		BigDecimal currentBalance = getBalance(message);
+		BigDecimal expectedBalance = tempBalanceAmount.subtract(outgoingPayment.getAmountPaid());
+		
+		informUserOnFraud(currentBalance, expectedBalance, !expectedBalance.equals(currentBalance));
+		
+		balance.setBalanceAmount(currentBalance);
+		balance.setConfirmationMessage(outgoingPayment.getConfirmationCode());
+		balance.setDateTime(new Date(outgoingPayment.getTimeConfirmed()));
+		balance.setBalanceUpdateMethod("Outgoing Payment");
+		
+		balance.updateBalance();
 	}
 	
 	private boolean isValidOutgoingPaymentConfirmation(FrontlineMessage message) {
