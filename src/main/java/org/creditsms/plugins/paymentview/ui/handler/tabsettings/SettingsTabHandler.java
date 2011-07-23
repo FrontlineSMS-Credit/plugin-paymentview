@@ -6,7 +6,10 @@ import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
+import net.frontlinesms.payment.PaymentServiceStartedNotification;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
+import net.frontlinesms.payment.safaricom.MpesaPaymentService.BalanceFraudNotification;
+import net.frontlinesms.ui.UiDestroyEvent;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 import net.frontlinesms.ui.handler.BaseTabHandler;
@@ -17,6 +20,7 @@ import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.cr
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance.BalanceEventNotification;
 
 public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
+	private static final String BTN_CREATE_NEW_SERVICE = "btn_createNewService";
 	private static final String COMPONENT_SETTINGS_TABLE = "tbl_accounts";
 	private static final String XML_SETTINGS_TAB = "/ui/plugins/paymentview/settings/settingsTab.xml";
 
@@ -82,11 +86,19 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	public void notify(final FrontlineEventNotification notification) {
 		new FrontlineUiUpateJob() {
 			public void run() {
-				if (!(notification instanceof BalanceEventNotification)) {
-					return;
-				}else{
+				if (notification instanceof BalanceEventNotification) {
 					ui.alert(((BalanceEventNotification)notification).getMessage());
 					SettingsTabHandler.this.refresh();
+				}else if (notification instanceof PaymentServiceStartedNotification) {
+					SettingsTabHandler.this.refresh();
+					ui.setEnabled(ui.find(settingsTab, BTN_CREATE_NEW_SERVICE), false);
+				}else if(notification instanceof BalanceFraudNotification){
+					ui.alert(((BalanceFraudNotification)notification).getMessage());
+					SettingsTabHandler.this.refresh();//Hoping this will be moved to the new Log Tab
+				}else if (notification instanceof UiDestroyEvent) {
+					if(((UiDestroyEvent) notification).isFor(ui)) {
+						ui.getFrontlineController().getEventBus().unregisterObserver(SettingsTabHandler.this);
+					}
 				}
 			}
 		}.execute();

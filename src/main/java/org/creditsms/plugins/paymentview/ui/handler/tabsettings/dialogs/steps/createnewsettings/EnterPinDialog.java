@@ -1,6 +1,8 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings;
 
+import net.frontlinesms.events.EventBus;
 import net.frontlinesms.messaging.sms.modem.SmsModem;
+import net.frontlinesms.payment.PaymentServiceStartedNotification;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -60,7 +62,10 @@ public class EnterPinDialog extends BaseDialog {
 	}
 	
 	public void create() {
-		ui.getFrontlineController().getEventBus().registerObserver(paymentService);
+		EventBus eventBus = ui.getFrontlineController().getEventBus();
+		eventBus.registerObserver(paymentService);
+		eventBus.notifyObservers(new PaymentServiceStartedNotification());
+		
 		pluginController.setPaymentService(paymentService);
 		ui.alert("The Payment service has been created successfully!");
 		removeDialog(ui.find(DLG_VERIFICATION_CODE));
@@ -74,7 +79,7 @@ public class EnterPinDialog extends BaseDialog {
 	public void assertMaxLength(Object component) {
 		String text = ui.getText(component);
 		if(text.length() > EXPECTED_PIN_LENGTH) {
-			ui.setText(component, text.substring(0, EXPECTED_PIN_LENGTH - 1));
+			ui.setText(component, text.substring(0, EXPECTED_PIN_LENGTH));
 		}
 	}
 }

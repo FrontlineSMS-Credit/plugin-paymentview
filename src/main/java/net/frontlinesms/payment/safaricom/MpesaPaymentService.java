@@ -48,6 +48,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	protected static final String PAID_BY_PATTERN = "([A-Za-z ]+)";
 	protected static final String ACCOUNT_NUMBER_PATTERN = "Account Number [\\d]+";
 	protected static final String RECEIVED_FROM = "received from";
+	
+	private static final int BALANCE_ENQUIRY_CHARGE = 1;
+	private static final BigDecimal BD_BALANCE_ENQUIRY_CHARGE = new BigDecimal(BALANCE_ENQUIRY_CHARGE);
 
 //> INSTANCE PROPERTIES
 	protected Logger pvLog;
@@ -63,7 +66,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 //> FIELDS
 	private String pin;
 	protected Balance balance;
-	private EventBus eventBus;
+	protected EventBus eventBus;
 	private TargetAnalytics targetAnalytics;
 	
 //> STK & PAYMENT ACCOUNT
@@ -247,6 +250,30 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}.execute();
 	}
 	
+	protected void processBalance(final FrontlineMessage message){
+		//TODO: On first run, should the user be told to update the
+		//balance by making an enquiry to M-PESA, or?
+		new PaymentJob() {
+			public void run() {
+				performBalanceEnquiryFraudCheck(message);
+			}
+		}.execute();
+	}
+	
+	synchronized void performBalanceEnquiryFraudCheck(final FrontlineMessage message) {
+		BigDecimal tempBalance = balance.getBalanceAmount();
+		BigDecimal expectedBalance = tempBalance.subtract(BD_BALANCE_ENQUIRY_CHARGE);
+		
+		BigDecimal actualBalance = getAmount(message);
+		informUserOnFraud(expectedBalance, actualBalance, !expectedBalance.equals(actualBalance));
+		
+		balance.setBalanceAmount(actualBalance);
+		balance.setConfirmationMessage(getConfirmationCode(message));
+		balance.setDateTime(getTimePaid(message));
+		balance.setBalanceUpdateMethod("BalanceEnquiry");
+		balance.updateBalance();
+	}
+	
 	synchronized void performIncominPaymentFraudCheck(final FrontlineMessage message,
 			final IncomingPayment payment) {
 		//check is: Let Previous Balance be p, Current Balance be c and Amount received be a
@@ -266,7 +293,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	
 	void informUserOnFraud(BigDecimal expected, BigDecimal actual, boolean fraudCommited) {
 		if (fraudCommited) {
-			pvLog.warn("Fraud commited? Was Expecting: "+expected+", But was "+actual);
+			String message = "Fraud commited? Was expecting balance as: "+expected+", But was "+actual;
+			pvLog.warn(message);
+			this.eventBus.notifyObservers(new BalanceFraudNotification(message));
 		}else{
 			pvLog.info("No Fraud occured!");
 		}
@@ -279,7 +308,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		return isMessageTextValid(message.getTextContent());
 	}
 	
-	abstract void processBalance(FrontlineMessage message);
 	abstract Date getTimePaid(FrontlineMessage message);
 	abstract boolean isMessageTextValid(String message);
 	abstract Account getAccount(FrontlineMessage message);
@@ -405,8 +433,12 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.targetAnalytics = pluginController.getTargetAnalytics();
 		
 		this.balance = Balance.getInstance().getLatest();
-		this.balance.setEventBus(pluginController.getUiGeneratorController()
-				.getFrontlineController().getEventBus());
+		this.registerToEventBus(
+			pluginController.getUiGeneratorController()
+			.getFrontlineController().getEventBus()
+		);
+		
+		this.balance.setEventBus(this.eventBus);
 		//Would like to test using the log...
 		this.pvLog = pluginController.getLogger(this.getClass());
 	}
@@ -422,5 +454,11 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			accountNumberGeneratedStr = String.format("%05d", ++ accountNumberGenerated);
 		}
 		return accountNumberGeneratedStr;
+	}
+	
+	public class BalanceFraudNotification implements FrontlineEventNotification{
+		private final String message;
+		public BalanceFraudNotification(String message){this.message=message;}
+		public String getMessage(){return message;}
 	}
 }

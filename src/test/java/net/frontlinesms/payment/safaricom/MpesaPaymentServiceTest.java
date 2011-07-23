@@ -156,7 +156,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		
 		FrontlineSMS fsms = mock(FrontlineSMS.class);
 		EventBus eventBus = mock(EventBus.class);
-		
+		mpesaPaymentService.registerToEventBus(eventBus);
 		when(fsms.getEventBus()).thenReturn(eventBus);
 		when(ui.getFrontlineController()).thenReturn(fsms);
 		

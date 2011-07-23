@@ -16,8 +16,6 @@ import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 
 public class MpesaPersonalService extends MpesaPaymentService {
 	
-	private static final int BALANCE_ENQUIRY_CHARGE = 1;
-	private static final BigDecimal BD_BALANCE_ENQUIRY_CHARGE = new BigDecimal(BALANCE_ENQUIRY_CHARGE);
 	//> REGEX PATTERN CONSTANTS
 	private static final String STR_PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n" +
 			"You have received Ksh[,|.|\\d]+ from\n([A-Za-z ]+) 2547[\\d]{8}\non " +
@@ -43,30 +41,6 @@ public class MpesaPersonalService extends MpesaPaymentService {
 //>BEGIN - OUTGOING PAYMENT REGION	
 	protected boolean isValidBalanceMessage(FrontlineMessage message){
 		return BALANCE_REGEX_PATTERN.matcher(message.getTextContent()).matches();
-	}
-	
-	protected void processBalance(final FrontlineMessage message){
-		//TODO: On first run, the user should be told to update the
-		//Balance by sending a request to M-PESA, or?
-		new PaymentJob() {
-			public void run() {
-				performBalanceEnquiryFraudCheck(message);
-			}
-		}.execute();
-	}
-	
-	private synchronized void performBalanceEnquiryFraudCheck(final FrontlineMessage message) {
-		BigDecimal tempBalance = balance.getBalanceAmount();
-		BigDecimal expectedBalance = getAmount(message);
-		
-		BigDecimal actual = tempBalance.subtract(BD_BALANCE_ENQUIRY_CHARGE);
-		informUserOnFraud(expectedBalance, actual, !expectedBalance.equals(actual));
-		
-		balance.setBalanceAmount(expectedBalance);
-		balance.setConfirmationMessage(getConfirmationCode(message));
-		balance.setDateTime(getTimePaid(message));
-		balance.setBalanceUpdateMethod("BalanceEnquiry");
-		balance.updateBalance();
 	}
 	
 	@Override

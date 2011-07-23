@@ -4,10 +4,7 @@
 		columns="1" gap="10">
 		<panel columns="1" gap="5" name="pnl_accounts" weightx="1"
 			weighty="1">
-			<panel weightx="1">
-				<label text="Mobile Payment Account Settings" font="20 Bold"/>
-				<button name="refresh" action="refresh" text="Refresh"/>
-			</panel>
+			<label text="Mobile Payment Account Settings" font="20 Bold" weightx="1"/>
 			<table name="tbl_accounts" weightx="1" weighty="1" delete="showConfirmationDialog('deleteAccount')">
 				<header>					
 					<column text="i18n.common.port" width="200" icon="/icons/port_open.png"/>
@@ -27,7 +24,7 @@
 		</panel>
 		<panel gap="5" bottom="5" name="pnl_buttons"
 			weightx="1">
-			<button name="btn_analyse" icon="/icons/keyword_add.png" text="i18n.plugins.paymentview.action.createnew" action="createNew" />
+			<button name="btn_createNewService" icon="/icons/keyword_add.png" text="i18n.plugins.paymentview.action.createnew" action="createNew" />
 			<panel weightx="1"/>
 			<panel weightx="1"/>		
 			<button action="updateAccountBalance" icon="/icons/connection.png" halign="right" name="btn_export"
