@@ -173,6 +173,13 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		
 		mpesaPaymentService.initDaosAndServices(pluginController);
 		
+		
+		IncomingPayment incomingPayment = new IncomingPayment();
+		incomingPayment.setAmountPaid(new BigDecimal("1000"));
+		incomingPayment.setConfirmationCode("BC77RI604");
+		
+		when(incomingPaymentDao.getByConfirmationCode("BC77RI604")).thenReturn(incomingPayment);
+		
 		//Set up accounts, targets and clients
 		Set<Account> accounts1 = mockAccounts(ACCOUNTNUMBER_1_1);
 		Set<Account> accounts2 = mockAccounts(ACCOUNTNUMBER_2_1, ACCOUNTNUMBER_2_2);
@@ -260,11 +267,11 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 				+"Transaction BC77RI604\n"
 				+"has been reversed. Your\n"
 				+"account balance now\n"
-				+"0Ksh.",
+				+"0Ksh",
 				"DXAH67GH9","BC77RI604");
 	}
 	
-	private void paymentReversalProcessing(String messageText,
+	protected void paymentReversalProcessing(String messageText,
 			final String confirmationCode, final String reversedConfirmationCode) {
 		// then
 		assertTrue(mpesaPaymentService instanceof EventObserver);

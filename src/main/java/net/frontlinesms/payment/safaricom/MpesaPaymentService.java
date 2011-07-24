@@ -159,7 +159,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	}
 
 	protected void processMessage(final FrontlineMessage message) {
-		//I have overrided this function...
+		//I have overridden this function...
 		if (isValidIncomingPaymentConfirmation(message)) {
 			processIncomingPayment(message);
 		}else if (isValidBalanceMessage(message)){
@@ -293,7 +293,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	private void performPaymentReversalFraudCheck(String confirmationCode, BigDecimal amountPaid, BigDecimal actualBalance) {
 		BigDecimal expectedBalance = balance.getBalanceAmount().subtract(amountPaid);
 		
-		informUserOnFraud(expectedBalance, actualBalance, !expectedBalance.equals(actualBalance));
+		performInform(actualBalance, expectedBalance);
 		
 		balance.setBalanceAmount(actualBalance);
 		balance.setBalanceUpdateMethod("PaymentReversal");
@@ -301,6 +301,14 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		balance.setConfirmationCode(confirmationCode);
 		
 		balance.updateBalance();
+	}
+
+	private void performInform(BigDecimal actualBalance, BigDecimal expectedBalance) {
+		if (expectedBalance.compareTo(new BigDecimal(0)) >= 0) {//Now we don't want Mathematical embarrassment...
+			informUserOnFraud(expectedBalance, actualBalance, !expectedBalance.equals(actualBalance));
+		}else{
+			//How can the balance be below 0?
+		}
 	}
 
 	private BigDecimal getReversedPaymentBalance(FrontlineMessage message) {
@@ -319,7 +327,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		BigDecimal expectedBalance = tempBalance.subtract(BD_BALANCE_ENQUIRY_CHARGE);
 		
 		BigDecimal actualBalance = getAmount(message);
-		informUserOnFraud(expectedBalance, actualBalance, !expectedBalance.equals(actualBalance));
+		performInform(actualBalance, expectedBalance);
 		
 		balance.setBalanceAmount(actualBalance);
 		balance.setConfirmationCode(getConfirmationCode(message));
@@ -331,13 +339,13 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	synchronized void performIncominPaymentFraudCheck(final FrontlineMessage message,
 			final IncomingPayment payment) {
 		//check is: Let Previous Balance be p, Current Balance be c and Amount received be a
-		final BigDecimal currentBalance = getBalance(message);
+		final BigDecimal actualBalance = getBalance(message);
 		BigDecimal expectedBalance = payment.getAmountPaid().add(balance.getBalanceAmount());
 		
 		//c == p + a
-		informUserOnFraud(currentBalance, expectedBalance, !currentBalance.equals(expectedBalance));
+		performInform(actualBalance, expectedBalance);
 		
-		balance.setBalanceAmount(currentBalance);
+		balance.setBalanceAmount(actualBalance);
 		balance.setConfirmationCode(payment.getConfirmationCode());
 		balance.setDateTime(new Date(payment.getTimePaid()));
 		balance.setBalanceUpdateMethod("IncomingPayment");

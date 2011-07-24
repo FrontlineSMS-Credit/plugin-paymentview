@@ -3,6 +3,7 @@
  */
 package net.frontlinesms.payment.safaricom;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -57,9 +58,13 @@ public class MpesaPersonalServiceTest extends MpesaPaymentServiceTest<MpesaPerso
 				PHONENUMBER_1, ACCOUNTNUMBER_1_1, "1235", "BC77RI604",
 				"DACON OMONDI", "22/5/11 10:35 PM", OutgoingPayment.Status.CONFIRMED);
 		
+		
+		verify(logger).info("No Fraud occured!");
+		
 		balance.reset();
 		balance.setBalanceAmount("1000");
 		balance.updateBalance();
+		
 		
 		//Test When Payment is successful IncomingPayment
 		testIncomingPaymentProcessing("BI94HR849 Confirmed.\n" +
@@ -68,17 +73,33 @@ public class MpesaPersonalServiceTest extends MpesaPaymentServiceTest<MpesaPerso
 				PHONENUMBER_1, ACCOUNTNUMBER_1_1, "236", "BI94HR849",
 				"JOHN KIU", "30/5/11 10:35 PM");
 		
+		verify(logger, times(2)).info("No Fraud occured!");
+		
 		balance.reset();
 		balance.setBalanceAmount("1000");
 		balance.updateBalance();
 		
-		//Test on Balance Enquiry
+		paymentReversalProcessing(
+				"DXAH67GH9 Confirmed.\n"
+				+"Transaction BC77RI604\n"
+				+"has been reversed. Your\n"
+				+"account balance now\n"
+				+"0Ksh",
+				"DXAH67GH9","BC77RI604");
+		
+		verify(logger, times(3)).info("No Fraud occured!");
+		
+		balance.reset();
+		balance.setBalanceAmount("1000");
+		balance.updateBalance();
+		
+		//Test on Balance Inquiry
 		testBalanceProcessing("NB56GF6JK Confirmed.\n" +
 			"Your M-PESA balance was Ksh999\n" +
 			"on 12/2/11 at 12:23 AM",
 		"999", "NB56GF6JK", "12/2/11 12:23 AM");
-		
-		verify(logger, times(3)).info("No Fraud occured!");
+		verify(logger, times(4)).info("No Fraud occured!");
+		verify(logger, never()).warn(any(String.class));
 	}
 	
 	public void testInvalidBalanceFraudCheck() throws DuplicateKeyException {
@@ -107,12 +128,13 @@ public class MpesaPersonalServiceTest extends MpesaPaymentServiceTest<MpesaPerso
 		balance.setBalanceAmount("1100");
 		balance.updateBalance();
 		
-		//Test on Balance Enquiry //Ksh100 lost
+		//Test on Balance Inquiry //Ksh100 lost
 		testBalanceProcessing("NB56GF6JK Confirmed.\n" +
 			"Your M-PESA balance was Ksh999\n" +
 			"on 12/2/11 at 12:23 AM",
 		"999", "NB56GF6JK", "12/2/11 12:23 AM");
 		
+		verify(logger, never()).info("No Fraud occured!");
 		verify(logger, times(3)).warn(any(String.class));
 	}
 	
