@@ -64,7 +64,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	private static final Pattern REVERSE_REGEX_PATTERN = Pattern.compile(STR_REVERSE_REGEX_PATTERN);
 
 //> INSTANCE PROPERTIES
-	protected Logger pvLog;
+	protected Logger pvLog = Logger.getLogger(this.getClass());
 	private CService cService;
 
 	//> DAOs
@@ -307,7 +307,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		if (expectedBalance.compareTo(new BigDecimal(0)) >= 0) {//Now we don't want Mathematical embarrassment...
 			informUserOnFraud(expectedBalance, actualBalance, !expectedBalance.equals(actualBalance));
 		}else{
-			//How can the balance be below 0?
+			pvLog.error("Balance is way low: than expected " + actualBalance + " instead of : "+ expectedBalance);
 		}
 	}
 
@@ -505,7 +505,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		);
 		
 		this.balance.setEventBus(this.eventBus);
-		//Would like to test using the log...
 		this.pvLog = pluginController.getLogger(this.getClass());
 	}
 	

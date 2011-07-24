@@ -82,9 +82,8 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	protected PaymentViewPluginController pluginController;
 	private UiGeneratorController ui;
 	private TargetAnalytics targetAnalytics;
-	private E mpesaPaymentService;
+	protected E mpesaPaymentService;
 	protected Logger logger;
-	
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -168,11 +167,11 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		when(pluginController.getClientDao()).thenReturn(clientDao);
 		when(pluginController.getUiGeneratorController()).thenReturn(ui);
 		when(pluginController.getTargetAnalytics()).thenReturn(targetAnalytics);
+		
 		logger = mock(Logger.class);
 		when(pluginController.getLogger(any(Class.class))).thenReturn(logger);
 		
 		mpesaPaymentService.initDaosAndServices(pluginController);
-		
 		
 		IncomingPayment incomingPayment = new IncomingPayment();
 		incomingPayment.setAmountPaid(new BigDecimal("1000"));
