@@ -154,6 +154,7 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		ip.setPaymentBy(by);
 		ip.setAccount(account);
 		ip.setTarget(tgt);
+		ip.setActive(true);
 		Date todaysDatesv = new Date(); 
 		this.todaysDate = todaysDatesv;
 		ip.setTimePaid(todaysDatesv);
