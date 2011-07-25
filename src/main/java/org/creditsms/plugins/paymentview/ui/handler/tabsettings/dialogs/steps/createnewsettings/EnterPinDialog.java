@@ -1,6 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings;
 
 import net.frontlinesms.messaging.sms.modem.SmsModem;
+import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -8,6 +9,7 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.paymentsettings.PaymentSettingsProperties;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
+
 
 public class EnterPinDialog extends BaseDialog {
 	private static final String DLG_VERIFICATION_CODE = "dlgVerificationCode";
@@ -18,13 +20,26 @@ public class EnterPinDialog extends BaseDialog {
 	private final SmsModem modem;
 	private Object pin;
 	private Object vpin;
+	private Class<? extends PaymentService> paymentServiceCls;
 
 	private PaymentSettingsProperties paymentSettingsPropPin = PaymentSettingsProperties.getInstance();
 
-	public EnterPinDialog(UiGeneratorController ui, PaymentViewPluginController pluginController, MpesaPaymentService paymentService, SmsModem modem) {
+	
+	private PaymentService initPaymentService(Class<?> paymentService) {
+		if(paymentService != null){
+			try {
+				return (PaymentService) Class.forName(paymentService.getName()).newInstance();
+			} catch (Exception ex) {
+			}
+		}
+		return null;
+	}
+	
+	public EnterPinDialog(UiGeneratorController ui, PaymentViewPluginController pluginController,Class<? extends PaymentService> paymentService, SmsModem modem) {
 		super(ui);		
+		this.paymentServiceCls = paymentService;
 		this.pluginController = pluginController;
-		this.paymentService = paymentService;
+		this.paymentService = (MpesaPaymentService) initPaymentService(paymentService);
 		this.modem = modem;
 
 		init();
@@ -63,9 +78,8 @@ public class EnterPinDialog extends BaseDialog {
 	}
 	
 	private void persistPaymentService(String pin){
-		String paymentService = this.paymentService.toString();
 		String modemSerial = this.modem.getSerial().toString();
-		paymentSettingsPropPin.setPaymentServiceClass(paymentService);
+		paymentSettingsPropPin.setPaymentServiceClass(this.paymentServiceCls);
 		paymentSettingsPropPin.setSmsModem(modemSerial);
 		paymentSettingsPropPin.setPin(pin);
 		paymentSettingsPropPin.saveToDisk();

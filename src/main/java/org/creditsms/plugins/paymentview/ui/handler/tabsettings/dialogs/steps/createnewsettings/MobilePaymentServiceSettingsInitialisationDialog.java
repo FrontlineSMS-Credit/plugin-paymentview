@@ -1,19 +1,17 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings;
 
 import net.frontlinesms.messaging.sms.modem.SmsModem;
+import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPayBillService;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPersonalService;
 import net.frontlinesms.ui.UiGeneratorController;
-
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.paymentsettings.PaymentSettingsProperties;
 import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
 
 public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog {
 	private static final String XML_MOBILE_PAYMENT_SERVICE = "/ui/plugins/paymentview/settings/dialogs/createnewpaymentsteps/dlgCreateNewAccountStep1.xml";
 	private final PaymentViewPluginController pluginController;
-	private PaymentSettingsProperties paymentSettingsProp = PaymentSettingsProperties.getInstance();
 
 	public MobilePaymentServiceSettingsInitialisationDialog(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui);
@@ -69,10 +67,10 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 	}
 
 //> ACCESSORS
-	MpesaPaymentService getPaymentService() {
+	Class<? extends PaymentService> getPaymentService() {
 		Object paymentServiceCombobox = getServiceCombobox();
 		Object selectedItem = ui.getSelectedItem(paymentServiceCombobox);
-		return ui.getAttachedObject(selectedItem, MpesaPaymentService.class);
+		return ui.getAttachedObject(selectedItem, MpesaPaymentService.class).getClass();
 	}
 
 	private Object getServiceCombobox() {

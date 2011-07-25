@@ -196,27 +196,31 @@ public class PaymentViewPluginController extends BasePluginController
 			new FrontlineUiUpateJob() {
 				public void run() {
 					PaymentSettingsProperties props = PaymentSettingsProperties.getInstance();
-					if(props.getSmsModemSerial().equals(connectedModem.getSerial())) {
-						// We've just connected the configured device, so start up the payment service...
-						//...if it's not already running!
-						MpesaPaymentService mpesaPaymentService = (MpesaPaymentService) props.initPaymentService();
-						if(mpesaPaymentService != null) {
-							if(props.getPin() != null) {
-								mpesaPaymentService.setPin(props.getPin());
-								mpesaPaymentService.setCService(connectedModem.getCService());
-								mpesaPaymentService.initDaosAndServices(pluginController);
-								ui.getFrontlineController().getEventBus().registerObserver(mpesaPaymentService);
-								pluginController.setPaymentService(mpesaPaymentService);
+					if(props.getSmsModemSerial()!=null){
+						if(props.getSmsModemSerial().equals(connectedModem.getSerial())) {
+							// We've just connected the configured device, so start up the payment service...
+							//...if it's not already running!
+							MpesaPaymentService mpesaPaymentService = (MpesaPaymentService) props.initPaymentService();
+							if(mpesaPaymentService != null) {
+								if(props.getPin() != null) {
+									mpesaPaymentService.setPin(props.getPin());
+									mpesaPaymentService.setCService(connectedModem.getCService());
+									mpesaPaymentService.initDaosAndServices(pluginController);
+									ui.getFrontlineController().getEventBus().registerObserver(mpesaPaymentService);
+									pluginController.setPaymentService(mpesaPaymentService);
+								}
+								//String propPaymentService = ;
+								//String propPin = props.getPin();
+								
+								// TODO configure the payment service from the properties file
+								// TODO set the payment service in the plugin controller
+								// TODO start the payment service
+							} else {
+								ui.alert("Please setup payment service");
 							}
-							//String propPaymentService = ;
-							//String propPin = props.getPin();
-							
-							// TODO configure the payment service from the properties file
-							// TODO set the payment service in the plugin controller
-							// TODO start the payment service
-						} else {
-							ui.alert("Please setup payment service");
-						}
+						}	
+					} else {
+						ui.alert("Please setup payment service");
 					}
 				}
 			}.execute();
