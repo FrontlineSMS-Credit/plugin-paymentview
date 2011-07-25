@@ -49,11 +49,10 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	
 	public Object getRow(MpesaPaymentService paymentService) {
 		Object row = ui.createTableRow(paymentService);
-		//Object portNumber = ui.createTableCell(paymentService.);
-	    Object paymentServiceName = ui.createTableCell(paymentService.toString());
-		//Object balance = ui.createTableCell(paymentService.getBalance().toString());
+		Object paymentServiceName = ui.createTableCell(paymentService.toString());
+		Object balance = ui.createTableCell(paymentService.getBalance().toString());
 		ui.add(row, paymentServiceName);
-		//ui.add(row, balance);
+		ui.add(row, balance);
 		return row;
 	}
 
