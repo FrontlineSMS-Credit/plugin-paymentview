@@ -34,7 +34,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	private static final Pattern PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = Pattern.compile(STR_PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN);
 	private static final String STR_BALANCE_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n"
 		+ "Your M-PESA balance was Ksh([,|.|\\d]+)\n"
-		+ "on (([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) at ([1]?\\d:[0-5]\\d) ([A|P]M))";
+		+ "on (([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) at (([1]?\\d:[0-5]\\d) ([A|P]M))";
 	
 	private static final Pattern BALANCE_REGEX_PATTERN = Pattern.compile(STR_BALANCE_REGEX_PATTERN);
 	
