@@ -2,6 +2,7 @@ package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.c
 
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.messaging.sms.modem.SmsModem;
+import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceStartedNotification;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
