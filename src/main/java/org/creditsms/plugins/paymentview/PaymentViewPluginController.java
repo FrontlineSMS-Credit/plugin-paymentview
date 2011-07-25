@@ -26,8 +26,8 @@ import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
+import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
-import org.creditsms.plugins.paymentview.authorizationcode.AuthorizationProperties;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
@@ -38,6 +38,8 @@ import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.paymentsettings.PaymentSettingsProperties;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
+import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.AuthorizationProperties;
+import org.creditsms.plugins.paymentview.utils.PvUtils;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -213,4 +215,17 @@ public class PaymentViewPluginController extends BasePluginController
 //			}.execute();
 		}
 	}
+
+	public Logger getLogger(Class clazz) {
+		return PvUtils.getLogger(clazz);
+	}
+	
+	/*
+	public class PaymentServiceStartedNotification implements FrontlineEventNotification{
+		private MpesaPaymentService paymentService;
+		PaymentServiceStartedNotification(MpesaPaymentService paymentService){
+			this.paymentService = paymentService;
+		}
+	}
+	*/
 }

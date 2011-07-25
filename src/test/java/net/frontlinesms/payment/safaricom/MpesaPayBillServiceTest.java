@@ -1,10 +1,8 @@
 package net.frontlinesms.payment.safaricom;
 
-import org.smslib.handler.CATHandler_Wavecom_Stk;
 
 public class MpesaPayBillServiceTest extends
 		MpesaPaymentServiceTest<MpesaPayBillService> {
-	private CATHandler_Wavecom_Stk h;
 	
 	@Override
 	protected MpesaPayBillService createNewTestClass() {

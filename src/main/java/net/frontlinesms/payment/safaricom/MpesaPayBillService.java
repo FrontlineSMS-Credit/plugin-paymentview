@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
+import net.frontlinesms.payment.PaymentJob;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 
@@ -29,6 +30,14 @@ public class MpesaPayBillService extends MpesaPaymentService {
 	private static final Pattern BALANCE_REGEX_PATTERN = Pattern.compile(STR_BALANCE_REGEX_PATTERN);
 	protected boolean isValidBalanceMessage(FrontlineMessage message){
 		return BALANCE_REGEX_PATTERN.matcher(message.getTextContent()).matches();
+	}
+	
+	protected void processBalance(FrontlineMessage message){
+		new PaymentJob() {
+			public void run() {
+				
+			}
+		}.execute();
 	}
 	
 	@Override
