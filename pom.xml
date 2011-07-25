@@ -4,7 +4,7 @@
 	<groupId>net.frontlinesms.plugins.credit</groupId>
 	<artifactId>frontlinesms-plugin-credit</artifactId>
 	<name>FrontlineSMS CreditSMS Plugin</name>
-	<version>0.01.2-SNAPSHOT</version>
+	<version>0.01.3-SNAPSHOT</version>
 	<description>CreditSMS plugin for FrontlineSMS</description>
 	<parent>
 		<groupId>net.frontlinesms.core</groupId>
