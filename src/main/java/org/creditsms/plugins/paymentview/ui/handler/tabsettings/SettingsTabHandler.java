@@ -2,11 +2,13 @@ package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
 import java.io.IOException;
 
+import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
 import net.frontlinesms.payment.PaymentServiceStartedNotification;
+import net.frontlinesms.payment.PaymentServiceStoppedNotification;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService.BalanceFraudNotification;
 import net.frontlinesms.ui.UiDestroyEvent;
@@ -27,12 +29,14 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	private Object settingsTab;
 	private Object settingsTableComponent;
 	private final PaymentViewPluginController pluginController;
+	private EventBus eventBus;
 
 	public SettingsTabHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui);
 		this.pluginController = pluginController;
 		
-		ui.getFrontlineController().getEventBus().registerObserver(this);
+		eventBus = ui.getFrontlineController().getEventBus();
+		eventBus.registerObserver(this);
 		init();
 	}
 
@@ -50,8 +54,9 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	public Object getRow(MpesaPaymentService paymentService) {
 		Object row = ui.createTableRow(paymentService);
 		Object paymentServiceName = ui.createTableCell(paymentService.toString());
-		Object balance = ui.createTableCell(paymentService.getBalance().toString());
+		Object balance = ui.createTableCell(paymentService.getBalance().getBalanceAmount().toString());
 		ui.add(row, paymentServiceName);
+		ui.add(row, ui.createTableCell("Not configured"));
 		ui.add(row, balance);
 		return row;
 	}
@@ -80,7 +85,18 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	}
 	
 	public void deleteAccount() {
-		// FIXME this method's contents appeared to have nothing to do with accounts
+		Object selectedItem = this.ui.getSelectedItem(settingsTableComponent);
+		if (selectedItem != null) {
+			PaymentService __paymentService = ui.getAttachedObject(selectedItem, PaymentService.class);
+			//just before
+			__paymentService.stop();
+			//then notify listeners 
+			eventBus.notifyObservers(new PaymentServiceStoppedNotification(__paymentService));
+			//memory leaks?
+			pluginController.setPaymentService(null);
+		}else{
+			ui.alert("Please select an account to delete.");
+		}
 	}
 
 	public void notify(final FrontlineEventNotification notification) {
@@ -92,9 +108,12 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 				}else if (notification instanceof PaymentServiceStartedNotification) {
 					SettingsTabHandler.this.refresh();
 					ui.setEnabled(ui.find(settingsTab, BTN_CREATE_NEW_SERVICE), false);
+				}else if (notification instanceof PaymentServiceStoppedNotification) {
+					SettingsTabHandler.this.refresh();
+					ui.setEnabled(ui.find(settingsTab, BTN_CREATE_NEW_SERVICE), true);
 				}else if(notification instanceof BalanceFraudNotification){
 					ui.alert(((BalanceFraudNotification)notification).getMessage());
-					SettingsTabHandler.this.refresh();//Hoping this will be moved to the new Log Tab
+					SettingsTabHandler.this.refresh();
 				}else if (notification instanceof UiDestroyEvent) {
 					if(((UiDestroyEvent) notification).isFor(ui)) {
 						ui.getFrontlineController().getEventBus().unregisterObserver(SettingsTabHandler.this);

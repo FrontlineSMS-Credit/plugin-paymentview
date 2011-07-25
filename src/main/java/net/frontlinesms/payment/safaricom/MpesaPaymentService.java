@@ -462,6 +462,11 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	}
 	
 //> DESTROY
+	public void stop() {
+		deinit();
+		//Other stuff here
+	}
+	
 	public void deinit(){
 		eventBus.unregisterObserver(this);
 	}

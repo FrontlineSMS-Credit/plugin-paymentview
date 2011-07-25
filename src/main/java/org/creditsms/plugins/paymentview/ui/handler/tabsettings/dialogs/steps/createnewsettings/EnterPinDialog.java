@@ -76,9 +76,11 @@ public class EnterPinDialog extends BaseDialog {
 	public void create() {
 		EventBus eventBus = ui.getFrontlineController().getEventBus();
 		eventBus.registerObserver(paymentService);
-		eventBus.notifyObservers(new PaymentServiceStartedNotification());
 		
+		//then
 		pluginController.setPaymentService(paymentService);
+		//then
+		eventBus.notifyObservers(new PaymentServiceStartedNotification(paymentService));
 		
 		ui.alert("The Payment service has been created successfully!");
 		removeDialog(ui.find(DLG_VERIFICATION_CODE));
