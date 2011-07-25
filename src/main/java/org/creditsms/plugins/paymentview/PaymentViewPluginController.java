@@ -29,6 +29,7 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
@@ -60,6 +61,7 @@ public class PaymentViewPluginController extends BasePluginController
 	private OutgoingPaymentDao outgoingPaymentDao;
 	private TargetDao targetDao;
 	private ServiceItemDao serviceItemDao;
+	private LogMessageDao logMessageDao;
 	
 	private TargetAnalytics targetAnalytics;
 	
@@ -89,6 +91,7 @@ public class PaymentViewPluginController extends BasePluginController
 		outgoingPaymentDao 	= (OutgoingPaymentDao) applicationContext.getBean("outgoingPaymentDao");
 		serviceItemDao 		= (ServiceItemDao) applicationContext.getBean("serviceItemDao");
 		targetDao 			= (TargetDao) applicationContext.getBean("targetDao");
+		logMessageDao       = (LogMessageDao) applicationContext.getBean("logMessageDao");
 		
 		targetAnalytics = new TargetAnalytics();
 		targetAnalytics.setIncomingPaymentDao(incomingPaymentDao);
@@ -149,6 +152,10 @@ public class PaymentViewPluginController extends BasePluginController
 
 	public ServiceItemDao getServiceItemDao() {
 		return serviceItemDao;
+	}
+	
+	public LogMessageDao getLogMessageDao() {
+		return logMessageDao;
 	}
 	
 	public UiGeneratorController getUiGeneratorController() {
