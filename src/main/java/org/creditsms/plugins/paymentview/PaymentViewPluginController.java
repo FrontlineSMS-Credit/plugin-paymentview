@@ -16,7 +16,6 @@ import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
-import net.frontlinesms.messaging.sms.SmsServiceStatus;
 import net.frontlinesms.messaging.sms.events.SmsServiceStatusNotification;
 import net.frontlinesms.messaging.sms.modem.SmsModemStatus;
 import net.frontlinesms.payment.PaymentService;
@@ -26,7 +25,6 @@ import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.authorizationcode.AuthorizationProperties;
@@ -193,26 +191,26 @@ public class PaymentViewPluginController extends BasePluginController
 				((SmsServiceStatusNotification) notification).getStatus() instanceof SmsModemStatus &&
 				((SmsModemStatus) ((SmsServiceStatusNotification) notification).getStatus()) == SmsModemStatus.CONNECTED) {
 			// TODO this should be done on a thread other than the UI Event Thread
-			final String serial = ((SmsServiceStatusNotification) notification).getModemSerial();
-			new FrontlineUiUpateJob() {
-				public void run() {
-					PaymentSettingsProperties props = PaymentSettingsProperties.getInstance();
-					if(props.getSmsModem().equals(serial)) {
-						// We've just connected the configured device, so start up the payment service...
-						//...if it's not already running!
-						if(getPaymentService() == null) {
-							String propPaymentService = paymentSettingsProp.getPaymentService();
-							String propPin = paymentSettingsProp.getPin();
-							String propSerial = paymentSettingsProp.getSmsModem();
-							
-							
-							// TODO configure the payment service from the properties file
-							// TODO set the payment service in the plugin controller
-							// TODO start the payment service
-						}
-					}
-				}
-			}.execute();
+//			final String serial = ((SmsServiceStatusNotification) notification).getModemSerial();
+//			new FrontlineUiUpateJob() {
+//				public void run() {
+//					PaymentSettingsProperties props = PaymentSettingsProperties.getInstance();
+//					if(props.getSmsModem().equals(serial)) {
+//						// We've just connected the configured device, so start up the payment service...
+//						//...if it's not already running!
+//						if(getPaymentService() == null) {
+//							String propPaymentService = paymentSettingsProp.getPaymentService();
+//							String propPin = paymentSettingsProp.getPin();
+//							String propSerial = paymentSettingsProp.getSmsModem();
+//							
+//							
+//							// TODO configure the payment service from the properties file
+//							// TODO set the payment service in the plugin controller
+//							// TODO start the payment service
+//						}
+//					}
+//				}
+//			}.execute();
 		}
 	}
 }
