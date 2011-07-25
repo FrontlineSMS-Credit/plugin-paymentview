@@ -13,6 +13,8 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.IncomingPaymentsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.AnalyticsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabexport.ExportTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tablog.LogTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.OutgoingPaymentsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.SettingsTabHandler;
 
@@ -38,6 +40,8 @@ public class PaymentViewThinletTabController extends
 	private Object paymentViewTab;
 
 	private PvDebugTabController cdtController;
+	private ExportTabHandler exportTab;
+	private LogTabHandler logsTab;
 
 	/**
 	 * 
@@ -69,13 +73,12 @@ public class PaymentViewThinletTabController extends
 		outgoingPayTab.refresh();
 		ui.add(mainPane, outgoingPayTab.getTab());
 
-		/** UNCOMMENT FOR VERSION 0.1.3 
-		* exportTab = new ExportTabHandler(ui, getPluginController());
-		* exportTab.refresh();
-		* ui.add(mainPane, exportTab.getTab());
-		* 
+		/* UNCOMMENT FOR VERSION 0.1.3... Well, not sure, trash this? 
+		exportTab = new ExportTabHandler(ui, getPluginController());
+		exportTab.refresh();
+		ui.add(mainPane, exportTab.getTab());
 		*/
-
+		
 		analyticsTab = new AnalyticsTabHandler(ui, getPluginController());
 		analyticsTab.refresh();
 		ui.add(mainPane, analyticsTab.getTab());
@@ -83,6 +86,10 @@ public class PaymentViewThinletTabController extends
 		settingsTab = new SettingsTabHandler(ui, getPluginController());
 		//settingsTab.refresh();
 		ui.add(mainPane, settingsTab.getTab());
+		
+		logsTab = new LogTabHandler(ui, getPluginController());
+		logsTab.refresh();
+		ui.add(mainPane, logsTab.getTab());
 		
 		//For Tests Only
 		if(BuildProperties.getInstance().isSnapshot()) {
