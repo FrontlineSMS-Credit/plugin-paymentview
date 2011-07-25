@@ -38,7 +38,6 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 	}
 	
 	private void setUpPaymentServices(Object cmbSelectPaymentService) {
-		//TODO: We should think of having modules at this case;Some Metaprogramming in the house!!
 		MpesaPaymentService mpesaPersonal = new MpesaPersonalService();
 		Object comboboxChoice1 = ui.createComboboxChoice(mpesaPersonal.toString(), mpesaPersonal);
 		
@@ -63,7 +62,7 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 	}
 	
 	private void cleanUp() {
-		//Memory Leaks; Should the Payment Services be Singletons
+		//Memory Leaks; Should the Payment Services be Singletons?
 	}
 
 //> ACCESSORS

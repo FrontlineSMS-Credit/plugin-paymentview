@@ -26,10 +26,9 @@ import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
+import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
-import org.creditsms.plugins.paymentview.authorizationcode.AuthorizationProperties;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
@@ -40,6 +39,8 @@ import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.paymentsettings.PaymentSettingsProperties;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
+import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.AuthorizationProperties;
+import org.creditsms.plugins.paymentview.utils.PvUtils;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -193,9 +194,9 @@ public class PaymentViewPluginController extends BasePluginController
 			// TODO this should be done on a thread other than the UI Event Thread
 			final SmsModem connectedModem = ((SmsModemStatusNotification) notification).getService();
 			final PaymentViewPluginController pluginController = this;
-			new FrontlineUiUpateJob() {
-				public void run() {
-					PaymentSettingsProperties props = PaymentSettingsProperties.getInstance();
+//				public void run() {
+//					PaymentSettingsProperties props = PaymentSettingsProperties.getInstance();
+//					if(props.getSmsModem().equals(serial)) {
 					if(props.getSmsModemSerial()!=null){
 						if(props.getSmsModemSerial().equals(connectedModem.getSerial())) {
 							// We've just connected the configured device, so start up the payment service...
@@ -221,13 +222,22 @@ public class PaymentViewPluginController extends BasePluginController
 						}	
 					} else {
 						ui.alert("Please setup payment service");
-					}
-				}
-			}.execute();
+	}
+
+	public Logger getLogger(Class<?> clazz) {
+		return PvUtils.getLogger(clazz);
+	}
+	
+	/*
+	public class PaymentServiceStartedNotification implements FrontlineEventNotification{
+		private MpesaPaymentService paymentService;
+		PaymentServiceStartedNotification(MpesaPaymentService paymentService){
+			this.paymentService = paymentService;
 		}
 	}
 
 	public FrontlineSMS getFrontlineController() { // TODO this method shouldn't really be here :)
 		return this.frontlineController;
 	}
+	*/
 }

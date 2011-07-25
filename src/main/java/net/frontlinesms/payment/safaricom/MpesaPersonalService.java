@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.ui.events.FrontlineUiUpateJob;
+import net.frontlinesms.payment.PaymentJob;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
@@ -16,7 +16,7 @@ import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 
 public class MpesaPersonalService extends MpesaPaymentService {
 	
-//> REGEX PATTERN CONSTANTS
+	//> REGEX PATTERN CONSTANTS
 	private static final String STR_PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n" +
 			"You have received Ksh[,|.|\\d]+ from\n([A-Za-z ]+) 2547[\\d]{8}\non " +
 			"(([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) (at) ([1]?\\d:[0-5]\\d) (AM|PM)\n" +
@@ -33,8 +33,8 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	
 	private static final Pattern PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = Pattern.compile(STR_PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN);
 	private static final String STR_BALANCE_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n"
-		+ "Your M-PESA balance was Ksh([,|.|\\d]+\n"
-		+ "on (([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) at ([1]?\\d:[0-5]\\d) ([A|P]M))";
+		+ "Your M-PESA balance was Ksh([,|.|\\d]+)\n"
+		+ "on (([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) at (([1]?\\d:[0-5]\\d) ([A|P]M))";
 	
 	private static final Pattern BALANCE_REGEX_PATTERN = Pattern.compile(STR_BALANCE_REGEX_PATTERN);
 	
@@ -50,16 +50,16 @@ public class MpesaPersonalService extends MpesaPaymentService {
 		if (isValidOutgoingPaymentConfirmation(message)) {
 			processOutgoingPayment(message);
 		}else if (isFailedMpesaPayment(message)){
-			
+			//FIXME:Implement?
 		}
 	}
 	
 	private boolean isFailedMpesaPayment(final FrontlineMessage message) {
 		return MPESA_PAYMENT_FAILURE_PATTERN.matcher(message.getTextContent()).matches();
 	}
-
+	
 	private void processOutgoingPayment(final FrontlineMessage message) {
-		new FrontlineUiUpateJob() {
+		new PaymentJob() {
 			public void run() {
 				try {				
 					// Retrieve the corresponding outgoing payment with status UNCONFIRMED
@@ -73,20 +73,42 @@ public class MpesaPersonalService extends MpesaPaymentService {
 						outgoingPayment.setTimeConfirmed(getTimePaid(message, true).getTime());
 						outgoingPayment.setStatus(OutgoingPayment.Status.CONFIRMED);
 						
+						performOutgoingPaymentFraudCheck(message, outgoingPayment);
+						
 						//Update outgoing payment
 						outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
 					} else {
 						pvLog.warn("No unconfirmed outgoing payment for the following confirmation message: " + message.getTextContent());
 					}
 				} catch (IllegalArgumentException ex) {
-					log.warn("Message failed to parse; likely incorrect format", ex);
+					pvLog.warn("Message failed to parse; likely incorrect format", ex);
 					throw new RuntimeException(ex);
 				} catch (Exception ex) {
-					log.error("Unexpected exception parsing outgoing payment SMS.", ex);
+					pvLog.error("Unexpected exception parsing outgoing payment SMS.", ex);
 					throw new RuntimeException(ex);
 				}
 			}
 		}.execute();
+	}
+	
+	synchronized void performOutgoingPaymentFraudCheck(final FrontlineMessage message,
+			final OutgoingPayment outgoingPayment) {
+		BigDecimal tempBalanceAmount = balance.getBalanceAmount();
+		
+		//check is: Let Previous Balance be p, Current Balance be c and Amount sent be a
+		//c == p - a
+		//It might be wise that
+		BigDecimal currentBalance = getBalance(message);
+		BigDecimal expectedBalance = tempBalanceAmount.subtract(outgoingPayment.getAmountPaid());
+		
+		informUserOnFraud(currentBalance, expectedBalance, !expectedBalance.equals(currentBalance));
+		
+		balance.setBalanceAmount(currentBalance);
+		balance.setConfirmationCode(outgoingPayment.getConfirmationCode());
+		balance.setDateTime(new Date(outgoingPayment.getTimeConfirmed()));
+		balance.setBalanceUpdateMethod("Outgoing Payment");
+		
+		balance.updateBalance();
 	}
 	
 	private boolean isValidOutgoingPaymentConfirmation(FrontlineMessage message) {

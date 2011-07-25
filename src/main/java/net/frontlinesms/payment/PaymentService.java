@@ -32,4 +32,5 @@ public interface PaymentService {
 	
 	void makePayment(Client client, BigDecimal amount) throws PaymentServiceException;
 	void checkBalance() throws PaymentServiceException, IOException;
+	void stop();
 }

@@ -7,12 +7,12 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
+import net.frontlinesms.payment.PaymentJob;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
@@ -29,7 +29,7 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
-import org.creditsms.plugins.paymentview.utils.PvUtils;
+import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
 import org.smslib.handler.ATHandler.SynchronizedWorkflow;
@@ -49,10 +49,22 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	protected static final String PAID_BY_PATTERN = "([A-Za-z ]+)";
 	protected static final String ACCOUNT_NUMBER_PATTERN = "Account Number [\\d]+";
 	protected static final String RECEIVED_FROM = "received from";
+	
+	
+	private static final int BALANCE_ENQUIRY_CHARGE = 1;
+	private static final BigDecimal BD_BALANCE_ENQUIRY_CHARGE = new BigDecimal(BALANCE_ENQUIRY_CHARGE);
+	
+	private static final String STR_REVERSE_REGEX_PATTERN = 
+		"[A-Z0-9]+ Confirmed.\n"
+		+"Transaction [A-Z0-9]+\n"
+		+"has been reversed. Your\n"
+		+"account balance now\n"
+		+"[,|\\d]+Ksh";
+
+	private static final Pattern REVERSE_REGEX_PATTERN = Pattern.compile(STR_REVERSE_REGEX_PATTERN);
 
 //> INSTANCE PROPERTIES
-	protected final Logger log = FrontlineUtils.getLogger(this.getClass());
-	protected final Logger pvLog = PvUtils.getLogger(this.getClass());
+	protected Logger pvLog = Logger.getLogger(this.getClass());
 	private CService cService;
 
 	//> DAOs
@@ -64,8 +76,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	
 //> FIELDS
 	private String pin;
-	private BigDecimal balance;
-	private EventBus eventBus;
+	protected Balance balance;
+	protected EventBus eventBus;
 	private TargetAnalytics targetAnalytics;
 	
 //> STK & PAYMENT ACCOUNT
@@ -76,33 +88,33 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			this.cService.doSynchronized(new SynchronizedWorkflow<Object>() {
 				public Object run() throws SMSLibDeviceException, IOException {
 					try {
-						StkMenu mPesaMenu = getMpesaMenu();
-						StkMenu myAccountMenu = (StkMenu) cService.stkRequest(mPesaMenu.getRequest("My account"));
-						StkResponse getBalanceResponse = cService.stkRequest(myAccountMenu.getRequest("Show balance"));
+						final StkMenu mPesaMenu = getMpesaMenu();
+						final StkMenu myAccountMenu = (StkMenu) cService.stkRequest(mPesaMenu.getRequest("My account"));
+						final StkResponse getBalanceResponse = cService.stkRequest(myAccountMenu.getRequest("Show balance"));
 						assert getBalanceResponse instanceof StkValuePrompt;
-						StkValuePrompt pinRequired = (StkValuePrompt) getBalanceResponse;
+						final StkValuePrompt pinRequired = (StkValuePrompt) getBalanceResponse;
 						assert pinRequired.getPromptText().contains("Enter PIN");
 						cService.stkRequest(pinRequired.getRequest(), pin);
 						return null;
-					} catch(PaymentServiceException ex) {
+					} catch(final PaymentServiceException ex) {
 						throw new SMSLibDeviceException(ex);
 					}
 				}
 			});
 			// TODO check finalResponse is OK
 			// TODO wait for response...
-		} catch (SMSLibDeviceException ex) {
+		} catch (final SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new PaymentServiceException(e);
 		}
 	}
 
-	public void makePayment(Client client, BigDecimal amount) throws PaymentServiceException {
+	public void makePayment(final Client client, final BigDecimal amount) throws PaymentServiceException {
 		initIfRequired();
 		try {
-			StkMenu mPesaMenu = getMpesaMenu();
-			StkResponse sendMoneyResponse = cService.stkRequest(mPesaMenu.getRequest("Send money"));
+			final StkMenu mPesaMenu = getMpesaMenu();
+			final StkResponse sendMoneyResponse = cService.stkRequest(mPesaMenu.getRequest("Send money"));
 
 			StkValuePrompt enterPhoneNumberPrompt;
 			if(sendMoneyResponse instanceof StkMenu) {
@@ -111,33 +123,34 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 				enterPhoneNumberPrompt = (StkValuePrompt) sendMoneyResponse;
 			}
 
-			StkResponse enterPhoneNumberResponse = cService.stkRequest(enterPhoneNumberPrompt.getRequest(), client.getPhoneNumber());
+			final StkResponse enterPhoneNumberResponse = cService.stkRequest(enterPhoneNumberPrompt.getRequest(), client.getPhoneNumber());
 			if(!(enterPhoneNumberResponse instanceof StkValuePrompt)) throw new RuntimeException("Phone number rejected");
 			
-			StkResponse enterAmountResponse = cService.stkRequest(((StkValuePrompt) enterPhoneNumberResponse).getRequest(), amount.toString());
+			final StkResponse enterAmountResponse = cService.stkRequest(((StkValuePrompt) enterPhoneNumberResponse).getRequest(), amount.toString());
 			if(!(enterAmountResponse instanceof StkValuePrompt)) throw new RuntimeException("amount rejected");
 			
-			StkResponse enterPinResponse = cService.stkRequest(((StkValuePrompt) enterAmountResponse).getRequest(), this.pin);
+			final StkResponse enterPinResponse = cService.stkRequest(((StkValuePrompt) enterAmountResponse).getRequest(), this.pin);
 			if(!(enterPinResponse instanceof StkConfirmationPrompt)) throw new RuntimeException("PIN rejected");
 			
-			StkResponse confirmationResponse = cService.stkRequest(((StkConfirmationPrompt) enterPinResponse).getRequest());
+			final StkResponse confirmationResponse = cService.stkRequest(((StkConfirmationPrompt) enterPinResponse).getRequest());
 			if(confirmationResponse == StkResponse.ERROR) throw new RuntimeException("Payment failed for some reason.");
-		} catch (SMSLibDeviceException ex) {
+			//If I got Here, it means that I was successful, Right?
+		} catch (final SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new PaymentServiceException(e);
 		}
 	}
 
 //> EVENTBUS NOTIFY
 	@SuppressWarnings("rawtypes")
-	public void notify(FrontlineEventNotification notification) {
+	public void notify(final FrontlineEventNotification notification) {
 		if (!(notification instanceof EntitySavedNotification)) {
 			return;
 		}
 		
 		//And is of a saved message
-		Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
+		final Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
 		if (!(entity instanceof FrontlineMessage)) {
 			return;
 		}
@@ -146,19 +159,19 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	}
 
 	protected void processMessage(final FrontlineMessage message) {
-		//I have overrided this function...
+		//I have overridden this function...
 		if (isValidIncomingPaymentConfirmation(message)) {
 			processIncomingPayment(message);
 		}else if (isValidBalanceMessage(message)){
-			
-		} 
+			processBalance(message);
+		}else if (isValidReverseMessage(message)){
+			processReversePayment(message);
+		}
 	}
 
-//> INCOMING MESSAGE PAYMENT PROCESSORS
+	//> INCOMING MESSAGE PAYMENT PROCESSORS
 	private void processIncomingPayment(final FrontlineMessage message) {
-		new FrontlineUiUpateJob() {
-			// This probably shouldn't be a UI job,
-			// but it certainly should be done on a separate thread!
+		new PaymentJob() {
 			public void run() {
 				try {
 					final IncomingPayment payment = new IncomingPayment();
@@ -167,7 +180,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 					Account account = getAccount(message);
 					
 					if (account != null){
-						Target tgt = targetDao.getActiveTargetByAccount(account.getAccountNumber());
+						final Target tgt = targetDao.getActiveTargetByAccount(account.getAccountNumber());
 						if (tgt != null){//account is a non generic one
 							payment.setAccount(account);
 							payment.setTarget(tgt);
@@ -182,7 +195,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							// Check if the client has reached his targeted amount
 							if (targetAnalytics.getStatus(tgt.getId()) == TargetAnalytics.Status.COMPLETED){
 								//Update target.completedDate
-								Calendar calendar = Calendar.getInstance();
+								final Calendar calendar = Calendar.getInstance();
 								tgt.setCompletedDate(calendar.getTime());
 								targetDao.updateTarget(tgt);
 								// Update account.activeAccount
@@ -200,58 +213,165 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							payment.setPaymentBy(getPaymentBy(message));
 							payment.setTimePaid(getTimePaid(message));
 							
+							performIncominPaymentFraudCheck(message, payment);
+							
 							incomingPaymentDao.saveIncomingPayment(payment);
 						}
 					} else {
-					// paybill - account does not exist (typing error) but client exists
-					if (clientDao.getClientByPhoneNumber(getPhoneNumber(message))!=null){
-						//save the incoming payment in generic account
-						account = accountDao.getGenericAccountsByClientId(clientDao.getClientByPhoneNumber(getPhoneNumber(message)).getId());
-						pvLog.warn("The account does not exist for this client. Incoming payment has been saved in generic account. "+ message.getTextContent());
-					} else {
-						// client does not exist in the database -> create client and generic account
-						String paymentBy = getPaymentBy(message);
-						String[] names = paymentBy.split(" ");
-						String firstName = "";
-						String otherName = "";
-						if (names.length == 2){
-						firstName = paymentBy.split(" ")[0];
-						otherName = paymentBy.split(" ")[1];
+						// paybill - account does not exist (typing error) but client exists
+						if (clientDao.getClientByPhoneNumber(getPhoneNumber(message))!=null){
+							//save the incoming payment in generic account
+							account = accountDao.getGenericAccountsByClientId(clientDao.getClientByPhoneNumber(getPhoneNumber(message)).getId());
+							pvLog.warn("The account does not exist for this client. Incoming payment has been saved in generic account. "+ message.getTextContent());
 						} else {
-							otherName = paymentBy;
+							// client does not exist in the database -> create client and generic account
+							final String paymentBy = getPaymentBy(message);
+							final String[] names = paymentBy.split(" ");
+							String firstName = "";
+							String otherName = "";
+							if (names.length == 2){
+							firstName = paymentBy.split(" ")[0];
+							otherName = paymentBy.split(" ")[1];
+							} else {
+								otherName = paymentBy;
+							}
+							final Client client = new Client(firstName,otherName,getPhoneNumber(message));
+							clientDao.saveClient(client);
+							account = new Account(createAccountNumber(),client,false,true);
+							accountDao.saveAccount(account);
 						}
-						Client client = new Client(firstName,otherName,getPhoneNumber(message));
-						clientDao.saveClient(client);
-						account = new Account(createAccountNumber(),client,false,true);
-						accountDao.saveAccount(account);
-					}
-					
-					payment.setAccount(account);
-					payment.setTarget(null);
-					payment.setPhoneNumber(getPhoneNumber(message));
-					payment.setAmountPaid(getAmount(message));
-					payment.setConfirmationCode(getConfirmationCode(message));
-					payment.setPaymentBy(getPaymentBy(message));
-					payment.setTimePaid(getTimePaid(message));
-					incomingPaymentDao.saveIncomingPayment(payment);
 						
+						payment.setAccount(account);
+						payment.setTarget(null);
+						payment.setPhoneNumber(getPhoneNumber(message));
+						payment.setAmountPaid(getAmount(message));
+						payment.setConfirmationCode(getConfirmationCode(message));
+						payment.setPaymentBy(getPaymentBy(message));
+						payment.setTimePaid(getTimePaid(message));
+						incomingPaymentDao.saveIncomingPayment(payment);
 					}
-				} catch (IllegalArgumentException ex) {
-					log.warn("Message failed to parse; likely incorrect format", ex);
+				} catch (final IllegalArgumentException ex) {
+					pvLog.warn("Message failed to parse; likely incorrect format", ex);
 					throw new RuntimeException(ex);
-				} catch (Exception ex) {
-					log.error("Unexpected exception parsing incoming payment SMS.", ex);
+				} catch (final Exception ex) {
+					pvLog.error("Unexpected exception parsing incoming payment SMS.", ex);
 					throw new RuntimeException(ex);
 				}
 			}
 		}.execute();
 	}
 	
-	private boolean isValidIncomingPaymentConfirmation(FrontlineMessage message) {
+	private void processReversePayment(final FrontlineMessage message) {
+		new FrontlineUiUpateJob() {
+			public void run() {
+				try {
+					IncomingPayment incomingPayment = incomingPaymentDao.getByConfirmationCode(getReversedConfirmationCode(message));
+					incomingPayment.setActive(false);
+					
+					performPaymentReversalFraudCheck(
+						getConfirmationCode(message),
+						incomingPayment.getAmountPaid(), 
+						getReversedPaymentBalance(message)
+					);
+					
+					incomingPaymentDao.saveIncomingPayment(incomingPayment);
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}.execute();
+	}
+	
+	protected void processBalance(final FrontlineMessage message){
+		new PaymentJob() {
+			public void run() {
+				performBalanceEnquiryFraudCheck(message);
+			}
+		}.execute();
+	}
+	
+	private void performPaymentReversalFraudCheck(String confirmationCode, BigDecimal amountPaid, BigDecimal actualBalance) {
+		BigDecimal expectedBalance = balance.getBalanceAmount().subtract(amountPaid);
+		
+		performInform(actualBalance, expectedBalance);
+		
+		balance.setBalanceAmount(actualBalance);
+		balance.setBalanceUpdateMethod("PaymentReversal");
+		balance.setDateTime(new Date());
+		balance.setConfirmationCode(confirmationCode);
+		
+		balance.updateBalance();
+	}
+
+	private void performInform(BigDecimal actualBalance, BigDecimal expectedBalance) {
+		if (expectedBalance.compareTo(new BigDecimal(0)) >= 0) {//Now we don't want Mathematical embarrassment...
+			informUserOnFraud(expectedBalance, actualBalance, !expectedBalance.equals(actualBalance));
+		}else{
+			pvLog.error("Balance is way low: than expected " + actualBalance + " instead of : "+ expectedBalance);
+		}
+	}
+
+	private BigDecimal getReversedPaymentBalance(FrontlineMessage message) {
+		String firstMatch = getFirstMatch(message, "[,|\\d]+Ksh");
+		String strBalance = firstMatch.replace("Ksh", "").replace(",", "");
+		return new BigDecimal(strBalance);
+	}
+	
+	private String getReversedConfirmationCode(FrontlineMessage message) {
+		String firstMatch = getFirstMatch(message, "Transaction [A-Z0-9]+");
+		return firstMatch.replace("Transaction ", "").trim();
+	}
+	
+	synchronized void performBalanceEnquiryFraudCheck(final FrontlineMessage message) {
+		BigDecimal tempBalance = balance.getBalanceAmount();
+		BigDecimal expectedBalance = tempBalance.subtract(BD_BALANCE_ENQUIRY_CHARGE);
+		
+		BigDecimal actualBalance = getAmount(message);
+		performInform(actualBalance, expectedBalance);
+		
+		balance.setBalanceAmount(actualBalance);
+		balance.setConfirmationCode(getConfirmationCode(message));
+		balance.setDateTime(getTimePaid(message));
+		balance.setBalanceUpdateMethod("BalanceEnquiry");
+		balance.updateBalance();
+	}
+	
+	synchronized void performIncominPaymentFraudCheck(final FrontlineMessage message,
+			final IncomingPayment payment) {
+		//check is: Let Previous Balance be p, Current Balance be c and Amount received be a
+		final BigDecimal actualBalance = getBalance(message);
+		BigDecimal expectedBalance = payment.getAmountPaid().add(balance.getBalanceAmount());
+		
+		//c == p + a
+		performInform(actualBalance, expectedBalance);
+		
+		balance.setBalanceAmount(actualBalance);
+		balance.setConfirmationCode(payment.getConfirmationCode());
+		balance.setDateTime(new Date(payment.getTimePaid()));
+		balance.setBalanceUpdateMethod("IncomingPayment");
+		
+		balance.updateBalance();
+	}
+	
+	void informUserOnFraud(BigDecimal expected, BigDecimal actual, boolean fraudCommited) {
+		if (fraudCommited) {
+			String message = "Fraud commited? Was expecting balance as: "+expected+", But was "+actual;
+			pvLog.warn(message);
+			this.eventBus.notifyObservers(new BalanceFraudNotification(message));
+		}else{
+			pvLog.info("No Fraud occured!");
+		}
+	}
+	
+	private boolean isValidIncomingPaymentConfirmation(final FrontlineMessage message) {
 		if (!message.getSenderMsisdn().equals("MPESA")) {
 			return false;
 		}
 		return isMessageTextValid(message.getTextContent());
+	}
+	
+	private boolean isValidReverseMessage(FrontlineMessage message) {
+		return REVERSE_REGEX_PATTERN.matcher(message.getTextContent()).matches();
 	}
 	
 	abstract Date getTimePaid(FrontlineMessage message);
@@ -260,32 +380,42 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	abstract String getPaymentBy(FrontlineMessage message);
 	protected abstract boolean isValidBalanceMessage(FrontlineMessage message);
 	
-	BigDecimal getAmount(FrontlineMessage message) {
-		String amountWithKsh = getFirstMatch(message, AMOUNT_PATTERN);
+	BigDecimal getAmount(final FrontlineMessage message) {
+		final String amountWithKsh = getFirstMatch(message, AMOUNT_PATTERN);
 		return new BigDecimal(amountWithKsh.substring(3).replaceAll(",", ""));
 	}
 
-	String getPhoneNumber(FrontlineMessage message) {
+	BigDecimal getBalance(final FrontlineMessage message) {
+		try {
+	        final String balance_part = getFirstMatch(message, "balance is Ksh[,|.|\\d]+");
+	        final String amountWithKsh = balance_part.split("balance is ")[1];
+	        return new BigDecimal(amountWithKsh.substring(3).replaceAll(",", ""));
+		} catch(final ArrayIndexOutOfBoundsException ex) {
+		        throw new IllegalArgumentException(ex);
+		}
+	}	
+	
+	String getPhoneNumber(final FrontlineMessage message) {
 		return "+" + getFirstMatch(message, PHONE_PATTERN);
 	}
 
-	String getConfirmationCode(FrontlineMessage message) {
-		String firstMatch = getFirstMatch(message, CONFIRMATION_CODE_PATTERN);
+	String getConfirmationCode(final FrontlineMessage message) {
+		final String firstMatch = getFirstMatch(message, CONFIRMATION_CODE_PATTERN);
 		return firstMatch.replace(" Confirmed.", "").trim();
 	}
 
-	protected String getFirstMatch(String string, String regexMatcher) {
-		Matcher matcher = Pattern.compile(regexMatcher).matcher(string);
+	protected String getFirstMatch(final String string, final String regexMatcher) {
+		final Matcher matcher = Pattern.compile(regexMatcher).matcher(string);
 		matcher.find();
 		return matcher.group();
 	}
 
-	protected String getFirstMatch(FrontlineMessage message, String regexMatcher) {
+	protected String getFirstMatch(final FrontlineMessage message, final String regexMatcher) {
 		return getFirstMatch(message.getTextContent(), regexMatcher);
 	}
 			
 	@Override
-	public boolean equals(Object other) {
+	public boolean equals(final Object other) {
 		if (!(other instanceof PaymentService)){
 			return false;
 		}
@@ -303,7 +433,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 
 	private StkMenu getMpesaMenu() throws PaymentServiceException {
 		try {
-			StkResponse stkResponse = cService.stkRequest(StkRequest.GET_ROOT_MENU);
+			final StkResponse stkResponse = cService.stkRequest(StkRequest.GET_ROOT_MENU);
 			StkMenu rootMenu = null;
 			
 			if (stkResponse instanceof StkMenu) {
@@ -313,9 +443,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			}
 			
 			return  (StkMenu)cService.stkRequest(rootMenu.getRequest("M-PESA"));
-		} catch (SMSLibDeviceException ex) {
+		} catch (final SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new PaymentServiceException(e);
 		}
 	}
@@ -326,12 +456,17 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		// of identifying when it is and is not, we should perhaps implement this.
 		try {
 			this.cService.getAtHandler().stkInit();
-		} catch(Exception ex) {
+		} catch(final Exception ex) {
 			throw new PaymentServiceException(ex);
 		}
 	}
 	
-//> FINALIZE - FIXME what does FINALIZE refer to?  this word has spedcific technical meaning in java, so please do not use
+//> DESTROY
+	public void stop() {
+		deinit();
+		//Other stuff here
+	}
+	
 	public void deinit(){
 		eventBus.unregisterObserver(this);
 	}
@@ -341,32 +476,41 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		return pin;
 	}
 	
-	public void registerToEventBus(EventBus eventBus) {
+	public void registerToEventBus(final EventBus eventBus) {
 		if (eventBus != null) {
 			this.eventBus = eventBus;
 			this.eventBus.registerObserver(this);
 		}
 	}
 
-	public void setPin(String pin) {
+	public void setPin(final String pin) {
 		this.pin = pin;
 	}
 	
-	public void setCService(CService cService) {
+	public void setCService(final CService cService) {
 		this.cService = cService;
 	}
 	
-	public BigDecimal getBalance() {
+	public Balance getBalance() {
 		return balance;
 	}
 	
-	public void initDaosAndServices(PaymentViewPluginController pluginController) {
+	public void initDaosAndServices(final PaymentViewPluginController pluginController) {
 		this.accountDao = pluginController.getAccountDao();
 		this.clientDao = pluginController.getClientDao();
 		this.outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
 		this.targetDao = pluginController.getTargetDao();
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.targetAnalytics = pluginController.getTargetAnalytics();
+		
+		this.balance = Balance.getInstance().getLatest();
+		this.registerToEventBus(
+			pluginController.getUiGeneratorController()
+			.getFrontlineController().getEventBus()
+		);
+		
+		this.balance.setEventBus(this.eventBus);
+		this.pvLog = pluginController.getLogger(this.getClass());
 	}
 	
 	/**
@@ -380,5 +524,11 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			accountNumberGeneratedStr = String.format("%05d", ++ accountNumberGenerated);
 		}
 		return accountNumberGeneratedStr;
+	}
+	
+	public class BalanceFraudNotification implements FrontlineEventNotification{
+		private final String message;
+		public BalanceFraudNotification(String message){this.message=message;}
+		public String getMessage(){return message;}
 	}
 }

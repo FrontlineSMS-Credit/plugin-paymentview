@@ -1,7 +1,8 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings;
 
+import net.frontlinesms.events.EventBus;
 import net.frontlinesms.messaging.sms.modem.SmsModem;
-import net.frontlinesms.payment.PaymentService;
+import net.frontlinesms.payment.PaymentServiceStartedNotification;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -86,8 +87,13 @@ public class EnterPinDialog extends BaseDialog {
 	}
 	
 	public void create() {
-		ui.getFrontlineController().getEventBus().registerObserver(paymentService);
+		EventBus eventBus = ui.getFrontlineController().getEventBus();
+		eventBus.registerObserver(paymentService);
+		
+		//then
 		pluginController.setPaymentService(paymentService);
+		//then
+		eventBus.notifyObservers(new PaymentServiceStartedNotification(paymentService));
 		
 		ui.alert("The Payment service has been created successfully!");
 		removeDialog(ui.find(DLG_VERIFICATION_CODE));
