@@ -15,6 +15,7 @@ import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.payment.PaymentJob;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
+import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
 import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
@@ -49,11 +50,21 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	protected static final String ACCOUNT_NUMBER_PATTERN = "Account Number [\\d]+";
 	protected static final String RECEIVED_FROM = "received from";
 	
+	
 	private static final int BALANCE_ENQUIRY_CHARGE = 1;
 	private static final BigDecimal BD_BALANCE_ENQUIRY_CHARGE = new BigDecimal(BALANCE_ENQUIRY_CHARGE);
+	
+	private static final String STR_REVERSE_REGEX_PATTERN = 
+		"[A-Z0-9]+ Confirmed.\n"
+		+"Transaction [A-Z0-9]+\n"
+		+"has been reversed. Your\n"
+		+"account balance now\n"
+		+"[,|\\d]+Ksh";
+
+	private static final Pattern REVERSE_REGEX_PATTERN = Pattern.compile(STR_REVERSE_REGEX_PATTERN);
 
 //> INSTANCE PROPERTIES
-	protected Logger pvLog;
+	protected Logger pvLog = Logger.getLogger(this.getClass());
 	private CService cService;
 
 	//> DAOs
@@ -148,19 +159,19 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	}
 
 	protected void processMessage(final FrontlineMessage message) {
-		//I have overrided this function...
+		//I have overridden this function...
 		if (isValidIncomingPaymentConfirmation(message)) {
 			processIncomingPayment(message);
 		}else if (isValidBalanceMessage(message)){
 			processBalance(message);
-		} 
+		}else if (isValidReverseMessage(message)){
+			processReversePayment(message);
+		}
 	}
 
-//> INCOMING MESSAGE PAYMENT PROCESSORS
+	//> INCOMING MESSAGE PAYMENT PROCESSORS
 	private void processIncomingPayment(final FrontlineMessage message) {
 		new PaymentJob() {
-			// This probably shouldn't be a UI job,
-			// but it certainly should be done on a separate thread!
 			public void run() {
 				try {
 					final IncomingPayment payment = new IncomingPayment();
@@ -250,9 +261,28 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}.execute();
 	}
 	
+	private void processReversePayment(final FrontlineMessage message) {
+		new FrontlineUiUpateJob() {
+			public void run() {
+				try {
+					IncomingPayment incomingPayment = incomingPaymentDao.getByConfirmationCode(getReversedConfirmationCode(message));
+					incomingPayment.setActive(false);
+					
+					performPaymentReversalFraudCheck(
+						getConfirmationCode(message),
+						incomingPayment.getAmountPaid(), 
+						getReversedPaymentBalance(message)
+					);
+					
+					incomingPaymentDao.saveIncomingPayment(incomingPayment);
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}.execute();
+	}
+	
 	protected void processBalance(final FrontlineMessage message){
-		//TODO: On first run, should the user be told to update the
-		//balance by making an enquiry to M-PESA, or?
 		new PaymentJob() {
 			public void run() {
 				performBalanceEnquiryFraudCheck(message);
@@ -260,15 +290,47 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}.execute();
 	}
 	
+	private void performPaymentReversalFraudCheck(String confirmationCode, BigDecimal amountPaid, BigDecimal actualBalance) {
+		BigDecimal expectedBalance = balance.getBalanceAmount().subtract(amountPaid);
+		
+		performInform(actualBalance, expectedBalance);
+		
+		balance.setBalanceAmount(actualBalance);
+		balance.setBalanceUpdateMethod("PaymentReversal");
+		balance.setDateTime(new Date());
+		balance.setConfirmationCode(confirmationCode);
+		
+		balance.updateBalance();
+	}
+
+	private void performInform(BigDecimal actualBalance, BigDecimal expectedBalance) {
+		if (expectedBalance.compareTo(new BigDecimal(0)) >= 0) {//Now we don't want Mathematical embarrassment...
+			informUserOnFraud(expectedBalance, actualBalance, !expectedBalance.equals(actualBalance));
+		}else{
+			pvLog.error("Balance is way low: than expected " + actualBalance + " instead of : "+ expectedBalance);
+		}
+	}
+
+	private BigDecimal getReversedPaymentBalance(FrontlineMessage message) {
+		String firstMatch = getFirstMatch(message, "[,|\\d]+Ksh");
+		String strBalance = firstMatch.replace("Ksh", "").replace(",", "");
+		return new BigDecimal(strBalance);
+	}
+	
+	private String getReversedConfirmationCode(FrontlineMessage message) {
+		String firstMatch = getFirstMatch(message, "Transaction [A-Z0-9]+");
+		return firstMatch.replace("Transaction ", "").trim();
+	}
+	
 	synchronized void performBalanceEnquiryFraudCheck(final FrontlineMessage message) {
 		BigDecimal tempBalance = balance.getBalanceAmount();
 		BigDecimal expectedBalance = tempBalance.subtract(BD_BALANCE_ENQUIRY_CHARGE);
 		
 		BigDecimal actualBalance = getAmount(message);
-		informUserOnFraud(expectedBalance, actualBalance, !expectedBalance.equals(actualBalance));
+		performInform(actualBalance, expectedBalance);
 		
 		balance.setBalanceAmount(actualBalance);
-		balance.setConfirmationMessage(getConfirmationCode(message));
+		balance.setConfirmationCode(getConfirmationCode(message));
 		balance.setDateTime(getTimePaid(message));
 		balance.setBalanceUpdateMethod("BalanceEnquiry");
 		balance.updateBalance();
@@ -277,14 +339,14 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	synchronized void performIncominPaymentFraudCheck(final FrontlineMessage message,
 			final IncomingPayment payment) {
 		//check is: Let Previous Balance be p, Current Balance be c and Amount received be a
-		final BigDecimal currentBalance = getBalance(message);
+		final BigDecimal actualBalance = getBalance(message);
 		BigDecimal expectedBalance = payment.getAmountPaid().add(balance.getBalanceAmount());
 		
 		//c == p + a
-		informUserOnFraud(currentBalance, expectedBalance, !currentBalance.equals(expectedBalance));
+		performInform(actualBalance, expectedBalance);
 		
-		balance.setBalanceAmount(currentBalance);
-		balance.setConfirmationMessage(payment.getConfirmationCode());
+		balance.setBalanceAmount(actualBalance);
+		balance.setConfirmationCode(payment.getConfirmationCode());
 		balance.setDateTime(new Date(payment.getTimePaid()));
 		balance.setBalanceUpdateMethod("IncomingPayment");
 		
@@ -306,6 +368,10 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			return false;
 		}
 		return isMessageTextValid(message.getTextContent());
+	}
+	
+	private boolean isValidReverseMessage(FrontlineMessage message) {
+		return REVERSE_REGEX_PATTERN.matcher(message.getTextContent()).matches();
 	}
 	
 	abstract Date getTimePaid(FrontlineMessage message);
@@ -439,7 +505,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		);
 		
 		this.balance.setEventBus(this.eventBus);
-		//Would like to test using the log...
 		this.pvLog = pluginController.getLogger(this.getClass());
 	}
 	

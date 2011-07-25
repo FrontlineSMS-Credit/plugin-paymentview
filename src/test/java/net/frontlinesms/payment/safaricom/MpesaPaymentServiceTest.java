@@ -82,9 +82,8 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	protected PaymentViewPluginController pluginController;
 	private UiGeneratorController ui;
 	private TargetAnalytics targetAnalytics;
-	private E mpesaPaymentService;
+	protected E mpesaPaymentService;
 	protected Logger logger;
-	
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -168,10 +167,17 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		when(pluginController.getClientDao()).thenReturn(clientDao);
 		when(pluginController.getUiGeneratorController()).thenReturn(ui);
 		when(pluginController.getTargetAnalytics()).thenReturn(targetAnalytics);
+		
 		logger = mock(Logger.class);
 		when(pluginController.getLogger(any(Class.class))).thenReturn(logger);
 		
 		mpesaPaymentService.initDaosAndServices(pluginController);
+		
+		IncomingPayment incomingPayment = new IncomingPayment();
+		incomingPayment.setAmountPaid(new BigDecimal("1000"));
+		incomingPayment.setConfirmationCode("BC77RI604");
+		
+		when(incomingPaymentDao.getByConfirmationCode("BC77RI604")).thenReturn(incomingPayment);
 		
 		//Set up accounts, targets and clients
 		Set<Account> accounts1 = mockAccounts(ACCOUNTNUMBER_1_1);
@@ -254,6 +260,39 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		inOrder.verify(cService).stkRequest(pinRequiredRequest , "1234");
 	}
 	
+	public void testPaymentReversalProcessing(){
+		paymentReversalProcessing(
+				"DXAH67GH9 Confirmed.\n"
+				+"Transaction BC77RI604\n"
+				+"has been reversed. Your\n"
+				+"account balance now\n"
+				+"0Ksh",
+				"DXAH67GH9","BC77RI604");
+	}
+	
+	protected void paymentReversalProcessing(String messageText,
+			final String confirmationCode, final String reversedConfirmationCode) {
+		// then
+		assertTrue(mpesaPaymentService instanceof EventObserver);
+		
+		// when
+		mpesaPaymentService.notify(mockMessageNotification("MPESA", messageText));
+		
+		// then
+		WaitingJob.waitForEvent();
+		
+		verify(incomingPaymentDao).getByConfirmationCode(reversedConfirmationCode);
+		verify(incomingPaymentDao).saveIncomingPayment(new IncomingPayment() {
+			@Override
+			public boolean equals(Object that) {
+				if(!(that instanceof IncomingPayment)) return false;
+				IncomingPayment other = (IncomingPayment) that;
+				return other.getConfirmationCode().equals(reversedConfirmationCode);
+			}
+		});
+		
+	}
+
 	protected void testIncomingPaymentProcessing(String messageText,
 			final String phoneNo, final String accountNumber, final String amount,
 			final String confirmationCode, final String payedBy, final String datetime) {

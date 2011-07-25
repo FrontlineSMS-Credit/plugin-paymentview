@@ -35,7 +35,7 @@ public class BalanceProperties extends UserHomeFilePropertySet {
 	private synchronized Balance createBalanceObject(String balance_amount, String confirmation_code, Date datetime){
 		Balance balance = Balance.getInstance();
 		balance.setBalanceAmount(new BigDecimal(balance_amount));
-		balance.setConfirmationMessage(confirmation_code);
+		balance.setConfirmationCode(confirmation_code);
 		balance.setDateTime(datetime);
 		return balance;
 	}
