@@ -35,7 +35,10 @@ public class SettingsTabHandler extends BaseTabHandler {
 	
 	public Object getRow(MpesaPaymentService paymentService) {
 		Object row = ui.createTableRow(paymentService);
-		ui.add(row, "Hi there is something configured here.  I deleted the details.");
+		Object paymentServiceName = ui.createTableCell(paymentService.toString());
+		Object balance = ui.createTableCell(paymentService.getBalance().toString());
+		ui.add(row, paymentServiceName);
+		ui.add(row, balance);
 		return row;
 	}
 

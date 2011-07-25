@@ -64,6 +64,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	
 //> FIELDS
 	private String pin;
+	private BigDecimal balance;
 	private EventBus eventBus;
 	private TargetAnalytics targetAnalytics;
 	
@@ -148,7 +149,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		//I have overrided this function...
 		if (isValidIncomingPaymentConfirmation(message)) {
 			processIncomingPayment(message);
-		}
+		}else if (isValidBalanceMessage(message)){
+			
+		} 
 	}
 
 //> INCOMING MESSAGE PAYMENT PROCESSORS
@@ -255,6 +258,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	abstract boolean isMessageTextValid(String message);
 	abstract Account getAccount(FrontlineMessage message);
 	abstract String getPaymentBy(FrontlineMessage message);
+	protected abstract boolean isValidBalanceMessage(FrontlineMessage message);
 	
 	BigDecimal getAmount(FrontlineMessage message) {
 		String amountWithKsh = getFirstMatch(message, AMOUNT_PATTERN);
@@ -350,6 +354,10 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	
 	public void setCService(CService cService) {
 		this.cService = cService;
+	}
+	
+	public BigDecimal getBalance() {
+		return balance;
 	}
 	
 	public void initDaosAndServices(PaymentViewPluginController pluginController) {
