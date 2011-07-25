@@ -1,10 +1,11 @@
 package org.creditsms.plugins.paymentview.paymentsettings;
+import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.resources.UserHomeFilePropertySet;
 
 public class PaymentSettingsProperties extends UserHomeFilePropertySet {
-	private static final String SMS_MODEM = "sms.modem";
-	private static final String PAYMENT_SERVICE = "payment.service";
-	private static final String PIN = "ps.pin";
+	private static final String SMS_MODEM_SERIAL = "sms.modem.serial";
+	private static final String PAYMENT_SERVICE_CLASS = "payment.service.class";
+	private static final String PIN = "payment.service.pin";
 	private static final PaymentSettingsProperties INSTANCE = new PaymentSettingsProperties(); 
 	
 	private PaymentSettingsProperties() {
@@ -12,25 +13,29 @@ public class PaymentSettingsProperties extends UserHomeFilePropertySet {
 	}
 	
 	public void setSmsModem(String val)  {
-		setProperty(SMS_MODEM, val);
+		setProperty(SMS_MODEM_SERIAL, val);
 	}
 	
-	public String getSmsModem() {
-		String value = super.getProperty(SMS_MODEM);
+	public String getSmsModemSerial() {
+		String value = super.getProperty(SMS_MODEM_SERIAL);
 		if(value != null){
 			return value;
 		}
 		return null;
 	}
 	
-	public void setPaymentService(String val)  {
-		setProperty(PAYMENT_SERVICE, val);
+	public void setPaymentServiceClass(Class<? extends PaymentService> val)  {
+		setProperty(PAYMENT_SERVICE_CLASS, val.getName());
 	}
 	
-	public String getPaymentService() {
-		String value = super.getProperty(PAYMENT_SERVICE);
+	public PaymentService initPaymentService() {
+		String value = super.getProperty(PAYMENT_SERVICE_CLASS);
 		if(value != null){
-			return value;
+			try {
+				return (PaymentService) Class.forName(value).newInstance();
+			} catch (Exception ex) {
+				LOG.warn("Unable to load payment service specified in properties file.", ex);
+			}
 		}
 		return null;
 	}

@@ -65,7 +65,7 @@ public class EnterPinDialog extends BaseDialog {
 	private void persistPaymentService(String pin){
 		String paymentService = this.paymentService.toString();
 		String modemSerial = this.modem.getSerial().toString();
-		paymentSettingsPropPin.setPaymentService(paymentService);
+		paymentSettingsPropPin.setPaymentServiceClass(paymentService);
 		paymentSettingsPropPin.setSmsModem(modemSerial);
 		paymentSettingsPropPin.setPin(pin);
 		paymentSettingsPropPin.saveToDisk();

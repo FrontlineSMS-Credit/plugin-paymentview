@@ -16,8 +16,8 @@ import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
-import net.frontlinesms.messaging.sms.SmsServiceStatus;
-import net.frontlinesms.messaging.sms.events.SmsServiceStatusNotification;
+import net.frontlinesms.messaging.sms.events.SmsModemStatusNotification;
+import net.frontlinesms.messaging.sms.modem.SmsModem;
 import net.frontlinesms.messaging.sms.modem.SmsModemStatus;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
@@ -74,9 +74,8 @@ public class PaymentViewPluginController extends BasePluginController
 	private UiGeneratorController ui;
 	
 	/** Currently we will allow only one payment service to be configured TO MAKE THINGS SIMPLER */
-	private MpesaPaymentService paymentService;
+	private PaymentService paymentService;
 	private FrontlineSMS frontlineController;
-	private PaymentSettingsProperties paymentSettingsProp = PaymentSettingsProperties.getInstance();
 	
 	/** @see net.frontlinesms.plugins.PluginController#deinit() */
 	public void deinit() {
@@ -173,15 +172,15 @@ public class PaymentViewPluginController extends BasePluginController
 		return targetAnalytics;
 	}
 
-	public List<MpesaPaymentService> getPaymentServices() {
+	public List<PaymentService> getPaymentServices() {
 		if(this.paymentService == null) return Collections.emptyList();
 		else {
-			return Arrays.asList(new MpesaPaymentService[] { this.paymentService });
+			return Arrays.asList(new PaymentService[] { this.paymentService });
 		}
 	}
 
-	public void setPaymentService(MpesaPaymentService paymentService) {
-		this.paymentService = paymentService;
+	public void setPaymentService(PaymentService service) {
+		this.paymentService = service;
 	}
 
 	public PaymentService getPaymentService() {
@@ -189,30 +188,42 @@ public class PaymentViewPluginController extends BasePluginController
 	}
 
 	public void notify(FrontlineEventNotification notification) {
-		if(notification instanceof SmsServiceStatusNotification &&
-				((SmsServiceStatusNotification) notification).getStatus() instanceof SmsModemStatus &&
-				((SmsModemStatus) ((SmsServiceStatusNotification) notification).getStatus()) == SmsModemStatus.CONNECTED) {
+		if(notification instanceof SmsModemStatusNotification &&
+				((SmsModemStatusNotification) notification).getStatus() == SmsModemStatus.CONNECTED) {
 			// TODO this should be done on a thread other than the UI Event Thread
-			final String serial = ((SmsServiceStatusNotification) notification).getModemSerial();
+			final SmsModem connectedModem = ((SmsModemStatusNotification) notification).getService();
+			final PaymentViewPluginController pluginController = this;
 			new FrontlineUiUpateJob() {
 				public void run() {
 					PaymentSettingsProperties props = PaymentSettingsProperties.getInstance();
-					if(props.getSmsModem().equals(serial)) {
+					if(props.getSmsModemSerial().equals(connectedModem.getSerial())) {
 						// We've just connected the configured device, so start up the payment service...
 						//...if it's not already running!
-						if(getPaymentService() == null) {
-							String propPaymentService = paymentSettingsProp.getPaymentService();
-							String propPin = paymentSettingsProp.getPin();
-							String propSerial = paymentSettingsProp.getSmsModem();
-							
+						MpesaPaymentService mpesaPaymentService = (MpesaPaymentService) props.initPaymentService();
+						if(mpesaPaymentService != null) {
+							if(props.getPin() != null) {
+								mpesaPaymentService.setPin(props.getPin());
+								mpesaPaymentService.setCService(connectedModem.getCService());
+								mpesaPaymentService.initDaosAndServices(pluginController);
+								ui.getFrontlineController().getEventBus().registerObserver(mpesaPaymentService);
+								pluginController.setPaymentService(mpesaPaymentService);
+							}
+							//String propPaymentService = ;
+							//String propPin = props.getPin();
 							
 							// TODO configure the payment service from the properties file
 							// TODO set the payment service in the plugin controller
 							// TODO start the payment service
+						} else {
+							ui.alert("Please setup payment service");
 						}
 					}
 				}
 			}.execute();
 		}
+	}
+
+	public FrontlineSMS getFrontlineController() { // TODO this method shouldn't really be here :)
+		return this.frontlineController;
 	}
 }
