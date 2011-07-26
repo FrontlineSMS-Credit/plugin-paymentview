@@ -1,6 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings;
 
 import net.frontlinesms.messaging.sms.modem.SmsModem;
+import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPayBillService;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPersonalService;
@@ -38,14 +39,12 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 	}
 	
 	private void setUpPaymentServices(Object cmbSelectPaymentService) {
-		//TODO: We should think of having modules at this case;Some Metaprogramming in the house!!
 		MpesaPaymentService mpesaPersonal = new MpesaPersonalService();
 		Object comboboxChoice1 = ui.createComboboxChoice(mpesaPersonal.toString(), mpesaPersonal);
 		
 		MpesaPaymentService mpesaPaybill = new MpesaPayBillService();
 		Object comboboxChoice2 = ui.createComboboxChoice(mpesaPaybill.toString(), mpesaPaybill);
-		
-		
+
 		ui.add(cmbSelectPaymentService, comboboxChoice1);
 		ui.add(cmbSelectPaymentService, comboboxChoice2);
 	}
@@ -64,14 +63,14 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 	}
 	
 	private void cleanUp() {
-		//Memory Leaks; Should the Payment Services be Singletons
+		//Memory Leaks; Should the Payment Services be Singletons?
 	}
 
 //> ACCESSORS
-	MpesaPaymentService getPaymentService() {
+	Class<? extends PaymentService> getPaymentService() {
 		Object paymentServiceCombobox = getServiceCombobox();
 		Object selectedItem = ui.getSelectedItem(paymentServiceCombobox);
-		return ui.getAttachedObject(selectedItem, MpesaPaymentService.class);
+		return ui.getAttachedObject(selectedItem, MpesaPaymentService.class).getClass();
 	}
 
 	private Object getServiceCombobox() {
@@ -95,7 +94,7 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 	}
 
 	private Object getModemCombobox() {
-		return ui.find("cmbDevices");
+		return ui.find(dialogComponent, "cmbDevices");
 	}
 
 	public void setModem(SmsModem modem) {

@@ -18,15 +18,18 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.junit.BaseTestCase;
 import net.frontlinesms.payment.PaymentServiceException;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
+import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.domain.Account;
@@ -39,6 +42,7 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
+import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance;
 import org.mockito.InOrder;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
@@ -64,6 +68,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	
 	private CService cService;
 	private CATHandler_Wavecom_Stk aTHandler;
+	protected Balance balance;
 	
 	private StkMenuItem myAccountMenuItem;
 	private StkRequest mpesaMenuItemRequest;
@@ -76,15 +81,17 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	private IncomingPaymentDao incomingPaymentDao;
 	protected OutgoingPaymentDao outgoingPaymentDao;
 	protected LogMessageDao logMessageDao;
-	private PaymentViewPluginController pluginController;
 	private UiGeneratorController ui;
 	private TargetAnalytics targetAnalytics;
-	private E mpesaPaymentService;
-	
+	protected E mpesaPaymentService;
+	protected Logger logger;
+	private PaymentViewPluginController pluginController;
 	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		
+		balance = Balance.getInstance();
 		
 		this.mpesaPaymentService = createNewTestClass();
 		this.cService = mock(CService.class);
@@ -149,6 +156,13 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		pluginController = mock(PaymentViewPluginController.class);
 		ui = mock(UiGeneratorController.class);
 		
+		FrontlineSMS fsms = mock(FrontlineSMS.class);
+
+		EventBus eventBus = mock(EventBus.class);
+		mpesaPaymentService.registerToEventBus(eventBus);
+		when(fsms.getEventBus()).thenReturn(eventBus);
+		when(ui.getFrontlineController()).thenReturn(fsms);
+		
 		//Set Up Rules
 		when(pluginController.getAccountDao()).thenReturn(accountDao);
 		when(pluginController.getOutgoingPaymentDao()).thenReturn(outgoingPaymentDao);
@@ -159,7 +173,16 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		when(pluginController.getUiGeneratorController()).thenReturn(ui);
 		when(pluginController.getTargetAnalytics()).thenReturn(targetAnalytics);
 		
+		logger = mock(Logger.class);
+		when(pluginController.getLogger(any(Class.class))).thenReturn(logger);
+		
 		mpesaPaymentService.initDaosAndServices(pluginController);
+		
+		IncomingPayment incomingPayment = new IncomingPayment();
+		incomingPayment.setAmountPaid(new BigDecimal("1000"));
+		incomingPayment.setConfirmationCode("BC77RI604");
+		
+		when(incomingPaymentDao.getByConfirmationCode("BC77RI604")).thenReturn(incomingPayment);
 		
 		//Set up accounts, targets and clients
 		Set<Account> accounts1 = mockAccounts(ACCOUNTNUMBER_1_1);
@@ -244,6 +267,39 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		inOrder.verify(cService).stkRequest(pinRequiredRequest , "1234");
 	}
 	
+	public void testPaymentReversalProcessing(){
+		paymentReversalProcessing(
+				"DXAH67GH9 Confirmed.\n"
+				+"Transaction BC77RI604\n"
+				+"has been reversed. Your\n"
+				+"account balance now\n"
+				+"0Ksh",
+				"DXAH67GH9","BC77RI604");
+	}
+	
+	protected void paymentReversalProcessing(String messageText,
+			final String confirmationCode, final String reversedConfirmationCode) {
+		// then
+		assertTrue(mpesaPaymentService instanceof EventObserver);
+		
+		// when
+		mpesaPaymentService.notify(mockMessageNotification("MPESA", messageText));
+		
+		// then
+		WaitingJob.waitForEvent();
+		
+		verify(incomingPaymentDao).getByConfirmationCode(reversedConfirmationCode);
+		verify(incomingPaymentDao).saveIncomingPayment(new IncomingPayment() {
+			@Override
+			public boolean equals(Object that) {
+				if(!(that instanceof IncomingPayment)) return false;
+				IncomingPayment other = (IncomingPayment) that;
+				return other.getConfirmationCode().equals(reversedConfirmationCode);
+			}
+		});
+		
+	}
+
 	protected void testIncomingPaymentProcessing(String messageText,
 			final String phoneNo, final String accountNumber, final String amount,
 			final String confirmationCode, final String payedBy, final String datetime) {
@@ -274,7 +330,8 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	
 	protected void testOutgoingPaymentProcessing(String messageText,
 			final String phoneNo, final String accountNumber, final String amount,
-			final String confirmationCode, final String payTo, final String datetime, final OutgoingPayment.Status status) throws DuplicateKeyException {
+			final String confirmationCode, final String payTo, final String datetime, 
+			final OutgoingPayment.Status status) throws DuplicateKeyException {
 		// then
 		assertTrue(mpesaPaymentService instanceof EventObserver);
 		
@@ -294,6 +351,16 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		// then
 		WaitingJob.waitForEvent();
 		verify(outgoingPaymentDao).updateOutgoingPayment(payment);
+	}
+	
+	protected void testBalanceProcessing(String messageText, String amount,
+			String confimation_message, String date_time) {
+		mpesaPaymentService.notify(mockMessageNotification("MPESA", messageText));
+		
+		WaitingJob.waitForEvent();
+		//verify(mpesaPaymentService).setBalance(new BigDecimal(amount));
+		assertEquals(mpesaPaymentService.getBalance().getBalanceAmount(), new BigDecimal(amount));
+		
 	}
 	
 	private Date getTimestamp(String dateString) {

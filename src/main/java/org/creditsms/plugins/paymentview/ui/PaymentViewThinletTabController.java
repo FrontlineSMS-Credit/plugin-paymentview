@@ -84,7 +84,7 @@ public class PaymentViewThinletTabController extends
 		ui.add(mainPane, analyticsTab.getTab());
 
 		settingsTab = new SettingsTabHandler(ui, getPluginController());
-		settingsTab.refresh();
+		//settingsTab.refresh();
 		ui.add(mainPane, settingsTab.getTab());
 		
 		logsTab = new LogTabHandler(ui, getPluginController());

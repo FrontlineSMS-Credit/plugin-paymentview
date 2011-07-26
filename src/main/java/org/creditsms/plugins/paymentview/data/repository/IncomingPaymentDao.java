@@ -26,6 +26,12 @@ public interface IncomingPaymentDao {
 	public List<IncomingPayment> getActiveIncomingPayments();
 	
 	/**
+	 * gets Outgoing payments by Confirmation code
+	 * @param confirmationCode
+	 */
+	public IncomingPayment getByConfirmationCode(String confirmationCode);
+
+	/**
 	 * returns all the active incomingPayments in the system
 	 * */
 	public int getActiveIncomingPaymentsCount();

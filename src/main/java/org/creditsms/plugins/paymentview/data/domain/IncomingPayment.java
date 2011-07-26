@@ -23,14 +23,14 @@ import net.frontlinesms.data.EntityField;
 @Table(name = IncomingPayment.TABLE_NAME)
 public class IncomingPayment {
 	public static final String TABLE_NAME = "IncomingPayment";
-	public static final String FIELD_AMOUNT_PAID = "amountPaid";
-	public static final String FIELD_CONFIRMATION_CODE = "confirmationCode";
-	public static final String FIELD_PAYMENT_BY = "paymentBy";
-	public static final String FIELD_PHONE_NUMBER = "phoneNumber";
-	public static final String FIELD_TIME_PAID = "timePaid";
-	public static final String FIELD_ACCOUNT = "account";
-	public static final String FIELD_TARGET ="target";
-	public static final String FIELD_ACTIVE ="active";
+	private static final String FIELD_AMOUNT_PAID = "amountPaid";
+	private static final String FIELD_CONFIRMATION_CODE = "confirmationCode";
+	private static final String FIELD_PAYMENT_BY = "paymentBy";
+	private static final String FIELD_PHONE_NUMBER = "phoneNumber";
+	private static final String FIELD_TIME_PAID = "timePaid";
+	private static final String FIELD_ACCOUNT = "account";
+	private static final String FIELD_TARGET ="target";
+	private static final String FIELD_ACTIVE = "active";
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
@@ -51,8 +51,8 @@ public class IncomingPayment {
 	@Column(name = FIELD_TIME_PAID)
 	private long timePaid;
 	
-	@Column(name = FIELD_ACTIVE, nullable = false)
-	private boolean active;
+	@Column(name = FIELD_ACTIVE)
+	private boolean active = true;
 	
 	@ManyToOne
 	@JoinColumn(name = FIELD_ACCOUNT)
@@ -61,7 +61,7 @@ public class IncomingPayment {
 	@ManyToOne
 	@JoinColumn(name = FIELD_TARGET, nullable = true) //nullable if payment for generic account
 	private Target target;
-
+	
 	public enum Field implements EntityField<IncomingPayment> {
 		AMOUNT_PAID(FIELD_AMOUNT_PAID),
 		CONFIRMATION_CODE(FIELD_CONFIRMATION_CODE),
@@ -130,15 +130,14 @@ public class IncomingPayment {
 	public Long getTimePaid() {
 		return timePaid;
 	}
-	
-	public boolean isActive() {
-		return active;
-	}
 
 	public void setAccount(Account account) {
 		this.account = account;
 	}
-
+	
+	public boolean isActive() {
+		return active;
+	}
 	
 	public Target getTarget() {
 		return this.target;
@@ -234,5 +233,5 @@ public class IncomingPayment {
 				+ ", confirmationCode=" + confirmationCode + ", paymentBy="
 				+ paymentBy + ", phoneNumber=" + phoneNumber + ", timePaid="
 				+ timePaid + "]";
-	}	
+	}
 }

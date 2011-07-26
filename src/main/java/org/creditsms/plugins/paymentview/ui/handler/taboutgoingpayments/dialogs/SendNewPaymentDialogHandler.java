@@ -103,7 +103,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 			while(!flag && itemPaymentServices<pluginController.getPaymentServices().size()){
 				flag = pluginController.getPaymentServices().get(itemPaymentServices).getClass().toString().contains(opMobilePaymentSystem);
 				if (flag){
-					paymentService = pluginController.getPaymentServices().get(itemPaymentServices); 
+					paymentService = (MpesaPaymentService) pluginController.getPaymentServices().get(itemPaymentServices); 
 				}
 				itemPaymentServices++;
 			}

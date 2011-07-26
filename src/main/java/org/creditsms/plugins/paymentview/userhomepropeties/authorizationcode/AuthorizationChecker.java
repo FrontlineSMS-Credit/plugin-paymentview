@@ -1,4 +1,4 @@
-package org.creditsms.plugins.paymentview.authorizationcode;
+package org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
