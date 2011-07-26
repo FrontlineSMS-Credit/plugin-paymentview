@@ -95,6 +95,7 @@ public class IncomingPayment {
 		this.timePaid = timePaid;
 		this.account = account;
 		this.target = target;
+		this.active = true;
 	}
 
 	public IncomingPayment(String paymentBy, String phoneNumber,
@@ -128,6 +129,10 @@ public class IncomingPayment {
 
 	public Long getTimePaid() {
 		return timePaid;
+	}
+	
+	public boolean isActive() {
+		return active;
 	}
 
 	public void setAccount(Account account) {
@@ -173,6 +178,10 @@ public class IncomingPayment {
 
 	public void setTimePaid(Date timePaid) {
 		this.timePaid = timePaid.getTime();
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	@Override

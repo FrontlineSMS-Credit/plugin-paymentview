@@ -28,14 +28,22 @@ public class HibernateIncomingPaymentDao extends
 	public List<IncomingPayment> getAllIncomingPayments() {
 		return super.getAll();
 	}
-
-	public List<IncomingPayment> getAllIncomingPayments(int startingIndex,
-			int limit) {
-		return super.getAll(startingIndex, limit);
+	
+	public List<IncomingPayment> getActiveIncomingPayments() {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("active", true));
+		return super.getList(criteria);
+	}
+	
+	public List<IncomingPayment> getActiveIncomingPayments(int startingIndex, int limit) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("active", true));
+		return super.getList(criteria, startingIndex, limit);
 	}
 
-	public List<IncomingPayment> getIncomingPaymentByClientId(long clientId) {
+	public List<IncomingPayment> getActiveIncomingPaymentByClientId(long clientId) {
 		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("active", true));
 		DetachedCriteria accountCriteria = criteria.createCriteria(IncomingPayment.Field.ACCOUNT.getFieldName());
 		DetachedCriteria clientCriteria = accountCriteria
 				.createCriteria("client");
@@ -43,8 +51,9 @@ public class HibernateIncomingPaymentDao extends
 		return super.getList(criteria);
 	}
 
-	public IncomingPayment getIncomingPaymentById(long id) {
+	public IncomingPayment getActiveIncomingPaymentById(long id) {
 		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("active", true));
 		criteria.add(Restrictions.eq("id", id));
 		return super.getUnique(criteria);
 	}
@@ -55,24 +64,28 @@ public class HibernateIncomingPaymentDao extends
 		return null;
 	}
 
-	public List<IncomingPayment> getIncomingPaymentsByTarget(long targetId) {
+	public List<IncomingPayment> getActiveIncomingPaymentsByTarget(long targetId) {
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria accountCriteria = criteria.createCriteria("target");
+		criteria.add(Restrictions.eq("active", true));
 		accountCriteria.add(Restrictions.eq("id", targetId));
 		return super.getList(criteria);
 	}
 	
-	public List<IncomingPayment> getIncomingPaymentsByAccountNumber(String accountNumber) {
+	public List<IncomingPayment> getActiveIncomingPaymentsByAccountNumber(String accountNumber) {
 		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("active", true));
 		DetachedCriteria accountCriteria = criteria.createCriteria("account");
 		accountCriteria.add(Restrictions.eq("accountNumber", accountNumber));
+		
 		return super.getList(criteria);
 	}
 
-	public Long getLastIncomingPaymentDateByAccountNumber(
+	public Long getLastActiveIncomingPaymentDateByAccountNumber(
 			String accountNumber) {
 		
 		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("active", true));
 		DetachedCriteria accountCriteria = criteria.createCriteria("account");
 		accountCriteria.add(Restrictions.eq("accountNumber", accountNumber));
 		List<IncomingPayment> incomingPaymentsLst = super.getList(criteria);
@@ -100,14 +113,16 @@ public class HibernateIncomingPaymentDao extends
 		return null;
 	}
 
-	public List<IncomingPayment> getIncomingPaymentsByPayer(String payer) {
+	public List<IncomingPayment> getActiveIncomingPaymentsByPayer(String payer) {
 		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("active", true));
 		criteria.add(Restrictions.eq("paymentBy", payer));
 		return super.getList(criteria);
 	}
 
-	public List<IncomingPayment> getIncomingPaymentsByPhoneNo(String phoneNo) {
+	public List<IncomingPayment> getActiveIncomingPaymentsByPhoneNo(String phoneNo) {
 		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("active", true));
 		criteria.add(Restrictions.eq("phoneNumber", phoneNo));
 		return super.getList(criteria);
 	}
@@ -119,9 +134,9 @@ public class HibernateIncomingPaymentDao extends
 	public void updateIncomingPayment(IncomingPayment incomingPayment)  {
 		super.updateWithoutDuplicateHandling(incomingPayment);
 	}
-
-	public int getIncomingPaymentsCount() {
-		return super.countAll();
+	
+	public int getActiveIncomingPaymentsCount() {
+		return getActiveIncomingPayments().size();
 	}
 
 	public List<IncomingPayment> getIncomingPaymentsByAccountNumber(

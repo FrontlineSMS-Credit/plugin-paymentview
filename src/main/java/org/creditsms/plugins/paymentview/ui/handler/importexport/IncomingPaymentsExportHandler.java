@@ -37,7 +37,7 @@ public class IncomingPaymentsExportHandler extends
 	@Override
 	public void doSpecialExport(String dataPath) throws IOException {
 		log.debug("Exporting all contacts..");
-		exportIncomingPayment(this.incomingPaymentDao.getAllIncomingPayments(),
+		exportIncomingPayment(this.incomingPaymentDao.getActiveIncomingPayments(),
 				dataPath);
 	}
 

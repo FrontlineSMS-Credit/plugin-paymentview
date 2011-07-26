@@ -96,6 +96,7 @@ public class DemoData {
 		i.setPhoneNumber(phoneNumber);
 		i.setTarget(target);
 		i.setTimePaid(new Date(Long.parseLong(timePaid)));
+		i.setActive(true);
 		try {
 			getIncomingPaymentDao().saveIncomingPayment(i);
 		} catch (Exception e) {// DuplicateKeyException

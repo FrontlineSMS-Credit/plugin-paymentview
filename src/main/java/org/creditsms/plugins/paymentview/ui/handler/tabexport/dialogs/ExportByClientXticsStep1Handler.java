@@ -74,7 +74,7 @@ public class ExportByClientXticsStep1Handler implements ThinletUiEventHandler {
 				switch (paymentType) {
 				case INCOMING:
 					for (Client client : selectedClients) {
-						payments.addAll(incomingPaymentDao.getIncomingPaymentByClientId(client.getId()));
+						payments.addAll(incomingPaymentDao.getActiveIncomingPaymentByClientId(client.getId()));
 					}
 				case OUTGOING:
 					for (Client client : selectedClients) {
@@ -85,7 +85,7 @@ public class ExportByClientXticsStep1Handler implements ThinletUiEventHandler {
 				switch (paymentType) {
 				case INCOMING:
 					for (Client client : selectedClients) {
-						payments.addAll(incomingPaymentDao.getIncomingPaymentByClientId(client.getId()));
+						payments.addAll(incomingPaymentDao.getActiveIncomingPaymentByClientId(client.getId()));
 					}
 				case OUTGOING:
 					for (Client client : selectedClients) {
@@ -96,7 +96,7 @@ public class ExportByClientXticsStep1Handler implements ThinletUiEventHandler {
 				switch (paymentType) {
 				case INCOMING:
 					for (Client client : selectedClients) {
-						payments.addAll(incomingPaymentDao.getIncomingPaymentByClientId(client.getId()));
+						payments.addAll(incomingPaymentDao.getActiveIncomingPaymentByClientId(client.getId()));
 					}
 				case OUTGOING:
 					for (Client client : selectedClients) {
@@ -107,7 +107,7 @@ public class ExportByClientXticsStep1Handler implements ThinletUiEventHandler {
 				switch (paymentType) {
 				case INCOMING:
 					for (Client client : selectedClients) {
-						payments.addAll(incomingPaymentDao.getIncomingPaymentByClientId(client.getId()));
+						payments.addAll(incomingPaymentDao.getActiveIncomingPaymentByClientId(client.getId()));
 					}
 				case OUTGOING:
 					for (Client client : selectedClients) {
