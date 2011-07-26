@@ -130,18 +130,10 @@ public class IncomingPayment {
 	public Long getTimePaid() {
 		return timePaid;
 	}
-	
-	public boolean isActive() {
-		return active;
-	}
 
 	public void setAccount(Account account) {
 		this.account = account;
 	}
-	
-	public void setActive(boolean active) {
-		this.active = active;
-	}	
 	
 	public boolean isActive() {
 		return active;
