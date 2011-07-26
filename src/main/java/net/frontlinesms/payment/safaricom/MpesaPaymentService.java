@@ -150,18 +150,21 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		processMessage(message);
 	}
 
-	protected void processMessage(final FrontlineMessage message) {
+	protected boolean processMessage(final FrontlineMessage message) {
 		//I have overrided this function...
 		if (isValidIncomingPaymentConfirmation(message)) {
 			processIncomingPayment(message);
+			return true;
 		}else if (isValidBalanceMessage(message)){
-			
+			return true;
 		} else {
 			logMessageDao.saveLogMessage(
 					new LogMessage(LogMessage.LogLevel.ERROR,
-						   	"Create Incoming/Balance Payment: Invalid message",
+						   	"Payment Message: Invalid message",
 						   	message.getTextContent()));
+			return false;
 		}
+
 	}
 
 //> INCOMING MESSAGE PAYMENT PROCESSORS

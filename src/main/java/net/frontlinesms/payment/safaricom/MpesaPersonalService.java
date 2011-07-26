@@ -45,19 +45,15 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	}
 	
 	@Override
-	protected void processMessage(final FrontlineMessage message) {
-		super.processMessage(message);
-		
+	protected boolean processMessage(final FrontlineMessage message) {
 		if (isValidOutgoingPaymentConfirmation(message)) {
 			processOutgoingPayment(message);
+			return true;
 		}else if (isFailedMpesaPayment(message)){
-			
-		} else {
-			logMessageDao.saveLogMessage(
-					new LogMessage(LogMessage.LogLevel.ERROR,
-						   	"Outgoing Confirmation Payment: Invalid message",
-						   	message.getTextContent()));
+			//TODO: Implement me!!
+			return true;
 		}
+		return super.processMessage(message);
 	}
 	
 	private boolean isFailedMpesaPayment(final FrontlineMessage message) {
