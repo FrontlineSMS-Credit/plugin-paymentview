@@ -11,7 +11,6 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.BaseClientTable;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientImportHandler;
@@ -27,7 +26,6 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 //> INSTANCE PROPERTIES
 	private final ClientDao clientDao;
 	private final CustomFieldDao customFieldDao;
-	private final CustomValueDao customValueDao;
 
 	private Object clientsTableComponent;
 	private UiGeneratorController ui;
@@ -42,7 +40,6 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 		this.pluginController = pluginController;
 		this.clientDao = pluginController.getClientDao();
 		this.customFieldDao = pluginController.getCustomFieldDao();
-		this.customValueDao = pluginController.getCustomValueDao();
 		init();
 	}
 	

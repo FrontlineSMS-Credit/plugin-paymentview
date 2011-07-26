@@ -140,4 +140,11 @@ public class HibernateIncomingPaymentDao extends
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public IncomingPayment getByConfirmationCode(String confirmationCode) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions
+			.eq(IncomingPayment.Field.CONFIRMATION_CODE.getFieldName(), confirmationCode));
+		return super.getUnique(criteria);
+	}
 }

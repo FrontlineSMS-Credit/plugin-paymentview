@@ -6,7 +6,7 @@ import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.authorizationcode.AuthorizationChecker;
+import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.AuthorizationChecker;
 
 public class AuthorisationCodeHandler extends BaseDialog{
 	private static final String XML_ENTER_AUTHORIZATION_CODE = "/ui/plugins/paymentview/settings/dialogs/createnewpaymentsteps/dlgCreateNewAccountStep3.xml";
