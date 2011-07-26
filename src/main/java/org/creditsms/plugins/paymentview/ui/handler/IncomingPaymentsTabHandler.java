@@ -8,6 +8,7 @@ import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.UiGeneratorControllerConstants;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
@@ -16,6 +17,7 @@ import net.frontlinesms.ui.handler.PagedListDetails;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
@@ -26,6 +28,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private static final String COMPONENT_INCOMING_PAYMENTS_TABLE = "tbl_clients";
 	private static final String COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE = "pnl_clients";
 	private static final String XML_INCOMING_PAYMENTS_TAB = "/ui/plugins/paymentview/incomingpayments/tabincomingpayments.xml";
+	private static final String CONFIRM_DELETE_INCOMING = "message.confirm.delete.incoming";
 	
 	private IncomingPaymentDao incomingPaymentDao;
 	
@@ -35,11 +38,14 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private Object incomingPaymentsTableComponent;
 	private ComponentPagingHandler incomingPaymentsTablePager;
 	private Object pnlIncomingPaymentsTableComponent;
+	private PaymentViewPluginController pluginController;
+	private Object dialogConfirmation;
 
 	public IncomingPaymentsTabHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController) {
 		super(ui);
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
+		this.pluginController = pluginController;
 		ui.getFrontlineController().getEventBus().registerObserver(this);
 		init();
 	}
@@ -93,13 +99,13 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		List<IncomingPayment> incomingPayments = new ArrayList<IncomingPayment>();
 		
 		if (this.incomingPaymentsFilter.equals("")) {
-			incomingPayments = this.incomingPaymentDao.getAllIncomingPayments(startIndex, limit);
+			incomingPayments = this.incomingPaymentDao.getActiveIncomingPayments(startIndex, limit);
 		} else {
 			//TODO: change this to add more columns to be filtered.
-			incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByPhoneNo(this.incomingPaymentsFilter);
+			incomingPayments = this.incomingPaymentDao.getActiveIncomingPaymentsByPhoneNo(this.incomingPaymentsFilter);
 		}
 
-		int totalItemCount = incomingPaymentDao.getIncomingPaymentsCount();
+		int totalItemCount = incomingPaymentDao.getActiveIncomingPaymentsCount();
 		Object[] listItems = toThinletComponents(incomingPayments);
 
 		return new PagedListDetails(totalItemCount, listItems);
@@ -127,6 +133,31 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		this.incomingPaymentsTablePager.setCurrentPage(0);
 		this.incomingPaymentsTablePager.refresh();
 	}
+	
+//> INCOMING PAYMENT DELETION
+	public void deleteIncomingPayment() {
+		Object[] selectedIncomings = this.ui.getSelectedItems(incomingPaymentsTableComponent);
+		if (selectedIncomings.length == 0){
+			ui.infoMessage("Please select incoming payment(s).");	
+		} else {
+			for (Object selectedIncoming : selectedIncomings) {
+				IncomingPayment attachedIncoming = ui.getAttachedObject(selectedIncoming, IncomingPayment.class);
+				attachedIncoming.setActive(false);
+				incomingPaymentDao.updateIncomingPayment(attachedIncoming);
+			}
+			ui.infoMessage("You have successfully deleted the selected incoming payment(s).");	
+		}		
+	}
+	
+	public void showAuthCode() {
+		ui.remove(dialogConfirmation);
+		new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog("deleteIncomingPayment", this);
+	}
+	
+	public final void showDeleteConfirmationDialog(String methodToBeCalled){
+		dialogConfirmation = this.ui.showConfirmationDialog(methodToBeCalled, this, CONFIRM_DELETE_INCOMING);
+	}
+	
 //> INCOMING PAYMENT NOTIFICATION...
 	@SuppressWarnings("rawtypes")
 	public void notify(final FrontlineEventNotification notification) {

@@ -1,12 +1,19 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics;
 
+import net.frontlinesms.data.events.DatabaseEntityNotification;
+import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ConfigureServiceTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.SentPaymentsTabHandler;
 
 public class AnalyticsTabHandler implements ThinletUiEventHandler {
 	private static final String XML_ANALYTICS_TAB = "/ui/plugins/paymentview/analytics/tabanalytics.xml";
@@ -42,4 +49,5 @@ public class AnalyticsTabHandler implements ThinletUiEventHandler {
 		this.viewDashBoardHandler.refresh();
 		this.configureServiceTabHandler.refresh();
 	}
+	
 }

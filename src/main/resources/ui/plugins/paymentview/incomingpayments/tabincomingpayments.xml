@@ -5,7 +5,7 @@
 		<panel columns="2" gap="5" name="pnl_clients" weightx="1"
 			weighty="1">
 			<label text="Incoming Payments" font="20 Bold" weightx="1"/>
-			<table name="tbl_clients" weightx="1" weighty="1" colspan="2">
+			<table name="tbl_clients" weightx="1" weighty="1" colspan="2" selection="multiple">
 				<header>
 					<column text="Name" width="200" icon="/icons/user.png" />
 					<column text="Phone" width="150" icon="/icons/phone.png" />
@@ -19,7 +19,9 @@
 			<!-- <combobox name="cmb_mobilePaymentAccount" width="250" weightx="1"
 				text="Select Mobile payment account" /> -->
 			<panel weightx="1"/>
-			<panel weightx="1"/>
+			<button action="showDeleteConfirmationDialog('showAuthCode')"
+				icon="/icons/delete.png" name="miDeleteIncoming"
+				text="i18n.plugins.paymentview.action.deleteincoming" />
 			<button icon="/icons/export.png" action="exportPayments" halign="right" name="btn_export"
 				text="Export" />
 		</panel>

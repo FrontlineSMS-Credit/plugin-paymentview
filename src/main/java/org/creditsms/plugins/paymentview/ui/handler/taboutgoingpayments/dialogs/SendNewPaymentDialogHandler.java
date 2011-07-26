@@ -120,7 +120,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 					//TODO the account would have to be filled when specifications are clear!!!!!!!!!!!!!!!1
 					//System.out.println("account:"+accountDao.getAccountsByClientId(client.getId()).get(0).getAccountNumber());
 
-					new AuthorisationCodeHandler(ui, pluginController).showAuthorizationCodeDialog("sendPayment", this);
+					new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog("sendPayment", this);
 
 					ui.remove(dialogComponent);
 				} catch (NumberFormatException ex){

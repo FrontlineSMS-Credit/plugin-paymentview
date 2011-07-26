@@ -76,7 +76,7 @@ public class TargetAnalytics {
 	
 	private List<IncomingPayment> getIncomingPaymentsByTargetId(long tartgetId){
 	    List <IncomingPayment> incomingPayments = incomingPaymentDao.
-	    getIncomingPaymentsByTarget(tartgetId);
+	    getActiveIncomingPaymentsByTarget(tartgetId);
 		
 		return incomingPayments;
 	}
@@ -138,9 +138,9 @@ public class TargetAnalytics {
 	    String accountNumber = getAccountNumber(tartgetId);
 	    
 	    if(incomingPaymentDao.
-				getLastIncomingPaymentDateByAccountNumber(accountNumber)!=null){
+				getLastActiveIncomingPaymentDateByAccountNumber(accountNumber)!=null){
 	    	return new Date(incomingPaymentDao.
-					getLastIncomingPaymentDateByAccountNumber(accountNumber));
+					getLastActiveIncomingPaymentDateByAccountNumber(accountNumber));
 	    }else{
 	    	return null;
 	    }
