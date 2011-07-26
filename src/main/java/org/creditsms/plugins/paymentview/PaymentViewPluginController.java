@@ -109,6 +109,8 @@ public class PaymentViewPluginController extends BasePluginController
 		targetDao 			= (TargetDao) applicationContext.getBean("targetDao");
 		logMessageDao       = (LogMessageDao) applicationContext.getBean("logMessageDao");
 		
+		this.frontlineController = frontlineController;
+		
 		targetAnalytics = new TargetAnalytics();
 		targetAnalytics.setIncomingPaymentDao(incomingPaymentDao);
 		targetAnalytics.setTargetDao(targetDao);
