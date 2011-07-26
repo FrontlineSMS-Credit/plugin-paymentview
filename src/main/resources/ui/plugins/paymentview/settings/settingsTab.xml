@@ -28,8 +28,8 @@
 			<button name="btn_createNewService" icon="/icons/keyword_add.png" text="i18n.plugins.paymentview.action.createnew" action="createNew" />
 			<panel weightx="1"/>
 			<panel weightx="1"/>		
-			<button action="updateAccountBalance" icon="/icons/connection.png" halign="right" name="btn_export"
-				text="i18n.plugins.paymentview.action.updateaccountbalance" />
+			<button action="checkBalance('updateAccountBalance')" icon="/icons/connection.png" halign="right" name="btn_export"
+				text="i18n.plugins.paymentview.action.checkccountbalance" />
 			<button action="updateAuthCode" halign="right" name="btn_authcode"
 				text="Set Authorization Code" />
 		</panel>

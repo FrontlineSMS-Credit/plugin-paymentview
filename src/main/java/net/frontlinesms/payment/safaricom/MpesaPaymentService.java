@@ -95,10 +95,10 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 						final StkMenu mPesaMenu = getMpesaMenu();
 						final StkMenu myAccountMenu = (StkMenu) cService.stkRequest(mPesaMenu.getRequest("My account"));
 						final StkResponse getBalanceResponse = cService.stkRequest(myAccountMenu.getRequest("Show balance"));
-						assert getBalanceResponse instanceof StkValuePrompt;
-						final StkValuePrompt pinRequired = (StkValuePrompt) getBalanceResponse;
-						assert pinRequired.getPromptText().contains("Enter PIN");
-						cService.stkRequest(pinRequired.getRequest(), pin);
+						
+						final StkResponse enterPinResponse = cService.stkRequest(((StkValuePrompt) getBalanceResponse).getRequest(), pin);
+						if(enterPinResponse == StkResponse.ERROR) throw new RuntimeException("PIN rejected");
+						
 //						return null;
 					} catch(final PaymentServiceException ex) {
 						throw new SMSLibDeviceException(ex);

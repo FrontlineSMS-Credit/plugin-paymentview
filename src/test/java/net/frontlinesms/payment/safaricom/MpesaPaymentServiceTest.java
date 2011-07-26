@@ -215,7 +215,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 				"Change PIN", "Secret word", "Language", "Update menu"); 
 		when(cService.stkRequest(myAccountMenuItemRequest)).thenReturn(myAccountMenu);
 
-		StkValuePrompt pinRequired = mockInputRequirement("Enter PIN", 0, 0, 4, 4, 0);
+		StkValuePrompt pinRequired = mockInputRequirement("Enter PIN");
 		StkRequest pinRequiredRequest = pinRequired.getRequest();
 		StkRequest showBalanceMenuItemRequest = myAccountMenu.getRequest("Show balance");
 		when(cService.stkRequest(showBalanceMenuItemRequest)).thenReturn(pinRequired);
