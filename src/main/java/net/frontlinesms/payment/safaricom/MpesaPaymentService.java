@@ -85,22 +85,22 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		initIfRequired();
 		try {
 			final String pin = this.pin;
-			this.cService.doSynchronized(new SynchronizedWorkflow<Object>() {
-				public Object run() throws SMSLibDeviceException, IOException {
+//			this.cService.doSynchronized(new SynchronizedWorkflow<Object>() {
+//				public Object run() throws SMSLibDeviceException, IOException {
 					try {
 						final StkMenu mPesaMenu = getMpesaMenu();
 						final StkMenu myAccountMenu = (StkMenu) cService.stkRequest(mPesaMenu.getRequest("My account"));
 						final StkResponse getBalanceResponse = cService.stkRequest(myAccountMenu.getRequest("Show balance"));
-						assert getBalanceResponse instanceof StkValuePrompt;
-						final StkValuePrompt pinRequired = (StkValuePrompt) getBalanceResponse;
-						assert pinRequired.getPromptText().contains("Enter PIN");
-						cService.stkRequest(pinRequired.getRequest(), pin);
-						return null;
+						
+						final StkResponse enterPinResponse = cService.stkRequest(((StkValuePrompt) getBalanceResponse).getRequest(), pin);
+						if(enterPinResponse == StkResponse.ERROR) throw new RuntimeException("PIN rejected");
+						
+//						return null;
 					} catch(final PaymentServiceException ex) {
 						throw new SMSLibDeviceException(ex);
 					}
-				}
-			});
+//				}
+//			});
 			// TODO check finalResponse is OK
 			// TODO wait for response...
 		} catch (final SMSLibDeviceException ex) {

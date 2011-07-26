@@ -24,10 +24,12 @@ import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balan
 public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	private static final String BTN_CREATE_NEW_SERVICE = "btn_createNewService";
 	private static final String COMPONENT_SETTINGS_TABLE = "tbl_accounts";
+	private static final String CONFIRM_CHECK_BALANCE = "message.confirm.checkbalance";
 	private static final String XML_SETTINGS_TAB = "/ui/plugins/paymentview/settings/settingsTab.xml";
 
 	private Object settingsTab;
 	private Object settingsTableComponent;
+	Object dialogConfirmation;
 	private final PaymentViewPluginController pluginController;
 	private EventBus eventBus;
 
@@ -70,14 +72,19 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	}
 
 	public void updateAccountBalance() throws PaymentServiceException, IOException {
+		ui.remove(dialogConfirmation);
 		Object selectedItem = this.ui.getSelectedItem(settingsTableComponent);
-		if (selectedItem != null) {
-			PaymentService __paymentService = ui.getAttachedObject(selectedItem, PaymentService.class);
-			__paymentService.checkBalance();
+		if (selectedItem != null){
+			PaymentService paymentService = ui.getAttachedObject(selectedItem, PaymentService.class);
+			paymentService.checkBalance();
 			ui.alert("Request has been sent. The Account balance will be updated shortly.");
 		}else{
 			ui.alert("Please select an account to update balance.");
 		}
+	}
+
+	public final void checkBalance(String methodToBeCalled){
+		dialogConfirmation = this.ui.showConfirmationDialog(methodToBeCalled, this, CONFIRM_CHECK_BALANCE);
 	}
 	
 	public void updateAuthCode() {
