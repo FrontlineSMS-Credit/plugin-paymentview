@@ -12,7 +12,9 @@ import net.frontlinesms.ui.UiGeneratorController;
 import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
@@ -52,11 +54,13 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	private Object cmbOpMobilePaymentSystem;
 	private OutgoingPaymentDao outgoingPaymentDao;
 	private MpesaPaymentService paymentService;
+	private LogMessageDao logMessageDao;
 
 	public SendNewPaymentDialogHandler(UiGeneratorController ui,PaymentViewPluginController pluginController, Client client) {
 		super(ui);
 		this.pluginController = pluginController;
 		outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
+		logMessageDao = pluginController.getLogMessageDao();
 		this.client = client;
 		initialise();
 		refresh();
@@ -135,13 +139,17 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 
 
 	public void sendPayment() throws PaymentServiceException {
-		//TODO check MSISDN, amount available?
 		try {
 			outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
 			try {
 				paymentService.makePayment(client, outgoingPayment.getAmountPaid());
 				outgoingPayment.setStatus(OutgoingPayment.Status.UNCONFIRMED);
+				
+				logMessageDao.saveLogMessage(
+						new LogMessage(LogMessage.LogLevel.INFO, "Create Outgoing Payment",outgoingPayment.toString()));
 			} catch(Exception ex) {
+				logMessageDao.saveLogMessage(
+						new LogMessage(LogMessage.LogLevel.ERROR,"Create Outgoing Payment: Payment failed.",outgoingPayment.toString()));
 				log.warn("Payment failed.", ex);
 				outgoingPayment.setStatus(OutgoingPayment.Status.ERROR);
 			}
@@ -153,6 +161,8 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 				ui.infoMessage("The outgoing payment has been created and successfully sent");
 			}
 		} catch (Exception ex) {
+			logMessageDao.saveLogMessage(
+					new LogMessage(LogMessage.LogLevel.ERROR,"Create Outgoing Payment: Payment failed.",outgoingPayment.toString()));
 			throw new RuntimeException(ex);
 		}
 	}

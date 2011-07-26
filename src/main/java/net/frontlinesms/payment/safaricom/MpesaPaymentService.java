@@ -23,10 +23,12 @@ import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.utils.PvUtils;
@@ -61,6 +63,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	TargetDao targetDao;
 	IncomingPaymentDao incomingPaymentDao;
 	OutgoingPaymentDao outgoingPaymentDao;
+	LogMessageDao logMessageDao;
 	
 //> FIELDS
 	private String pin;
@@ -70,6 +73,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	
 //> STK & PAYMENT ACCOUNT
 	public void checkBalance() throws PaymentServiceException, IOException {
+		//TODO LOGS
 		initIfRequired();
 		try {
 			final String pin = this.pin;
@@ -122,6 +126,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			
 			StkResponse confirmationResponse = cService.stkRequest(((StkConfirmationPrompt) enterPinResponse).getRequest());
 			if(confirmationResponse == StkResponse.ERROR) throw new RuntimeException("Payment failed for some reason.");
+			
 		} catch (SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
 		} catch (IOException e) {
@@ -151,7 +156,12 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			processIncomingPayment(message);
 		}else if (isValidBalanceMessage(message)){
 			
-		} 
+		} else {
+			logMessageDao.saveLogMessage(
+					new LogMessage(LogMessage.LogLevel.ERROR,
+						   	"Create Incoming/Balance Payment: Invalid message",
+						   	message.getTextContent()));
+		}
 	}
 
 //> INCOMING MESSAGE PAYMENT PROCESSORS
@@ -236,11 +246,25 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 					incomingPaymentDao.saveIncomingPayment(payment);
 						
 					}
+					
+					//log the saved incoming payment
+					logMessageDao.saveLogMessage(
+							new LogMessage(LogMessage.LogLevel.INFO,
+										   	"Create Incoming Payment",
+										   	message.getTextContent()));
 				} catch (IllegalArgumentException ex) {
 					log.warn("Message failed to parse; likely incorrect format", ex);
+					logMessageDao.saveLogMessage(
+							new LogMessage(LogMessage.LogLevel.ERROR,
+										   	"Create Incoming Payment: Message failed to parse; likely incorrect format",
+										   	 message.getTextContent()));
 					throw new RuntimeException(ex);
 				} catch (Exception ex) {
 					log.error("Unexpected exception parsing incoming payment SMS.", ex);
+					logMessageDao.saveLogMessage(
+							new LogMessage(LogMessage.LogLevel.ERROR,
+								   	"Create Incoming Payment: Unexpected exception parsing incoming payment SMS",
+								   	message.getTextContent()));
 					throw new RuntimeException(ex);
 				}
 			}
@@ -367,6 +391,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.targetDao = pluginController.getTargetDao();
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.targetAnalytics = pluginController.getTargetAnalytics();
+		this.logMessageDao = pluginController.getLogMessageDao();
 	}
 	
 	/**

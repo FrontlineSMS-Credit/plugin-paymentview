@@ -8,7 +8,8 @@
 			<table name="tbl_logs" weightx="1" weighty="1">
 				<header>					
 					<column text="Level" width="100"/>
-					<column text="Message" width="800"/>
+					<column text="Description" width="400"/>
+					<column text="Message" width="600"/>
 					<column text="Date-Time" width="200"/>
 				</header>
 				<popupmenu name="menu">

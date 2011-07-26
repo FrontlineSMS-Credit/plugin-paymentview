@@ -36,6 +36,7 @@ import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.mockito.InOrder;
@@ -74,6 +75,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	private TargetDao targetDao;
 	private IncomingPaymentDao incomingPaymentDao;
 	protected OutgoingPaymentDao outgoingPaymentDao;
+	protected LogMessageDao logMessageDao;
 	private PaymentViewPluginController pluginController;
 	private UiGeneratorController ui;
 	private TargetAnalytics targetAnalytics;
@@ -136,6 +138,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	private void setUpDaos() {
 		incomingPaymentDao = mock(IncomingPaymentDao.class);
 		outgoingPaymentDao= mock(OutgoingPaymentDao.class);
+	    logMessageDao = mock(LogMessageDao.class);
 		
 		targetDao = mock(TargetDao.class);
 		clientDao = mock(ClientDao.class);
@@ -150,6 +153,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		when(pluginController.getAccountDao()).thenReturn(accountDao);
 		when(pluginController.getOutgoingPaymentDao()).thenReturn(outgoingPaymentDao);
 		when(pluginController.getIncomingPaymentDao()).thenReturn(incomingPaymentDao);
+		when(pluginController.getLogMessageDao()).thenReturn(logMessageDao);
 		when(pluginController.getTargetDao()).thenReturn(targetDao);
 		when(pluginController.getClientDao()).thenReturn(clientDao);
 		when(pluginController.getUiGeneratorController()).thenReturn(ui);
@@ -164,6 +168,8 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	    CLIENT_0 = mockClient(0, PHONENUMBER_0, Collections.EMPTY_SET);
 	    CLIENT_1 = mockClient(1, PHONENUMBER_1, accounts1);
 	    CLIENT_2 = mockClient(2, PHONENUMBER_2, accounts2);
+
+
 	}
 	
 	private Client mockClient(long id, String phoneNumber, Set<Account> accounts) {

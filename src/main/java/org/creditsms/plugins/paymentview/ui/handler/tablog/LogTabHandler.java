@@ -106,7 +106,8 @@ PagedComponentItemProvider, EventObserver{
 		Object row = ui.createTableRow(logMessage);
 
 		ui.add(row, ui.createTableCell(logMessage.getLogLevel().toString()));
-		ui.add(row, ui.createTableCell(logMessage.getLogTitle() + " : " + logMessage.getLogContent()));
+		ui.add(row, ui.createTableCell(logMessage.getLogTitle()));
+		ui.add(row, ui.createTableCell(logMessage.getLogContent()));
 		ui.add(row, ui.createTableCell(InternationalisationUtils.getDatetimeFormat().format(new Date(logMessage.getTimestamp()))));
 		return row;
 	}

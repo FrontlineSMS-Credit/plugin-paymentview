@@ -12,6 +12,7 @@ import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 
 public class MpesaPersonalService extends MpesaPaymentService {
@@ -33,7 +34,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	
 	private static final Pattern PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = Pattern.compile(STR_PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN);
 	private static final String STR_BALANCE_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n"
-		+ "Your M-PESA balance was Ksh([,|.|\\d]+\n"
+		+ "Your M-PESA balance was Ksh[,|.|\\d]+\n"
 		+ "on (([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) at ([1]?\\d:[0-5]\\d) ([A|P]M)";
 	
 	private static final Pattern BALANCE_REGEX_PATTERN = Pattern.compile(STR_BALANCE_REGEX_PATTERN);
@@ -51,6 +52,11 @@ public class MpesaPersonalService extends MpesaPaymentService {
 			processOutgoingPayment(message);
 		}else if (isFailedMpesaPayment(message)){
 			
+		} else {
+			logMessageDao.saveLogMessage(
+					new LogMessage(LogMessage.LogLevel.ERROR,
+						   	"Outgoing Confirmation Payment: Invalid message",
+						   	message.getTextContent()));
 		}
 	}
 	
@@ -72,16 +78,30 @@ public class MpesaPersonalService extends MpesaPaymentService {
 						outgoingPayment.setConfirmationCode(getConfirmationCode(message));
 						outgoingPayment.setTimeConfirmed(getTimePaid(message, true).getTime());
 						outgoingPayment.setStatus(OutgoingPayment.Status.CONFIRMED);
-						
-						//Update outgoing payment
 						outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
+						
+						logMessageDao.saveLogMessage(
+							new LogMessage(LogMessage.LogLevel.INFO,
+								   	"Outgoing Confirmation Payment",
+								   	message.getTextContent()));
 					} else {
-						pvLog.warn("No unconfirmed outgoing payment for the following confirmation message: " + message.getTextContent());
+						logMessageDao.saveLogMessage(
+								new LogMessage(LogMessage.LogLevel.WARNING,
+									   	"Outgoing Confirmation Payment: No unconfirmed outgoing payment for the following confirmation message",
+									   	message.getTextContent()));
 					}
 				} catch (IllegalArgumentException ex) {
+					logMessageDao.saveLogMessage(
+							new LogMessage(LogMessage.LogLevel.ERROR,
+								   	"Outgoing Confirmation Payment: Message failed to parse; likely incorrect format",
+								   	message.getTextContent()));
 					log.warn("Message failed to parse; likely incorrect format", ex);
 					throw new RuntimeException(ex);
 				} catch (Exception ex) {
+					logMessageDao.saveLogMessage(
+							new LogMessage(LogMessage.LogLevel.ERROR,
+								   	"Outgoing Confirmation Payment: Unexpected exception parsing outgoing payment SMS",
+								   	message.getTextContent()));
 					log.error("Unexpected exception parsing outgoing payment SMS.", ex);
 					throw new RuntimeException(ex);
 				}
