@@ -39,8 +39,7 @@ public class BalancePropertiesTest extends BaseTestCase {
 	}
 
 	public void testDateTime() throws ParseException {
-		balance.updateBalance();
-		assertEquals("Datetime not correct", properties.getBalance()
-				.getDateTime(), PvUtils.parseDate(PvUtils.formatDate(datetime)));
+		balance.updateBalance();	
+		assertEquals("Datetime not correct", properties.getBalance().getDateTime(), datetime);
 	}
 }
