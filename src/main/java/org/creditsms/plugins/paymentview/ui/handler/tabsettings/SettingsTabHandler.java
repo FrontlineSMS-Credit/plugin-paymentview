@@ -16,7 +16,10 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
+import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.LogMessage;
+import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.UpdateAuthorizationCodeDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings.MobilePaymentServiceSettingsInitialisationDialog;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance.BalanceEventNotification;
@@ -32,11 +35,14 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	Object dialogConfirmation;
 	private final PaymentViewPluginController pluginController;
 	private EventBus eventBus;
+	private LogMessageDao logMessageDao;
+	
+	protected Logger pvLog = Logger.getLogger(this.getClass());
 
 	public SettingsTabHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui);
 		this.pluginController = pluginController;
-		
+		this.logMessageDao = pluginController.getLogMessageDao();
 		eventBus = ui.getFrontlineController().getEventBus();
 		eventBus.registerObserver(this);
 		init();
@@ -71,13 +77,19 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 		}
 	}
 
-	public void updateAccountBalance() throws PaymentServiceException, IOException {
+	public void updateAccountBalance(){
 		ui.remove(dialogConfirmation);
 		Object selectedItem = this.ui.getSelectedItem(settingsTableComponent);
 		if (selectedItem != null){
 			PaymentService paymentService = ui.getAttachedObject(selectedItem, PaymentService.class);
-			paymentService.checkBalance();
-			ui.alert("Request has been sent. The Account balance will be updated shortly.");
+			try {
+				paymentService.checkBalance();
+				logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.INFO, "Check Balance", ""));
+				ui.alert("Request has been sent. The Account balance will be updated shortly.");
+			} catch (PaymentServiceException e) {
+				logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.ERROR, "Check Balance: Failed", ""));
+				pvLog.warn("Check Balance failed." + e);
+			}
 		}else{
 			ui.alert("Please select an account to update balance.");
 		}

@@ -18,8 +18,8 @@
 						icon="/icons/keyword.png" name="miConfigureAccount" text="i18n.plugins.paymentview.menuitem.configureaccount" /> -->
 					<menuitem action="showConfirmationDialog('deleteAccount')"
 						icon="/icons/delete.png" name="miDeleteAccount" text="i18n.plugins.paymentview.menuitem.deleteaccount" />
-					<menuitem action="updateAccountBalance"
-						icon="/icons/connection.png" name="miUpdateAccount" text="i18n.plugins.paymentview.menuitem.updateaccountbalance" />					
+					<menuitem action="checkBalance('updateAccountBalance')"
+						icon="/icons/connection.png" name="miUpdateAccount" text="i18n.plugins.paymentview.menuitem.checkaccountbalance" />					
 				</popupmenu>
 			</table>
 		</panel>

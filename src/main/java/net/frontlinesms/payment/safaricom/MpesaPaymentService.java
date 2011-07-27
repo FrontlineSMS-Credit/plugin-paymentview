@@ -84,8 +84,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	private TargetAnalytics targetAnalytics;
 	
 //> STK & PAYMENT ACCOUNT
-	public void checkBalance() throws PaymentServiceException, IOException {
-		//TODO LOGS
+	public void checkBalance() throws PaymentServiceException {
 		initIfRequired();
 		try {
 			final String pin = this.pin;
@@ -111,6 +110,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			throw new PaymentServiceException(ex);
 		} catch (final IOException e) {
 			throw new PaymentServiceException(e);
+		} catch (RuntimeException e) {
+			throw new PaymentServiceException("PIN rejected");
 		}
 	}
 
@@ -162,22 +163,18 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		processMessage(message);
 	}
 
-	protected boolean processMessage(final FrontlineMessage message) {
+	protected void processMessage(final FrontlineMessage message) {
 		//I have overridden this function...
 		if (isValidIncomingPaymentConfirmation(message)) {
 			processIncomingPayment(message);
-			return true;
 		}else if (isValidBalanceMessage(message)){
 			processBalance(message);
-			return true;
 		}else if (isValidReverseMessage(message)){
 			processReversePayment(message);
+		} else {
+			// Message is invalid
+			logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.ERROR,"Payment Message: Invalid message",message.getTextContent()));
 		}
-		logMessageDao.saveLogMessage(
-				new LogMessage(LogMessage.LogLevel.ERROR,
-					   	"Payment Message: Invalid message",
-					   	message.getTextContent()));
-		return false;
 	}
 
 	//> INCOMING MESSAGE PAYMENT PROCESSORS
@@ -296,7 +293,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 					performPaymentReversalFraudCheck(
 						getConfirmationCode(message),
 						incomingPayment.getAmountPaid(), 
-						getReversedPaymentBalance(message)
+						getReversedPaymentBalance(message),
+						message
 					);
 					
 					incomingPaymentDao.saveIncomingPayment(incomingPayment);
@@ -315,10 +313,10 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}.execute();
 	}
 	
-	private void performPaymentReversalFraudCheck(String confirmationCode, BigDecimal amountPaid, BigDecimal actualBalance) {
+	private void performPaymentReversalFraudCheck(String confirmationCode, BigDecimal amountPaid, BigDecimal actualBalance, final FrontlineMessage message) {
 		BigDecimal expectedBalance = balance.getBalanceAmount().subtract(amountPaid);
 		
-		performInform(actualBalance, expectedBalance);
+		performInform(actualBalance, expectedBalance, message.getTextContent());
 		
 		balance.setBalanceAmount(actualBalance);
 		balance.setBalanceUpdateMethod("PaymentReversal");
@@ -328,9 +326,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		balance.updateBalance();
 	}
 
-	private void performInform(BigDecimal actualBalance, BigDecimal expectedBalance) {
+	private void performInform(BigDecimal actualBalance, BigDecimal expectedBalance, String messageContent) {
 		if (expectedBalance.compareTo(new BigDecimal(0)) >= 0) {//Now we don't want Mathematical embarrassment...
-			informUserOnFraud(expectedBalance, actualBalance, !expectedBalance.equals(actualBalance));
+			informUserOnFraud(expectedBalance, actualBalance, !expectedBalance.equals(actualBalance), messageContent);
 		}else{
 			pvLog.error("Balance is way low: than expected " + actualBalance + " instead of : "+ expectedBalance);
 		}
@@ -352,7 +350,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		BigDecimal expectedBalance = tempBalance.subtract(BD_BALANCE_ENQUIRY_CHARGE);
 		
 		BigDecimal actualBalance = getAmount(message);
-		performInform(actualBalance, expectedBalance);
+		performInform(actualBalance, expectedBalance, message.getTextContent());
 		
 		balance.setBalanceAmount(actualBalance);
 		balance.setConfirmationCode(getConfirmationCode(message));
@@ -368,7 +366,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		BigDecimal expectedBalance = payment.getAmountPaid().add(balance.getBalanceAmount());
 		
 		//c == p + a
-		performInform(actualBalance, expectedBalance);
+		performInform(actualBalance, expectedBalance, message.getTextContent());
 		
 		balance.setBalanceAmount(actualBalance);
 		balance.setConfirmationCode(payment.getConfirmationCode());
@@ -378,9 +376,14 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		balance.updateBalance();
 	}
 	
-	void informUserOnFraud(BigDecimal expected, BigDecimal actual, boolean fraudCommited) {
+	void informUserOnFraud(BigDecimal expected, BigDecimal actual, boolean fraudCommited, String messageContent) {
 		if (fraudCommited) {
 			String message = "Fraud commited? Was expecting balance as: "+expected+", But was "+actual;
+
+			logMessageDao.saveLogMessage(
+					new LogMessage(LogMessage.LogLevel.WARNING,
+						   	"Fraud commited? Was expecting balance as: "+expected+", But was "+actual,
+						    messageContent));
 			pvLog.warn(message);
 			this.eventBus.notifyObservers(new BalanceFraudNotification(message));
 		}else{

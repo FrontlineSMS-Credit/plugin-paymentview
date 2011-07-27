@@ -28,7 +28,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	private static final Pattern MPESA_PAYMENT_FAILURE_PATTERN = Pattern.compile(STR_MPESA_PAYMENT_FAILURE_PATTERN);
 	
 	private static final String STR_PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = 
-		"[A-Z\\d]+ Confirmed. " +
+		"[A-Z0-9]+ Confirmed. " +
 		"Ksh[,|.|\\d]+ sent to ([A-Za-z ]+) \\+2547[\\d]{8} on " +
 		"(([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) at ([1]?\\d:[0-5]\\d) ([A|P]M) New M-PESA balance is Ksh([,|.|\\d]+)";
 	
@@ -45,15 +45,14 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	}
 	
 	@Override
-	protected boolean processMessage(final FrontlineMessage message) {
+	protected void processMessage(final FrontlineMessage message) {
 		if (isValidOutgoingPaymentConfirmation(message)) {
 			processOutgoingPayment(message);
-			return true;
 		}else if (isFailedMpesaPayment(message)){
 			//TODO: Implement me!!
-			return true;
+		}else {
+			super.processMessage(message);
 		}
-		return super.processMessage(message);
 	}
 	
 	private boolean isFailedMpesaPayment(final FrontlineMessage message) {
@@ -115,7 +114,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 		BigDecimal currentBalance = getBalance(message);
 		BigDecimal expectedBalance = tempBalanceAmount.subtract(outgoingPayment.getAmountPaid());
 		
-		informUserOnFraud(currentBalance, expectedBalance, !expectedBalance.equals(currentBalance));
+		informUserOnFraud(currentBalance, expectedBalance, !expectedBalance.equals(currentBalance), message.getTextContent());
 		
 		balance.setBalanceAmount(currentBalance);
 		balance.setConfirmationCode(outgoingPayment.getConfirmationCode());
