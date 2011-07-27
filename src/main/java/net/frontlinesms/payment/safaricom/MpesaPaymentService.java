@@ -32,7 +32,6 @@ import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
-import org.smslib.handler.ATHandler.SynchronizedWorkflow;
 import org.smslib.stk.StkConfirmationPrompt;
 import org.smslib.stk.StkMenu;
 import org.smslib.stk.StkRequest;
