@@ -46,6 +46,10 @@
         <property name="sessionFactory" ref="sessionFactory" />
         <property name="eventBus" ref="eventBus"/>
     </bean>
+    <bean id="logMessageDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateLogMessageDao" parent="baseHibernateDao">
+        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="eventBus" ref="eventBus"/>
+    </bean>
     <bean id="baseHibernateDao" abstract="true" class="net.frontlinesms.data.repository.hibernate">
 		<property name="sessionFactory" ref="sessionFactory"/>
 		<property name="eventBus" ref="eventBus"/>

@@ -12,6 +12,7 @@ import net.frontlinesms.payment.PaymentJob;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 
 public class MpesaPersonalService extends MpesaPaymentService {
@@ -27,7 +28,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	private static final Pattern MPESA_PAYMENT_FAILURE_PATTERN = Pattern.compile(STR_MPESA_PAYMENT_FAILURE_PATTERN);
 	
 	private static final String STR_PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = 
-		"[A-Z\\d]+ Confirmed. " +
+		"[A-Z0-9]+ Confirmed. " +
 		"Ksh[,|.|\\d]+ sent to ([A-Za-z ]+) \\+2547[\\d]{8} on " +
 		"(([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) at ([1]?\\d:[0-5]\\d) ([A|P]M) New M-PESA balance is Ksh([,|.|\\d]+)";
 	
@@ -45,12 +46,12 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	
 	@Override
 	protected void processMessage(final FrontlineMessage message) {
-		super.processMessage(message);
-		
 		if (isValidOutgoingPaymentConfirmation(message)) {
 			processOutgoingPayment(message);
 		}else if (isFailedMpesaPayment(message)){
-			//FIXME:Implement?
+			//TODO: Implement me!!
+		}else {
+			super.processMessage(message);
 		}
 	}
 	
@@ -72,19 +73,31 @@ public class MpesaPersonalService extends MpesaPaymentService {
 						outgoingPayment.setConfirmationCode(getConfirmationCode(message));
 						outgoingPayment.setTimeConfirmed(getTimePaid(message, true).getTime());
 						outgoingPayment.setStatus(OutgoingPayment.Status.CONFIRMED);
-						
 						performOutgoingPaymentFraudCheck(message, outgoingPayment);
 						
-						//Update outgoing payment
 						outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
+						
+						logMessageDao.saveLogMessage(
+							new LogMessage(LogMessage.LogLevel.INFO,
+								   	"Outgoing Confirmation Payment",
+								   	message.getTextContent()));
 					} else {
-						pvLog.warn("No unconfirmed outgoing payment for the following confirmation message: " + message.getTextContent());
+						logMessageDao.saveLogMessage(
+								new LogMessage(LogMessage.LogLevel.WARNING,
+									   	"Outgoing Confirmation Payment: No unconfirmed outgoing payment for the following confirmation message",
+									   	message.getTextContent()));
 					}
 				} catch (IllegalArgumentException ex) {
-					pvLog.warn("Message failed to parse; likely incorrect format", ex);
+					logMessageDao.saveLogMessage(
+							new LogMessage(LogMessage.LogLevel.ERROR,
+								   	"Outgoing Confirmation Payment: Message failed to parse; likely incorrect format",
+								   	message.getTextContent()));
 					throw new RuntimeException(ex);
 				} catch (Exception ex) {
-					pvLog.error("Unexpected exception parsing outgoing payment SMS.", ex);
+					logMessageDao.saveLogMessage(
+							new LogMessage(LogMessage.LogLevel.ERROR,
+								   	"Outgoing Confirmation Payment: Unexpected exception parsing outgoing payment SMS",
+								   	message.getTextContent()));
 					throw new RuntimeException(ex);
 				}
 			}
@@ -101,7 +114,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 		BigDecimal currentBalance = getBalance(message);
 		BigDecimal expectedBalance = tempBalanceAmount.subtract(outgoingPayment.getAmountPaid());
 		
-		informUserOnFraud(currentBalance, expectedBalance, !expectedBalance.equals(currentBalance));
+		informUserOnFraud(currentBalance, expectedBalance, !expectedBalance.equals(currentBalance), message.getTextContent());
 		
 		balance.setBalanceAmount(currentBalance);
 		balance.setConfirmationCode(outgoingPayment.getConfirmationCode());

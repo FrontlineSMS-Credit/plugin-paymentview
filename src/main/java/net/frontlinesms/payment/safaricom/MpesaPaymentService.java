@@ -23,10 +23,12 @@ import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance;
@@ -72,6 +74,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	TargetDao targetDao;
 	IncomingPaymentDao incomingPaymentDao;
 	OutgoingPaymentDao outgoingPaymentDao;
+	LogMessageDao logMessageDao;
 	
 //> FIELDS
 	private String pin;
@@ -80,7 +83,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	private TargetAnalytics targetAnalytics;
 	
 //> STK & PAYMENT ACCOUNT
-	public void checkBalance() throws PaymentServiceException, IOException {
+	public void checkBalance() throws PaymentServiceException {
 		initIfRequired();
 		try {
 			final String pin = this.pin;
@@ -106,6 +109,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			throw new PaymentServiceException(ex);
 		} catch (final IOException e) {
 			throw new PaymentServiceException(e);
+		} catch (RuntimeException e) {
+			throw new PaymentServiceException("PIN rejected");
 		}
 	}
 
@@ -133,7 +138,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			
 			final StkResponse confirmationResponse = cService.stkRequest(((StkConfirmationPrompt) enterPinResponse).getRequest());
 			if(confirmationResponse == StkResponse.ERROR) throw new RuntimeException("Payment failed for some reason.");
-			//If I got Here, it means that I was successful, Right?
+			
 		} catch (final SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
 		} catch (final IOException e) {
@@ -165,6 +170,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			processBalance(message);
 		}else if (isValidReverseMessage(message)){
 			processReversePayment(message);
+		} else {
+			// Message is invalid
+			logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.ERROR,"Payment Message: Invalid message",message.getTextContent()));
 		}
 	}
 
@@ -249,11 +257,25 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 						payment.setTimePaid(getTimePaid(message));
 						incomingPaymentDao.saveIncomingPayment(payment);
 					}
+					
+					//log the saved incoming payment
+					logMessageDao.saveLogMessage(
+							new LogMessage(LogMessage.LogLevel.INFO,
+										   	"Created Incoming Payment",
+										   	message.getTextContent()));
 				} catch (final IllegalArgumentException ex) {
+					logMessageDao.saveLogMessage(
+							new LogMessage(LogMessage.LogLevel.ERROR,
+										   	"Create Incoming Payment: Message failed to parse; likely incorrect format",
+										   	 message.getTextContent()));
 					pvLog.warn("Message failed to parse; likely incorrect format", ex);
 					throw new RuntimeException(ex);
 				} catch (final Exception ex) {
 					pvLog.error("Unexpected exception parsing incoming payment SMS.", ex);
+					logMessageDao.saveLogMessage(
+							new LogMessage(LogMessage.LogLevel.ERROR,
+								   	"Create Incoming Payment: Unexpected exception parsing incoming payment SMS",
+								   	message.getTextContent()));
 					throw new RuntimeException(ex);
 				}
 			}
@@ -270,7 +292,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 					performPaymentReversalFraudCheck(
 						getConfirmationCode(message),
 						incomingPayment.getAmountPaid(), 
-						getReversedPaymentBalance(message)
+						getReversedPaymentBalance(message),
+						message
 					);
 					
 					incomingPaymentDao.saveIncomingPayment(incomingPayment);
@@ -289,10 +312,10 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}.execute();
 	}
 	
-	private void performPaymentReversalFraudCheck(String confirmationCode, BigDecimal amountPaid, BigDecimal actualBalance) {
+	private void performPaymentReversalFraudCheck(String confirmationCode, BigDecimal amountPaid, BigDecimal actualBalance, final FrontlineMessage message) {
 		BigDecimal expectedBalance = balance.getBalanceAmount().subtract(amountPaid);
 		
-		performInform(actualBalance, expectedBalance);
+		performInform(actualBalance, expectedBalance, message.getTextContent());
 		
 		balance.setBalanceAmount(actualBalance);
 		balance.setBalanceUpdateMethod("PaymentReversal");
@@ -302,9 +325,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		balance.updateBalance();
 	}
 
-	private void performInform(BigDecimal actualBalance, BigDecimal expectedBalance) {
+	private void performInform(BigDecimal actualBalance, BigDecimal expectedBalance, String messageContent) {
 		if (expectedBalance.compareTo(new BigDecimal(0)) >= 0) {//Now we don't want Mathematical embarrassment...
-			informUserOnFraud(expectedBalance, actualBalance, !expectedBalance.equals(actualBalance));
+			informUserOnFraud(expectedBalance, actualBalance, !expectedBalance.equals(actualBalance), messageContent);
 		}else{
 			pvLog.error("Balance is way low: than expected " + actualBalance + " instead of : "+ expectedBalance);
 		}
@@ -326,7 +349,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		BigDecimal expectedBalance = tempBalance.subtract(BD_BALANCE_ENQUIRY_CHARGE);
 		
 		BigDecimal actualBalance = getAmount(message);
-		performInform(actualBalance, expectedBalance);
+		performInform(actualBalance, expectedBalance, message.getTextContent());
 		
 		balance.setBalanceAmount(actualBalance);
 		balance.setConfirmationCode(getConfirmationCode(message));
@@ -342,7 +365,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		BigDecimal expectedBalance = payment.getAmountPaid().add(balance.getBalanceAmount());
 		
 		//c == p + a
-		performInform(actualBalance, expectedBalance);
+		performInform(actualBalance, expectedBalance, message.getTextContent());
 		
 		balance.setBalanceAmount(actualBalance);
 		balance.setConfirmationCode(payment.getConfirmationCode());
@@ -352,9 +375,14 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		balance.updateBalance();
 	}
 	
-	void informUserOnFraud(BigDecimal expected, BigDecimal actual, boolean fraudCommited) {
+	void informUserOnFraud(BigDecimal expected, BigDecimal actual, boolean fraudCommited, String messageContent) {
 		if (fraudCommited) {
 			String message = "Fraud commited? Was expecting balance as: "+expected+", But was "+actual;
+
+			logMessageDao.saveLogMessage(
+					new LogMessage(LogMessage.LogLevel.WARNING,
+						   	"Fraud commited? Was expecting balance as: "+expected+", But was "+actual,
+						    messageContent));
 			pvLog.warn(message);
 			this.eventBus.notifyObservers(new BalanceFraudNotification(message));
 		}else{
@@ -501,7 +529,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.targetDao = pluginController.getTargetDao();
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.targetAnalytics = pluginController.getTargetAnalytics();
-		
+		this.logMessageDao = pluginController.getLogMessageDao();
 		this.balance = Balance.getInstance().getLatest();
 		this.registerToEventBus(
 			pluginController.getUiGeneratorController()
