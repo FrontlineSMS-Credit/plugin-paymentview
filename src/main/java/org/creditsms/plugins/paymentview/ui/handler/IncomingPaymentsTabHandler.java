@@ -19,7 +19,9 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsImportHandler;
 
@@ -31,6 +33,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private static final String CONFIRM_DELETE_INCOMING = "message.confirm.delete.incoming";
 	
 	private IncomingPaymentDao incomingPaymentDao;
+	private LogMessageDao logMessageDao;
 	
 	private String incomingPaymentsFilter = "";
 	private Object incomingPaymentsTab;
@@ -41,10 +44,12 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private PaymentViewPluginController pluginController;
 	private Object dialogConfirmation;
 
+
 	public IncomingPaymentsTabHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController) {
 		super(ui);
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
+		this.logMessageDao = pluginController.getLogMessageDao();
 		this.pluginController = pluginController;
 		ui.getFrontlineController().getEventBus().registerObserver(this);
 		init();
@@ -144,6 +149,10 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				IncomingPayment attachedIncoming = ui.getAttachedObject(selectedIncoming, IncomingPayment.class);
 				attachedIncoming.setActive(false);
 				incomingPaymentDao.updateIncomingPayment(attachedIncoming);
+				logMessageDao.saveLogMessage(
+						new LogMessage(LogMessage.LogLevel.INFO,
+							   	"Delete Incoming Payment",
+							   	attachedIncoming.toString()));
 			}
 			ui.infoMessage("You have successfully deleted the selected incoming payment(s).");	
 		}		

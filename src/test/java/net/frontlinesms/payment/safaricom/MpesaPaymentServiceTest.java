@@ -39,6 +39,7 @@ import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance;
@@ -79,11 +80,12 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	private TargetDao targetDao;
 	private IncomingPaymentDao incomingPaymentDao;
 	protected OutgoingPaymentDao outgoingPaymentDao;
-	protected PaymentViewPluginController pluginController;
+	protected LogMessageDao logMessageDao;
 	private UiGeneratorController ui;
 	private TargetAnalytics targetAnalytics;
 	protected E mpesaPaymentService;
 	protected Logger logger;
+	private PaymentViewPluginController pluginController;
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -143,6 +145,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	private void setUpDaos() {
 		incomingPaymentDao = mock(IncomingPaymentDao.class);
 		outgoingPaymentDao= mock(OutgoingPaymentDao.class);
+	    logMessageDao = mock(LogMessageDao.class);
 		
 		targetDao = mock(TargetDao.class);
 		clientDao = mock(ClientDao.class);
@@ -154,6 +157,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		ui = mock(UiGeneratorController.class);
 		
 		FrontlineSMS fsms = mock(FrontlineSMS.class);
+
 		EventBus eventBus = mock(EventBus.class);
 		mpesaPaymentService.registerToEventBus(eventBus);
 		when(fsms.getEventBus()).thenReturn(eventBus);
@@ -163,6 +167,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		when(pluginController.getAccountDao()).thenReturn(accountDao);
 		when(pluginController.getOutgoingPaymentDao()).thenReturn(outgoingPaymentDao);
 		when(pluginController.getIncomingPaymentDao()).thenReturn(incomingPaymentDao);
+		when(pluginController.getLogMessageDao()).thenReturn(logMessageDao);
 		when(pluginController.getTargetDao()).thenReturn(targetDao);
 		when(pluginController.getClientDao()).thenReturn(clientDao);
 		when(pluginController.getUiGeneratorController()).thenReturn(ui);
@@ -186,6 +191,8 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	    CLIENT_0 = mockClient(0, PHONENUMBER_0, Collections.EMPTY_SET);
 	    CLIENT_1 = mockClient(1, PHONENUMBER_1, accounts1);
 	    CLIENT_2 = mockClient(2, PHONENUMBER_2, accounts2);
+
+
 	}
 	
 	private Client mockClient(long id, String phoneNumber, Set<Account> accounts) {
