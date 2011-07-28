@@ -84,7 +84,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 			PaymentService paymentService = ui.getAttachedObject(selectedItem, PaymentService.class);
 			try {
 				paymentService.checkBalance();
-				logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.INFO, "Check Balance", ""));
+				logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.INFO, "Check Balance performed", ""));
 				ui.alert("Request has been sent. The Account balance will be updated shortly.");
 			} catch (PaymentServiceException e) {
 				logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.ERROR, "Check Balance: Failed", ""));
