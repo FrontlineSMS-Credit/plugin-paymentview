@@ -297,6 +297,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 					);
 					
 					incomingPaymentDao.saveIncomingPayment(incomingPayment);
+					logMessageDao.saveLogMessage(
+							new LogMessage(LogMessage.LogLevel.INFO,"Reverse Transaction",message.getTextContent()));
 				}catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -308,6 +310,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		new PaymentJob() {
 			public void run() {
 				performBalanceEnquiryFraudCheck(message);
+				logMessageDao.saveLogMessage(
+						new LogMessage(LogMessage.LogLevel.INFO,"Check Balance Response",message.getTextContent()));
 			}
 		}.execute();
 	}
@@ -323,6 +327,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		balance.setConfirmationCode(confirmationCode);
 		
 		balance.updateBalance();
+
 	}
 
 	private void performInform(BigDecimal actualBalance, BigDecimal expectedBalance, String messageContent) {
