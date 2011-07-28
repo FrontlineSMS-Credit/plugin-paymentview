@@ -40,6 +40,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	private static final Pattern BALANCE_REGEX_PATTERN = Pattern.compile(STR_BALANCE_REGEX_PATTERN);
 	
 //>BEGIN - OUTGOING PAYMENT REGION	
+	@Override
 	protected boolean isValidBalanceMessage(FrontlineMessage message){
 		return BALANCE_REGEX_PATTERN.matcher(message.getTextContent()).matches();
 	}

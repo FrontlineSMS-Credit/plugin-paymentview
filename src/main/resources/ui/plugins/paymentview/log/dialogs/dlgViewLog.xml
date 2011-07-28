@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dialog bottom="9" close="removeDialog(this)" 
+	columns="1" gap="10" left="9" icon="/icons/user.png" name="logView"
+	right="9" text="Log Details"
+	top="9" modal="true" closable="true">
+	<panel name="pnlFields" columns="3" weightx="1" gap="10">
+		<label text="Level" />
+		<textfield columns="50" name="fldLevel" colspan="2" editable="false"/>
+	
+		<label text="Date-time" />
+		<textfield name="fldDatetime" colspan="2" editable="false" />
+	</panel>
+	<panel text="Details" colspan="3" weightx="1" border="true" left="5" right="5" top="5" bottom="5">
+		<textarea name="fldDetails" weightx="1" weighty="1" editable="false">
+		</textarea>
+	</panel>
+	<panel text="Message" colspan="3" weightx="1" border="true" left="5" right="5" top="5" bottom="5">
+		<textarea name="fldMessage" weightx="1" weighty="1" editable="false">
+		</textarea>
+	</panel>
+</dialog>

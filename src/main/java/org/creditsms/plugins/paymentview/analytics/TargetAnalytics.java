@@ -26,6 +26,7 @@ public class TargetAnalytics {
 		ON_TRACK,
 		COMPLETED;
 		
+		@Override
 		public String toString() {
 			return name().toLowerCase().replace('_', ' ');
 		}

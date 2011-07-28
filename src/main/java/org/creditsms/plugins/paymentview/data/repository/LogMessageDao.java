@@ -33,6 +33,4 @@ public interface LogMessageDao {
 	 * @param logMessage
 	 */
 	public void saveLogMessage(LogMessage logMessage);
-
-
 }

@@ -16,6 +16,7 @@ public class TargetStandardProcess extends TargetCreationProcess{
 		super(client, serviceItem, targetStartDate, targetEndDate, pluginController);
 	}
 	
+	@Override
 	public void createTarget(){
 		// Check if there are any accounts linked to the client
 		if (this.getTotalListNonGenericAccounts().size()==0){
@@ -45,6 +46,7 @@ public class TargetStandardProcess extends TargetCreationProcess{
 		}
 	}
 	
+	@Override
 	public boolean canCreateTarget(){
 
 		this.setInactiveNonGenericAccounts(this.getAccountDao().

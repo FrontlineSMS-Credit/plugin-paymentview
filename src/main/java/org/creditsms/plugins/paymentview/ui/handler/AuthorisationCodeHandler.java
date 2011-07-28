@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
-import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.AuthorizationChecker;
 
 public class AuthorisationCodeHandler extends BaseDialog{
@@ -55,22 +54,27 @@ public class AuthorisationCodeHandler extends BaseDialog{
 		}
 	}
  	
+	@Override
 	public Object getDialog() {
 		return dialogComponent;
 	}
 
+	@Override
 	public void removeDialog() {
 		this.removeDialog(this.dialogComponent);
 	}
 
+	@Override
 	public void removeDialog(Object dialog) {
 		this.ui.removeDialog(dialog);
 	}
 	
+	@Override
 	public Object find(String object) {
 		return ui.find(this.dialogComponent, object);
 	}
 	
+	@Override
 	public void showDialog() {
 		ui.add(this.dialogComponent);
 	}

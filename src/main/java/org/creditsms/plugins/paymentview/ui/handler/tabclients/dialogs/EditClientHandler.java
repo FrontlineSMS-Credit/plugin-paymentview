@@ -118,6 +118,7 @@ public class EditClientHandler extends BaseDialog{
 		ui.add(compPanelFields, txtfield);
 	}
 
+	@Override
 	public void refresh() {
 		if (editMode) {
 			ui.setText(fieldFirstName, this.getClientObj().getFirstName());

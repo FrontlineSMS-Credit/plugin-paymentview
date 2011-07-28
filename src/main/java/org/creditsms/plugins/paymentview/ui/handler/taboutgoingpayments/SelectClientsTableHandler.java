@@ -8,9 +8,11 @@ import org.creditsms.plugins.paymentview.ui.handler.BaseClientTable;
 public class SelectClientsTableHandler extends BaseClientTable {
 	private static final String TBL_CLIENTS = "tbl_clients";
 	private static final String XML_CLIENTS_TABLE = "/ui/plugins/paymentview/outgoingpayments/innertabs/clientsTable.xml";
+	private SelectFromClientsTabHandler selectFromClientTab;
 	
-	public SelectClientsTableHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
+	public SelectClientsTableHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, SelectFromClientsTabHandler selectFromClientTab) {
 		super(ui, pluginController);		
+		this.selectFromClientTab = selectFromClientTab;
 	}
 
 	@Override
@@ -22,4 +24,8 @@ public class SelectClientsTableHandler extends BaseClientTable {
 	protected String getClientsPanelFilePath() {
 		return XML_CLIENTS_TABLE;
 	}	
+	
+	public void sendPaymentForClient() {
+		selectFromClientTab.sendPaymentForClient();
+	}
 }

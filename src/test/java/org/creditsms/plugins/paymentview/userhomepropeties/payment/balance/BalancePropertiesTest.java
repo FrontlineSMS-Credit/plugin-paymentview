@@ -8,7 +8,6 @@ import net.frontlinesms.junit.BaseTestCase;
 
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.BalanceProperties;
-import org.creditsms.plugins.paymentview.utils.PvUtils;
 
 public class BalancePropertiesTest extends BaseTestCase {
 

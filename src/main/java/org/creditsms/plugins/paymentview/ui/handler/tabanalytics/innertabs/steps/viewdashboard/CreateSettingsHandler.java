@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.frontlinesms.data.events.DatabaseEntityNotification;
-import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -21,7 +20,6 @@ import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
-import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.AnalyticsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateAlertHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
 

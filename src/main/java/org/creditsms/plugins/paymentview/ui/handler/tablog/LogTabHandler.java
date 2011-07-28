@@ -13,11 +13,11 @@ import net.frontlinesms.ui.handler.BaseTabHandler;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
-import net.frontlinesms.ui.i18n.InternationalisationUtils;
-
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
+import org.creditsms.plugins.paymentview.ui.handler.tablog.dialogs.LogViewDialog;
+import org.creditsms.plugins.paymentview.utils.PvUtils;
 
 public class LogTabHandler extends BaseTabHandler implements
 PagedComponentItemProvider, EventObserver{
@@ -29,14 +29,12 @@ PagedComponentItemProvider, EventObserver{
 	private ComponentPagingHandler logsTablePager;
 	private Object pnlLogsTableComponent;
 	
-	private final PaymentViewPluginController pluginController;
 	private LogMessageDao logMessageDao;
 	private String logMessagesFilter = "";
 
 	
 	public LogTabHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui);
-		this.pluginController = pluginController;
 		this.logMessageDao = pluginController.getLogMessageDao();
 		ui.getFrontlineController().getEventBus().registerObserver(this);
 		
@@ -105,11 +103,22 @@ PagedComponentItemProvider, EventObserver{
 	private Object getRow(LogMessage logMessage) {
 		Object row = ui.createTableRow(logMessage);
 
-		ui.add(row, ui.createTableCell(logMessage.getLogLevel().toString()));
+		Object levelCell = ui.createTableCell(logMessage.getLogLevel().toString());
+		ui.setIcon(levelCell, logMessage.getLogLevel().getIconPath());
+		
+		ui.add(row, levelCell);
 		ui.add(row, ui.createTableCell(logMessage.getLogTitle()));
 		ui.add(row, ui.createTableCell(logMessage.getLogContent()));
-		ui.add(row, ui.createTableCell(InternationalisationUtils.getDatetimeFormat().format(new Date(logMessage.getTimestamp()))));
+		ui.add(row, ui.createTableCell(PvUtils.formatDate(new Date(logMessage.getTimestamp()))));
 		return row;
+	}
+	
+	public void viewLog() {
+		Object selectedItem = ui.getSelectedItem(logsTableComponent);
+		if (selectedItem != null){
+			LogMessage logMessage = ui.getAttachedObject(selectedItem, LogMessage.class);
+			new LogViewDialog(ui, logMessage).showDialog();
+		}
 	}
 
 	//> INCOMING PAYMENT NOTIFICATION...

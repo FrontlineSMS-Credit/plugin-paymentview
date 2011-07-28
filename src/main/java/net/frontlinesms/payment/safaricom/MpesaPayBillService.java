@@ -28,10 +28,12 @@ public class MpesaPayBillService extends MpesaPaymentService {
 		+ "Time: ([0-2]\\d|[3][0-1])/(0[1-9]|1[0-2])/(20[1][1-2]) (([2][0-3]|[0-1]\\d):([0-5]\\d):([0-5]\\d))";
 	
 	private static final Pattern BALANCE_REGEX_PATTERN = Pattern.compile(STR_BALANCE_REGEX_PATTERN);
+	@Override
 	protected boolean isValidBalanceMessage(FrontlineMessage message){
 		return BALANCE_REGEX_PATTERN.matcher(message.getTextContent()).matches();
 	}
 	
+	@Override
 	protected void processBalance(FrontlineMessage message){
 		new PaymentJob() {
 			public void run() {

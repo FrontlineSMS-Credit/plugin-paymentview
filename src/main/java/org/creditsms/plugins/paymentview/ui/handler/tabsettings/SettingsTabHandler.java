@@ -1,10 +1,11 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
-import java.io.IOException;
-
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
+import net.frontlinesms.messaging.sms.events.SmsModemStatusNotification;
+import net.frontlinesms.messaging.sms.modem.SmsModem;
+import net.frontlinesms.messaging.sms.modem.SmsModemStatus;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
 import net.frontlinesms.payment.PaymentServiceStartedNotification;
@@ -20,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
+import org.creditsms.plugins.paymentview.paymentsettings.PaymentSettingsProperties;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.UpdateAuthorizationCodeDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings.MobilePaymentServiceSettingsInitialisationDialog;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance.BalanceEventNotification;
@@ -121,7 +123,39 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	public void notify(final FrontlineEventNotification notification) {
 		new FrontlineUiUpateJob() {
 			public void run() {
-				if (notification instanceof BalanceEventNotification) {
+				if(notification instanceof SmsModemStatusNotification &&
+						((SmsModemStatusNotification) notification).getStatus() == SmsModemStatus.CONNECTED) {
+					final SmsModem connectedModem = ((SmsModemStatusNotification) notification).getService();
+					PaymentSettingsProperties props = PaymentSettingsProperties.getInstance();
+					if(props.getSmsModemSerial()!=null){
+						if(props.getSmsModemSerial().equals(connectedModem.getSerial())) {
+							// We've just connected the configured device, so start up the payment service...
+							//...if it's not already running!
+							MpesaPaymentService mpesaPaymentService = (MpesaPaymentService) props.initPaymentService();
+							if(mpesaPaymentService != null) {
+								if(props.getPin() != null) {
+									mpesaPaymentService.setPin(props.getPin());
+									mpesaPaymentService.setCService(connectedModem.getCService());
+									mpesaPaymentService.initDaosAndServices(pluginController);
+									EventBus eventBus = ui.getFrontlineController().getEventBus();
+									eventBus.registerObserver(mpesaPaymentService);
+									pluginController.setPaymentService(mpesaPaymentService);
+									eventBus.notifyObservers(new PaymentServiceStartedNotification(mpesaPaymentService));
+								}
+								//String propPaymentService = ;
+								//String propPin = props.getPin();
+								
+								// TODO configure the payment service from the properties file
+								// TODO set the payment service in the plugin controller
+								// TODO start the payment service
+							} else {
+								ui.alert("Please setup payment service");
+							}
+						}	
+					} else {
+						ui.alert("Please setup payment service");
+					}
+				}else if (notification instanceof BalanceEventNotification) {
 					ui.alert(((BalanceEventNotification)notification).getMessage());
 					SettingsTabHandler.this.refresh();
 				}else if (notification instanceof PaymentServiceStartedNotification) {
