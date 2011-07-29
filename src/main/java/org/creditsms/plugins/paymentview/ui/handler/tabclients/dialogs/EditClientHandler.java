@@ -148,15 +148,20 @@ public class EditClientHandler extends BaseDialog{
 //			}
 		}
 	}
-
-	public void saveClient() throws DuplicateKeyException {
+	
+	private boolean validate() {
 		//Check phone number format
 		String PHONE_PATTERN = "\\+2547[\\d]{8}";
 		Matcher matcherPhoneNumber = Pattern.compile(PHONE_PATTERN).matcher(ui.getText(fieldPhoneNumber));
-		if (!matcherPhoneNumber.matches()){
+		boolean isValid = matcherPhoneNumber.matches();
+		if (!isValid){
 			ui.infoMessage("The phone number should be set with the following format: +254XXXXXXXXX.");
-		} else {
-		
+		}
+		return isValid;
+	}
+
+	public void saveClient() throws DuplicateKeyException {
+		if (validate()){
 			if (editMode) {
 				this.client.setFirstName(ui.getText(fieldFirstName));
 				this.client.setOtherName(ui.getText(fieldOtherName));
@@ -205,48 +210,48 @@ public class EditClientHandler extends BaseDialog{
 					clientsTabHandler.refresh();
 				}
 			} else {
-					String fn = ui.getText(fieldFirstName);
-					String on = ui.getText(fieldOtherName);
-					String phone = ui.getText(fieldPhoneNumber);
-					//test if phoneNumber already linked to another client
-					Client clientInDb = clientDao.getClientByPhoneNumber(phone);
-					if (clientInDb!=null ){
-						if (clientInDb.isActive()){
-							ui.infoMessage("The phone number " + phone + " is already set up for "+ clientInDb.getFullName() + ".");
-						} else {
-							//TODO: Make sure that the user is active if we add a client that has same phone number...
-							//ui.showConfirmationDialog("An inactive client with this phone number '" + phone + "' exists." +
-							//		"Would you like to reactivate it?", "", this);
-							removeDialog();
-							ui.infoMessage("The phone number " + phone + " was previously set up for "+ clientInDb.getFullName() + " and will be reactivated.");
-							clientInDb.setActive(true);
-							this.clientDao.updateClient(clientInDb);
-						}
-						
+				String fn = ui.getText(fieldFirstName);
+				String on = ui.getText(fieldOtherName);
+				String phone = ui.getText(fieldPhoneNumber);
+				//test if phoneNumber already linked to another client
+				Client clientInDb = clientDao.getClientByPhoneNumber(phone);
+				if (clientInDb!=null ){
+					if (clientInDb.isActive()){
+						ui.infoMessage("The phone number " + phone + " is already set up for "+ clientInDb.getFullName() + ".");
 					} else {
-						Client client = new Client(fn, on, phone);
-						this.clientDao.saveClient(client);
-			
-						List<CustomField> allUsedCustomFields = this.customFieldDao
-								.getAllActiveUsedCustomFields();
-			
-						if (!allUsedCustomFields.isEmpty()) {
-							for (CustomField cf : allUsedCustomFields) {
-								CustomValue cv = new CustomValue(
-										ui.getText(customComponents.get(cf)), cf, client);
-								try {
-									customValueDao.saveCustomValue(cv);
-								} catch (DuplicateKeyException e) {
-									throw new RuntimeException(e);
-								}
+						//TODO: Make sure that the user is active if we add a client that has same phone number...
+						//ui.showConfirmationDialog("An inactive client with this phone number '" + phone + "' exists." +
+						//		"Would you like to reactivate it?", "", this);
+						removeDialog();
+						ui.infoMessage("The phone number " + phone + " was previously set up for "+ clientInDb.getFullName() + " and will be reactivated.");
+						clientInDb.setActive(true);
+						this.clientDao.updateClient(clientInDb);
+					}
+					
+				} else {
+					Client client = new Client(fn, on, phone);
+					this.clientDao.saveClient(client);
+		
+					List<CustomField> allUsedCustomFields = this.customFieldDao
+							.getAllActiveUsedCustomFields();
+		
+					if (!allUsedCustomFields.isEmpty()) {
+						for (CustomField cf : allUsedCustomFields) {
+							CustomValue cv = new CustomValue(
+									ui.getText(customComponents.get(cf)), cf, client);
+							try {
+								customValueDao.saveCustomValue(cv);
+							} catch (DuplicateKeyException e) {
+								throw new RuntimeException(e);
 							}
 						}
-						
-						Account account = new Account(createAccountNumber(),client,false,true);
-						this.accountDao.saveAccount(account);
-						removeDialog();
-						clientsTabHandler.refresh();
 					}
+					
+					Account account = new Account(createAccountNumber(),client,false,true);
+					this.accountDao.saveAccount(account);
+					removeDialog();
+					clientsTabHandler.refresh();
+				}
 			}
 		}
 	}
