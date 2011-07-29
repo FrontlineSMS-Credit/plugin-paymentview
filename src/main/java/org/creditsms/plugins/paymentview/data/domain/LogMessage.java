@@ -82,9 +82,9 @@ public class LogMessage {
 	}
 
 	public static enum LogLevel {
-		INFO("Info","/icons/sms_created.png"),
-		WARNING("Warning", "/icons/sms_unconfirmed.png"),
-		ERROR("Error", "/icons/sms_confirmed.png");
+		INFO("Info","/icons/log_info.png"),
+		WARNING("Warning", "/icons/log_warning.png"),
+		ERROR("Error", "/icons/log_error.png");
 
 		private String status;
 		private String icon;
