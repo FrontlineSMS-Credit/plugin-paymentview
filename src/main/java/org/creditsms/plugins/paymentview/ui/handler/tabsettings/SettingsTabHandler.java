@@ -1,7 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
-import java.io.IOException;
-
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
