@@ -5,7 +5,7 @@
 		<label text="PaymentView Logs" font="20 Bold" weightx="1"/>
 		<panel columns="1" gap="5" name="pnl_logs" weightx="1"
 			weighty="1">
-			<table name="tbl_logs" weightx="1" weighty="1">
+			<table name="tbl_logs" weightx="1" weighty="1" perform="viewLog()">
 				<header>					
 					<column text="Level" width="100"/>
 					<column text="Description" width="400"/>

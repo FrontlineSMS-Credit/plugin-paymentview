@@ -21,7 +21,6 @@ import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
 public class ClientExportHandler extends ExportDialogHandler<Client> {
-	private static final String COMPONENT_ACCOUNTS = "cbAccounts";
 	private static final String COMPONENT_CB_NAME = "cbName";
 	private static final String COMPONENT_CB_PHONE = "cbPhone";
 	/** I18n Text Key: TODO document */

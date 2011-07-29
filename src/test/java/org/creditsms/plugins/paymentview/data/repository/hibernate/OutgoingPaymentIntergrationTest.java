@@ -111,7 +111,7 @@ public class OutgoingPaymentIntergrationTest extends HibernateTestCase{
 		createAndSaveOutgoingPayment(c, "700000", d1, ac, Status.UNCONFIRMED,1);
 		createAndSaveOutgoingPayment(c, "700000", d2, ac, Status.UNCONFIRMED,2);
 		assertEquals(2,this.hibernateOutgoingPaymentDao.getAllOutgoingPayments().size());
-		assertEquals((Long) d2.getTime(), (Long) this.hibernateOutgoingPaymentDao.getByPhoneNumberAndAmountPaid(c.getPhoneNumber(),
+		assertEquals((Long) d2.getTime(), this.hibernateOutgoingPaymentDao.getByPhoneNumberAndAmountPaid(c.getPhoneNumber(),
 				new BigDecimal("700000"), Status.UNCONFIRMED).get(0).getTimePaid());
 	}
 	

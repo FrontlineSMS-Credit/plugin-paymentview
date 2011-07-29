@@ -35,7 +35,7 @@ public class SelectFromClientsTabHandler extends BaseTabHandler {
 	protected Object initialiseTab() {
 		selectFromClientsPanel = ui.loadComponentFromFile(XML_SELECT_FROM_CLIENTS_TAB, this);
 		clientTableHolder = ui.find(selectFromClientsPanel, PNL_CLIENT_TABLE_HOLDER);
-		clientsTableHandler = new SelectClientsTableHandler(ui, pluginController);
+		clientsTableHandler = new SelectClientsTableHandler(ui, pluginController, this);
 		clientsTableComponent = clientsTableHandler.getClientsTable();
 		ui.add(clientTableHolder, clientsTableHandler.getClientsTablePanel());
 		this.ui.add(sendNewPaymentsTab, selectFromClientsPanel);

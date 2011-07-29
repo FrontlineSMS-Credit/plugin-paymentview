@@ -79,6 +79,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 		fieldOpNotes = ui.find(dialogComponent, COMPONENT_TEXT_OP_NOTES);
 	}
 
+	@Override
 	protected void refresh(){
 		ui.setText(fieldOpName, this.getClientObj().getFullName());
 		ui.setText(fieldOpMsisdn, this.getClientObj().getPhoneNumber());

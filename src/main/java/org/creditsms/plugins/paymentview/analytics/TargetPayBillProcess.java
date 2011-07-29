@@ -16,6 +16,7 @@ public class TargetPayBillProcess  extends TargetCreationProcess{
 		super(client, serviceItem, targetStartDate, targetEndDate, pluginController);
 	}
 	
+	@Override
 	public void createTarget(){
 		// Check if there are any accounts linked to the client
 		if (canCreateTarget()){
@@ -41,6 +42,7 @@ public class TargetPayBillProcess  extends TargetCreationProcess{
 		}
 	}
 	
+	@Override
 	public boolean canCreateTarget(){
 		this.setInactiveNonGenericAccounts(this.getAccountDao().
 		getInactiveNonGenericAccountsByClientId(this.getClient().getId()));
