@@ -26,6 +26,7 @@ import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.junit.BaseTestCase;
 import net.frontlinesms.payment.PaymentServiceException;
+import net.frontlinesms.test.smslib.SmsLibTestUtils;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
@@ -94,7 +95,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		balance = Balance.getInstance();
 		
 		this.mpesaPaymentService = createNewTestClass();
-		this.cService = mock(CService.class);
+		this.cService = SmsLibTestUtils.mockCService();
 		this.aTHandler = mock(CATHandler_Wavecom_Stk.class);
 		when(cService.getAtHandler()).thenReturn(aTHandler);
 		mpesaPaymentService.setCService(cService);

@@ -34,8 +34,10 @@ import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
+import org.smslib.handler.ATHandler.SynchronizedWorkflow;
 import org.smslib.stk.StkConfirmationPrompt;
 import org.smslib.stk.StkMenu;
+import org.smslib.stk.StkMenuItemNotFoundException;
 import org.smslib.stk.StkRequest;
 import org.smslib.stk.StkResponse;
 import org.smslib.stk.StkValuePrompt;
@@ -84,25 +86,21 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	
 //> STK & PAYMENT ACCOUNT
 	public void checkBalance() throws PaymentServiceException {
-		initIfRequired();
 		try {
 			final String pin = this.pin;
-//			this.cService.doSynchronized(new SynchronizedWorkflow<Object>() {
-//				public Object run() throws SMSLibDeviceException, IOException {
-					try {
-						final StkMenu mPesaMenu = getMpesaMenu();
-						final StkMenu myAccountMenu = (StkMenu) cService.stkRequest(mPesaMenu.getRequest("My account"));
-						final StkResponse getBalanceResponse = cService.stkRequest(myAccountMenu.getRequest("Show balance"));
-						
-						final StkResponse enterPinResponse = cService.stkRequest(((StkValuePrompt) getBalanceResponse).getRequest(), pin);
-						if(enterPinResponse == StkResponse.ERROR) throw new RuntimeException("PIN rejected");
-						
-//						return null;
-					} catch(final PaymentServiceException ex) {
-						throw new SMSLibDeviceException(ex);
-					}
-//				}
-//			});
+			this.cService.doSynchronized(new SynchronizedWorkflow<Object>() {
+				public Object run() throws SMSLibDeviceException, IOException {
+					initIfRequired();
+					final StkMenu mPesaMenu = getMpesaMenu();
+					final StkMenu myAccountMenu = (StkMenu) cService.stkRequest(mPesaMenu.getRequest("My account"));
+					final StkResponse getBalanceResponse = cService.stkRequest(myAccountMenu.getRequest("Show balance"));
+					
+					final StkResponse enterPinResponse = cService.stkRequest(((StkValuePrompt) getBalanceResponse).getRequest(), pin);
+					if(enterPinResponse == StkResponse.ERROR) throw new RuntimeException("PIN rejected");
+					
+					return null;
+				}
+			});
 			// TODO check finalResponse is OK
 			// TODO wait for response...
 		} catch (final SMSLibDeviceException ex) {
@@ -115,30 +113,35 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	}
 
 	public void makePayment(final Client client, final BigDecimal amount) throws PaymentServiceException {
-		initIfRequired();
 		try {
-			final StkMenu mPesaMenu = getMpesaMenu();
-			final StkResponse sendMoneyResponse = cService.stkRequest(mPesaMenu.getRequest("Send money"));
-
-			StkValuePrompt enterPhoneNumberPrompt;
-			if(sendMoneyResponse instanceof StkMenu) {
-				enterPhoneNumberPrompt = (StkValuePrompt) cService.stkRequest(((StkMenu) sendMoneyResponse).getRequest("Enter phone no."));
-			} else {
-				enterPhoneNumberPrompt = (StkValuePrompt) sendMoneyResponse;
-			}
-
-			final StkResponse enterPhoneNumberResponse = cService.stkRequest(enterPhoneNumberPrompt.getRequest(), client.getPhoneNumber());
-			if(!(enterPhoneNumberResponse instanceof StkValuePrompt)) throw new RuntimeException("Phone number rejected");
-			
-			final StkResponse enterAmountResponse = cService.stkRequest(((StkValuePrompt) enterPhoneNumberResponse).getRequest(), amount.toString());
-			if(!(enterAmountResponse instanceof StkValuePrompt)) throw new RuntimeException("amount rejected");
-			
-			final StkResponse enterPinResponse = cService.stkRequest(((StkValuePrompt) enterAmountResponse).getRequest(), this.pin);
-			if(!(enterPinResponse instanceof StkConfirmationPrompt)) throw new RuntimeException("PIN rejected");
-			
-			final StkResponse confirmationResponse = cService.stkRequest(((StkConfirmationPrompt) enterPinResponse).getRequest());
-			if(confirmationResponse == StkResponse.ERROR) throw new RuntimeException("Payment failed for some reason.");
-			
+			this.cService.doSynchronized(new SynchronizedWorkflow<Object>() {
+				public Object run() throws SMSLibDeviceException, IOException {
+					initIfRequired();
+					final StkMenu mPesaMenu = getMpesaMenu();
+					final StkResponse sendMoneyResponse = cService.stkRequest(mPesaMenu.getRequest("Send money"));
+		
+					StkValuePrompt enterPhoneNumberPrompt;
+					if(sendMoneyResponse instanceof StkMenu) {
+						enterPhoneNumberPrompt = (StkValuePrompt) cService.stkRequest(((StkMenu) sendMoneyResponse).getRequest("Enter phone no."));
+					} else {
+						enterPhoneNumberPrompt = (StkValuePrompt) sendMoneyResponse;
+					}
+		
+					final StkResponse enterPhoneNumberResponse = cService.stkRequest(enterPhoneNumberPrompt.getRequest(), client.getPhoneNumber());
+					if(!(enterPhoneNumberResponse instanceof StkValuePrompt)) throw new RuntimeException("Phone number rejected");
+					
+					final StkResponse enterAmountResponse = cService.stkRequest(((StkValuePrompt) enterPhoneNumberResponse).getRequest(), amount.toString());
+					if(!(enterAmountResponse instanceof StkValuePrompt)) throw new RuntimeException("amount rejected");
+					
+					final StkResponse enterPinResponse = cService.stkRequest(((StkValuePrompt) enterAmountResponse).getRequest(), pin);
+					if(!(enterPinResponse instanceof StkConfirmationPrompt)) throw new RuntimeException("PIN rejected");
+					
+					final StkResponse confirmationResponse = cService.stkRequest(((StkConfirmationPrompt) enterPinResponse).getRequest());
+					if(confirmationResponse == StkResponse.ERROR) throw new RuntimeException("Payment failed for some reason.");
+					
+					return null;
+				}
+			});
 		} catch (final SMSLibDeviceException ex) {
 			throw new PaymentServiceException(ex);
 		} catch (final IOException e) {
@@ -463,34 +466,23 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		return super.equals(other);
 	}
 
-	private StkMenu getMpesaMenu() throws PaymentServiceException {
-		try {
-			final StkResponse stkResponse = cService.stkRequest(StkRequest.GET_ROOT_MENU);
-			StkMenu rootMenu = null;
-			
-			if (stkResponse instanceof StkMenu) {
-				rootMenu = (StkMenu) stkResponse;
-			} else {
-				throw new PaymentServiceException("StkResponse Error Returned.");
-			}
-			
-			return  (StkMenu)cService.stkRequest(rootMenu.getRequest("M-PESA"));
-		} catch (final SMSLibDeviceException ex) {
-			throw new PaymentServiceException(ex);
-		} catch (final IOException e) {
-			throw new PaymentServiceException(e);
+	private StkMenu getMpesaMenu() throws StkMenuItemNotFoundException, SMSLibDeviceException, IOException {
+		final StkResponse stkResponse = cService.stkRequest(StkRequest.GET_ROOT_MENU);
+		StkMenu rootMenu = null;
+		
+		if (stkResponse instanceof StkMenu) {
+			rootMenu = (StkMenu) stkResponse;
+			return (StkMenu) cService.stkRequest(rootMenu.getRequest("M-PESA"));
+		} else {
+			throw new SMSLibDeviceException("StkResponse Error Returned.");
 		}
 	}
 
 	
-	private void initIfRequired() throws PaymentServiceException {
+	private void initIfRequired() throws SMSLibDeviceException, IOException {
 		// For now, we assume that init is always required.  If there is a clean way
 		// of identifying when it is and is not, we should perhaps implement this.
-		try {
-			this.cService.getAtHandler().stkInit();
-		} catch(final Exception ex) {
-			throw new PaymentServiceException(ex);
-		}
+		this.cService.getAtHandler().stkInit();
 	}
 	
 //> DESTROY
