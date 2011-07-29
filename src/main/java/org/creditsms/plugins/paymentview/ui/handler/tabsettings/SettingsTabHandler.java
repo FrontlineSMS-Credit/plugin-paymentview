@@ -1,7 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
-import java.io.IOException;
-
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
@@ -28,16 +26,20 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	private static final String BTN_CREATE_NEW_SERVICE = "btn_createNewService";
 	private static final String COMPONENT_SETTINGS_TABLE = "tbl_accounts";
 	private static final String CONFIRM_CHECK_BALANCE = "message.confirm.checkbalance";
+	private String CONFIRM_DELETE_MOBILE_PAYMENT_ACCOUNT = "message.confirm.delete.mobilepaymentaccount";
 	private static final String XML_SETTINGS_TAB = "/ui/plugins/paymentview/settings/settingsTab.xml";
 
 	private Object settingsTab;
 	private Object settingsTableComponent;
 	Object dialogConfirmation;
+	Object dialogDeleteMobilePaymentAccount;
 	private final PaymentViewPluginController pluginController;
 	private EventBus eventBus;
 	private LogMessageDao logMessageDao;
 	
 	protected Logger pvLog = Logger.getLogger(this.getClass());
+
+
 
 	public SettingsTabHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui);
@@ -94,16 +96,13 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 			ui.alert("Please select an account to update balance.");
 		}
 	}
-
-	public final void checkBalance(String methodToBeCalled){
-		dialogConfirmation = this.ui.showConfirmationDialog(methodToBeCalled, this, CONFIRM_CHECK_BALANCE);
-	}
 	
 	public void updateAuthCode() {
 		new UpdateAuthorizationCodeDialog(ui, pluginController).showDialog();
 	}
 	
 	public void deleteAccount() {
+		ui.remove(dialogDeleteMobilePaymentAccount);
 		Object selectedItem = this.ui.getSelectedItem(settingsTableComponent);
 		if (selectedItem != null) {
 			PaymentService __paymentService = ui.getAttachedObject(selectedItem, PaymentService.class);
@@ -140,5 +139,13 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 				}
 			}
 		}.execute();
+	}
+	
+	public final void checkBalance(String methodToBeCalled){
+		dialogConfirmation = this.ui.showConfirmationDialog(methodToBeCalled, this, CONFIRM_CHECK_BALANCE);
+	}
+	
+	public final void deleteMobilePaymentAccount(String methodToBeCalled){
+		dialogDeleteMobilePaymentAccount = this.ui.showConfirmationDialog(methodToBeCalled, this, CONFIRM_DELETE_MOBILE_PAYMENT_ACCOUNT);
 	}
 }
