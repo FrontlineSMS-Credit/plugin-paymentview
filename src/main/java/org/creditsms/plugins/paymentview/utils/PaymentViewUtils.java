@@ -75,7 +75,7 @@ public class PaymentViewUtils extends FrontlineUtils {
 			currentType = type;
 		}
 		list.add(new String(c, tokenStart, c.length - tokenStart));
-		return (String[]) list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
 	public static String getReadableFieldName(String fieldName) {

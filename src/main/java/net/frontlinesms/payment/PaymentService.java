@@ -1,6 +1,5 @@
 package net.frontlinesms.payment;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;

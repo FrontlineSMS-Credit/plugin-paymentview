@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <panel name="pnl_clients" columns="1" weightx="1" weighty="1" gap="10">
-	<table name="tbl_clients" weightx="1" weighty="1" selection="single">
+	<table name="tbl_clients" weightx="1" weighty="1" selection="single" perform="sendPaymentForClient">
 		<header/>
 	</table>
 </panel>

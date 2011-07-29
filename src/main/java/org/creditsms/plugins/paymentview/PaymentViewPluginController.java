@@ -14,22 +14,14 @@ import java.util.List;
 import net.frontlinesms.BuildProperties;
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.DuplicateKeyException;
-import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
-import net.frontlinesms.messaging.sms.events.SmsModemStatusNotification;
-import net.frontlinesms.messaging.sms.modem.SmsModem;
-import net.frontlinesms.messaging.sms.modem.SmsModemStatus;
 import net.frontlinesms.payment.PaymentService;
-import net.frontlinesms.payment.PaymentServiceStartedNotification;
-import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.events.FrontlineUiUpateJob;
-
 import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
@@ -41,7 +33,6 @@ import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
-import org.creditsms.plugins.paymentview.paymentsettings.PaymentSettingsProperties;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.AuthorizationProperties;
 import org.creditsms.plugins.paymentview.utils.PvUtils;
@@ -200,61 +191,14 @@ public class PaymentViewPluginController extends BasePluginController
 	}
 
 	public void notify(FrontlineEventNotification notification) {
-		if(notification instanceof SmsModemStatusNotification &&
-				((SmsModemStatusNotification) notification).getStatus() == SmsModemStatus.CONNECTED) {
-			// TODO this should be done on a thread other than the UI Event Thread
-			final SmsModem connectedModem = ((SmsModemStatusNotification) notification).getService();
-			final PaymentViewPluginController pluginController = this;
-			new FrontlineUiUpateJob() {
-				public void run() {
-					PaymentSettingsProperties props = PaymentSettingsProperties.getInstance();
-					if(props.getSmsModemSerial()!=null){
-						if(props.getSmsModemSerial().equals(connectedModem.getSerial())) {
-							// We've just connected the configured device, so start up the payment service...
-							//...if it's not already running!
-							MpesaPaymentService mpesaPaymentService = (MpesaPaymentService) props.initPaymentService();
-							if(mpesaPaymentService != null) {
-								if(props.getPin() != null) {
-									mpesaPaymentService.setPin(props.getPin());
-									mpesaPaymentService.setCService(connectedModem.getCService());
-									mpesaPaymentService.initDaosAndServices(pluginController);
-									EventBus eventBus = ui.getFrontlineController().getEventBus();
-									eventBus.registerObserver(mpesaPaymentService);
-									pluginController.setPaymentService(mpesaPaymentService);
-									eventBus.notifyObservers(new PaymentServiceStartedNotification(mpesaPaymentService));
-								}
-								//String propPaymentService = ;
-								//String propPin = props.getPin();
-								
-								// TODO configure the payment service from the properties file
-								// TODO set the payment service in the plugin controller
-								// TODO start the payment service
-							} else {
-								ui.alert("Please setup payment service");
-							}
-						}	
-					} else {
-						ui.alert("Please setup payment service");
-					}
-				}
-			}.execute();
-		}
+		//Moved to Settings Tab for consistencies sake
 	}
 
 	public Logger getLogger(Class<?> clazz) {
 		return PvUtils.getLogger(clazz);
 	}
 	
-	/*
-	public class PaymentServiceStartedNotification implements FrontlineEventNotification{
-		private MpesaPaymentService paymentService;
-		PaymentServiceStartedNotification(MpesaPaymentService paymentService){
-			this.paymentService = paymentService;
-		}
-	}
-
-	public FrontlineSMS getFrontlineController() { // TODO this method shouldn't really be here :)
-		return this.frontlineController;
-	}
-	*/
+//	public FrontlineSMS getFrontlineController() { // TODO this method shouldn't really be here :)
+//		return this.frontlineController;
+//	}
 }
