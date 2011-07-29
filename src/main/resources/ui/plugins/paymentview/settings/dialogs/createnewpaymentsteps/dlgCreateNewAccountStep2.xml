@@ -2,7 +2,7 @@
 <dialog bottom="9"
 	columns="3" gap="15" left="9" name="clientDetailsDialog"
 	right="9" text="Create Alert"
-	top="9" resizable="true" modal="true">
+	top="9" resizable="true" modal="true" closable="true" close="removeDialog(this)" >
 
 	<label text="Enter Account PIN" />
 	<passwordfield colspan="2" columns="15" name="pin"  text="" action="assertMaxLength(this)"/>
@@ -11,7 +11,7 @@
 	<passwordfield colspan="2" columns="15" name="vpin" text="" action="assertMaxLength(this)" perform="next"/>
 
 	<panel colspan="3" weightx="1">
-		<button icon="/icons/left.png" text="Previous" action="previous" />
+		<panel weightx="1" />
 		<panel weightx="1" />
 		<button icon="/icons/right.png" text="Next"	action="next" />
 	</panel>

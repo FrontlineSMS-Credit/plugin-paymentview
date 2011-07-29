@@ -54,14 +54,6 @@ public class EnterPinDialog extends BaseDialog {
 		
 	}
 	
-	public void previous() {
-		MobilePaymentServiceSettingsInitialisationDialog initialisationDialog = new MobilePaymentServiceSettingsInitialisationDialog(ui, pluginController);
-		initialisationDialog.setPaymentService(paymentService);
-		initialisationDialog.setModem(modem);
-		initialisationDialog.showDialog();
-		removeDialog();
-	}
-	
 	public void next() {
 		setUpThePaymentService(ui.getText(pin), ui.getText(vpin));
 	}
