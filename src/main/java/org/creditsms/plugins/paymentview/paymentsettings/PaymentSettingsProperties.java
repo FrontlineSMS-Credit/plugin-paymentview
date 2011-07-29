@@ -25,7 +25,12 @@ public class PaymentSettingsProperties extends UserHomeFilePropertySet {
 	}
 	
 	public void setPaymentServiceClass(Class<? extends PaymentService> val)  {
-		setProperty(PAYMENT_SERVICE_CLASS, val.getName());
+		if(val!=null){
+			setProperty(PAYMENT_SERVICE_CLASS, val.getName());
+		}else{
+			setProperty(PAYMENT_SERVICE_CLASS, "");
+		}
+		
 	}
 	
 	public PaymentService initPaymentService() {
