@@ -49,7 +49,8 @@ public class MpesaPersonalServiceTest extends MpesaPaymentServiceTest<MpesaPerso
 	
 	public void testValidBalanceFraudCheck() throws DuplicateKeyException {
 		balance.reset();
-		balance.setBalanceAmount("2235");
+		// 30 kes transaction fees
+		balance.setBalanceAmount("2265");
 		balance.updateBalance();
 		//Test When Payment is successful OutgoingPayment
 		testOutgoingPaymentProcessing("BC77RI604 Confirmed. " +
