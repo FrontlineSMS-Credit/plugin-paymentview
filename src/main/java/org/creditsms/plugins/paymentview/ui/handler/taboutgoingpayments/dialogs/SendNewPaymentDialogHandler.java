@@ -99,7 +99,6 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 			int itemPaymentServices=0;
 			boolean flag = false;
 			opMobilePaymentSystem = ((PaymentService.PaymentServiceType) ui.getAttachedObject(ui.getSelectedItem(cmbOpMobilePaymentSystem))).getType();
-			System.out.println("payment service combobox:" + ((PaymentService.PaymentServiceType) ui.getAttachedObject(ui.getSelectedItem(cmbOpMobilePaymentSystem))).getType());
 			//to pick up the right paymentService from the list initialised in enterPin.java
 			while(!flag && itemPaymentServices<pluginController.getPaymentServices().size()){
 				flag = pluginController.getPaymentServices().get(itemPaymentServices).getClass().toString().contains(opMobilePaymentSystem);

@@ -28,7 +28,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	private static final Pattern MPESA_PAYMENT_FAILURE_PATTERN = Pattern.compile(STR_MPESA_PAYMENT_FAILURE_PATTERN);
 	
 	private static final String STR_PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = 
-		"[A-Z0-9]+ Confirmed. Ksh[,|.|\\d]+ sent to ([A-Za-z ]+) ((\\+254)|0)[\\d]{9} " +
+		"[A-Z0-9]+ Confirmed. Ksh[,|.|\\d]+ sent to ([A-Za-z ]+) \\+254[\\d]{9} " +
 		"on (([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) at ([1]?\\d:[0-5]\\d) ([A|P]M) " +
 		"New M-PESA balance is Ksh([,|.|\\d]+)";
 	
@@ -110,11 +110,20 @@ public class MpesaPersonalService extends MpesaPaymentService {
 			final OutgoingPayment outgoingPayment) {
 		BigDecimal tempBalanceAmount = balance.getBalanceAmount();
 		
-		//check is: Let Previous Balance be p, Current Balance be c and Amount sent be a
-		//c == p - a
+		//check is: Let Previous Balance be p, Current Balance be c, Amount sent be a, and MPesa transaction fees f
+		//c == p - a - f
 		//It might be wise that
+		BigDecimal amountPaid = outgoingPayment.getAmountPaid();
+		BigDecimal transactionFees;
 		BigDecimal currentBalance = getBalance(message);
-		BigDecimal expectedBalance = tempBalanceAmount.subtract(outgoingPayment.getAmountPaid());
+		if ( amountPaid.compareTo(new BigDecimal(100))<= 0) {
+			transactionFees = new BigDecimal(10);
+		} else if (amountPaid.compareTo(new BigDecimal(35000))<= 0){
+			transactionFees = new BigDecimal(30);
+		} else {
+			transactionFees = new BigDecimal(60);
+		}
+		BigDecimal expectedBalance = (tempBalanceAmount.subtract(outgoingPayment.getAmountPaid().add(transactionFees)));
 		
 		informUserOnFraud(currentBalance, expectedBalance, !expectedBalance.equals(currentBalance), message.getTextContent());
 		
