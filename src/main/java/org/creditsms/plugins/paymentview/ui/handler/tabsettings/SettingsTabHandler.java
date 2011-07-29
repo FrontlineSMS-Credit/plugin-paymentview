@@ -38,6 +38,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	private final PaymentViewPluginController pluginController;
 	private EventBus eventBus;
 	private LogMessageDao logMessageDao;
+	private PaymentSettingsProperties paymentSettingsProp = PaymentSettingsProperties.getInstance();
 	
 	protected Logger pvLog = Logger.getLogger(this.getClass());
 
@@ -115,6 +116,11 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 			eventBus.notifyObservers(new PaymentServiceStoppedNotification(__paymentService));
 			//memory leaks?
 			pluginController.setPaymentService(null);
+			
+			paymentSettingsProp.setPaymentServiceClass(null);
+			paymentSettingsProp.setPin("");
+			paymentSettingsProp.setSmsModem("");
+			paymentSettingsProp.saveToDisk();
 		}else{
 			ui.alert("Please select an account to delete.");
 		}
@@ -142,9 +148,6 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 									pluginController.setPaymentService(mpesaPaymentService);
 									eventBus.notifyObservers(new PaymentServiceStartedNotification(mpesaPaymentService));
 								}
-								//String propPaymentService = ;
-								//String propPin = props.getPin();
-								
 								// TODO configure the payment service from the properties file
 								// TODO set the payment service in the plugin controller
 								// TODO start the payment service
