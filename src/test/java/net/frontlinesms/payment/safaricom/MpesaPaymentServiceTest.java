@@ -290,7 +290,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		WaitingJob.waitForEvent();
 		
 		verify(incomingPaymentDao).getByConfirmationCode(reversedConfirmationCode);
-		verify(incomingPaymentDao).saveIncomingPayment(new IncomingPayment() {
+		verify(incomingPaymentDao).updateIncomingPayment(new IncomingPayment() {
 			@Override
 			public boolean equals(Object that) {
 				if(!(that instanceof IncomingPayment)) return false;
