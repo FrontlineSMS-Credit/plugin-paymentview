@@ -200,6 +200,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							payment.setPaymentBy(getPaymentBy(message));
 							payment.setTimePaid(getTimePaid(message));
 							
+							performIncominPaymentFraudCheck(message, payment);
 							incomingPaymentDao.saveIncomingPayment(payment);
 
 							// Check if the client has reached his targeted amount
@@ -258,6 +259,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 						payment.setConfirmationCode(getConfirmationCode(message));
 						payment.setPaymentBy(getPaymentBy(message));
 						payment.setTimePaid(getTimePaid(message));
+						
+						performIncominPaymentFraudCheck(message, payment);
 						incomingPaymentDao.saveIncomingPayment(payment);
 					}
 					
@@ -299,7 +302,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 						message
 					);
 					
-					incomingPaymentDao.saveIncomingPayment(incomingPayment);
+					incomingPaymentDao.updateIncomingPayment(incomingPayment);
 					logMessageDao.saveLogMessage(
 							new LogMessage(LogMessage.LogLevel.INFO,"Reverse Transaction",message.getTextContent()));
 				}catch (Exception e) {
