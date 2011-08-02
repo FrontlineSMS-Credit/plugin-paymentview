@@ -10,7 +10,7 @@ import org.creditsms.plugins.paymentview.utils.PvUtils;
 
 public class LogViewDialog extends BaseDialog{
 
-	//private static final String FLD_MESSAGE = "fldMessage";
+	private static final String FLD_MESSAGE = "fldMessage";
 	private static final String FLD_DETAILS = "fldDetails";
 	private static final String FLD_DATETIME = "fldDatetime";
 	private static final String FLD_LEVEL = "fldLevel";
@@ -25,8 +25,8 @@ public class LogViewDialog extends BaseDialog{
 		dialogComponent = ui.loadComponentFromFile(XML_LOG_VIEW_DIALOG);
 		ui.setText(ui.find(dialogComponent, FLD_LEVEL), logMessage.getLogLevel().toString());
 		ui.setText(ui.find(dialogComponent, FLD_DATETIME), PvUtils.formatDate(new Date(logMessage.getTimestamp())));
-		ui.setText(ui.find(dialogComponent, FLD_DETAILS), logMessage.getLogContent());
-		//ui.find(logViewDialog, FLD_MESSAGE);
+		ui.setText(ui.find(dialogComponent, FLD_DETAILS), logMessage.getLogTitle());
+		ui.setText(ui.find(dialogComponent, FLD_MESSAGE), logMessage.getLogContent());
 	}
 	
 	

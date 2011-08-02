@@ -146,10 +146,10 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 				outgoingPayment.setStatus(OutgoingPayment.Status.UNCONFIRMED);
 				
 				logMessageDao.saveLogMessage(
-						new LogMessage(LogMessage.LogLevel.INFO, "Create Outgoing Payment",outgoingPayment.toString()));
+						new LogMessage(LogMessage.LogLevel.INFO, "Outgoing Payment",outgoingPayment.toStringForLogs()));
 			} catch(Exception ex) {
 				logMessageDao.saveLogMessage(
-						new LogMessage(LogMessage.LogLevel.ERROR,"Create Outgoing Payment: Payment failed.",outgoingPayment.toString()));
+						new LogMessage(LogMessage.LogLevel.ERROR,"Outgoing Payment: Payment failed.",outgoingPayment.toStringForLogs()));
 				log.warn("Payment failed.", ex);
 				outgoingPayment.setStatus(OutgoingPayment.Status.ERROR);
 			}
@@ -162,7 +162,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 			}
 		} catch (Exception ex) {
 			logMessageDao.saveLogMessage(
-					new LogMessage(LogMessage.LogLevel.ERROR,"Create Outgoing Payment: Payment failed.",outgoingPayment.toString()));
+					new LogMessage(LogMessage.LogLevel.ERROR,"Outgoing Payment: Payment failed.",outgoingPayment.toStringForLogs()));
 			throw new RuntimeException(ex);
 		}
 	}

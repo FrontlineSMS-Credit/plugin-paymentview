@@ -267,12 +267,12 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 					//log the saved incoming payment
 					logMessageDao.saveLogMessage(
 							new LogMessage(LogMessage.LogLevel.INFO,
-										   	"Created Incoming Payment",
+										   	"Incoming Payment",
 										   	message.getTextContent()));
 				} catch (final IllegalArgumentException ex) {
 					logMessageDao.saveLogMessage(
 							new LogMessage(LogMessage.LogLevel.ERROR,
-										   	"Create Incoming Payment: Message failed to parse; likely incorrect format",
+										   	"Incoming Payment: Message failed to parse; likely incorrect format",
 										   	 message.getTextContent()));
 					pvLog.warn("Message failed to parse; likely incorrect format", ex);
 					throw new RuntimeException(ex);
@@ -280,7 +280,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 					pvLog.error("Unexpected exception parsing incoming payment SMS.", ex);
 					logMessageDao.saveLogMessage(
 							new LogMessage(LogMessage.LogLevel.ERROR,
-								   	"Create Incoming Payment: Unexpected exception parsing incoming payment SMS",
+								   	"Incoming Payment: Unexpected exception parsing incoming payment SMS",
 								   	message.getTextContent()));
 					throw new RuntimeException(ex);
 				}

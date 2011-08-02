@@ -1,6 +1,7 @@
 package org.creditsms.plugins.paymentview.data.domain;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -233,5 +234,11 @@ public class IncomingPayment {
 				+ ", confirmationCode=" + confirmationCode + ", paymentBy="
 				+ paymentBy + ", phoneNumber=" + phoneNumber + ", timePaid="
 				+ timePaid + "]";
+	}
+	
+	public String toStringForLogs() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy 'at' hh:mm a");
+		return "Incoming payment caracteristics:\nKsh " + this.amountPaid + " received from " + this.paymentBy +" "+ this.phoneNumber 
+		          + " on " + dateFormat.format(this.timePaid); 
 	}
 }

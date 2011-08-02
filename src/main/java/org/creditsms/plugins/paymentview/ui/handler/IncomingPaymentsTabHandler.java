@@ -150,7 +150,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				logMessageDao.saveLogMessage(
 						new LogMessage(LogMessage.LogLevel.INFO,
 							   	"Delete Incoming Payment",
-							   	attachedIncoming.toString()));
+							   	attachedIncoming.toStringForLogs()));
 			}
 			ui.infoMessage("You have successfully deleted the selected incoming payment(s).");	
 		}		
