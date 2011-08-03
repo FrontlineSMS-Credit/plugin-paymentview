@@ -53,7 +53,7 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler implements EventO
 					}
 				}else if (notification instanceof PaymentServiceStoppedNotification) {
 					OutgoingPaymentsTabHandler.this.refresh();
-					if(((PaymentServiceStartedNotification)notification).getPaymentService() instanceof MpesaPayBillService){
+					if(((PaymentServiceStoppedNotification)notification).getPaymentService() instanceof MpesaPayBillService){
 						ui.setEnabledRecursively(outgoingPaymentsTab, true);
 					}
 				}else if (notification instanceof UiDestroyEvent) {

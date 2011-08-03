@@ -187,7 +187,6 @@ public class AccountIntergrationTest extends HibernateTestCase {
 	private String createAccountNumber(){
 		int accountNumberGenerated = this.hibernateAccountDao.getAccountCount()+1;
 		String accountNumberGeneratedStr = String.format("%05d", accountNumberGenerated);
-		System.out.println("counter calculated :"+ accountNumberGeneratedStr);
 		while (this.hibernateAccountDao.getAccountByAccountNumber(accountNumberGeneratedStr) != null){
 			accountNumberGeneratedStr = String.format("%05d", ++ accountNumberGenerated);
 			System.out.println("counter incremented as previous generated account number exists:"+ accountNumberGeneratedStr);
