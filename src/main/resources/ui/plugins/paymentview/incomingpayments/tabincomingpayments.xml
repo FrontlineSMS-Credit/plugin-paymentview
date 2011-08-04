@@ -22,7 +22,7 @@
 			<button action="showDeleteConfirmationDialog('showAuthCode')"
 				icon="/icons/delete.png" name="miDeleteIncoming"
 				text="i18n.plugins.paymentview.action.deleteincoming" />
-			<button icon="/icons/export.png" action="exportPayments" halign="right" name="btn_export"
+			<button icon="/icons/export.png" action="exportIncomingPayments" halign="right" name="btn_export"
 				text="Export" />
 		</panel>
 	</panel>

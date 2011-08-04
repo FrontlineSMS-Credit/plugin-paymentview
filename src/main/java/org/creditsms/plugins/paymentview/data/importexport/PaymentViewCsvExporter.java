@@ -139,10 +139,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 									.getI18nString(COMMON_AMOUNT_PAID),
 							PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,
 							InternationalisationUtils
-									.getI18nString(COMMON_TIME_PAID),
-							PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT,
-							InternationalisationUtils
-									.getI18nString(COMMON_ACCOUNT));
+									.getI18nString(COMMON_TIME_PAID));
 			for (IncomingPayment incomingPayment : incomingPayments) {
 				CsvUtils.writeLine(out, incomingPaymentFormat,
 						PaymentViewCsvUtils.MARKER_PAYMENT_BY,
@@ -152,9 +149,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
 						incomingPayment.getAmountPaid().toString(),
 						PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,
-						Long.toString(incomingPayment.getTimePaid()),
-						PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT,
-						incomingPayment.getAccount().getAccountNumber());
+						Long.toString(incomingPayment.getTimePaid()));
 
 			}
 		} finally {

@@ -52,13 +52,33 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		ui.getFrontlineController().getEventBus().registerObserver(this);
 		init();
 	}
-
-	public void addClient() {
+	
+	@Override
+	protected Object initialiseTab() {
+		incomingPaymentsTab = ui.loadComponentFromFile(XML_INCOMING_PAYMENTS_TAB, this);
+		incomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_INCOMING_PAYMENTS_TABLE);
+		incomingPaymentsTablePager = new ComponentPagingHandler(ui, this, incomingPaymentsTableComponent);
+		pnlIncomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE);
+		this.ui.add(pnlIncomingPaymentsTableComponent, this.incomingPaymentsTablePager.getPanel());
+		return incomingPaymentsTab;
 	}
 
 	// > EVENTS...
-	public void exportPayments() {
-		new IncomingPaymentsExportHandler(ui, incomingPaymentDao).showWizard();
+	public void exportIncomingPayments() {
+		Object[] selectedItems = ui.getSelectedItems(incomingPaymentsTableComponent);
+		if (selectedItems.length <= 0){
+			exportIncomingPayments(incomingPaymentDao.getActiveIncomingPayments());
+		}else{
+			List<IncomingPayment> incomingPayments = new ArrayList<IncomingPayment>(selectedItems.length);
+			for (Object o : selectedItems) {
+				incomingPayments.add(ui.getAttachedObject(o, IncomingPayment.class));
+			}
+			exportIncomingPayments(incomingPayments);
+		}
+	}
+	
+	public void exportIncomingPayments(List<IncomingPayment> incomingPayments) {
+		new IncomingPaymentsExportHandler(ui, pluginController, incomingPayments).showWizard();
 		this.refresh();
 	}
 
@@ -78,23 +98,10 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 
 	@Override
-	protected Object initialiseTab() {
-		incomingPaymentsTab = ui.loadComponentFromFile(XML_INCOMING_PAYMENTS_TAB, this);
-		incomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_INCOMING_PAYMENTS_TABLE);
-		incomingPaymentsTablePager = new ComponentPagingHandler(ui, this, incomingPaymentsTableComponent);
-		pnlIncomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE);
-		this.ui.add(pnlIncomingPaymentsTableComponent, this.incomingPaymentsTablePager.getPanel());
-		return incomingPaymentsTab;
-	}
-
-	@Override
 	public void refresh() {
 		this.updateIncomingPaymentsList();
 	}
-//>INCOMING PAYMENT EVENT HANDLER
-	public void incomingPaymentReceived(IncomingPayment i) {
-		
-	}
+
 	
 //>PAGING METHODS
 	private PagedListDetails getIncomingPaymentsListDetails(int startIndex,
