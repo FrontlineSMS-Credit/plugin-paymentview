@@ -5,10 +5,14 @@ import java.util.List;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.CustomField;
+import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 
 @SuppressWarnings("unchecked")
 public class HibernateClientDao extends BaseHibernateDao<Client> implements
@@ -45,31 +49,48 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements
 		return getAllActiveClients().size();
 	}
 
-	public List<Client> getClientsByName(String clientName) {
+	public List<Client> getClientsByFilter(String filter) {
+		DetachedCriteria subCriteria = DetachedCriteria.forClass(CustomValue.class);
+		subCriteria.add(Restrictions.ilike("strValue", filter.trim(),MatchMode.ANYWHERE));
+		DetachedCriteria customFieldSubCriteria = subCriteria.createCriteria("customField");
+		customFieldSubCriteria.add(Restrictions.eq(CustomField.Field.USED.getFieldName(),Boolean.TRUE));
+		subCriteria.setProjection(Projections.distinct(Projections.property("client")));
+
 		DetachedCriteria criteria = super.getCriterion().add(
 				Restrictions
 						.disjunction()
-						.add(Restrictions.ilike("firstName", clientName.trim(),
+						.add(Restrictions.ilike("firstName", filter.trim(),
 								MatchMode.ANYWHERE))
-						.add(Restrictions.ilike("otherName", clientName.trim(),
-								MatchMode.ANYWHERE)));
+						.add(Restrictions.ilike("otherName", filter.trim(),
+								MatchMode.ANYWHERE))
+						.add(Restrictions.ilike("phoneNumber", filter.trim(),
+								MatchMode.ANYWHERE))
+						.add(Subqueries.propertyIn("id", subCriteria)));
 		criteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),Boolean.TRUE));
 		return super.getList(criteria);
 	}
+	
+	public List<Client> getClientsByFilter(String filter, int startIndex,int limit) {
+		DetachedCriteria subCriteria = DetachedCriteria.forClass(CustomValue.class);
+		subCriteria.add(Restrictions.ilike("strValue", filter.trim(),MatchMode.ANYWHERE));
+		DetachedCriteria customFieldSubCriteria = subCriteria.createCriteria("customField");
+		customFieldSubCriteria.add(Restrictions.eq(CustomField.Field.USED.getFieldName(),Boolean.TRUE));
+		subCriteria.setProjection(Projections.distinct(Projections.property("client")));
 
-	public List<Client> getClientsByName(String clientName, int startIndex,
-			int limit) {
 		DetachedCriteria criteria = super.getCriterion().add(
 				Restrictions
 						.disjunction()
-						.add(Restrictions.ilike("firstName", clientName.trim(),
+						.add(Restrictions.ilike("firstName", filter.trim(),
 								MatchMode.ANYWHERE))
-						.add(Restrictions.ilike("otherName", clientName.trim(),
-								MatchMode.ANYWHERE)));
+						.add(Restrictions.ilike("otherName", filter.trim(),
+								MatchMode.ANYWHERE))
+						.add(Restrictions.ilike("phoneNumber", filter.trim(),
+								MatchMode.ANYWHERE))
+						.add(Subqueries.propertyIn("id", subCriteria)));
 		criteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),Boolean.TRUE));
 		return super.getList(criteria, startIndex, limit);
 	}
-
+	
 	public List<Client> getAllActiveClients() {
 		DetachedCriteria criteria = super.getCriterion();
 		criteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),

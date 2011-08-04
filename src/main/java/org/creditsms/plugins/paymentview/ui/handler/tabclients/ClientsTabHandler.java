@@ -96,9 +96,18 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	}
 
 	public void exportClient() {
+		exportClient(clientTableHandler.getClientFilter());
+	}
+	
+	public void exportClient(String clientFilter) {
 		Object[] selectedItems = ui.getSelectedItems(clientsTableComponent);
 		if (selectedItems.length <= 0){
-			exportClients(clientDao.getAllClients());
+			if (clientFilter.isEmpty()){
+				exportClients(clientDao.getAllClients());
+			} else {
+				exportClients(clientDao.getClientsByFilter(clientFilter));
+			}
+			
 		}else{
 			List<Client> clients = new ArrayList<Client>(selectedItems.length);
 			for (Object o : selectedItems) {

@@ -81,7 +81,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	protected List<Client> getClients(String filter, int startIndex, int limit) {
 		if (clients.isEmpty()){
 			if (!filter.trim().isEmpty()) {
-				return this.clientDao.getClientsByName(filter, startIndex, limit);
+				return this.clientDao.getClientsByFilter(filter, startIndex, limit);
 			}else{
 				return this.clientDao.getAllActiveClients(startIndex, limit);
 			}
@@ -174,7 +174,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 		this.updateClientsList();
 	}
 
-	protected String getClientFilter() {
+	public String getClientFilter() {
 		return clientFilter;
 	}
 

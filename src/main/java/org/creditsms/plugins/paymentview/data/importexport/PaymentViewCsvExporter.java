@@ -83,8 +83,6 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 				items.add(client.getOtherName());
 				items.add(PaymentViewCsvUtils.MARKER_CLIENT_PHONE);
 				items.add(client.getPhoneNumber());
-				items.add(PaymentViewCsvUtils.MARKER_CLIENT_ACCOUNTS);
-				items.add(PaymentViewUtils.accountsAsString(accountDao.getAccountsByClientId(client.getId()), "; "));
 
 				if (!usedCustomFields.isEmpty()) {
 					CustomField curr = null;
