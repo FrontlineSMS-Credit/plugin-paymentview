@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dialog name="dialog_incomingPayments" text="Incoming Payments" icon="/icons/user_receiver.png" resizable="true" 
+ closable="true" close="removeDialog(this)" width="800" height="500">
+	<panel weightx="1" weighty="1" top="5" right="5" left="5"
+		columns="1" gap="10">
+		<panel columns="2" gap="5" name="pnl_clients" weightx="1"
+			weighty="1">
+			<label text="Incoming Payments" font="20 Bold" weightx="1"/>
+			<table name="tbl_clients" weightx="1" weighty="1" colspan="2" selection="multiple">
+				<header>
+					<column text="Name" width="200" icon="/icons/user.png" />
+					<column text="Phone" width="150" icon="/icons/phone.png" />
+					<column text="Amount" width="100" icon="/icons/money.png" />
+					<column text="Date" width="100" icon="/icons/date.png" />
+				</header>
+			</table>
+		</panel>
+		<panel gap="5" bottom="5" name="pnl_buttons"
+			weightx="1">
+			<panel weightx="1"/>
+			<panel weightx="1"/>
+			<button icon="/icons/export.png" action="exportIncomingPayments" halign="right" name="btn_export"
+				text="Export" />
+		</panel>
+	</panel>
+</dialog>
