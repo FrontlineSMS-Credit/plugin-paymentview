@@ -16,6 +16,8 @@ import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHan
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientImportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.CustomizeClientDBHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.EditClientHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.IncomingPaymentsDialogHandler;
+import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SendNewPaymentDialogHandler;
 
 public class ClientsTabHandler implements ThinletUiEventHandler {
 //> STATIC CONSTANTS
@@ -33,6 +35,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	private Object clientTableHolder;
 	private BaseClientTable clientTableHandler;
 	private final PaymentViewPluginController pluginController;
+	private Object incomingPaymentsDialog;
 
 	public ClientsTabHandler(UiGeneratorController ui,
 			final PaymentViewPluginController pluginController) {
@@ -125,6 +128,26 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	public void importClient() {
 		new ClientImportHandler(pluginController, this).showWizard();
 		this.refresh();
+	}
+	
+	public void viewIncomingPaymentByClient() {
+		Object[] selectedItems = ui.getSelectedItems(clientsTableComponent);
+		List<Client> selectedClients = new ArrayList<Client>(selectedItems.length);
+		if (selectedItems.length <= 0){
+			if (clientTableHandler.getClientFilter().isEmpty()){
+				selectedClients = this.clientDao.getAllActiveClients();
+			} else {
+				selectedClients = this.clientDao.getClientsByFilter(clientTableHandler.getClientFilter());
+			}
+			
+		}else{
+			for (Object o : selectedItems) {
+				selectedClients.add(ui.getAttachedObject(o, Client.class));
+			}
+		}
+		
+		incomingPaymentsDialog = new IncomingPaymentsDialogHandler(ui,pluginController, selectedClients).getDialog();
+		ui.add(incomingPaymentsDialog);
 	}
 	
 	public final void showDeleteConfirmationDialog(String methodToBeCalled){

@@ -30,14 +30,14 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private static final String XML_INCOMING_PAYMENTS_TAB = "/ui/plugins/paymentview/incomingpayments/tabincomingpayments.xml";
 	private static final String CONFIRM_DELETE_INCOMING = "message.confirm.delete.incoming";
 	
-	private IncomingPaymentDao incomingPaymentDao;
+	protected IncomingPaymentDao incomingPaymentDao;
 	private LogMessageDao logMessageDao;
 	
 	private String incomingPaymentsFilter = "";
 	private Object incomingPaymentsTab;
 
-	private Object incomingPaymentsTableComponent;
-	private ComponentPagingHandler incomingPaymentsTablePager;
+	protected Object incomingPaymentsTableComponent;
+	protected ComponentPagingHandler incomingPaymentsTablePager;
 	private Object pnlIncomingPaymentsTableComponent;
 	private PaymentViewPluginController pluginController;
 	private Object dialogConfirmation;
@@ -55,7 +55,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	
 	@Override
 	protected Object initialiseTab() {
-		incomingPaymentsTab = ui.loadComponentFromFile(XML_INCOMING_PAYMENTS_TAB, this);
+		incomingPaymentsTab = ui.loadComponentFromFile(getXMLFile(), this);
 		incomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_INCOMING_PAYMENTS_TABLE);
 		incomingPaymentsTablePager = new ComponentPagingHandler(ui, this, incomingPaymentsTableComponent);
 		pnlIncomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE);
@@ -63,11 +63,15 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		return incomingPaymentsTab;
 	}
 
+	protected String getXMLFile() {
+		return XML_INCOMING_PAYMENTS_TAB;
+	}
+
 	// > EVENTS...
 	public void exportIncomingPayments() {
 		Object[] selectedItems = ui.getSelectedItems(incomingPaymentsTableComponent);
 		if (selectedItems.length <= 0){
-			exportIncomingPayments(incomingPaymentDao.getActiveIncomingPayments());
+			exportIncomingPayments(getIncomingPaymentsForExport());
 		}else{
 			List<IncomingPayment> incomingPayments = new ArrayList<IncomingPayment>(selectedItems.length);
 			for (Object o : selectedItems) {
@@ -75,6 +79,10 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			}
 			exportIncomingPayments(incomingPayments);
 		}
+	}
+
+	protected List<IncomingPayment> getIncomingPaymentsForExport() {
+		return incomingPaymentDao.getActiveIncomingPayments();
 	}
 	
 	public void exportIncomingPayments(List<IncomingPayment> incomingPayments) {
@@ -104,21 +112,25 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 
 	
 //>PAGING METHODS
-	private PagedListDetails getIncomingPaymentsListDetails(int startIndex,
+	protected PagedListDetails getIncomingPaymentsListDetails(int startIndex,
 			int limit) {
 		List<IncomingPayment> incomingPayments = new ArrayList<IncomingPayment>();
-		
+		incomingPayments = getIncomingPaymentsForUI(startIndex, limit);
+		int totalItemCount = incomingPaymentDao.getActiveIncomingPaymentsCount();
+		Object[] listItems = toThinletComponents(incomingPayments);
+
+		return new PagedListDetails(totalItemCount, listItems);
+	}
+
+	protected List<IncomingPayment> getIncomingPaymentsForUI(int startIndex, int limit) {
+		List<IncomingPayment> incomingPayments;
 		if (this.incomingPaymentsFilter.equals("")) {
 			incomingPayments = this.incomingPaymentDao.getActiveIncomingPayments(startIndex, limit);
 		} else {
 			//TODO: change this to add more columns to be filtered.
 			incomingPayments = this.incomingPaymentDao.getActiveIncomingPaymentsByPhoneNo(this.incomingPaymentsFilter);
 		}
-
-		int totalItemCount = incomingPaymentDao.getActiveIncomingPaymentsCount();
-		Object[] listItems = toThinletComponents(incomingPayments);
-
-		return new PagedListDetails(totalItemCount, listItems);
+		return incomingPayments;
 	}
 
 	public PagedListDetails getListDetails(Object list, int startIndex,
