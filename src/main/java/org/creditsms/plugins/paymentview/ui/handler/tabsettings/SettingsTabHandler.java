@@ -44,8 +44,6 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	
 	protected Logger pvLog = Logger.getLogger(this.getClass());
 
-
-
 	public SettingsTabHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui);
 		this.pluginController = pluginController;

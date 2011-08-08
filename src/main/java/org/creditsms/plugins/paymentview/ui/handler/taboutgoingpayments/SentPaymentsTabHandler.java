@@ -39,6 +39,7 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	private OutgoingPaymentDao outgoingPaymentDao;
 
 	private Object sentPaymentsTableComponent;
+	private Object sentPaymentsPanel;
 	private ComponentPagingHandler sentPaymentsTablePager;
 	private Object pnlSentPaymentsTableComponent;
 
@@ -46,10 +47,7 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	private NumberFormat formatter = new DecimalFormat("#,000.00");
 	SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss a");
 	
-	private Object sentPaymentsPanel;
 	private String sentPaymentsFilter = "";
-
-
 
 	public SentPaymentsTabHandler(UiGeneratorController ui, Object tabOutgoingPayments, PaymentViewPluginController pluginController) {
 		super(ui);
@@ -82,7 +80,7 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	}
 
 	public void importPayments() {
-		new OutgoingPaymentsImportHandler(ui, accountDao, clientDao).showWizard();
+//		new OutgoingPaymentsImportHandler(ui, accountDao, clientDao).showWizard();
 		this.refresh();
 	}
 
