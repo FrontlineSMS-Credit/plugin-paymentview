@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dialog bottom="9" close="removeDialog(this)" 
+	columns="1" gap="10" left="9" icon="/icons/user.png" name="incomingPaymentDetailsDialog"
+	right="9" text="i18n.plugins.paymentview.dialog.incoming"
+	top="9" resizable="true" modal="true" closable="true">
+	
+	<panel name="pnlFields" columns="3" weightx="1" gap="10">
+		<label icon="/icons/user.png" text="Name:" />
+		<textfield columns="50" name="fldName" colspan="2" editable="false"/>
+		<label icon="/icons/phone.png" text="i18n.common.phone.number" />
+		<textfield name="fldPhoneNumber" colspan="2" editable="false"/>
+		<label icon="/icons/money.png" text="Amount" />
+		<textfield name="fldAmount" colspan="2" editable="false"/>
+		<label icon="/icons/date.png" text="Date" />
+		<textfield name="fldDate" colspan="2" editable="false"/>
+		<label icon="/icons/description.png" text="i18n.plugins.paymentview.common.paymentid" />
+		<textfield name="fldPaymentId" colspan="2" columns="20" action="assertMaxLength(this,20)"/>
+		<label icon="/icons/description.png" text="i18n.common.notes" />
+		<textarea name="fldNotes" colspan="2" rows="5" columns="20" action="assertMaxLength(this,100)"/>		
+	</panel>
+
+	<panel colspan="3" weightx="1">
+		<button action="saveIncomingPayment" icon="/icons/tick.png"
+			name="btSaveIncoming" text="i18n.action.save" />
+		<panel weightx="1" />
+		<button icon="/icons/cross.png" text="i18n.action.cancel"
+			action="removeDialog" />
+	</panel>
+</dialog>

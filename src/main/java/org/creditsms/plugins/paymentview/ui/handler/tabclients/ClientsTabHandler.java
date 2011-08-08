@@ -17,7 +17,6 @@ import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientImportHan
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.CustomizeClientDBHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.EditClientHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.IncomingPaymentsDialogHandler;
-import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SendNewPaymentDialogHandler;
 
 public class ClientsTabHandler implements ThinletUiEventHandler {
 //> STATIC CONSTANTS

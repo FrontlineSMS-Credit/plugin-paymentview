@@ -5,13 +5,21 @@
 		<panel columns="2" gap="5" name="pnl_clients" weightx="1"
 			weighty="1">
 			<label text="Incoming Payments" font="20 Bold" weightx="1"/>
-			<table name="tbl_clients" weightx="1" weighty="1" colspan="2" selection="multiple">
+			<table name="tbl_clients" weightx="1" weighty="1" colspan="2" selection="multiple" perform="editIncoming" >
 				<header>
 					<column text="Name" width="200" icon="/icons/user.png" />
 					<column text="Phone" width="150" icon="/icons/phone.png" />
 					<column text="Amount" width="100" icon="/icons/money.png" />
-					<column text="Date" width="100" icon="/icons/date.png" />
+					<column text="Date" width="130" icon="/icons/date.png" />
+					<column width="120" icon="/icons/description.png" text="i18n.plugins.paymentview.common.paymentid" />
+					<column icon="/icons/description.png" text="i18n.common.notes" />
 				</header>
+				<popupmenu name="menu">
+					<menuitem action="editIncoming" icon="/icons/edit.png" name="miEditIncoming" text="Edit Incoming Payment" />
+					<menuitem action="showDeleteConfirmationDialog('showAuthCode')" icon="/icons/delete.png" name="miDeleteIncoming"
+						text="i18n.plugins.paymentview.action.deleteincoming" />
+					<menuitem action="exportIncomingPayments" icon="/icons/export.png" name="miExportClient" text="Export" />
+				</popupmenu>
 			</table>
 		</panel>
 		<panel gap="5" bottom="5" name="pnl_buttons"

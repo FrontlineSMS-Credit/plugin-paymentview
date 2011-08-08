@@ -1,4 +1,4 @@
-package org.creditsms.plugins.paymentview.ui.handler;
+package org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,12 +16,16 @@ import net.frontlinesms.ui.handler.PagedListDetails;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
+import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsImportHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.EditClientHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.EditIncomingPaymentDialogHandler;
 
 public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		PagedComponentItemProvider, EventObserver{
@@ -97,6 +101,8 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		ui.add(row, ui.createTableCell(incomingPayment.getPhoneNumber()));
 		ui.add(row, ui.createTableCell(incomingPayment.getAmountPaid().toPlainString()));
 		ui.add(row, ui.createTableCell(InternationalisationUtils.getDatetimeFormat().format(new Date(incomingPayment.getTimePaid()))));
+		ui.add(row, ui.createTableCell(incomingPayment.getPaymentId()));
+		ui.add(row, ui.createTableCell(incomingPayment.getNotes()));
 		return row;
 	}
 
@@ -108,6 +114,14 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	@Override
 	public void refresh() {
 		this.updateIncomingPaymentsList();
+	}
+
+	public void editIncoming() {
+		Object[] selectedIncomings = this.ui.getSelectedItems(incomingPaymentsTableComponent);
+		for (Object selectedIncoming : selectedIncomings) {
+			IncomingPayment ip = (IncomingPayment) ui.getAttachedObject(selectedIncoming);
+			ui.add(new EditIncomingPaymentDialogHandler(ui,pluginController,ip).getDialog());
+		}
 	}
 
 	

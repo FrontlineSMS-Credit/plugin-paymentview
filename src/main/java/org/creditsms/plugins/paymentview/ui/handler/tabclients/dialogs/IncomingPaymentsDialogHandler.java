@@ -48,6 +48,15 @@ public class IncomingPaymentsDialogHandler extends IncomingPaymentsTabHandler {
 			for (Client client : selectedClients) {
 				listedIncomingPayments.addAll(this.incomingPaymentDao.getActiveIncomingPaymentByClientId(client.getId()));
 			}
+			if (incomingPaymentsTablePager.getMaxItemsPerPage() < listedIncomingPayments.size()){
+				if ( (startIndex+limit)<listedIncomingPayments.size()){
+					return listedIncomingPayments.subList(startIndex, startIndex+limit);
+				} else {
+					return listedIncomingPayments.subList(startIndex, listedIncomingPayments.size());
+				}
+				
+			} 
+
 		}
 		return listedIncomingPayments;
 	}
