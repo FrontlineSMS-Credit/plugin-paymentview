@@ -38,5 +38,7 @@
 			name="btn_sendPaymentToSelection" text="Send Payment Now" />
 		<button icon="/icons/time.png" name="btn_schedulePaymentToSelection"
 			action="showSchedulePaymentAuthDialog" text="Schedule Payment" />
+		<button icon="/icons/cross.png" action="cancelNewPayments"
+		name="btn_cancelNewPayments" text="Cancel" />
 	</panel>
 </panel>

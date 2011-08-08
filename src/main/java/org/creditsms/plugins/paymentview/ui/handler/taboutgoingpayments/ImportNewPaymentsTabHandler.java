@@ -120,7 +120,6 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 		if (!pluginController.getPaymentServices().isEmpty()){
 			try {					
 				new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog("sendPayment", this);
-
 				//ui.remove(newPaymentsTab);
 			} catch (NumberFormatException ex){
 				ui.infoMessage("Please enter an amount");
@@ -210,7 +209,10 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 		}
 	}
 	
-	
+	public void cancelNewPayments(){
+		ui.removeAll(newPaymentsTableComponent);
+		ui.setEnabled(ui.find(newPaymentsTab, BTN_SEND_NEW_PAYMENT), false);
+	}
 
 	public List<OutgoingPayment> getOutgoingPaymentsLst() {
 		return outgoingPaymentsLst;
