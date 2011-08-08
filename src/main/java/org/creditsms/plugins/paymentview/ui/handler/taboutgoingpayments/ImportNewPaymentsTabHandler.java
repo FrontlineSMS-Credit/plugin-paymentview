@@ -1,45 +1,112 @@
 package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments;
+import java.util.Calendar;
 
+import java.util.List;
+
+import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.payment.PaymentServiceException;
+import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
-
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.Account;
+import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
+import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
+import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.OutgoingPaymentsImportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SchedulePaymentAuthDialogHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabsettings.SettingsTabHandler;
+import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 
 public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	private static final String XML_IMPORT_NEW_PAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/importnewpayments.xml";
+	private static final String COMPONENT_NEW_PAYMENTS_TABLE = "tbl_new_payments";
+	private static final String BTN_SEND_NEW_PAYMENT = "btn_sendPaymentToSelection";
 	private AccountDao accountDao;
 	private ClientDao clientDao;
+	private Object newPaymentsTableComponent;
 	private Object schedulePaymentAuthDialog;
-	private Object selectFromClientsPanel;
-	private Object sendPaymentAuthDialog;
+	private Object newPaymentsTab;
+	private Client client;
+	private OutgoingPayment outgoingPayment;
 	private static final String TAB_IMPORTNEWPAYMENTS = "tab_importNewOutgoingPayments";
+	private PaymentViewPluginController pluginController;
 	private Object importPaymentsTab;
+	private OutgoingPaymentDao outgoingPaymentDao;
+	private MpesaPaymentService paymentService;
+	private LogMessageDao logMessageDao;
+
+	private int paymentCountPositive;
+	private int paymentCountNegative;
+
+	private List<OutgoingPayment> outgoingPaymentsLst;
 
 	public ImportNewPaymentsTabHandler(UiGeneratorController ui, Object tabOutgoingPayments, PaymentViewPluginController pluginController) {
 		super(ui);
 		accountDao = pluginController.getAccountDao();
 		clientDao = pluginController.getClientDao();
+		this.pluginController = pluginController;
+		outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
+		logMessageDao = pluginController.getLogMessageDao();
 		importPaymentsTab = ui.find(tabOutgoingPayments, TAB_IMPORTNEWPAYMENTS);
 		init();
 	}
-
+	
 	@Override
 	protected Object initialiseTab() {
-		selectFromClientsPanel = ui.loadComponentFromFile(XML_IMPORT_NEW_PAYMENTS_TAB, this);
-		this.ui.add(importPaymentsTab, selectFromClientsPanel);
-		return importPaymentsTab;
+		newPaymentsTab = ui.loadComponentFromFile(XML_IMPORT_NEW_PAYMENTS_TAB, this);
+		newPaymentsTableComponent = ui.find(newPaymentsTab, COMPONENT_NEW_PAYMENTS_TABLE);
+		this.ui.add(importPaymentsTab, newPaymentsTab);
+		ui.setEnabled(ui.find(newPaymentsTab, BTN_SEND_NEW_PAYMENT), false);
+		return newPaymentsTab;
+	}
+	
+	private Object getClientName(String phoneNumber){
+		Client clnt = clientDao.getClientByPhoneNumber(phoneNumber);
+		String clientName = "";
+		if(clnt != null){
+			clientName = clnt.getFullName();
+		}
+		return clientName;
+	}
+	
+ 	private Object getRow(OutgoingPayment oP, int i) {
+		Object row = ui.createTableRow(i);
+		
+		Object clientName = ui.createTableCell(getClientName(oP.getClient().getPhoneNumber()).toString());
+		Object phoneNumber = ui.createTableCell(oP.getClient().getPhoneNumber());
+		Object amountToPay = ui.createTableCell(oP.getAmountPaid().toString());
+		Object paymentId = ui.createTableCell(oP.getPaymentId());
+		Object notes = ui.createTableCell(oP.getNotes());
+		
+		ui.add(row, clientName);
+		ui.add(row, phoneNumber);
+		ui.add(row, amountToPay);
+		ui.add(row, paymentId);
+		ui.add(row, notes);
+		return row;
 	}
 
-	@Override
-	public void refresh() {
+	public void refresh(List<OutgoingPayment> newPaymentsLst) {
+		ui.removeAll(newPaymentsTableComponent);
+		setOutgoingPaymentsLst(newPaymentsLst);
+		if (newPaymentsLst != null){
+			int q = 0;
+			for(OutgoingPayment o:newPaymentsLst){
+				q++;
+				ui.add(newPaymentsTableComponent, getRow(o, q));
+			}
+			ui.setEnabled(ui.find(newPaymentsTab, BTN_SEND_NEW_PAYMENT), true);
+		}
 	}
 
 	public void showImportWizard(String typeName) {
-		new OutgoingPaymentsImportHandler(ui, accountDao, clientDao).showWizard();
+		OutgoingPaymentsImportHandler outgoingPaymentsImportHandler = new OutgoingPaymentsImportHandler(ui, accountDao, clientDao, this);
+		outgoingPaymentsImportHandler.showWizard();
 	}
 
 	public void showSchedulePaymentAuthDialog() {
@@ -47,12 +114,115 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 				.getDialog();
 		ui.add(schedulePaymentAuthDialog);
 	}
-
+	
 	public void showSendPaymentAuthDialog() {
-		//TODO construct a list of outgoingpayments
+		// get the correct payment service in the paymentServices list
+		if (!pluginController.getPaymentServices().isEmpty()){
+			try {					
+				new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog("sendPayment", this);
+
+				//ui.remove(newPaymentsTab);
+			} catch (NumberFormatException ex){
+				ui.infoMessage("Please enter an amount");
+			}
+			
+		} else {
+			ui.infoMessage("Please set up a mobile payment account in the setting tab.");
+		}
+	}
+
+ 	private String getTheClientName(String phoneNumber){
+		Client clnt = clientDao.getClientByPhoneNumber(phoneNumber);
+		String clientName = "";
+		if(clnt != null){
+            this.client = clnt;
+			clientName = clnt.getFullName();
+		}
+		return clientName;
+	}
+
+ 	private void createImportedClient(String phoneNumber) throws DuplicateKeyException{
+ 		String firstName = " ";
+		String otherName = " ";
+		Client client = new Client(firstName, otherName, phoneNumber);
+		clientDao.saveClient(client);
+		this.client = client;
+		Account account = new Account(paymentService.createAccountNumber(),client,false,true);
+		accountDao.saveAccount(account);
+ 	}
+ 	
+    private OutgoingPayment getTheOutgoingPayment(OutgoingPayment o) throws DuplicateKeyException{
+    	outgoingPayment = new OutgoingPayment();
+    	
+    	String clientName = getTheClientName(o.getClient().getPhoneNumber());
+    			
+    	if(clientName.length()==0){
+    		createImportedClient(o.getClient().getPhoneNumber());
+    	}
+		outgoingPayment.setClient(client);
+		outgoingPayment.setAmountPaid(o.getAmountPaid());
+		outgoingPayment.setTimePaid(Calendar.getInstance().getTime());
+		outgoingPayment.setNotes(o.getNotes());
+		outgoingPayment.setStatus(OutgoingPayment.Status.CREATED);
+		outgoingPayment.setPaymentId(o.getPaymentId());
+		outgoingPayment.setConfirmationCode("");
+    	return outgoingPayment;
+    }
+    
+	public void sendPayment() throws PaymentServiceException {
+		try {
+			List<OutgoingPayment> newPaymentsLst = getOutgoingPaymentsLst();
+			int itemPaymentServices = 0;
+			paymentCountNegative = 0;
+			paymentCountPositive = 0;
+			if (newPaymentsLst != null){
+				for(OutgoingPayment o:newPaymentsLst){
+					outgoingPaymentDao.saveOutgoingPayment(getTheOutgoingPayment(o));
+					try {
+						paymentService = (MpesaPaymentService) pluginController.getPaymentServices().get(itemPaymentServices); 
+						paymentService.makePayment(client, outgoingPayment.getAmountPaid());
+						outgoingPayment.setStatus(OutgoingPayment.Status.UNCONFIRMED);
+						
+						logMessageDao.saveLogMessage(
+								new LogMessage(LogMessage.LogLevel.INFO, "Outgoing Payment",outgoingPayment.toStringForLogs()));
+					} catch(Exception ex) {
+						logMessageDao.saveLogMessage(
+								new LogMessage(LogMessage.LogLevel.ERROR,"Outgoing Payment: Payment failed.",outgoingPayment.toStringForLogs()));
+						log.warn("Payment failed.", ex);
+						outgoingPayment.setStatus(OutgoingPayment.Status.ERROR);
+					}
+					outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
+					
+					if(outgoingPayment.getStatus() == OutgoingPayment.Status.ERROR) {
+						paymentCountNegative++;
+						ui.infoMessage("Error Occured");
+					} else {
+						paymentCountPositive++;
+						ui.setEnabled(ui.find(newPaymentsTab, BTN_SEND_NEW_PAYMENT), false);
+					}
+				}
+				ui.alert(paymentCountPositive+ " outgoing payment(s) created and successfully sent. "+ paymentCountNegative+" error(s) occurred");
+			}
+		} catch (Exception ex) {
+			logMessageDao.saveLogMessage(
+					new LogMessage(LogMessage.LogLevel.ERROR,"Outgoing Payment: Payment failed.",outgoingPayment.toStringForLogs()));
+			throw new RuntimeException(ex);
+		}
+	}
+	
+	
+
+	public List<OutgoingPayment> getOutgoingPaymentsLst() {
+		return outgoingPaymentsLst;
+	}
+
+	public void setOutgoingPaymentsLst(List<OutgoingPayment> outgoingPaymentsLst) {
+		this.outgoingPaymentsLst = outgoingPaymentsLst;
+	}
+
+	@Override
+	public void refresh() {
+		// TODO Auto-generated method stub
 		
-//		sendPaymentAuthDialog = new SendPaymentAuthDialogHandler(ui,this)
-//				.getDialog();
-//		ui.add(sendPaymentAuthDialog);
 	}
 }
