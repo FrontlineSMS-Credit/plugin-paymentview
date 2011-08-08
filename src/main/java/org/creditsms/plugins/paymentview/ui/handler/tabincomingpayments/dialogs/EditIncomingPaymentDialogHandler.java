@@ -72,6 +72,7 @@ public class EditIncomingPaymentDialogHandler extends BaseDialog{
 			incomingPayment.setPaymentId(ui.getText(fieldPaymentId));
 			incomingPayment.setNotes(ui.getText(fieldNotes));
 			incomingPaymentDao.updateIncomingPayment(this.incomingPayment);
+			removeDialog();
 	}
 	
 	
