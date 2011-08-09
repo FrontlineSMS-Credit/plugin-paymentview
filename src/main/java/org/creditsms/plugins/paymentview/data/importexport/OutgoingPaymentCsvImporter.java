@@ -20,7 +20,7 @@ import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.paymentsettings.phone.no.pattern.PhoneNumberPattern;
 
 /**
- * @author Ian Onesmus Mukewa <ian@frontlinesms.com>
+ * @author Ian Onesmus Mukewa <ian@frontlinesms.com>, Roy
  */
 public class OutgoingPaymentCsvImporter extends CsvImporter {
 	/** The delimiter to use between group names when they are exported. */

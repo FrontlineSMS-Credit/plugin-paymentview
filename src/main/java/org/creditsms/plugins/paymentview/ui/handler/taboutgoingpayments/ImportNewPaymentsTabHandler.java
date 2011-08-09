@@ -21,6 +21,12 @@ import org.creditsms.plugins.paymentview.ui.handler.importexport.OutgoingPayment
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SchedulePaymentAuthDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 
+/**
+ * 
+ * @author Roy
+ *
+ */
+
 public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	private static final String XML_IMPORT_NEW_PAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/importnewpayments.xml";
 	private static final String COMPONENT_NEW_PAYMENTS_TABLE = "tbl_new_payments";

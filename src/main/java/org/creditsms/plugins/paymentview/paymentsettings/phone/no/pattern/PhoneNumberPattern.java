@@ -3,6 +3,12 @@ package org.creditsms.plugins.paymentview.paymentsettings.phone.no.pattern;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 
+ * @author Roy
+ *
+ */
+
 public class PhoneNumberPattern {
 	String newPhoneNumberPattern;
 	private static String PHONE_PATTERN = "\\+2547[\\d]{8}";
