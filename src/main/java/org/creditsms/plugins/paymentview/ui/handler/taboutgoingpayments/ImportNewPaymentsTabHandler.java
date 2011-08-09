@@ -202,9 +202,10 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 						ui.infoMessage("Error Occured");
 					} else {
 						paymentCountPositive++;
-						ui.setEnabled(ui.find(newPaymentsTab, BTN_SEND_NEW_PAYMENT), false);
 					}
 				}
+				ui.setEnabled(ui.find(newPaymentsTab, BTN_SEND_NEW_PAYMENT), false);
+				ui.removeAll(newPaymentsTableComponent);
 				ui.alert(paymentCountPositive+ " outgoing payment(s) created and successfully sent. "+ paymentCountNegative+" error(s) occurred");
 			}
 		} catch (Exception ex) {
@@ -230,6 +231,5 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	@Override
 	public void refresh() {
 		// TODO Auto-generated method stub
-		
 	}
 }
