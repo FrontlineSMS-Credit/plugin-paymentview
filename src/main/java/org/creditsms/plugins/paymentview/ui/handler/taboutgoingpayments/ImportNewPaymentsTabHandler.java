@@ -96,7 +96,7 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 		return row;
 	}
 
-	public void refresh(List<OutgoingPayment> newPaymentsLst) {
+	public void updateNewPayments(List<OutgoingPayment> newPaymentsLst) {
 		ui.removeAll(newPaymentsTableComponent);
 		setOutgoingPaymentsLst(newPaymentsLst);
 		if (newPaymentsLst != null){

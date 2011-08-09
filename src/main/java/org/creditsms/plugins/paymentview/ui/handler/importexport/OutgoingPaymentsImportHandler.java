@@ -98,7 +98,7 @@ public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
 		
 		this.importer.importOutgoingPayments(this.outgoingPaymentDao,
 				this.accountDao,this.clientDao, rowFormat);
-		this.newPaymentsTabHandler.refresh(this.importer.getImportedPaymentsLst());
+		this.newPaymentsTabHandler.updateNewPayments(this.importer.getImportedPaymentsLst());
 		this.uiController.infoMessage(InternationalisationUtils
 				.getI18nString(I18N_IMPORT_SUCCESSFUL));
 		if(this.importer.incorrectCount!=0){
