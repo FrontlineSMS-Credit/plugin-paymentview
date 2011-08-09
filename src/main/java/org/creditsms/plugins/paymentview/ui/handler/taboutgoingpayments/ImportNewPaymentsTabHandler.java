@@ -19,7 +19,6 @@ import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.OutgoingPaymentsImportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SchedulePaymentAuthDialogHandler;
-import org.creditsms.plugins.paymentview.ui.handler.tabsettings.SettingsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 
 public class ImportNewPaymentsTabHandler extends BaseTabHandler {

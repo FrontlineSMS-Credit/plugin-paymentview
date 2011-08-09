@@ -96,7 +96,7 @@ public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
 		this.uiController.infoMessage(InternationalisationUtils
 				.getI18nString(I18N_IMPORT_SUCCESSFUL));
 		if(this.importer.incorrectCount!=0){
-			this.uiController.alert(this.importer.incorrectCount+" payment record(s) had invalid phone number(s)");
+			this.uiController.alert(this.importer.incorrectCount+" payment record(s) had invalid phone number(s) or record(s)");
 		}
 	}
 	

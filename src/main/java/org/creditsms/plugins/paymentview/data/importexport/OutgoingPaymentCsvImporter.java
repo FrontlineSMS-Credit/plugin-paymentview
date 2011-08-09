@@ -5,8 +5,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import net.frontlinesms.csv.CsvImportReport;
 import net.frontlinesms.csv.CsvImporter;
@@ -19,6 +17,7 @@ import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
+import org.creditsms.plugins.paymentview.paymentsettings.phone.no.pattern.PhoneNumberPattern;
 
 /**
  * @author Ian Onesmus Mukewa <ian@frontlinesms.com>
@@ -28,7 +27,6 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 	protected static final String GROUPS_DELIMITER = "\\\\";
 		
 	List<OutgoingPayment> importedPaymentsLst;
-	private String tempPhoneNumber;
 	public int incorrectCount;
 
 	// > INSTANCE PROPERTIES
@@ -63,7 +61,7 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 		log.trace("ENTER");
 		
 		List<OutgoingPayment> importedPayments = new ArrayList<OutgoingPayment>();
-
+		PhoneNumberPattern phonePattern = new PhoneNumberPattern();
 		incorrectCount = 0;
 		for (String[] lineValues : this.getRawValues()) {
 			String phoneNumber = rowFormat.getOptionalValue(lineValues,
@@ -76,17 +74,23 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 			String notes = rowFormat.getOptionalValue(lineValues,
 					PaymentViewCsvUtils.MARKER_OUTGOING_NOTES);
             
-			if(formatPhoneNumber(phoneNumber)) {
+			if(phonePattern.formatPhoneNumber(phoneNumber)) {
 				OutgoingPayment outgoingPayment = new OutgoingPayment();
 				Client outgoingPaymentClient = new Client();
-				BigDecimal amntToPay = new BigDecimal(amountPaid);
-				outgoingPayment.setAmountPaid(amntToPay.setScale(0, RoundingMode.HALF_UP));
-				outgoingPaymentClient.setPhoneNumber(tempPhoneNumber);
-				outgoingPayment.setClient(outgoingPaymentClient);
-				outgoingPayment.setPaymentId(paymentId);
-				outgoingPayment.setNotes(notes);
-				
-				importedPayments.add(outgoingPayment);
+				try{
+					BigDecimal amntToPay = new BigDecimal(amountPaid);
+					outgoingPayment.setAmountPaid(amntToPay.setScale(0, RoundingMode.HALF_UP));
+					outgoingPaymentClient.setPhoneNumber(phonePattern.getNewPhoneNumberPattern());
+					outgoingPayment.setClient(outgoingPaymentClient);
+					outgoingPayment.setPaymentId(paymentId);
+					outgoingPayment.setNotes(notes);
+					
+					importedPayments.add(outgoingPayment);
+				} catch (NumberFormatException ex) {
+					incorrectCount++;
+				}
+			} else {
+				incorrectCount++;
 			}
 		}
 		setImportedPaymentsLst(importedPayments);
@@ -94,57 +98,6 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 		log.trace("EXIT");
 
 		return new CsvImportReport();
-	}
-	
-	private boolean formatPhoneNumber(String tempPhoneNumber){
-		String PHONE_PATTERN = "\\+2547[\\d]{8}";
-		
-		if(tempPhoneNumber.contains("2547")){
-			if(tempPhoneNumber.contains("+2547")){
-				Matcher matcher1 = Pattern.compile(PHONE_PATTERN).matcher(tempPhoneNumber);
-				if(matcher1.matches()){
-					this.tempPhoneNumber = tempPhoneNumber;
-					return true;
-				} else {
-					incorrectCount++;
-				}
-			} else {
-				tempPhoneNumber = "+"+tempPhoneNumber;
-				Matcher matcher1 = Pattern.compile(PHONE_PATTERN).matcher(tempPhoneNumber);
-				if(matcher1.matches()){
-					this.tempPhoneNumber = tempPhoneNumber;
-					return true;
-				} else {
-					incorrectCount++;
-				}
-			}
-		} else {
-			if(tempPhoneNumber.length()==10){
-				String newPhoneNumber = tempPhoneNumber.substring(1, tempPhoneNumber.length());
-				tempPhoneNumber = "+254"+newPhoneNumber;
-				Matcher matcher1 = Pattern.compile(PHONE_PATTERN).matcher(tempPhoneNumber);
-				if(matcher1.matches()){
-					this.tempPhoneNumber = tempPhoneNumber;
-					return true;
-				} else {
-					incorrectCount++;
-				}
-			} else {
-				if(tempPhoneNumber.length()==9){
-					tempPhoneNumber = "+254"+tempPhoneNumber;
-					Matcher matcher1 = Pattern.compile(PHONE_PATTERN).matcher(tempPhoneNumber);
-					if(matcher1.matches()){
-						this.tempPhoneNumber = tempPhoneNumber;
-						return true;
-					} else {
-						incorrectCount++;
-					}
-				} else {
-					incorrectCount++;
-				}
-			}
-		}
-		return false;
 	}
 
 	public List<OutgoingPayment> getImportedPaymentsLst() {
