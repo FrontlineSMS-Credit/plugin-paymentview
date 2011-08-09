@@ -35,7 +35,8 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	protected CustomValueDao customValueDao;
 	protected AccountDao accountDao;
 	protected Object tableClientsPanel;
-	protected List<Client> clients;
+	protected List<Client> clientListForAnalytics;
+	private int totalItemCount = 0;
 
 	public BaseClientTable(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		this.ui = ui;
@@ -46,13 +47,12 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 		
 		ui.getFrontlineController().getEventBus().registerObserver(this);
 		
-		this.clients = new ArrayList<Client>();		
+		this.clientListForAnalytics = new ArrayList<Client>();		
 		this.init();
 	}
 
 	protected void init() {
-		tableClientsPanel = ui.loadComponentFromFile(getClientsPanelFilePath(),
-				this);
+		tableClientsPanel = ui.loadComponentFromFile(getClientsPanelFilePath(), this);
 		tableClients = ui.find(tableClientsPanel, getClientsTableName());
 		clientsTablePager = new ComponentPagingHandler(ui, this, tableClients);
 		this.createHeader();
@@ -74,40 +74,30 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 
 	protected PagedListDetails getClientListDetails(int startIndex, int limit) {
 		List<Client> clients = null;
-		clients = getClients(clientFilter, startIndex, limit);
-		return new PagedListDetails(clients.size(), toThinletComponents(clients));
+		clients = getClients(clientFilter, startIndex, limit);	
+		return new PagedListDetails(totalItemCount, toThinletComponents(clients));
 	}
 
-	protected List<Client> getClients(String filter, int startIndex, int limit) {
-		if (clients.isEmpty()){
-			if (!filter.trim().isEmpty()) {
-				return this.clientDao.getClientsByFilter(filter, startIndex, limit);
-			}else{
-				return this.clientDao.getAllActiveClients(startIndex, limit);
-			}
+
+	protected List<Client> getClients(String clientFilter, int startIndex, int limit) {
+		if (!clientFilter.trim().isEmpty()) {
+			totalItemCount  = this.clientDao.getClientsByFilter(clientFilter).size();
+			return this.clientDao.getClientsByFilter(clientFilter, startIndex, limit);
 		}else{
-			//FIXME: Make this stable
-			if (filter.trim().isEmpty()) {
-				if (clientsTablePager.getMaxItemsPerPage() < clients.size()){
-					return clients.subList(startIndex, limit);
-				}
-				return clients;
-			}else{
-				List<Client> subList = null;
-				
-				if (clientsTablePager.getMaxItemsPerPage() < clients.size()){
-					subList = clients.subList(startIndex, limit);
-				}else{
-					subList = clients;
-				}
-				
-				List<Client> temp = new ArrayList<Client>(); 
-				for (Client c : subList) {
-					if (c.getFullName().equalsIgnoreCase(filter)) {
-						temp.add(c);
+			if (clientListForAnalytics.isEmpty()){
+				totalItemCount = this.clientDao.getAllActiveClients().size();
+				return this.clientDao.getAllActiveClients(startIndex, limit);
+			} else {
+				totalItemCount = clientListForAnalytics.size();
+				if (clientsTablePager.getMaxItemsPerPage() < clientListForAnalytics.size()){					
+					if( (startIndex+limit) < clientListForAnalytics.size()){
+						return clientListForAnalytics.subList(startIndex, startIndex+limit);
+					} else {
+						return clientListForAnalytics.subList(startIndex, clientListForAnalytics.size());
 					}
+				}else{
+					return clientListForAnalytics;
 				}
-				return temp;
 			}
 		}
 	}
@@ -238,8 +228,16 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	 * @param clients the clients to set
 	 */
 	public void setClients(List<Client> clients) {
-		this.clients = clients;
+		this.clientListForAnalytics = clients;
 		this.refresh();
+	}
+	
+	public List<Client> getClients() {
+		return clientListForAnalytics;
+	}
+	
+	public void setTotalItemCount(int totalItemCount) {
+		this.totalItemCount = totalItemCount;
 	}
 	
 	public void notify(final FrontlineEventNotification notification) {
