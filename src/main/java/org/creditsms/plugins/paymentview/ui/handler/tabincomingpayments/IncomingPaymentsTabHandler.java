@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +46,10 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private Object pnlIncomingPaymentsTableComponent;
 	private PaymentViewPluginController pluginController;
 	private Object dialogConfirmation;
+	private Object fldStartDate;
+	private Object fldEndDate;
+	private Date startDate;
+	private Date endDate;
 
 
 	public IncomingPaymentsTabHandler(UiGeneratorController ui,
@@ -60,6 +65,9 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	@Override
 	protected Object initialiseTab() {
 		incomingPaymentsTab = ui.loadComponentFromFile(getXMLFile(), this);
+		fldStartDate = ui.find(incomingPaymentsTab, "txt_startDate");
+		fldEndDate = ui.find(incomingPaymentsTab, "txt_endDate");
+		
 		incomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_INCOMING_PAYMENTS_TABLE);
 		incomingPaymentsTablePager = new ComponentPagingHandler(ui, this, incomingPaymentsTableComponent);
 		pnlIncomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE);
@@ -90,7 +98,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 	
 	public void exportIncomingPayments(List<IncomingPayment> incomingPayments) {
-		new IncomingPaymentsExportHandler(ui, pluginController, incomingPayments).showWizard();
+		new IncomingPaymentsExportHandler(ui, pluginController, incomingPayments, startDate, endDate).showWizard();
 		this.refresh();
 	}
 
@@ -138,13 +146,33 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 
 	protected List<IncomingPayment> getIncomingPaymentsForUI(int startIndex, int limit) {
 		List<IncomingPayment> incomingPayments;
-		if (this.incomingPaymentsFilter.equals("")) {
+		String strStartDate = ui.getText(fldStartDate);
+		String strEndDate = ui.getText(fldEndDate);
+		try {
+			startDate = InternationalisationUtils.getDateFormat().parse(strStartDate);
+		} catch (ParseException e) {
+		}
+		try {
+			endDate = InternationalisationUtils.getDateFormat().parse(strEndDate);
+		} catch (ParseException e) {
+		}
+			
+		if (strStartDate.equals("") && strEndDate.equals("")) {
 			incomingPayments = this.incomingPaymentDao.getActiveIncomingPayments(startIndex, limit);
 		} else {
-			//TODO: change this to add more columns to be filtered.
-			incomingPayments = this.incomingPaymentDao.getActiveIncomingPaymentsByPhoneNo(this.incomingPaymentsFilter);
+			if (strStartDate.equals("")){
+				incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByEndDate(endDate, startIndex, limit);
+				
+			} else {
+				if (strEndDate.equals("")){
+					incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByStartDate(startDate, startIndex, limit);
+				} else {
+					incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByDateRange(startDate, endDate, startIndex, limit);
+				}
+			}
 		}
 		return incomingPayments;
+
 	}
 
 	public PagedListDetails getListDetails(Object list, int startIndex,
@@ -196,6 +224,10 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	
 	public final void showDeleteConfirmationDialog(String methodToBeCalled){
 		dialogConfirmation = this.ui.showConfirmationDialog(methodToBeCalled, this, CONFIRM_DELETE_INCOMING);
+	}
+	
+	public void showDateSelecter(Object textField) {
+		((UiGeneratorController) ui).showDateSelecter(textField);
 	}
 	
 //> INCOMING PAYMENT NOTIFICATION...

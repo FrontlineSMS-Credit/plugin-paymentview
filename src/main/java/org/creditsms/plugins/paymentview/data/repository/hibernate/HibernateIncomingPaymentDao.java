@@ -145,10 +145,54 @@ public class HibernateIncomingPaymentDao extends
 		return null;
 	}
 
-	public List<IncomingPayment> getIncomingPaymentsByDateRange(Date startTime,
-			Date endtime) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<IncomingPayment> getIncomingPaymentsByDateRange(Date startDate,
+			Date endDate, int startingIndex, int limit) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("active", true));
+		criteria.add(Restrictions.between("timePaid", startDate.getTime(), endDate.getTime()));
+
+		return super.getList(criteria, startingIndex, limit);
+	}
+	
+	public List<IncomingPayment> getIncomingPaymentsByDateRange(Date startDate,
+			Date endDate) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("active", true));
+		criteria.add(Restrictions.between("timePaid", startDate.getTime(), endDate.getTime()));
+
+		return super.getList(criteria);
+	}
+	
+	public List<IncomingPayment> getIncomingPaymentsByStartDate(Date startDate, int startingIndex, int limit) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("active", true));
+		criteria.add(Restrictions.ge("timePaid", startDate.getTime()));
+
+		return super.getList(criteria, startingIndex, limit);
+	}
+	
+	public List<IncomingPayment> getIncomingPaymentsByStartDate(Date startDate) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("active", true));
+		criteria.add(Restrictions.ge("timePaid", startDate.getTime()));
+
+		return super.getList(criteria);
+	}
+	
+	public List<IncomingPayment> getIncomingPaymentsByEndDate(Date endDate, int startingIndex, int limit) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("active", true));
+		criteria.add(Restrictions.le("timePaid", endDate.getTime()));
+
+		return super.getList(criteria, startingIndex, limit);
+	}
+	
+	public List<IncomingPayment> getIncomingPaymentsByEndDate(Date endDate) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("active", true));
+		criteria.add(Restrictions.le("timePaid", endDate.getTime()));
+
+		return super.getList(criteria);
 	}
 	
 	public List<IncomingPayment> getIncomingPaymentsByDate(Date date) {

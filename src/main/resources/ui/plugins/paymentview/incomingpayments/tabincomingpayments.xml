@@ -4,7 +4,21 @@
 		columns="1" gap="10">
 		<panel columns="2" gap="5" name="pnl_clients" weightx="1"
 			weighty="1">
-			<label text="Incoming Payments" font="20 Bold" weightx="1"/>
+			<panel>
+				<label text="Incoming Payments" font="20 Bold" weightx="1"/>
+				<panel weightx="1" />
+				<panel weightx="1" />
+				<panel weightx="1" />
+				<panel gap="5">		
+					<textfield columns="10" name="txt_startDate" />
+					<button action="showDateSelecter(txt_startDate)" icon="/icons/date.png" />
+					<textfield columns="10" name="txt_endDate" />
+					<button action="showDateSelecter(txt_endDate)" icon="/icons/date.png" />		
+					<button icon="/icons/search.png" text="Filter" action="refresh" />
+				</panel>
+
+			</panel>
+
 			<table name="tbl_clients" weightx="1" weighty="1" colspan="2" selection="multiple" perform="editIncoming" >
 				<header>
 					<column text="Name" width="200" icon="/icons/user.png" />

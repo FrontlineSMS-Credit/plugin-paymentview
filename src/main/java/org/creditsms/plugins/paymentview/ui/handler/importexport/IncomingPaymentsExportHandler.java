@@ -2,6 +2,7 @@ package org.creditsms.plugins.paymentview.ui.handler.importexport;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.csv.CsvRowFormat;
@@ -28,22 +29,30 @@ public class IncomingPaymentsExportHandler extends ExportDialogHandler<IncomingP
 
 	private IncomingPaymentDao incomingPaymentDao;
 	private List<IncomingPayment> selected;
+	private Date startDate;
+	private Date endDate;
 
 	public IncomingPaymentsExportHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(IncomingPayment.class, ui);
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 	}
 	
-	public IncomingPaymentsExportHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, List<IncomingPayment> selected) {
+	public IncomingPaymentsExportHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, List<IncomingPayment> selected
+				, Date startDate, Date endDate) {
 		super(IncomingPayment.class, ui);
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.selected = selected;
+		this.startDate = startDate;
+		this.endDate = endDate;
 	}
 
 	@Override
 	public void doSpecialExport(String dataPath) throws IOException {
 		log.debug("Exporting all contacts..");
 		if (selected == null) {
+			if (startDate == null){
+				
+			}
 			exportIncomingPayment(this.incomingPaymentDao.getActiveIncomingPayments(), dataPath);
 		}else{
 			exportIncomingPayment(selected, dataPath);
