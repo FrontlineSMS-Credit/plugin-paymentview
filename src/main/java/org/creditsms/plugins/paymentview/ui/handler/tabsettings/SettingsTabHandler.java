@@ -30,12 +30,14 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	private static final String BTN_CREATE_NEW_SERVICE = "btn_createNewService";
 	private static final String COMPONENT_SETTINGS_TABLE = "tbl_accounts";
 	private static final String CONFIRM_CHECK_BALANCE = "message.confirm.checkbalance";
+	private static final String CONFIRM_CHECK_CONFIGURE_MODEM = "message.confirm.configure.modem";
 	private String CONFIRM_DELETE_MOBILE_PAYMENT_ACCOUNT = "message.confirm.delete.mobilepaymentaccount";
 	private static final String XML_SETTINGS_TAB = "/ui/plugins/paymentview/settings/settingsTab.xml";
 
 	private Object settingsTab;
 	private Object settingsTableComponent;
 	Object dialogConfirmation;
+	Object dialogConfimConfigureModem;
 	Object dialogDeleteMobilePaymentAccount;
 	private final PaymentViewPluginController pluginController;
 	private EventBus eventBus;
@@ -80,6 +82,24 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 		if (this.pluginController.getPaymentService() != null){
 			ui.add(settingsTableComponent, getRow((MpesaPaymentService)this.pluginController.getPaymentService()));
 		}
+	}
+	
+	public void configureNewModem(){
+		ui.remove(dialogConfimConfigureModem);
+		Object selectedItem = this.ui.getSelectedItem(settingsTableComponent);
+		if (selectedItem != null){
+			PaymentService paymentService = ui.getAttachedObject(selectedItem, PaymentService.class);
+			try {
+				paymentService.configureModem();
+				logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.INFO, "Configure Modem Request Performed", ""));
+				ui.alert("The modem is now configured. Please wait for a few seconds while it restarts.");
+			} catch (PaymentServiceException e) {
+				logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.ERROR, "Configure Modem Request Failed", ""));
+				pvLog.warn("Check Balance failed." + e);
+			}
+		}else{
+			ui.alert("Please select an account to configure the modem");
+		}	
 	}
 
 	public void updateAccountBalance(){
@@ -180,6 +200,10 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	
 	public final void checkBalance(String methodToBeCalled){
 		dialogConfirmation = this.ui.showConfirmationDialog(methodToBeCalled, this, CONFIRM_CHECK_BALANCE);
+	}
+	
+	public final void configureModem(String methodToBeCalled){
+		dialogConfimConfigureModem = this.ui.showConfirmationDialog(methodToBeCalled, this, CONFIRM_CHECK_CONFIGURE_MODEM);
 	}
 	
 	public final void deleteMobilePaymentAccount(String methodToBeCalled){

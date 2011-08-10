@@ -84,6 +84,27 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	protected EventBus eventBus;
 	private TargetAnalytics targetAnalytics;
 	
+	public void configureModem() throws PaymentServiceException {
+		try{
+			this.cService.doSynchronized(new SynchronizedWorkflow<Object>() {
+				public Object run() throws SMSLibDeviceException, IOException {
+					cService.getAtHandler().configureModem();
+					return null;
+				}
+			});
+		} catch (final SMSLibDeviceException ex) {
+			throw new PaymentServiceException(ex);
+		} catch (final IOException e) {
+			throw new PaymentServiceException(e);
+		} catch (RuntimeException e) {
+			throw new PaymentServiceException("PIN rejected");
+		}
+		
+	}	
+	
+	//configureModem
+	
+	
 //> STK & PAYMENT ACCOUNT
 	public void checkBalance() throws PaymentServiceException {
 		try {
@@ -481,13 +502,12 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}
 	}
 
-	
 	private void initIfRequired() throws SMSLibDeviceException, IOException {
 		// For now, we assume that init is always required.  If there is a clean way
 		// of identifying when it is and is not, we should perhaps implement this.
 		this.cService.getAtHandler().stkInit();
 	}
-	
+
 //> DESTROY
 	public void stop() {
 		deinit();

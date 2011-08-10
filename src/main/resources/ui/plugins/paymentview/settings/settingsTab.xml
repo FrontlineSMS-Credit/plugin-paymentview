@@ -32,6 +32,8 @@
 				text="i18n.plugins.paymentview.action.checkccountbalance" />
 			<button action="updateAuthCode" halign="right" name="btn_authcode"
 				text="Set Authorization Code" />
+			<button action="configureModem('configureNewModem')" icon="/icons/keyword_add.png" halign="right" name="btn_configure_modem"
+			text="i18n.plugins.paymentview.action.configuremodem" />
 		</panel>
 	</panel>
 </tab>
