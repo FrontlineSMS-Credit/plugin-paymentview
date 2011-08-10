@@ -8,6 +8,7 @@ import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COM
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_PHONE;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_TIME_PAID;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.PAYMENT_BY;
+import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_PAYMENT_ID;
 
 import java.io.File;
 import java.io.IOException;
@@ -139,7 +140,13 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 									.getI18nString(COMMON_AMOUNT_PAID),
 							PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,
 							InternationalisationUtils
-									.getI18nString(COMMON_TIME_PAID));
+									.getI18nString(COMMON_TIME_PAID),
+							PaymentViewCsvUtils.MARKER_INCOMING_PAYMENT_ID,
+							InternationalisationUtils
+									.getI18nString(COMMON_PAYMENT_ID),
+							PaymentViewCsvUtils.MARKER_INCOMING_NOTES,
+							InternationalisationUtils
+									.getI18nString(COMMON_NOTES));
 			for (IncomingPayment incomingPayment : incomingPayments) {
 				CsvUtils.writeLine(out, incomingPaymentFormat,
 						PaymentViewCsvUtils.MARKER_PAYMENT_BY,
@@ -149,7 +156,11 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
 						incomingPayment.getAmountPaid().toString(),
 						PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,
-						Long.toString(incomingPayment.getTimePaid()));
+						Long.toString(incomingPayment.getTimePaid()),
+						PaymentViewCsvUtils.MARKER_INCOMING_PAYMENT_ID,
+						incomingPayment.getPaymentId(),
+						PaymentViewCsvUtils.MARKER_INCOMING_NOTES,
+						incomingPayment.getNotes());
 
 			}
 		} finally {

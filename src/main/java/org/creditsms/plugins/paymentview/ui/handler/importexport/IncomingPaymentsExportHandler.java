@@ -23,36 +23,30 @@ public class IncomingPaymentsExportHandler extends ExportDialogHandler<IncomingP
 	/** i18n Text Key: "Active" */
 	private static final String COMPONENT_CB_PHONE_NUMBER = "cbPhoneNumber";
 	private static final String COMPONENT_CB_TIME_PAID = "cbTimePaid";
+	private static final String COMPONENT_CB_PAYMENT_ID = "cbPaymentId";
+	private static final String COMPONENT_CB_NOTES = "cbNotes";
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_EXPORTING_SELECTED_CONTACTS = "plugins.paymentview.message.exporting.selected.client";
 	private static final String UI_FILE_OPTIONS_PANEL_INCOMING_PAYMENT = "/ui/plugins/paymentview/importexport/pnIncomingPaymentsDetails.xml";
 
 	private IncomingPaymentDao incomingPaymentDao;
 	private List<IncomingPayment> selected;
-	private Date startDate;
-	private Date endDate;
 
 	public IncomingPaymentsExportHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(IncomingPayment.class, ui);
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 	}
 	
-	public IncomingPaymentsExportHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, List<IncomingPayment> selected
-				, Date startDate, Date endDate) {
+	public IncomingPaymentsExportHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, List<IncomingPayment> selected) {
 		super(IncomingPayment.class, ui);
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.selected = selected;
-		this.startDate = startDate;
-		this.endDate = endDate;
 	}
 
 	@Override
 	public void doSpecialExport(String dataPath) throws IOException {
 		log.debug("Exporting all contacts..");
 		if (selected == null) {
-			if (startDate == null){
-				
-			}
 			exportIncomingPayment(this.incomingPaymentDao.getActiveIncomingPayments(), dataPath);
 		}else{
 			exportIncomingPayment(selected, dataPath);
@@ -103,10 +97,6 @@ public class IncomingPaymentsExportHandler extends ExportDialogHandler<IncomingP
 
 	protected CsvRowFormat getRowFormatForIncomingPayment() {
 		CsvRowFormat rowFormat = new CsvRowFormat();
-//		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME,
-//				COMPONENT_CB_NAME);
-//		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME,
-//				COMPONENT_CB_NAME);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_PAYMENT_BY,
 				COMPONENT_CB_NAME);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER,
@@ -115,6 +105,10 @@ public class IncomingPaymentsExportHandler extends ExportDialogHandler<IncomingP
 				COMPONENT_CB_AMOUNT_PAID);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,
 				COMPONENT_CB_TIME_PAID);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_PAYMENT_ID,
+				COMPONENT_CB_PAYMENT_ID);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_NOTES,
+				COMPONENT_CB_NOTES);
 		return rowFormat;
 	}
 

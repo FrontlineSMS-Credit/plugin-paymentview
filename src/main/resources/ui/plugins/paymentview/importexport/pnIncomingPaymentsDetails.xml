@@ -8,5 +8,7 @@
 		<checkbox action="columnCheckboxChanged" icon="/icons/user.png" name="cbPhoneNumber" selected="true" text="i18n.common.phone.number" />
 		<checkbox action="columnCheckboxChanged" icon="/icons/money.png" name="cbAmountPaid" selected="true" text="i18n.plugins.paymentview.common.amountpaid" />
 		<checkbox action="columnCheckboxChanged" icon="/icons/time.png" name="cbTimePaid" selected="true" text="i18n.plugins.paymentview.common.timepaid" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/description.png" name="cbPaymentId" selected="true" text="i18n.plugins.paymentview.common.paymentid" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/description.png" name="cbNotes" selected="true" text="i18n.common.notes" />
 	</panel>
 </panel>

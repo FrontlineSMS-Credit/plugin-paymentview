@@ -38,7 +38,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	protected IncomingPaymentDao incomingPaymentDao;
 	private LogMessageDao logMessageDao;
 	
-	private String incomingPaymentsFilter = "";
 	private Object incomingPaymentsTab;
 
 	protected Object incomingPaymentsTableComponent;
@@ -50,6 +49,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private Object fldEndDate;
 	private Date startDate;
 	private Date endDate;
+	protected int totalItemCount = 0;
 
 
 	public IncomingPaymentsTabHandler(UiGeneratorController ui,
@@ -94,11 +94,37 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 
 	protected List<IncomingPayment> getIncomingPaymentsForExport() {
-		return incomingPaymentDao.getActiveIncomingPayments();
+		List<IncomingPayment> incomingPayments;
+		String strStartDate = ui.getText(fldStartDate);
+		String strEndDate = ui.getText(fldEndDate);
+		try {
+			startDate = InternationalisationUtils.getDateFormat().parse(strStartDate);
+		} catch (ParseException e) {
+		}
+		try {
+			endDate = InternationalisationUtils.getDateFormat().parse(strEndDate);
+		} catch (ParseException e) {
+		}
+			
+		if (strStartDate.equals("") && strEndDate.equals("")) {
+			incomingPayments = this.incomingPaymentDao.getActiveIncomingPayments();
+		} else {
+			if (strStartDate.equals("")){
+				incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByEndDate(endDate);
+				
+			} else {
+				if (strEndDate.equals("")){
+					incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByStartDate(startDate);
+				} else {
+					incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByDateRange(startDate, endDate);
+				}
+			}
+		}
+		return incomingPayments;
 	}
 	
 	public void exportIncomingPayments(List<IncomingPayment> incomingPayments) {
-		new IncomingPaymentsExportHandler(ui, pluginController, incomingPayments, startDate, endDate).showWizard();
+		new IncomingPaymentsExportHandler(ui, pluginController, incomingPayments).showWizard();
 		this.refresh();
 	}
 
@@ -138,7 +164,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			int limit) {
 		List<IncomingPayment> incomingPayments = new ArrayList<IncomingPayment>();
 		incomingPayments = getIncomingPaymentsForUI(startIndex, limit);
-		int totalItemCount = incomingPaymentDao.getActiveIncomingPaymentsCount();
 		Object[] listItems = toThinletComponents(incomingPayments);
 
 		return new PagedListDetails(totalItemCount, listItems);
@@ -158,15 +183,19 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		}
 			
 		if (strStartDate.equals("") && strEndDate.equals("")) {
+			totalItemCount = this.incomingPaymentDao.getActiveIncomingPayments().size();
 			incomingPayments = this.incomingPaymentDao.getActiveIncomingPayments(startIndex, limit);
 		} else {
 			if (strStartDate.equals("")){
+				totalItemCount = this.incomingPaymentDao.getIncomingPaymentsByEndDate(endDate).size();
 				incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByEndDate(endDate, startIndex, limit);
 				
 			} else {
 				if (strEndDate.equals("")){
+					totalItemCount = this.incomingPaymentDao.getIncomingPaymentsByStartDate(startDate).size();
 					incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByStartDate(startDate, startIndex, limit);
 				} else {
+					totalItemCount = this.incomingPaymentDao.getIncomingPaymentsByDateRange(startDate, endDate).size();
 					incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByDateRange(startDate, endDate, startIndex, limit);
 				}
 			}

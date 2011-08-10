@@ -15,7 +15,7 @@ public class IncomingPaymentsDialogHandler extends IncomingPaymentsTabHandler {
 	private static final String XML_INCOMING_PAYMENTS_DIALOG = "/ui/plugins/paymentview/clients/dialogs/dlgIncomingPayments.xml";
 
 	private List<Client> selectedClients;
-	List<IncomingPayment> listedIncomingPayments = new ArrayList<IncomingPayment>();
+
 
 	public IncomingPaymentsDialogHandler(UiGeneratorController ui, PaymentViewPluginController pluginController,	List<Client> selectedClients) {
 		super(ui, pluginController);
@@ -25,7 +25,15 @@ public class IncomingPaymentsDialogHandler extends IncomingPaymentsTabHandler {
 
 	@Override
 	protected List<IncomingPayment> getIncomingPaymentsForExport() {
-		return listedIncomingPayments;
+		if (this.selectedClients.isEmpty()) {
+			return this.incomingPaymentDao.getActiveIncomingPayments();
+		} else {
+			List<IncomingPayment> listedIncomingPayments = new ArrayList<IncomingPayment>();
+			for (Client client : selectedClients) {
+				listedIncomingPayments.addAll(this.incomingPaymentDao.getActiveIncomingPaymentByClientId(client.getId()));
+			}
+			return listedIncomingPayments;
+		}
 	}
 
 	@Override
@@ -36,29 +44,30 @@ public class IncomingPaymentsDialogHandler extends IncomingPaymentsTabHandler {
 	// >PAGING METHODS
 	protected PagedListDetails getIncomingPaymentsListDetails(int startIndex,
 			int limit) {
-		listedIncomingPayments.clear();
 		return super.getIncomingPaymentsListDetails(startIndex, limit);
 	}
 
 	@Override
 	protected List<IncomingPayment> getIncomingPaymentsForUI(int startIndex, int limit) {
 		if (this.selectedClients.isEmpty()) {
-			listedIncomingPayments = this.incomingPaymentDao.getActiveIncomingPayments(startIndex, limit);
+			totalItemCount = this.incomingPaymentDao.getActiveIncomingPayments().size();
+			return this.incomingPaymentDao.getActiveIncomingPayments(startIndex, limit);
 		} else {
+			List<IncomingPayment> listedIncomingPayments = new ArrayList<IncomingPayment>();
 			for (Client client : selectedClients) {
 				listedIncomingPayments.addAll(this.incomingPaymentDao.getActiveIncomingPaymentByClientId(client.getId()));
 			}
+			totalItemCount = listedIncomingPayments.size();
 			if (incomingPaymentsTablePager.getMaxItemsPerPage() < listedIncomingPayments.size()){
 				if ( (startIndex+limit) < listedIncomingPayments.size()){
 					return listedIncomingPayments.subList(startIndex, startIndex+limit);
 				} else {
 					return listedIncomingPayments.subList(startIndex, listedIncomingPayments.size());
 				}
-				
 			} 
-
+			return listedIncomingPayments;
 		}
-		return listedIncomingPayments;
+		
 	}
 
 	public Object getDialog() {

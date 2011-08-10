@@ -12,6 +12,8 @@
 					<column text="Phone" width="150" icon="/icons/phone.png" />
 					<column text="Amount" width="100" icon="/icons/money.png" />
 					<column text="Date" width="100" icon="/icons/date.png" />
+					<column width="120" icon="/icons/description.png" text="i18n.plugins.paymentview.common.paymentid" />
+					<column icon="/icons/description.png" text="i18n.common.notes" />
 				</header>
 			</table>
 		</panel>
