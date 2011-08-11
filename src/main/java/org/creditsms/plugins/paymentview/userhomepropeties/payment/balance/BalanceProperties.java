@@ -2,7 +2,6 @@ package org.creditsms.plugins.paymentview.userhomepropeties.payment.balance;
 
 import java.math.BigDecimal;
 import java.util.Date;
-
 import net.frontlinesms.resources.UserHomeFilePropertySet;
 
 public class BalanceProperties extends UserHomeFilePropertySet {

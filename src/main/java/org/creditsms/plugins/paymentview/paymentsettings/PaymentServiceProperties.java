@@ -2,14 +2,14 @@ package org.creditsms.plugins.paymentview.paymentsettings;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.resources.UserHomeFilePropertySet;
 
-public class PaymentSettingsProperties extends UserHomeFilePropertySet {
+public class PaymentServiceProperties extends UserHomeFilePropertySet {
 	private static final String SMS_MODEM_SERIAL = "sms.modem.serial";
 	private static final String PAYMENT_SERVICE_CLASS = "payment.service.class";
 	private static final String PIN = "payment.service.pin";
-	private static final PaymentSettingsProperties INSTANCE = new PaymentSettingsProperties(); 
+	private static final PaymentServiceProperties INSTANCE = new PaymentServiceProperties(); 
 	
-	private PaymentSettingsProperties() {
-		super("payment-view");
+	private PaymentServiceProperties() {
+		super("paymentservice-settings");
 	}
 	
 	public void setSmsModem(String val)  {
@@ -57,7 +57,7 @@ public class PaymentSettingsProperties extends UserHomeFilePropertySet {
 		return null;
 	}
 	
-	public static PaymentSettingsProperties getInstance() {
+	public static PaymentServiceProperties getInstance() {
 		return INSTANCE;
 	}
 }

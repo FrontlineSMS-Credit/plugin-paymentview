@@ -83,9 +83,18 @@ public class HibernateOutgoingPaymentDao extends
 	}
 
 	public List<OutgoingPayment> getOutgoingPaymentsByDateRange(
-			Calendar startDate, Calendar endDate) {
-		// TODO Auto-generated method stub
+			Calendar startDate, Calendar endDate, int startIndex,
+			int limit) {
+//
+//		DetachedCriteria criteria = super.getCriterion();
+//		DetachedCriteria clientCriteria = criteria.createCriteria("client");
+//		clientCriteria.add(Restrictions.eq("phoneNumber", phoneNo));
+//		clientCriteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
+//						Boolean.TRUE));
+//		return super.getList(criteria);
+		
 		return null;
+		
 	}
 
 	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(String phoneNo) {

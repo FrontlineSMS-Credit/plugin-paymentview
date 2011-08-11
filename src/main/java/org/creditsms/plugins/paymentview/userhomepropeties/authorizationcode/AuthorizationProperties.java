@@ -9,7 +9,7 @@ public final class AuthorizationProperties extends UserHomeFilePropertySet {
 	private static final AuthorizationProperties INSTANCE = new AuthorizationProperties(); 
 	
 	private AuthorizationProperties() {
-		super("payment-view");
+		super("payment-view.auth");
 	}
 	
 	private void setAuthCode(byte[] hashedAuthCode)  {

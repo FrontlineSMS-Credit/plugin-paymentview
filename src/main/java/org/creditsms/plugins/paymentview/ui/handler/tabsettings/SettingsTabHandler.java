@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
-import org.creditsms.plugins.paymentview.paymentsettings.PaymentSettingsProperties;
+import org.creditsms.plugins.paymentview.paymentsettings.PaymentServiceProperties;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.UpdateAuthorizationCodeDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings.MobilePaymentServiceSettingsInitialisationDialog;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance.BalanceEventNotification;
@@ -42,7 +42,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	private final PaymentViewPluginController pluginController;
 	private EventBus eventBus;
 	private LogMessageDao logMessageDao;
-	private PaymentSettingsProperties paymentSettingsProp = PaymentSettingsProperties.getInstance();
+	private PaymentServiceProperties paymentSettingsProp = PaymentServiceProperties.getInstance();
 	
 	protected Logger pvLog = Logger.getLogger(this.getClass());
 
@@ -151,7 +151,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 				if(notification instanceof SmsModemStatusNotification &&
 						((SmsModemStatusNotification) notification).getStatus() == SmsModemStatus.CONNECTED) {
 					final SmsModem connectedModem = ((SmsModemStatusNotification) notification).getService();
-					PaymentSettingsProperties props = PaymentSettingsProperties.getInstance();
+					PaymentServiceProperties props = PaymentServiceProperties.getInstance();
 					if(props.getSmsModemSerial()!=null){
 						if(props.getSmsModemSerial().equals(connectedModem.getSerial())) {
 							// We've just connected the configured device, so start up the payment service...
