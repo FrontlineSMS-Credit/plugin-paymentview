@@ -2,6 +2,7 @@ package org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +18,6 @@ import net.frontlinesms.ui.handler.PagedListDetails;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
@@ -25,7 +25,6 @@ import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsImportHandler;
-import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.EditClientHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.EditIncomingPaymentDialogHandler;
 
 public class IncomingPaymentsTabHandler extends BaseTabHandler implements
@@ -173,25 +172,36 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		List<IncomingPayment> incomingPayments;
 		String strStartDate = ui.getText(fldStartDate);
 		String strEndDate = ui.getText(fldEndDate);
-		try {
-			startDate = InternationalisationUtils.getDateFormat().parse(strStartDate);
-		} catch (ParseException e) {
+		
+		if (!strStartDate.equals("")){
+			try {
+				startDate = InternationalisationUtils.getDateFormat().parse(strStartDate);
+			} catch (ParseException e) {
+				ui.infoMessage("Please enter a correct starting date.");
+				return Collections.emptyList();
+			}
 		}
-		try {
-			endDate = InternationalisationUtils.getDateFormat().parse(strEndDate);
-		} catch (ParseException e) {
+
+		if (!strEndDate.equals("")){
+			try {
+				endDate = InternationalisationUtils.getDateFormat().parse(strEndDate);
+			} catch (ParseException e) {
+				ui.infoMessage("Please enter a correct ending date.");
+				return Collections.emptyList();
+			}
 		}
+
 			
 		if (strStartDate.equals("") && strEndDate.equals("")) {
 			totalItemCount = this.incomingPaymentDao.getActiveIncomingPayments().size();
 			incomingPayments = this.incomingPaymentDao.getActiveIncomingPayments(startIndex, limit);
 		} else {
-			if (strStartDate.equals("")){
+			if (strStartDate.equals("") && endDate != null){
 				totalItemCount = this.incomingPaymentDao.getIncomingPaymentsByEndDate(endDate).size();
 				incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByEndDate(endDate, startIndex, limit);
 				
 			} else {
-				if (strEndDate.equals("")){
+				if (strEndDate.equals("") && startDate != null){
 					totalItemCount = this.incomingPaymentDao.getIncomingPaymentsByStartDate(startDate).size();
 					incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByStartDate(startDate, startIndex, limit);
 				} else {
