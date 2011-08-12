@@ -29,7 +29,7 @@ public interface OutgoingPaymentDao {
 	 * @return
 	 */
 	public int getOutgoingPaymentsCount();
-
+	
 	/**
 	 * returns OutgoingPayment(s) by clientId
 	 * */
@@ -52,6 +52,37 @@ public interface OutgoingPaymentDao {
 	public List<OutgoingPayment> getOutgoingPaymentsByAccountNumberByTimeRange(
 			long accountId, Date startDate, Date endDate);
 
+	/**
+	 * returns OutgoingPayment(s) by date range
+	 * */
+	public List<OutgoingPayment> getOutgoingPaymentsByDateRange(Date startDate,	Date endDate,int startIndex,int limit);
+	
+	/**
+	 * returns OutgoingPayment(s) from start date
+	 * */
+	public List<OutgoingPayment> getOutgoingPaymentsByStartDate(Date startTime, int startingIndex, int limit);
+	
+	/**
+	 * returns OutgoingPayment(s) until end date
+	 * */
+	public List<OutgoingPayment> getOutgoingPaymentsByEndDate(Date endTime, int startingIndex, int limit);
+	
+	/**
+	 * returns OutgoingPayment(s) by time range
+	 * */
+	public List<OutgoingPayment> getOutgoingPaymentsByDateRange(Date startTime,
+			Date endtime);
+
+	/**
+	 * returns OutgoingPayment(s) from start date
+	 * */
+	public List<OutgoingPayment> getOutgoingPaymentsByStartDate(Date startTime);
+	
+	/**
+	 * returns OutgoingPayment(s) until end date
+	 * */
+	public List<OutgoingPayment> getOutgoingPaymentsByEndDate(Date endTime);
+	
 	/**
 	 * returns OutgoingPayment(s) by phone number
 	 * */
@@ -79,6 +110,6 @@ public interface OutgoingPaymentDao {
 	public void updateOutgoingPayment(OutgoingPayment outgoingPayment)
 			throws DuplicateKeyException;
 
-	
+
 
 }

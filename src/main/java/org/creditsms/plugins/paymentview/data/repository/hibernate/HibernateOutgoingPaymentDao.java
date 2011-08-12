@@ -34,8 +34,7 @@ public class HibernateOutgoingPaymentDao extends
 			int limit) {
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria clientCriteria = criteria.createCriteria("client");
-		clientCriteria.add(Restrictions.eq("active",
-				Boolean.TRUE));
+		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
 		return super.getList(criteria, startIndex, limit);
 	}
 	
@@ -81,20 +80,53 @@ public class HibernateOutgoingPaymentDao extends
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	public List<OutgoingPayment> getOutgoingPaymentsByDateRange(
-			Calendar startDate, Calendar endDate, int startIndex,
-			int limit) {
-//
-//		DetachedCriteria criteria = super.getCriterion();
-//		DetachedCriteria clientCriteria = criteria.createCriteria("client");
-//		clientCriteria.add(Restrictions.eq("phoneNumber", phoneNo));
-//		clientCriteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
-//						Boolean.TRUE));
-//		return super.getList(criteria);
-		
-		return null;
-		
+	
+	public List<OutgoingPayment> getOutgoingPaymentsByDateRange(Date startDate,	Date endDate,int startIndex,int limit) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.between("timePaid", startDate.getTime(), endDate.getTime()));
+		DetachedCriteria clientCriteria = criteria.createCriteria("client");
+		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
+		return super.getList(criteria);
+	}
+	
+	public List<OutgoingPayment> getOutgoingPaymentsByDateRange(Date startDate,	Date endDate) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.between("timePaid", startDate.getTime(), endDate.getTime()));
+		DetachedCriteria clientCriteria = criteria.createCriteria("client");
+		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
+		return super.getList(criteria);
+	}
+	
+	public List<OutgoingPayment> getOutgoingPaymentsByStartDate(Date startDate, int startingIndex, int limit) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.ge("timePaid", startDate.getTime()));
+		DetachedCriteria clientCriteria = criteria.createCriteria("client");
+		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
+		return super.getList(criteria, startingIndex, limit);
+	}
+	
+	public List<OutgoingPayment> getOutgoingPaymentsByStartDate(Date startDate) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.ge("timePaid", startDate.getTime()));
+		DetachedCriteria clientCriteria = criteria.createCriteria("client");
+		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
+		return super.getList(criteria);
+	}
+	
+	public List<OutgoingPayment> getOutgoingPaymentsByEndDate(Date endDate, int startingIndex, int limit) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.le("timePaid", endDate.getTime()));
+		DetachedCriteria clientCriteria = criteria.createCriteria("client");
+		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
+		return super.getList(criteria, startingIndex, limit);
+	}
+	
+	public List<OutgoingPayment> getOutgoingPaymentsByEndDate(Date endDate) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.le("timePaid", endDate.getTime()));
+		DetachedCriteria clientCriteria = criteria.createCriteria("client");
+		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
+		return super.getList(criteria);
 	}
 
 	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(String phoneNo) {

@@ -51,7 +51,6 @@ public class IncomingPaymentsExportHandler extends ExportDialogHandler<IncomingP
 		}else{
 			exportIncomingPayment(selected, dataPath);
 		}
-		
 	}
 
 	@Override
@@ -99,15 +98,15 @@ public class IncomingPaymentsExportHandler extends ExportDialogHandler<IncomingP
 		CsvRowFormat rowFormat = new CsvRowFormat();
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_PAYMENT_BY,
 				COMPONENT_CB_NAME);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_PHONE_NUMBER,
 				COMPONENT_CB_PHONE_NUMBER);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_AMOUNT_PAID,
 				COMPONENT_CB_AMOUNT_PAID);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_TIME_PAID,
 				COMPONENT_CB_TIME_PAID);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_PAYMENT_ID,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_PAYMENT_ID,
 				COMPONENT_CB_PAYMENT_ID);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_NOTES,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_NOTES,
 				COMPONENT_CB_NOTES);
 		return rowFormat;
 	}

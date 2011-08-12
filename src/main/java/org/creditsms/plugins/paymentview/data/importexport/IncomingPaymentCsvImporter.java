@@ -55,11 +55,11 @@ public class IncomingPaymentCsvImporter extends CsvImporter {
 			String paymentBy = rowFormat.getOptionalValue(lineValues,
 					PaymentViewCsvUtils.MARKER_INCOMING_PAYMENT_BY);
 			String phoneNumber = rowFormat.getOptionalValue(lineValues,
-					PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER);
+					PaymentViewCsvUtils.MARKER_PHONE_NUMBER);
 			String amountPaid = rowFormat.getOptionalValue(lineValues,
-					PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID);
+					PaymentViewCsvUtils.MARKER_AMOUNT_PAID);
 			String timePaid = rowFormat.getOptionalValue(lineValues,
-					PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID);
+					PaymentViewCsvUtils.MARKER_TIME_PAID);
 			String account = rowFormat.getOptionalValue(lineValues,
 					PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT);
 			Account acc;

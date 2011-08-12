@@ -24,7 +24,6 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
-import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsImportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.EditIncomingPaymentDialogHandler;
 
 public class IncomingPaymentsTabHandler extends BaseTabHandler implements
@@ -78,55 +77,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		return XML_INCOMING_PAYMENTS_TAB;
 	}
 
-	// > EVENTS...
-	public void exportIncomingPayments() {
-		Object[] selectedItems = ui.getSelectedItems(incomingPaymentsTableComponent);
-		if (selectedItems.length <= 0){
-			exportIncomingPayments(getIncomingPaymentsForExport());
-		}else{
-			List<IncomingPayment> incomingPayments = new ArrayList<IncomingPayment>(selectedItems.length);
-			for (Object o : selectedItems) {
-				incomingPayments.add(ui.getAttachedObject(o, IncomingPayment.class));
-			}
-			exportIncomingPayments(incomingPayments);
-		}
-	}
-
-	protected List<IncomingPayment> getIncomingPaymentsForExport() {
-		List<IncomingPayment> incomingPayments;
-		String strStartDate = ui.getText(fldStartDate);
-		String strEndDate = ui.getText(fldEndDate);
-		try {
-			startDate = InternationalisationUtils.getDateFormat().parse(strStartDate);
-		} catch (ParseException e) {
-		}
-		try {
-			endDate = InternationalisationUtils.getDateFormat().parse(strEndDate);
-		} catch (ParseException e) {
-		}
-			
-		if (strStartDate.equals("") && strEndDate.equals("")) {
-			incomingPayments = this.incomingPaymentDao.getActiveIncomingPayments();
-		} else {
-			if (strStartDate.equals("")){
-				incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByEndDate(endDate);
-				
-			} else {
-				if (strEndDate.equals("")){
-					incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByStartDate(startDate);
-				} else {
-					incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByDateRange(startDate, endDate);
-				}
-			}
-		}
-		return incomingPayments;
-	}
-	
-	public void exportIncomingPayments(List<IncomingPayment> incomingPayments) {
-		new IncomingPaymentsExportHandler(ui, pluginController, incomingPayments).showWizard();
-		this.refresh();
-	}
-
 	public Object getRow(IncomingPayment incomingPayment) {
 		Object row = ui.createTableRow(incomingPayment);
 
@@ -137,11 +87,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		ui.add(row, ui.createTableCell(incomingPayment.getPaymentId()));
 		ui.add(row, ui.createTableCell(incomingPayment.getNotes()));
 		return row;
-	}
-
-	public void importPayments() {
-		new IncomingPaymentsImportHandler(ui).showWizard();
-		this.refresh();
 	}
 
 	@Override
@@ -254,6 +199,55 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			}
 			ui.infoMessage("You have successfully deleted the selected incoming payment(s).");	
 		}		
+	}
+	
+	// > EXPORTS...
+	public void exportIncomingPayments() {
+		Object[] selectedItems = ui.getSelectedItems(incomingPaymentsTableComponent);
+		if (selectedItems.length <= 0){
+			exportIncomingPayments(getIncomingPaymentsForExport());
+		}else{
+			List<IncomingPayment> incomingPayments = new ArrayList<IncomingPayment>(selectedItems.length);
+			for (Object o : selectedItems) {
+				incomingPayments.add(ui.getAttachedObject(o, IncomingPayment.class));
+			}
+			exportIncomingPayments(incomingPayments);
+		}
+	}
+
+	protected List<IncomingPayment> getIncomingPaymentsForExport() {
+		List<IncomingPayment> incomingPayments;
+		String strStartDate = ui.getText(fldStartDate);
+		String strEndDate = ui.getText(fldEndDate);
+		try {
+			startDate = InternationalisationUtils.getDateFormat().parse(strStartDate);
+		} catch (ParseException e) {
+		}
+		try {
+			endDate = InternationalisationUtils.getDateFormat().parse(strEndDate);
+		} catch (ParseException e) {
+		}
+			
+		if (strStartDate.equals("") && strEndDate.equals("")) {
+			incomingPayments = this.incomingPaymentDao.getActiveIncomingPayments();
+		} else {
+			if (strStartDate.equals("")){
+				incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByEndDate(endDate);
+				
+			} else {
+				if (strEndDate.equals("")){
+					incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByStartDate(startDate);
+				} else {
+					incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByDateRange(startDate, endDate);
+				}
+			}
+		}
+		return incomingPayments;
+	}
+	
+	public void exportIncomingPayments(List<IncomingPayment> incomingPayments) {
+		new IncomingPaymentsExportHandler(ui, pluginController, incomingPayments).showWizard();
+		this.refresh();
 	}
 	
 	public void showAuthCode() {

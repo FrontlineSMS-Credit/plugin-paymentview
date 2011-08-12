@@ -36,7 +36,7 @@ public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
 	private final ImportNewPaymentsTabHandler newPaymentsTabHandler;
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_IMPORTING_SELECTED_CLIENTS = "Import Clients";
-	private static final String UI_FILE_OPTIONS_PANEL_CONTACT = "/ui/plugins/paymentview/importexport/pnOutgoingPaymentsDetails.xml";
+	private static final String UI_FILE_OPTIONS_PANEL_CONTACT = "/ui/plugins/paymentview/importexport/pnOutgoingPaymentsImportDetails.xml";
 
 	private AccountDao accountDao;
 	private ClientDao clientDao;
@@ -139,13 +139,13 @@ public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
 
 	private CsvRowFormat getRowFormatForIncomingPayment() {
 		CsvRowFormat rowFormat = new CsvRowFormat();
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_PHONE_NUMBER,
 				COMPONENT_CB_PHONE_NUMBER);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_AMOUNT_PAID,
 				COMPONENT_CB_AMOUNT_PAID);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT,
 				PAYMENT_ID);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_OUTGOING_NOTES,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_NOTES,
 				COMPONENT_CB_OUTGOING_NOTES);
 		return rowFormat;
 	}

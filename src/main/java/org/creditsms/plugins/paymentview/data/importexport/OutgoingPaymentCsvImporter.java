@@ -65,14 +65,14 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 		incorrectCount = 0;
 		for (String[] lineValues : this.getRawValues()) {
 			String phoneNumber = rowFormat.getOptionalValue(lineValues,
-					PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER);
+					PaymentViewCsvUtils.MARKER_PHONE_NUMBER);
 			phoneNumber = phoneNumber.trim();
 			String amountPaid = rowFormat.getOptionalValue(lineValues,
-					PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID);
+					PaymentViewCsvUtils.MARKER_AMOUNT_PAID);
 			String paymentId = rowFormat.getOptionalValue(lineValues,
 					PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT);
 			String notes = rowFormat.getOptionalValue(lineValues,
-					PaymentViewCsvUtils.MARKER_OUTGOING_NOTES);
+					PaymentViewCsvUtils.MARKER_NOTES);
             
 			if(phonePattern.formatPhoneNumber(phoneNumber)) {
 				OutgoingPayment outgoingPayment = new OutgoingPayment();
