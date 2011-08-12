@@ -118,8 +118,8 @@ public class TargetAnalytics {
 		} else {
 			lastPaymentdate = getLastDatePaid(targetId);
 		}
-		Calendar startCalDate = Calendar.getInstance();
-		startCalDate.setTime(lastPaymentdate);
+		Calendar lastPaymentCalDate = Calendar.getInstance();
+		lastPaymentCalDate.setTime(lastPaymentdate);
 		
 		if(amountPaid.compareTo(totalTargetCost) >=0){
 			return Status.PAID;
@@ -128,9 +128,9 @@ public class TargetAnalytics {
 		if(nowTime > endTime && amountPaid.compareTo(totalTargetCost) < 0){
 			return Status.OVERDUE;
 		}else if(nowTime < endTime && amountPaid.compareTo(totalTargetCost) < 0 
-				&& getMonthsDiffFromStart(startCalDate, calNowDate) == 0){
+				&& getMonthsDiffFromStart(calNowDate, lastPaymentCalDate) == 0){
 			return Status.PAYING;
-		}else if(getMonthsDiffFromStart(startCalDate, calNowDate) > 0 
+		}else if(getMonthsDiffFromStart(calNowDate, lastPaymentCalDate ) > 0 
 				&& amountPaid.compareTo(totalTargetCost) < 0){
 			return Status.INACTIVE;	
 		}
@@ -211,11 +211,12 @@ public class TargetAnalytics {
 	private Calendar setEndOfDay(Calendar cal){
 		cal.set(Calendar.HOUR_OF_DAY, 24);  
 		cal.set(Calendar.MINUTE, 0);  
-		cal.set(Calendar.SECOND, 0);  
+		cal.set(Calendar.SECOND, 0); 
 		cal.set(Calendar.MILLISECOND, 0);
 		return cal;
 	}
 	
+	//Function which retrieves the theoretical instalment based on amount paid
 	private int getEndOfIntervalByInstalment(String prem, String paymenmtDurtn, String amntPaid){
 		BigDecimal premium = new BigDecimal(prem);
 		BigDecimal paymentDuration = new BigDecimal(paymenmtDurtn);
@@ -227,8 +228,7 @@ public class TargetAnalytics {
 	
 	public void computeAnalyticsIntervalDatesAndSavings(long targetId){
 		
-		int startMonth = 0;
-		int monthPoz = 0;
+	//	int startMonth = 0;
 		int endDay = 0;
 		Target tgt = targetDao.getTargetById(targetId);
 		String prem = tgt.getServiceItem().getAmount().toString();
@@ -244,7 +244,7 @@ public class TargetAnalytics {
 		Date startDate = calStartDate.getTime();
 
 		Calendar calEndDate = Calendar.getInstance();
-		calEndDate.setTime(endDateStr);
+		calEndDate.setTime(endDateStr); // or add 1 sec
 		endDay = calEndDate.get(Calendar.DAY_OF_MONTH);
 		calEndDate = setEndOfDay(calEndDate);
 		Date endDate = calEndDate.getTime();
@@ -252,47 +252,50 @@ public class TargetAnalytics {
 		Calendar calNowDate = Calendar.getInstance();
 		Date nowDate = calNowDate.getTime();
 
-		startMonth  = getMonthsDiffFromStart(calStartDate, calNowDate); 
+		//startMonth  = getMonthsDiffFromStart(calStartDate, calNowDate); 
 		instalmentsCount = String.valueOf(getMonthsDiffFromStart(calEndDate, calStartDate));
 		setInstalments(Integer.parseInt(instalmentsCount));
 		
+		//Set up the end date of the first interval
 		Calendar calEndOf1stInterval = Calendar.getInstance();
-		monthPoz = startMonth+1;
-		calEndOf1stInterval.add(Calendar.MONTH, monthPoz);  
-		calEndOf1stInterval.set(Calendar.DATE, endDay);
-		calEndOf1stInterval = setEndOfDay(calEndOf1stInterval);
+		calEndOf1stInterval.setTime(startDate);
+		calEndOf1stInterval.add(Calendar.MONTH, 1);  
+//		calEndOf1stInterval.set(Calendar.DATE, endDay);
+//		calEndOf1stInterval = setEndOfDay(calEndOf1stInterval);
 		Date endOfInterval = calEndOf1stInterval.getTime();
 		
 		if(endDate.getTime() > nowDate.getTime()){
-			int q = 0;
-			for(q = 0; nowDate.getTime() > endOfInterval.getTime(); q++){	
-				Calendar calEndOfInterval = Calendar.getInstance();
-				monthPoz = monthPoz+1;
-				calEndOfInterval.add(Calendar.MONTH, monthPoz); 
-				calEndOfInterval.set(Calendar.DATE, endDay);
-				calEndOfInterval = setEndOfDay(calEndOfInterval);
+			int nowInsterval = 1;
+			Calendar calEndOfInterval = Calendar.getInstance();
+			calEndOfInterval.setTime(endOfInterval);
+			for(nowInsterval = 1; nowDate.getTime() > endOfInterval.getTime(); nowInsterval++){	
+				calEndOfInterval.add(Calendar.MONTH, 1); 
+				//calEndOfInterval = setEndOfDay(calEndOfInterval);
 				endOfInterval = calEndOfInterval.getTime();
 			}
-			int instlmntPoz = getEndOfIntervalByInstalment(prem, instalmentsCount, amntPaid);
+			int amountPaidPoz = getEndOfIntervalByInstalment(prem, instalmentsCount, amntPaid);
 			setMonthlyTarget(new BigDecimal(prem).divide(new BigDecimal(instalmentsCount), 
 					4, RoundingMode.HALF_DOWN));
-			getRemAmnt(q, instlmntPoz, startMonth, endDay, endOfInterval, startDate, targetId);
+			//getRemAmnt(q, instlmntPoz, startMonth, endDay, endOfInterval, startDate, targetId);
+			getRemAmnt(nowInsterval, amountPaidPoz, endDay, endOfInterval, startDate, targetId);
 		}
 	}
 
-	private int getMonthsDiffFromStart(Calendar calStartDate,
-			Calendar calNowDate) {
-		if(calStartDate.get(Calendar.YEAR)==calNowDate.get(Calendar.YEAR) && calStartDate.get(Calendar.MONTH) == calNowDate.get(Calendar.MONTH)){
+	private int getMonthsDiffFromStart(Calendar calEndDate,
+			Calendar calStartDate) {
+		if(calEndDate.get(Calendar.YEAR)==calStartDate.get(Calendar.YEAR) && calEndDate.get(Calendar.MONTH) == calStartDate.get(Calendar.MONTH)){
 			return 0;
 		} else {
-			return (calStartDate.get(Calendar.YEAR) - calNowDate.get(Calendar.YEAR)) * 12 +
-			(calStartDate.get(Calendar.MONTH)- calNowDate.get(Calendar.MONTH)) + 
-			(calStartDate.get(Calendar.DAY_OF_MONTH) >= calNowDate.get(Calendar.DAY_OF_MONTH)? 0: -1); 			
+			return (calEndDate.get(Calendar.YEAR) - calStartDate.get(Calendar.YEAR)) * 12 +
+			(calEndDate.get(Calendar.MONTH)- calStartDate.get(Calendar.MONTH)) + 
+			(calEndDate.get(Calendar.DAY_OF_MONTH) >= calStartDate.get(Calendar.DAY_OF_MONTH)? 0: -1); 			
 		}
 	}
 
-	private void getRemAmnt(int datepoz, int amntPoz, int startMonth, int endDay, 
-			Date endOfIntervalDate, Date startDate, long targetId){
+//	private void getRemAmnt(int datepoz, int amntPoz, int startMonth, int endDay, 
+//			Date endOfIntervalDate, Date startDate, long targetId){
+	private void getRemAmnt(int datepoz, int amntPoz, int endDay, 
+				Date endOfIntervalDate, Date startDate, long targetId){
 		int diffInPoz = datepoz-amntPoz;
 		BigDecimal amntRem = BigDecimal.ZERO;
 		BigDecimal instalmentsBD = getMonthlyTarget();
@@ -323,8 +326,8 @@ public class TargetAnalytics {
 			}
 		} else if (diffInPoz>0) {
 			amntSavedForPeriod = getAmntPaidIntervalBackDate(targetId, endOfInstalIntManDate);
-			amntRem = instalmentsBD.multiply(new BigDecimal(String.valueOf(diffInPoz))).
-			add(instalmentsBD.subtract(getAmntPaidFromStart(targetId, startDate, endOfIntervalDate)));
+			amntRem = instalmentsBD.multiply(new BigDecimal(String.valueOf(datepoz)))
+			.subtract(getAmntPaidFromStart(targetId, startDate, endOfIntervalDate));
 		}
 		if(endOfIntervalDate.getTime() >= endOfInstalIntManDate.getTime()){
 			setEndMonthInterval(formatEndDate(endOfIntervalDate));
@@ -369,6 +372,7 @@ public class TargetAnalytics {
 		return  getAmountSaved(targetId, startDate, nowDate);
 	}
 
+	// This function calculates the end date of the installment linked to the amount paid
 	private Date getInstalmentPozEndOfIntervalDate(Date startDate, int dayNum, int instalmentPoz){
 		Calendar calInstalEOD = Calendar.getInstance();
 		calInstalEOD.setTime(startDate);

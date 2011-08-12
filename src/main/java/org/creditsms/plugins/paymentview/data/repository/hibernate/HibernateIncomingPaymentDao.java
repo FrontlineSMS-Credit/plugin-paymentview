@@ -105,11 +105,11 @@ public class HibernateIncomingPaymentDao extends
 		if(incomingPaymentsLst.size()==0){
 			return null;
 		}else{
-			DetachedCriteria criteriafnl = super.getCriterion();
+			//DetachedCriteria criteriafnl = super.getCriterion();
 	        ProjectionList ipProj = Projections.projectionList();
 	        ipProj.add(Projections.max("timePaid"));
-	        criteriafnl.setProjection(ipProj);
-	        return DataAccessUtils.longResult(this.getHibernateTemplate().findByCriteria(criteriafnl));
+	        criteria.setProjection(ipProj);
+	        return DataAccessUtils.longResult(this.getHibernateTemplate().findByCriteria(criteria));
 		}      
 	}
 	
