@@ -136,13 +136,13 @@ public class IncomingPaymentsImportHandler extends ImportDialogHandler {
 		CsvRowFormat rowFormat = new CsvRowFormat();
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_PAYMENT_BY,
 				COMPONENT_CB_PAYMENT_BY);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_PHONE_NUMBER,
 				COMPONENT_CB_PHONE_NUMBER);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT,
 				COMPONENT_CB_ACCOUNT);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_AMOUNT_PAID,
 				COMPONENT_CB_AMOUNT_PAID);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_TIME_PAID,
 				COMPONENT_CB_TIME_PAID);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_DATE_PAID,
 				COMPONENT_CB_DATE_PAID);

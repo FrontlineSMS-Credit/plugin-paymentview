@@ -1,13 +1,14 @@
 package org.creditsms.plugins.paymentview.data.importexport;
 
-import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_ACCOUNT;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_AMOUNT_PAID;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_FIRST_NAME;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_NOTES;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_OTHER_NAME;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_PHONE;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_TIME_PAID;
-import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.PAYMENT_BY;
+import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_STATUS;
+import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_CONFIRMATION_CODE;
+import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_PAYMENT_BY;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_PAYMENT_ID;
 
 import java.io.File;
@@ -131,35 +132,35 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 			CsvUtils
 					.writeLine(out, incomingPaymentFormat,
 							PaymentViewCsvUtils.MARKER_PAYMENT_BY,
-							InternationalisationUtils.getI18nString(PAYMENT_BY),
-							PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER,
+							InternationalisationUtils.getI18nString(COMMON_PAYMENT_BY),
+							PaymentViewCsvUtils.MARKER_PHONE_NUMBER,
 							InternationalisationUtils
 									.getI18nString(COMMON_PHONE),
-							PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
+							PaymentViewCsvUtils.MARKER_AMOUNT_PAID,
 							InternationalisationUtils
 									.getI18nString(COMMON_AMOUNT_PAID),
-							PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,
+							PaymentViewCsvUtils.MARKER_TIME_PAID,
 							InternationalisationUtils
 									.getI18nString(COMMON_TIME_PAID),
-							PaymentViewCsvUtils.MARKER_INCOMING_PAYMENT_ID,
+							PaymentViewCsvUtils.MARKER_PAYMENT_ID,
 							InternationalisationUtils
 									.getI18nString(COMMON_PAYMENT_ID),
-							PaymentViewCsvUtils.MARKER_INCOMING_NOTES,
+							PaymentViewCsvUtils.MARKER_NOTES,
 							InternationalisationUtils
 									.getI18nString(COMMON_NOTES));
 			for (IncomingPayment incomingPayment : incomingPayments) {
 				CsvUtils.writeLine(out, incomingPaymentFormat,
 						PaymentViewCsvUtils.MARKER_PAYMENT_BY,
 						incomingPayment.getPaymentBy(),
-						PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER,
+						PaymentViewCsvUtils.MARKER_PHONE_NUMBER,
 						incomingPayment.getPhoneNumber(),
-						PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
+						PaymentViewCsvUtils.MARKER_AMOUNT_PAID,
 						incomingPayment.getAmountPaid().toString(),
-						PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,
+						PaymentViewCsvUtils.MARKER_TIME_PAID,
 						Long.toString(incomingPayment.getTimePaid()),
-						PaymentViewCsvUtils.MARKER_INCOMING_PAYMENT_ID,
+						PaymentViewCsvUtils.MARKER_PAYMENT_ID,
 						incomingPayment.getPaymentId(),
-						PaymentViewCsvUtils.MARKER_INCOMING_NOTES,
+						PaymentViewCsvUtils.MARKER_NOTES,
 						incomingPayment.getNotes());
 
 			}
@@ -186,11 +187,19 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 					.writeLine(out, outgoingPaymentFormat,
 							PaymentViewCsvUtils.MARKER_CLIENT_NAME,
 							"Name",
-							PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER,
+							PaymentViewCsvUtils.MARKER_PHONE_NUMBER,
 							InternationalisationUtils.getI18nString(COMMON_PHONE),
-							PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
+							PaymentViewCsvUtils.MARKER_AMOUNT_PAID,
 							InternationalisationUtils.getI18nString(COMMON_AMOUNT_PAID),
-							PaymentViewCsvUtils.MARKER_OUTGOING_NOTES,
+							PaymentViewCsvUtils.MARKER_TIME_PAID,
+							InternationalisationUtils.getI18nString(COMMON_TIME_PAID),
+							PaymentViewCsvUtils.MARKER_OUTGOING_STATUS,
+							InternationalisationUtils.getI18nString(COMMON_STATUS),
+							PaymentViewCsvUtils.MARKER_OUTGOING_CONFIRMATION_CODE,
+							InternationalisationUtils.getI18nString(COMMON_CONFIRMATION_CODE),
+							PaymentViewCsvUtils.MARKER_PAYMENT_ID,
+							InternationalisationUtils.getI18nString(COMMON_PAYMENT_ID),							
+							PaymentViewCsvUtils.MARKER_NOTES,
 							InternationalisationUtils.getI18nString(COMMON_NOTES));
 			
 			for (OutgoingPayment outgoingPayment : outgoingPayments) {
@@ -199,9 +208,17 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						outgoingPayment.getClient().getFullName(),
 						PaymentViewCsvUtils.MARKER_CLIENT_PHONE,
 						outgoingPayment.getClient().getPhoneNumber(),
-						PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
+						PaymentViewCsvUtils.MARKER_AMOUNT_PAID,
 						outgoingPayment.getAmountPaid().toString(),
-						PaymentViewCsvUtils.MARKER_OUTGOING_NOTES,
+						PaymentViewCsvUtils.MARKER_TIME_PAID,
+						Long.toString(outgoingPayment.getTimePaid()),
+						PaymentViewCsvUtils.MARKER_OUTGOING_STATUS,
+						outgoingPayment.getStatus().toString(),
+						PaymentViewCsvUtils.MARKER_OUTGOING_CONFIRMATION_CODE,
+						outgoingPayment.getConfirmationCode(),
+						PaymentViewCsvUtils.MARKER_PAYMENT_ID,
+						outgoingPayment.getPaymentId(),	
+						PaymentViewCsvUtils.MARKER_NOTES,
 						outgoingPayment.getNotes());
 
 			}
