@@ -7,6 +7,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.domain.Contact;
+import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
@@ -48,6 +50,7 @@ public class EditClientHandler extends BaseDialog{
 	private Map<CustomField, Object> customComponents;
 
 	private boolean editMode;
+	private ContactDao contactDao;
 	
 	public EditClientHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, ClientsTabHandler clientsTabHandler,
 			boolean newClient) {
@@ -58,6 +61,7 @@ public class EditClientHandler extends BaseDialog{
 		this.customFieldDao = pluginController.getCustomFieldDao();
 		this.accountDao = pluginController.getAccountDao();
 		this.editMode = false;
+		this.contactDao = pluginController.getUiGeneratorController().getFrontlineController().getContactDao();
 		
 		if (newClient){
 			XML_EDIT_CLIENT = "/ui/plugins/paymentview/clients/dialogs/dlgViewClient.xml";
@@ -79,6 +83,8 @@ public class EditClientHandler extends BaseDialog{
 		this.clientDao = pluginController.getClientDao();
 		this.accountDao = pluginController.getAccountDao();
 		this.editMode = true;
+		
+		this.contactDao = pluginController.getUiGeneratorController().getFrontlineController().getContactDao();
 		
 		XML_EDIT_CLIENT = "/ui/plugins/paymentview/clients/dialogs/dlgEditClient.xml";
 		
@@ -173,6 +179,18 @@ public class EditClientHandler extends BaseDialog{
 					ui.infoMessage("The phone number " + client.getPhoneNumber() + " is already set up for "+ clientInDb.getFullName() + ".");
 				} else {
 					this.clientDao.updateClient(this.client);
+					
+					Contact fromMsisdn = contactDao.getFromMsisdn(client.getPhoneNumber());
+					if (fromMsisdn != null){
+						fromMsisdn.setName(client.getFullName());
+						fromMsisdn.setPhoneNumber(client.getPhoneNumber());
+						contactDao.updateContact(fromMsisdn);
+					}else{
+						//Start Save the Client as a contact to the core project
+						Contact contact = new Contact(client.getFullName(), client.getPhoneNumber(), "", "", "", true);
+						contactDao.saveContact(contact);
+						//Finish save
+					}
 		
 					List<CustomField> allCustomFields = this.customFieldDao
 							.getAllActiveUsedCustomFields();
@@ -231,6 +249,11 @@ public class EditClientHandler extends BaseDialog{
 				} else {
 					Client client = new Client(fn, on, phone);
 					this.clientDao.saveClient(client);
+					
+					//Start Save the Client as a contact to the core project
+					Contact contact = new Contact(client.getFullName(), client.getPhoneNumber(), "", "", "", true);
+					contactDao.saveContact(contact);
+					//Finish save
 		
 					List<CustomField> allUsedCustomFields = this.customFieldDao
 							.getAllActiveUsedCustomFields();

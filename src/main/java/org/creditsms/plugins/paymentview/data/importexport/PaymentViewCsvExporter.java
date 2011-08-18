@@ -31,6 +31,7 @@ import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
+import org.creditsms.plugins.paymentview.utils.PvUtils;
 
 public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 	/**
@@ -154,7 +155,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
 						incomingPayment.getAmountPaid().toString(),
 						PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,
-						Long.toString(incomingPayment.getTimePaid()),
+						PvUtils.formatDate(incomingPayment.getTimePaid()),
 						PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT,
 						incomingPayment.getAccount().getAccountNumber());
 

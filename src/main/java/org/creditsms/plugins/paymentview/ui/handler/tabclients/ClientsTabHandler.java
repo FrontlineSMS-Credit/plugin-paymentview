@@ -3,6 +3,9 @@ package org.creditsms.plugins.paymentview.ui.handler.tabclients;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.domain.Contact;
+import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.UiGeneratorControllerConstants;
@@ -33,13 +36,15 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	private Object clientTableHolder;
 	private BaseClientTable clientTableHandler;
 	private final PaymentViewPluginController pluginController;
-
+	
 	public ClientsTabHandler(UiGeneratorController ui,
 			final PaymentViewPluginController pluginController) {
 		this.ui = ui;
+		
 		this.pluginController = pluginController;
 		this.clientDao = pluginController.getClientDao();
 		this.customFieldDao = pluginController.getCustomFieldDao();
+		
 		init();
 	}
 	
@@ -112,7 +117,37 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 		new ClientExportHandler(ui, pluginController, clients).showWizard();
 		this.refresh();
 	}
+	
+	public void copyToContacts() throws NumberFormatException, DuplicateKeyException {
+		Object[] selectedItems = ui.getSelectedItems(clientsTableComponent);
+		if (selectedItems.length <= 0){
+			copyClientsToContacts(clientDao.getAllClients());
+		}else{
+			List<Client> clients = new ArrayList<Client>(selectedItems.length);
+			for (Object o : selectedItems) {
+				clients.add(ui.getAttachedObject(o, Client.class));
+			}
+			copyClientsToContacts(clients);
+		}
+	}
 
+	private void copyClientsToContacts(List<Client> clients) throws NumberFormatException, DuplicateKeyException {
+		ContactDao contactDao = pluginController.getUiGeneratorController().getFrontlineController().getContactDao();
+		for (Client c : clients) {
+			Contact fromMsisdn = contactDao.getFromMsisdn(c.getPhoneNumber());
+			if (fromMsisdn != null){
+				fromMsisdn.setName(c.getFullName());
+				fromMsisdn.setPhoneNumber(c.getPhoneNumber());
+				contactDao.updateContact(fromMsisdn);
+			}else{
+				//Start Save the Client as a contact to the core project
+				Contact contact = new Contact(c.getFullName(), c.getPhoneNumber(), "", "", "", true);
+				contactDao.saveContact(contact);
+				//Finish save
+			}
+		}
+	}
+	
 	public void importClient() {
 		new ClientImportHandler(pluginController, this).showWizard();
 		this.refresh();

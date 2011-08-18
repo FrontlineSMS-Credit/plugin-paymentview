@@ -1,4 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabclients;
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
@@ -40,4 +41,7 @@ public class ClientTableHandler extends BaseClientTable {
 		clientsTabHandler.showDeleteConfirmationDialog(methodToBeCalled);
 	}
 	
+	public void copyToContacts() throws NumberFormatException, DuplicateKeyException{
+		clientsTabHandler.copyToContacts();
+	}
 }

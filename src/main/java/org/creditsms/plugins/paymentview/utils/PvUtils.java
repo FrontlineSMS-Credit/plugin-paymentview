@@ -23,4 +23,8 @@ public class PvUtils {
 	public static Date parseDate(String strDatetime) throws ParseException{
 		return SDF.parse(strDatetime);
 	}
+
+	public static String formatDate(Long timePaid) {
+		return formatDate(new Date(timePaid));
+	}
 }

@@ -7,13 +7,14 @@
 		<panel weightx="1" />
 		<panel weightx="1" />
 		<panel weightx="1" />
-		<textfield
-			name="clientsFilter" tooltip="i18n.tooltip.search.here" weightx="1" />
+		<textfield name="clientsFilter" tooltip="i18n.tooltip.search.here"
+			weightx="1" />
 		<button icon="/icons/search.png" text="i18n.common.search"
 			action="filterClients(clientsFilter.text)" />
 	</panel>
-	<table perform="editClient" delete="showDeleteConfirmationDialog('deleteClient')" colspan="10" selection="multiple"
-		name="tbl_clientList" width="1000" weightx="1" weighty="1" tooltip="Right-click for options">
+	<table perform="editClient" delete="showDeleteConfirmationDialog('deleteClient')"
+		colspan="10" selection="multiple" name="tbl_clientList" width="1000"
+		weightx="1" weighty="1" tooltip="Right-click for options">
 		<popupmenu name="menu">
 			<menuitem action="editClient" icon="/icons/edit.png" name="miEditClient"
 				text="Edit Client" />
@@ -22,6 +23,7 @@
 				text="i18n.plugins.paymentview.action.deleteclient" />
 			<menuitem action="exportClient" icon="/icons/export.png"
 				name="miExportClient" text="i18n.plugins.paymentview.action.exportclient" />
+			<menuitem action="copyToContacts" name="miCopyClientToContacts" text="Copy to Contacts" />
 		</popupmenu>
 	</table>
 </panel>

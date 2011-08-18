@@ -7,8 +7,10 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
@@ -83,6 +85,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	protected Balance balance;
 	protected EventBus eventBus;
 	private TargetAnalytics targetAnalytics;
+	private ContactDao contactDao;
 	
 //> STK & PAYMENT ACCOUNT
 	public void checkBalance() throws PaymentServiceException {
@@ -248,6 +251,12 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							}
 							final Client client = new Client(firstName,otherName,getPhoneNumber(message));
 							clientDao.saveClient(client);
+
+							//Start Save the Client as a contact to the core project
+							Contact contact = new Contact(client.getFullName(), client.getPhoneNumber(), "", "", "", true);
+							contactDao.saveContact(contact);
+							//Finish save
+							
 							account = new Account(createAccountNumber(),client,false,true);
 							accountDao.saveAccount(account);
 						}
@@ -531,6 +540,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.targetAnalytics = pluginController.getTargetAnalytics();
 		this.logMessageDao = pluginController.getLogMessageDao();
 		this.balance = Balance.getInstance().getLatest();
+		this.contactDao = pluginController.getUiGeneratorController().getFrontlineController().getContactDao();
 		this.registerToEventBus(
 			pluginController.getUiGeneratorController()
 			.getFrontlineController().getEventBus()
