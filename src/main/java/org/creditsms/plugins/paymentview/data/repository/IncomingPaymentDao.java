@@ -60,6 +60,12 @@ public interface IncomingPaymentDao {
 	 * */
 	public List<IncomingPayment> getActiveIncomingPaymentsByTarget(
 			long targetId);
+	
+	/**
+	 * returns IncomingPayment(s) by targetId and dates
+	 * */
+	public List<IncomingPayment> getActiveIncomingPaymentsByTargetAndDates(
+			long targetId, Date startDate, Date endDate);
 
 	/**
 	 * returns IncomingPayment(s) by accountId
