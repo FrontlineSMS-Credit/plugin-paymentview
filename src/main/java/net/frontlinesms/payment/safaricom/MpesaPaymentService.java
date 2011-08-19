@@ -17,7 +17,6 @@ import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.payment.PaymentJob;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
-import net.frontlinesms.payment.safaricom.MpesaPaymentService.BalanceFraudNotification;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
 import org.apache.log4j.Logger;

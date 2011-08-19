@@ -180,16 +180,15 @@ public class EditClientHandler extends BaseDialog{
 				} else {
 					this.clientDao.updateClient(this.client);
 					
-					Contact fromMsisdn = contactDao.getFromMsisdn(client.getPhoneNumber());
-					if (fromMsisdn != null){
-						fromMsisdn.setName(client.getFullName());
-						fromMsisdn.setPhoneNumber(client.getPhoneNumber());
-						contactDao.updateContact(fromMsisdn);
+					Contact contact = contactDao.getFromMsisdn(client.getPhoneNumber());
+					if (contact != null){
+						contact.setName(client.getFullName());
+						contact.setPhoneNumber(client.getPhoneNumber());
+						contactDao.updateContact(contact);
 					}else{
 						//Start Save the Client as a contact to the core project
-						Contact contact = new Contact(client.getFullName(), client.getPhoneNumber(), "", "", "", true);
+						contact = new Contact(client.getFullName(), client.getPhoneNumber(), "", "", "", true);
 						contactDao.saveContact(contact);
-						//Finish save
 					}
 		
 					List<CustomField> allCustomFields = this.customFieldDao
