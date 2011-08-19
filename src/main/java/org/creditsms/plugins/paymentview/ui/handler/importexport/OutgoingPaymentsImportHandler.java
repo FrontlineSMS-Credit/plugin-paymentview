@@ -20,30 +20,39 @@ import org.creditsms.plugins.paymentview.data.importexport.OutgoingPaymentCsvImp
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
+import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.ImportNewPaymentsTabHandler;
+
+/**
+ * 
+ * @author Roy
+ *
+ */
 
 public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
-	private static final String COMPONENT_CB_ACCOUNT = "cbAccount";
+	private static final String PAYMENT_ID = "cbPaymentId";
 	private static final String COMPONENT_CB_AMOUNT_PAID = "cbAmountPaid";
-	private static final String COMPONENT_CB_OUTGOING_CONFIRMATION = "cbConfirmation";
 	private static final String COMPONENT_CB_OUTGOING_NOTES = "cbNotes";
 	private static final String COMPONENT_CB_PHONE_NUMBER = "cbPhoneNumber";
+	private final ImportNewPaymentsTabHandler newPaymentsTabHandler;
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_IMPORTING_SELECTED_CLIENTS = "Import Clients";
-	private static final String UI_FILE_OPTIONS_PANEL_CONTACT = "/ui/plugins/paymentview/importexport/pnOutgoingPaymentsDetails.xml";
+	private static final String UI_FILE_OPTIONS_PANEL_CONTACT = "/ui/plugins/paymentview/importexport/pnOutgoingPaymentsImportDetails.xml";
 
 	private AccountDao accountDao;
 	private ClientDao clientDao;
 	private int columnCount;
+
+
 	// > INSTANCE PROPERTIES
 	private OutgoingPaymentCsvImporter importer;
 	private OutgoingPaymentDao outgoingPaymentDao;
-
-
+	
 	public OutgoingPaymentsImportHandler(UiGeneratorController ui,
-			AccountDao accountDao, ClientDao clientDao) {
+			AccountDao accountDao, ClientDao clientDao, ImportNewPaymentsTabHandler newPaymentsTabHandler) {
 		super(ui);
 		this.accountDao = accountDao;
 		this.clientDao = clientDao;
+		this.newPaymentsTabHandler = newPaymentsTabHandler;
 	}
 
 	private void addIncomingPaymentCells(Object row, String[] lineValues) {
@@ -86,13 +95,17 @@ public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
 	@Override
 	protected void doSpecialImport(String dataPath) {
 		CsvRowFormat rowFormat = getRowFormatForIncomingPayment();
+		
 		this.importer.importOutgoingPayments(this.outgoingPaymentDao,
 				this.accountDao,this.clientDao, rowFormat);
-		// this.uiController.refreshContactsTab();
+		this.newPaymentsTabHandler.updateNewPayments(this.importer.getImportedPaymentsLst());
 		this.uiController.infoMessage(InternationalisationUtils
 				.getI18nString(I18N_IMPORT_SUCCESSFUL));
+		if(this.importer.incorrectCount!=0){
+			this.uiController.alert(this.importer.incorrectCount+" payment record(s) had invalid phone number(s) or record(s)");
+		}
 	}
-
+	
 	protected List<Object> getCheckboxes() {
 		Object pnCheckboxes = this.uiController.find(this.wizardDialog,
 				COMPONENT_PN_CHECKBOXES);
@@ -103,7 +116,7 @@ public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
 	protected CsvImporter getImporter() {
 		return this.importer;
 	}
-
+	
 	@Override
 	protected String getOptionsFilePath() {
 		return UI_FILE_OPTIONS_PANEL_CONTACT;
@@ -126,16 +139,14 @@ public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
 
 	private CsvRowFormat getRowFormatForIncomingPayment() {
 		CsvRowFormat rowFormat = new CsvRowFormat();
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_PHONE_NUMBER,
 				COMPONENT_CB_PHONE_NUMBER);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT,
-				COMPONENT_CB_ACCOUNT);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_AMOUNT_PAID,
 				COMPONENT_CB_AMOUNT_PAID);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_OUTGOING_NOTES,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT,
+				PAYMENT_ID);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_NOTES,
 				COMPONENT_CB_OUTGOING_NOTES);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_OUTGOING_CONFIRMATION,
-				COMPONENT_CB_OUTGOING_CONFIRMATION);
 		return rowFormat;
 	}
 

@@ -65,7 +65,7 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 
 	/**
 	 * Export the supplied contacts using settings set in {@link #wizardDialog}.
-	 * 
+	 * 	
 	 * @param clients
 	 *            The contacts to export
 	 * @param filename

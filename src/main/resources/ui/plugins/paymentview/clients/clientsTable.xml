@@ -8,7 +8,7 @@
 		<panel weightx="1" />
 		<panel weightx="1" />
 		<textfield name="clientsFilter" tooltip="i18n.tooltip.search.here"
-			weightx="1" />
+			weightx="1" perform="filterClients(clientsFilter.text)" />
 		<button icon="/icons/search.png" text="i18n.common.search"
 			action="filterClients(clientsFilter.text)" />
 	</panel>

@@ -40,13 +40,17 @@ public class SelectClientsTableHandler extends BaseSelectClientTableHandler {
 
 	@Override
 	protected List<Client> getClients(String filter, int startIndex, int limit) {
-		if (clients.isEmpty()) {
+		this.setTotalItemCount(this.getClients().size());
+		if (this.getClients().isEmpty()) {
 			return Collections.emptyList();
 		} else {
-			if (clientsTablePager.getMaxItemsPerPage() < clients.size()) {
-				return clients.subList(startIndex, limit);
+			if (clientsTablePager.getMaxItemsPerPage() < this.getClients().size()) {
+				if ((startIndex+limit) < this.getClients().size()) {
+					return this.getClients().subList(startIndex, limit+startIndex);
+				}
+				return this.getClients().subList(startIndex, this.getClients().size());
 			} else {
-				return clients;
+				return this.getClients();
 			}
 		}
 	}

@@ -2,6 +2,7 @@ package org.creditsms.plugins.paymentview.ui.handler.importexport;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.csv.CsvRowFormat;
@@ -9,36 +10,47 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.importexport.ExportDialogHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.importexport.PaymentViewCsvExporter;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 
-public class IncomingPaymentsExportHandler extends
-		ExportDialogHandler<IncomingPayment> {
+public class IncomingPaymentsExportHandler extends ExportDialogHandler<IncomingPayment> {
 
-	private static final String COMPONENT_CB_ACCOUNT = "cbAccount";
+	private static final String COMPONENT_CB_NAME = "cbPaymentBy";
 	private static final String COMPONENT_CB_AMOUNT_PAID = "cbAmountPaid";
 	/** i18n Text Key: "Active" */
 	private static final String COMPONENT_CB_PHONE_NUMBER = "cbPhoneNumber";
 	private static final String COMPONENT_CB_TIME_PAID = "cbTimePaid";
+	private static final String COMPONENT_CB_PAYMENT_ID = "cbPaymentId";
+	private static final String COMPONENT_CB_NOTES = "cbNotes";
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_EXPORTING_SELECTED_CONTACTS = "plugins.paymentview.message.exporting.selected.client";
 	private static final String UI_FILE_OPTIONS_PANEL_INCOMING_PAYMENT = "/ui/plugins/paymentview/importexport/pnIncomingPaymentsDetails.xml";
 
 	private IncomingPaymentDao incomingPaymentDao;
+	private List<IncomingPayment> selected;
 
-	public IncomingPaymentsExportHandler(UiGeneratorController ui,
-			IncomingPaymentDao incomingPaymentDao) {
+	public IncomingPaymentsExportHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(IncomingPayment.class, ui);
-		this.incomingPaymentDao = incomingPaymentDao;
+		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
+	}
+	
+	public IncomingPaymentsExportHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, List<IncomingPayment> selected) {
+		super(IncomingPayment.class, ui);
+		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
+		this.selected = selected;
 	}
 
 	@Override
 	public void doSpecialExport(String dataPath) throws IOException {
 		log.debug("Exporting all contacts..");
-		exportIncomingPayment(this.incomingPaymentDao.getActiveIncomingPayments(),
-				dataPath);
+		if (selected == null) {
+			exportIncomingPayment(this.incomingPaymentDao.getActiveIncomingPayments(), dataPath);
+		}else{
+			exportIncomingPayment(selected, dataPath);
+		}
 	}
 
 	@Override
@@ -84,14 +96,18 @@ public class IncomingPaymentsExportHandler extends
 
 	protected CsvRowFormat getRowFormatForIncomingPayment() {
 		CsvRowFormat rowFormat = new CsvRowFormat();
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_PHONE_NUMBER,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_PAYMENT_BY,
+				COMPONENT_CB_NAME);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_PHONE_NUMBER,
 				COMPONENT_CB_PHONE_NUMBER);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT,
-				COMPONENT_CB_ACCOUNT);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_AMOUNT_PAID,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_AMOUNT_PAID,
 				COMPONENT_CB_AMOUNT_PAID);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_TIME_PAID,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_TIME_PAID,
 				COMPONENT_CB_TIME_PAID);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_PAYMENT_ID,
+				COMPONENT_CB_PAYMENT_ID);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_NOTES,
+				COMPONENT_CB_NOTES);
 		return rowFormat;
 	}
 

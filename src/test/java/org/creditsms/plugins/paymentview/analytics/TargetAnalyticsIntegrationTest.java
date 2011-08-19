@@ -1,6 +1,7 @@
 package org.creditsms.plugins.paymentview.analytics;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -49,6 +50,7 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		this.targetAnalytics.setTargetDao(hibernateTargetDao);
 		
 		setUpTestData();
+		getEndOfIntervalDate();
 	}
 	
 	public void testSetup() {
@@ -82,9 +84,100 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		
 		assertEquals(this.todaysDate, this.targetAnalytics.getLastDatePaid(targetId));	
 	}
+	
+	private int getEndOfIntervalByInstalment(String prem, String paymenmtDurtn, String amntPaid){
+		BigDecimal premium = new BigDecimal(prem);
+		BigDecimal instalment = new BigDecimal("0.00");
+		BigDecimal paymentDuration = new BigDecimal(paymenmtDurtn);
+		BigDecimal amountPaid = new BigDecimal(amntPaid);
 
-	private void setUpTestData() throws DuplicateKeyException{
+		instalment = premium.divide(paymentDuration, 4, RoundingMode.HALF_DOWN);
+
+		return amountPaid.multiply(paymentDuration.stripTrailingZeros()).divide(premium).intValue();
+	}
+    
+	private void getEndOfIntervalDate() throws DuplicateKeyException{
+		getEndOfIntervalByInstalment("25000", "11", "10000");
+		int startMonth = -11;
+		int monthPoz = 0;
 		
+		Calendar calendar1 = Calendar.getInstance(); 
+		calendar1.add(Calendar.MONTH, startMonth); 
+		calendar1.set(Calendar.DATE, 10);
+		calendar1.set(Calendar.HOUR_OF_DAY, 0);  
+		calendar1.set(Calendar.MINUTE, 0);  
+		calendar1.set(Calendar.SECOND, 0);  
+		calendar1.set(Calendar.MILLISECOND, 0);
+		Date startDate = calendar1.getTime();
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MONTH, 6); 
+		calendar.set(Calendar.DATE, 9);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);  
+		calendar.set(Calendar.MINUTE, 0);  
+		calendar.set(Calendar.SECOND, 0);  
+		calendar.set(Calendar.MILLISECOND, 0);
+		Date endDate = calendar.getTime();
+		
+		Calendar calendar2 = Calendar.getInstance();
+		calendar2.set(Calendar.HOUR_OF_DAY, 0);  
+		calendar2.set(Calendar.MINUTE, 0);  
+		calendar2.set(Calendar.SECOND, 0);  
+		calendar2.set(Calendar.MILLISECOND, 0);
+		Date nowDate = calendar2.getTime();
+		
+		Calendar calendar3 = Calendar.getInstance();
+		monthPoz = startMonth+1;
+		calendar3.add(Calendar.MONTH, monthPoz); 
+		calendar3.set(Calendar.DATE, 9);
+		calendar3.set(Calendar.HOUR_OF_DAY, 0);  
+		calendar3.set(Calendar.MINUTE, 0);  
+		calendar3.set(Calendar.SECOND, 0);  
+		calendar3.set(Calendar.MILLISECOND, 0);
+		Date endOfInterval = calendar3.getTime();
+		
+		if(endDate.getTime() > nowDate.getTime()){
+			int q = 0;
+			int instalmentPoz = 0;
+			for(q=0; nowDate.getTime() > endOfInterval.getTime() ; q++){	
+				Calendar calendar4 = Calendar.getInstance();
+				monthPoz = monthPoz+1;
+				calendar4.add(Calendar.MONTH, monthPoz); 
+				calendar4.set(Calendar.DATE, 9);
+				calendar4.set(Calendar.HOUR_OF_DAY, 0);  
+				calendar4.set(Calendar.MINUTE, 0);  
+				calendar4.set(Calendar.SECOND, 0);  
+				calendar4.set(Calendar.MILLISECOND, 0);
+				endOfInterval = calendar4.getTime();
+			}
+			instalmentPoz = q+2;
+			getInstalmentsEndOfInervalDate(startMonth, 9, instalmentPoz);
+		    System.out.println(">>>>>>>>>>>>>>>>"+endOfInterval);
+		}
+
+		/*Account acc = getAccountNumber("104");
+		ServiceItem si = saveServiceItem("Solar Cooker","9300", 1);
+		Target tgt = createTarget(acc, si, startDate, endDate);
+		targetId = tgt.getId();
+		createIncomingPayment("0723000000","4500","Mr. Renyenjes", acc, tgt);
+		createIncomingPayment("0723000000","2500","Mr. Renyenjes", acc, tgt);
+		createIncomingPayment("0723000000","2000","Mr. Renyenjes", acc, tgt);*/
+		
+	}
+	
+	private Date getInstalmentsEndOfInervalDate(int monthNum, int dayNum, int instalmentPoz){
+		Calendar calendar4 = Calendar.getInstance();
+		calendar4.add(Calendar.MONTH, monthNum+instalmentPoz); 
+		calendar4.set(Calendar.DATE, dayNum);
+		calendar4.set(Calendar.HOUR_OF_DAY, 0);  
+		calendar4.set(Calendar.MINUTE, 0);  
+		calendar4.set(Calendar.SECOND, 0);  
+		calendar4.set(Calendar.MILLISECOND, 0);
+
+		return calendar4.getTime();
+	}
+	
+	private void setUpTestData() throws DuplicateKeyException{
 		Calendar calendar1 = Calendar.getInstance();
 		calendar1.set(Calendar.HOUR_OF_DAY, 0);  
 		calendar1.set(Calendar.MINUTE, 0);  

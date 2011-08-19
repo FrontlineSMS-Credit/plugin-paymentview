@@ -6,6 +6,8 @@ import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.junit.HibernateTestCase;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.CustomField;
+import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.springframework.beans.factory.annotation.Autowired;
 /**
  * 
@@ -15,9 +17,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ClientIntegrationTest extends HibernateTestCase {
 	@Autowired
 	HibernateClientDao hibernateClientDao;
+	@Autowired                     
+	HibernateCustomFieldDao hibernateCustomFieldDao;
+	@Autowired                     
+	HibernateCustomValueDao hibernateCustomValueDao;
 
 	public void testSetup() {
 		assertNotNull(hibernateClientDao);
+		assertNotNull(hibernateCustomFieldDao);
+		assertNotNull(hibernateCustomValueDao);
 	}
 	
 	public void testSave() throws DuplicateKeyException {
@@ -65,8 +73,31 @@ public class ClientIntegrationTest extends HibernateTestCase {
 		assertTrue(passedTest);
 	}
 	
-	private void createAndSaveClientWithPhoneNumber(String phoneNumber) throws DuplicateKeyException{
-		hibernateClientDao.saveClient(createClientWithPhoneNumber(phoneNumber));
+	public void testGetClientsByFilter() throws DuplicateKeyException{
+		assertDatabaseEmpty();
+		//create client - create custom field, create custom value
+		Client c3 = createAndSaveClientWithPhoneNumber("+25472012345");
+		Client c4 = createAndSaveClientWithPhoneNumber("+25472987654");
+		Client c5 = createAndSaveClientWithPhoneNumber("+25472987655");
+		CustomField cf1 = createAndSaveCustomField("Village",1);
+		createAndSaveCustomValue("Nunguni",c3,1,cf1);
+		createAndSaveCustomValue("Nunguni",c4,2,cf1);
+		CustomField cf2 = createAndSaveCustomField("Address",2);
+		createAndSaveCustomValue("Nunguni",c3,3,cf2);
+		createAndSaveCustomValue("Nairobi",c4,4,cf2);
+		CustomField cf3 = createAndSaveUnusedCustomField("PostalAddress",3);
+		createAndSaveCustomValue("Nunguni",c5,5 ,cf3);
+		
+		List<Client> clientList = hibernateClientDao.getClientsByFilter("Nunguni", 0, 10);
+		assertEquals(2, clientList.size());
+	}
+
+
+
+	private Client createAndSaveClientWithPhoneNumber(String phoneNumber) throws DuplicateKeyException{
+		Client client = createClientWithPhoneNumber(phoneNumber);
+		hibernateClientDao.saveClient(client);
+		return client;
 	}
 	
 	private Client getClient(){
@@ -78,6 +109,43 @@ public class ClientIntegrationTest extends HibernateTestCase {
 		Client c = new Client();
 		c.setPhoneNumber(phoneNumber);
 		return c;
+	}
+	
+	
+	private CustomField createAndSaveCustomField(String strName, int expectedCustomFieldCount) throws DuplicateKeyException{
+        CustomField cf = createCustomField(strName);
+        cf.setUsed(Boolean.TRUE);
+        hibernateCustomFieldDao.saveCustomField(cf);
+        assertEquals(expectedCustomFieldCount, hibernateCustomFieldDao.getCustomFieldCount());
+        return cf;
+	}
+	
+	private CustomField createAndSaveUnusedCustomField(String strName, int expectedCustomFieldCount) throws DuplicateKeyException{
+        CustomField cf = createCustomField(strName);
+        cf.setUsed(Boolean.FALSE);
+        hibernateCustomFieldDao.saveCustomField(cf);
+        assertEquals(expectedCustomFieldCount, hibernateCustomFieldDao.getCustomFieldCount());
+        return cf;
+	}
+	
+	private CustomField createCustomField(String strName){
+		CustomField cf = new CustomField();
+		cf.setReadableName(strName);
+		return cf;
+	}
+	
+	
+	private void createAndSaveCustomValue(String cfName, Client client, int expectedPaymentCount, CustomField cf) throws DuplicateKeyException{
+		hibernateCustomValueDao.saveCustomValue(createOtherClientdetails(cfName, client, cf));
+		assertEquals(expectedPaymentCount, hibernateCustomValueDao.getAllCustomValues().size());
+	}
+	
+	private CustomValue createOtherClientdetails(String strVal, Client client, CustomField cf){
+		CustomValue ocd = new CustomValue();
+		ocd.setStrValue(strVal);
+		ocd.setCustomField(cf);
+		if(client!=null) ocd.setClient(client);
+		return ocd;
 	}
 
 	private void assertDatabaseEmpty() {

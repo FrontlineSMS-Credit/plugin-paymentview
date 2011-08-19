@@ -32,6 +32,12 @@ public interface ClientDao {
 	/**
 	 * Returns all active clients from a particular start index with a maximum number
 	 * of returned clients set.
+	 * @return
+	 */
+	public List<Client> getAllActiveClients();
+	/**
+	 * Returns all active clients from a particular start index with a maximum number
+	 * of returned clients set.
 	 * 
 	 * @param startIndex
 	 *            index of the first client to fetch
@@ -59,29 +65,27 @@ public interface ClientDao {
 
 	/** @return number of clients in the system */
 	public int getClientCount();
-
+	
 	/**
-	 * Returns a list of clients whose name is similar to the specified string
+	 * Returns a list of clients whose name,phone number or custom value are similar to the specified string
 	 * 
-	 * @param clientname
-	 *            string to be used to match the names
+	 * @param filter
 	 * @return
 	 */
-	public List<Client> getClientsByName(String clientName);
+	public List<Client> getClientsByFilter(String filter);
 
 	/**
-	 * Returns a list of clients whose name is similar to the specified string
+	 * Returns a list of clients whose name,phone number or custom value are similar to the specified string
 	 * from a particular start index with a maximum number of returned clients
-	 * set
 	 * 
-	 * @param clientname
+	 * @param filter
 	 * @param startIndex
 	 * @param limit
 	 * @return
 	 */
-	public List<Client> getClientsByName(String clientName, int startIndex,
+	public List<Client> getClientsByFilter(String filter, int startIndex,
 			int limit);
-
+	
 	/**
 	 * Saves a client to the system
 	 * 

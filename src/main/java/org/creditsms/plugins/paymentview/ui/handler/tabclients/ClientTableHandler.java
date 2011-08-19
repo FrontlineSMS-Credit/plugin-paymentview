@@ -34,7 +34,7 @@ public class ClientTableHandler extends BaseClientTable {
 	}
 	
 	public void exportClient() {
-		clientsTabHandler.exportClient();
+		clientsTabHandler.exportClient(clientFilter);
 	}	
 	
 	public void showDeleteConfirmationDialog(String methodToBeCalled){

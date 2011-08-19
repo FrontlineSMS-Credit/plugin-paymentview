@@ -17,7 +17,10 @@
 					name="btn_import" text="i18n.plugins.paymentview.action.importclient" />
 			</panel>
 			<panel weightx="1" />
-			<panel weightx="1" />
+			<panel weightx="1" >
+				<button action="viewIncomingPaymentByClient"
+					name="btn_viewIncoming" text="i18n.plugins.paymentview.action.viewIncomingPayments" />
+			</panel>
 			<panel weightx="1" />
 			<panel weightx="1" />
 			<panel weightx="1" />

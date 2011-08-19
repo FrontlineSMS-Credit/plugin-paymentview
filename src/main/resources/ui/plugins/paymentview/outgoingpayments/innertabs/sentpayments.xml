@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <panel name="pnlSentPayments" columns="1" weightx="1" weighty="1" gap="10">		
-	<panel gap="5" columns="1" left="5" right="5" top="5" weightx="1"
-		weighty="1" name="pnl_clients">
-		<label text="i18n.plugins.paymentview.tab.outgoingpayments.sentpayments.text" font="20 Bold" weightx="1"/>
+	<panel gap="5" columns="1" left="5" right="5" top="5" weightx="1" weighty="1" name="pnl_clients">
+		<panel colspan="2" gap="8" weightx="1">
+			<label text="i18n.plugins.paymentview.tab.outgoingpayments.sentpayments.text" font="20 Bold" weightx="1"/>
+				<panel halign="right" weightx="1" gap="10">
+		        	<label icon="/icons/date_start.png" text="i18n.common.from"/>
+		            <panel>
+		            	<textfield columns="10" name="txt_startDate" action="refresh" />
+		                <button action="showDateSelecter(txt_startDate)" icon="/icons/date.png"/>
+		            </panel>
+		            <label icon="/icons/date_end.png" text="i18n.common.until" />
+		            <panel>
+		                <textfield columns="10" name="txt_endDate" action="refresh" />
+		                <button action="showDateSelecter(txt_endDate)" icon="/icons/date.png"/>
+		            </panel>
+	            </panel>
+		</panel>	
 		<table name="tbl_clients" weightx="1" weighty="1" selection="multiple">
 			<header>
 				<column width="200" icon="/icons/user.png" text="i18n.plugins.paymentview.common.name" />
@@ -20,6 +33,6 @@
 	<panel gap="5" left="5" bottom="5" weightx="1">			
 		<panel weightx="1"/>
 		<panel weightx="1"/>
-		<button colspan="1" icon="/icons/export.png" action="exportPayments" name="btn_export" text="i18n.action.export" />
+		<button colspan="1" icon="/icons/export.png" action="exportSentPayments" name="btn_export" text="i18n.action.export" />
 	</panel>
 </panel>

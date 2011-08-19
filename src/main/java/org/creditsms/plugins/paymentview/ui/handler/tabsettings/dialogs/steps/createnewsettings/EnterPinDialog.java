@@ -8,7 +8,7 @@ import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.paymentsettings.PaymentSettingsProperties;
+import org.creditsms.plugins.paymentview.paymentsettings.PaymentServiceProperties;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
 
@@ -24,7 +24,7 @@ public class EnterPinDialog extends BaseDialog {
 	private Object vpin;
 	private Class<? extends PaymentService> paymentServiceCls;
 
-	private PaymentSettingsProperties paymentSettingsPropPin = PaymentSettingsProperties.getInstance();
+	private PaymentServiceProperties paymentSettingsPropPin = PaymentServiceProperties.getInstance();
 
 	
 	private PaymentService initPaymentService(Class<?> paymentService) {

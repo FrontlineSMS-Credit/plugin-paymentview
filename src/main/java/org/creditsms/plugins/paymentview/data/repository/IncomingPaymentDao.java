@@ -93,7 +93,33 @@ public interface IncomingPaymentDao {
 	 * returns IncomingPayment(s) by time range
 	 * */
 	public List<IncomingPayment> getIncomingPaymentsByDateRange(Date startTime,
+			Date endtime, int startingIndex, int limit);
+	
+	/**
+	 * returns IncomingPayment(s) from start date
+	 * */
+	public List<IncomingPayment> getIncomingPaymentsByStartDate(Date startTime, int startingIndex, int limit);
+	
+	/**
+	 * returns IncomingPayment(s) until end date
+	 * */
+	public List<IncomingPayment> getIncomingPaymentsByEndDate(Date endTime, int startingIndex, int limit);
+	
+	/**
+	 * returns IncomingPayment(s) by time range
+	 * */
+	public List<IncomingPayment> getIncomingPaymentsByDateRange(Date startTime,
 			Date endtime);
+	
+	/**
+	 * returns IncomingPayment(s) from start date
+	 * */
+	public List<IncomingPayment> getIncomingPaymentsByStartDate(Date startTime);
+	
+	/**
+	 * returns IncomingPayment(s) until end date
+	 * */
+	public List<IncomingPayment> getIncomingPaymentsByEndDate(Date endTime);
 	
 	/**
 	 * @param date

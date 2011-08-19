@@ -32,6 +32,8 @@ public class IncomingPayment {
 	private static final String FIELD_ACCOUNT = "account";
 	private static final String FIELD_TARGET ="target";
 	private static final String FIELD_ACTIVE = "active";
+	private static final String FIELD_PAYMENT_ID = "paymentId";
+	private static final String FIELD_NOTES = "notes";
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
@@ -55,6 +57,12 @@ public class IncomingPayment {
 	@Column(name = FIELD_ACTIVE)
 	private boolean active = true;
 	
+	@Column(name = FIELD_PAYMENT_ID)
+	private String paymentId = "";
+
+	@Column(name = FIELD_NOTES)
+	private String notes = "";
+	
 	@ManyToOne
 	@JoinColumn(name = FIELD_ACCOUNT)
 	private Account account;
@@ -71,7 +79,9 @@ public class IncomingPayment {
 		TIME_PAID(FIELD_TIME_PAID),
 		ACCOUNT(FIELD_ACCOUNT),
 		TARGET(FIELD_TARGET),
-		ACTIVE(FIELD_ACTIVE);
+		ACTIVE(FIELD_ACTIVE),
+		PAYMENT_ID(FIELD_PAYMENT_ID),
+		NOTES(FIELD_NOTES);
 		
 		/** name of a field */
 		private final String fieldName;
@@ -98,6 +108,7 @@ public class IncomingPayment {
 		this.target = target;
 		this.active = true;
 	}
+
 
 	public IncomingPayment(String paymentBy, String phoneNumber,
 			BigDecimal amountPaid, Date timePaid, Account account, Target target) {
@@ -175,6 +186,22 @@ public class IncomingPayment {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+	
+	public String getPaymentId() {
+		return paymentId;
+	}
+
+	public void setPaymentId(String paymentId) {
+		this.paymentId = paymentId;
+	}
+
+	public String getNotes() {
+		return notes;
+	}
+
+	public void setNotes(String notes) {
+		this.notes = notes;
 	}
 
 	@Override

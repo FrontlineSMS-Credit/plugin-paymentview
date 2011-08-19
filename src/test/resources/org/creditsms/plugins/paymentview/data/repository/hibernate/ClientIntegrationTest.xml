@@ -8,4 +8,6 @@
 
 	<!-- DAO declarations -->	
 	<bean id="hibernateClientDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateClientDao" parent="baseHibernateDao"/>
+	<bean id="hibernateCustomFieldDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateCustomFieldDao" parent="baseHibernateDao"/>
+	<bean id="hibernateCustomValueDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateCustomValueDao" parent="baseHibernateDao"/>
 </beans>

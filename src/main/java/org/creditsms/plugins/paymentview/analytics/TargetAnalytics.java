@@ -113,9 +113,7 @@ public class TargetAnalytics {
 		} else {
 			remAmntRate = amountRem;
 		}
-				
 
-		
 		if(initAmntRate.compareTo(remAmntRate) >= 0){
 			return Status.ON_TRACK;
 		}else{
