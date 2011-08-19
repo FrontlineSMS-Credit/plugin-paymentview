@@ -291,8 +291,8 @@ public class TargetAnalytics {
 			int pozAboveCurreInstlmnt = (diffInPoz*-1);
 			int pozAboveCurreInstlmntDiff = 0;
 			if(pozAboveCurreInstlmnt==1){
-				amntSavedForPeriod = instalmentsBD.multiply(new BigDecimal(String.valueOf(amntPoz))).
-				subtract(instalmentsBD.multiply(new BigDecimal(String.valueOf(datepoz))));
+				amntSavedForPeriod = instalmentsBD.multiply(new BigDecimal(String.valueOf(datepoz))).
+				subtract(amntRem);
 			} else {
 				Calendar calNowDate = Calendar.getInstance();
 				Date nowDate = calNowDate.getTime();
@@ -356,7 +356,7 @@ public class TargetAnalytics {
 		Calendar calStartDate = Calendar.getInstance(); 
 		calStartDate.setTime(endOfIntervalDate);
 		calStartDate.set(Calendar.MONTH, endMonth-1);  
-		calStartDate.set(Calendar.DATE, endDay+1);  
+		calStartDate.set(Calendar.DATE, endDay);  
 		calStartDate = setStartOfDay(calStartDate);
 		Date startDate = calStartDate.getTime();
 
