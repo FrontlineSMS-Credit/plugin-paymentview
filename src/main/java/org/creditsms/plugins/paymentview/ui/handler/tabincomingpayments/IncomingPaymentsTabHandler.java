@@ -20,7 +20,6 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
@@ -49,14 +48,12 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private Date startDate;
 	private Date endDate;
 	protected int totalItemCount = 0;
-	private ClientDao clientDao;
 
 
 	public IncomingPaymentsTabHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController) {
 		super(ui);
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
-		clientDao = pluginController.getClientDao();
 		this.logMessageDao = pluginController.getLogMessageDao();
 		this.pluginController = pluginController;
 		ui.getFrontlineController().getEventBus().registerObserver(this);
@@ -82,9 +79,8 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 
 	public Object getRow(IncomingPayment incomingPayment) {
 		Object row = ui.createTableRow(incomingPayment);
-		
-		ui.add(row, ui.createTableCell(incomingPayment.getConfirmationCode()));
-		ui.add(row, ui.createTableCell(clientDao.getClientByPhoneNumber(incomingPayment.getPhoneNumber()).getFullName()));
+
+		ui.add(row, ui.createTableCell(incomingPayment.getPaymentBy()));
 		ui.add(row, ui.createTableCell(incomingPayment.getPhoneNumber()));
 		ui.add(row, ui.createTableCell(incomingPayment.getAmountPaid().toPlainString()));
 		ui.add(row, ui.createTableCell(InternationalisationUtils.getDatetimeFormat().format(new Date(incomingPayment.getTimePaid()))));
