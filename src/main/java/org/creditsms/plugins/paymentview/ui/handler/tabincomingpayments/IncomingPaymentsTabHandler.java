@@ -56,9 +56,9 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			PaymentViewPluginController pluginController) {
 		super(ui);
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
+		clientDao = pluginController.getClientDao();
 		this.logMessageDao = pluginController.getLogMessageDao();
 		this.pluginController = pluginController;
-		this.clientDao = pluginController.getClientDao();
 		ui.getFrontlineController().getEventBus().registerObserver(this);
 		init();
 	}
@@ -75,14 +75,15 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		this.ui.add(pnlIncomingPaymentsTableComponent, this.incomingPaymentsTablePager.getPanel());
 		return incomingPaymentsTab;
 	}
-	
+
 	protected String getXMLFile() {
 		return XML_INCOMING_PAYMENTS_TAB;
 	}
-	
+
 	public Object getRow(IncomingPayment incomingPayment) {
 		Object row = ui.createTableRow(incomingPayment);
-
+		
+		ui.add(row, ui.createTableCell(incomingPayment.getConfirmationCode()));
 		ui.add(row, ui.createTableCell(clientDao.getClientByPhoneNumber(incomingPayment.getPhoneNumber()).getFullName()));
 		ui.add(row, ui.createTableCell(incomingPayment.getPhoneNumber()));
 		ui.add(row, ui.createTableCell(incomingPayment.getAmountPaid().toPlainString()));
