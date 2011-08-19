@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.addclient;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -82,14 +83,34 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		((UiGeneratorController) ui).showDateSelecter(textField);
 	}
 	
+	private Calendar setStartOfDay(Calendar cal){
+		cal.set(Calendar.HOUR_OF_DAY, 0);  
+		cal.set(Calendar.MINUTE, 0);  
+		cal.set(Calendar.SECOND, 0);  
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal;
+	}
+	
+	private Calendar setEndOfDay(Calendar cal){
+		cal.set(Calendar.HOUR_OF_DAY, 24);  
+		cal.set(Calendar.MINUTE, 0);  
+		cal.set(Calendar.SECOND, 0);  
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal;
+	}
+	
+	private Calendar setEndOfDayFormat(Calendar cal){
+		cal.set(Calendar.HOUR_OF_DAY, 24);  
+		cal.set(Calendar.MINUTE, 0);  
+		cal.set(Calendar.SECOND, -1);  
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal;
+	}
+	
 	boolean validateStartDate(Date startDate){
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.HOUR_OF_DAY, 0);  
-		calendar.set(Calendar.MINUTE, 0);  
-		calendar.set(Calendar.SECOND, 0);  
-		calendar.set(Calendar.MILLISECOND, 0);
-		Date srtDate = calendar.getTime();
-
+		Calendar calStartDate = Calendar.getInstance();
+		calStartDate = setStartOfDay(calStartDate);
+		Date srtDate = calStartDate.getTime();
 		if(srtDate.compareTo(startDate)<=0){
 			return true;
 		}else{
@@ -97,10 +118,54 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		}
 	}
 	
+	private int getMonthsDiffFromStart(Calendar calStartDate,
+			Calendar calNowDate) {
+		return (calStartDate.get(Calendar.YEAR) - calNowDate.get(Calendar.YEAR)) * 12 +
+		(calStartDate.get(Calendar.MONTH)- calNowDate.get(Calendar.MONTH)) + 
+		(calStartDate.get(Calendar.DAY_OF_MONTH) >= calNowDate.get(Calendar.DAY_OF_MONTH)? 0: -1); 
+	}
+	
 	boolean validateEndDate(Date startDate, Date endDate){
 		if(startDate.compareTo(endDate)<0){
-			return true;
+			Calendar calStartDate = Calendar.getInstance();
+			calStartDate.setTime(startDate);
+			calStartDate = setStartOfDay(calStartDate);
+
+			Calendar calEndDate = Calendar.getInstance();
+			calEndDate.setTime(endDate);
+			calEndDate = setEndOfDay(calEndDate);
+			
+			if(calStartDate.get(Calendar.YEAR)==calEndDate.get(Calendar.YEAR)){
+				if(calStartDate.get(Calendar.MONTH)==calEndDate.get(Calendar.MONTH)){
+					ui.alert("Target duration cannot be less than a month.");
+					return false;
+				} else {
+					int monthDiff = getMonthsDiffFromStart(calEndDate, calStartDate);
+					if(monthDiff==0){
+						ui.alert("Target duration cannot be less than a month.");
+						return false;
+					} else {
+						calEndDate.setTime(calStartDate.getTime());
+						calEndDate.add(Calendar.MONTH, monthDiff);
+						calEndDate.add(Calendar.DATE, -1);
+						calEndDate = setEndOfDayFormat(calEndDate);
+						this.endDate = calEndDate.getTime();
+						this.startDate = calStartDate.getTime();
+						return true;
+					}
+				}
+			} else {
+				int monthDiff = getMonthsDiffFromStart(calEndDate, calStartDate);
+				calEndDate.setTime(calStartDate.getTime());
+				calEndDate.add(Calendar.MONTH, monthDiff);
+				calEndDate.add(Calendar.DATE, -1);
+				calEndDate = setEndOfDayFormat(calEndDate);
+				this.endDate = calEndDate.getTime();
+				this.startDate = calStartDate.getTime();
+				return true;
+			}
 		}else{
+			ui.alert("Invalid End Date");
 			return false;
 		}
 	}
@@ -119,7 +184,6 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 			if(validateEndDate(startDate, endDate)){
 				return true;
 			}else{
-				ui.alert("Invalid End Date");
 				return false;
 			}
 		} catch (ParseException e) {

@@ -14,6 +14,11 @@
 				<column text="Percentage" width="100" />
 				<column text="Last payment" width="100" />
 				<column text="Last payment Date" width="150" />
+				
+				<column text="Monthly Amount" width="100" />
+				<column text="Due This Month" width="100" />
+				<column text="End Of Month Interval" width="150" />
+				
 				<column text="Days remaining" width="100" />
 				<column text="Target Status" width="100" />
 			</header>

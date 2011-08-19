@@ -1,7 +1,6 @@
 package org.creditsms.plugins.paymentview.analytics;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -36,6 +35,7 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	
 	private long targetId;
 	private Date todaysDate; 
+	private Date endOfIntervalDate;
 	
 	@Override
 	protected void onSetUp() throws Exception {
@@ -48,9 +48,7 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		
 		this.targetAnalytics.setIncomingPaymentDao(hibernateIncomingPaymentDao);
 		this.targetAnalytics.setTargetDao(hibernateTargetDao);
-		
 		setUpTestData();
-		getEndOfIntervalDate();
 	}
 	
 	public void testSetup() {
@@ -64,8 +62,17 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		assertEquals(new BigDecimal("97"), this.targetAnalytics.getPercentageToGo(targetId));
 	}
 	
+	public void testComputeAnalyticsIntervalDatesAndSavings(){
+		this.targetAnalytics.computeAnalyticsIntervalDatesAndSavings(targetId);
+		assertEquals(endOfIntervalDate, this.targetAnalytics.getEndMonthInterval());
+		assertEquals(new BigDecimal("516.67"), this.targetAnalytics.getMonthlyTarget());
+		assertEquals(18, this.targetAnalytics.getInstalments());
+		assertEquals(new BigDecimal("300.06"), this.targetAnalytics.getMonthlyAmountDue());
+		assertEquals(new BigDecimal("216.61"), this.targetAnalytics.getMonthlyAmountSaved());
+	}
+	
 	public void testGetAmountSaved(){
-		assertEquals(new BigDecimal("9000"), this.targetAnalytics.getAmountSaved(targetId));
+		assertEquals(new BigDecimal("9000.00"), this.targetAnalytics.getAmountSaved(targetId).setScale(2, BigDecimal.ROUND_HALF_UP));
 	}
 	
 	public void testGetLastAmountPaid(){
@@ -73,7 +80,7 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	}
 	
 	public void testGetDaysRemaining(){
-		assertEquals(Long.valueOf(4), this.targetAnalytics.getDaysRemaining(targetId));	
+		assertEquals(Long.valueOf(214), this.targetAnalytics.getDaysRemaining(targetId));	
 	}
 	
 	public void testTargetStatus() {
@@ -81,117 +88,37 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	}
 	
 	public void testGetLastDatePaid(){
-		
 		assertEquals(this.todaysDate, this.targetAnalytics.getLastDatePaid(targetId));	
 	}
 	
-	private int getEndOfIntervalByInstalment(String prem, String paymenmtDurtn, String amntPaid){
-		BigDecimal premium = new BigDecimal(prem);
-		BigDecimal instalment = new BigDecimal("0.00");
-		BigDecimal paymentDuration = new BigDecimal(paymenmtDurtn);
-		BigDecimal amountPaid = new BigDecimal(amntPaid);
-
-		instalment = premium.divide(paymentDuration, 4, RoundingMode.HALF_DOWN);
-
-		return amountPaid.multiply(paymentDuration.stripTrailingZeros()).divide(premium).intValue();
-	}
-    
-	private void getEndOfIntervalDate() throws DuplicateKeyException{
-		getEndOfIntervalByInstalment("25000", "11", "10000");
-		int startMonth = -11;
-		int monthPoz = 0;
-		
-		Calendar calendar1 = Calendar.getInstance(); 
-		calendar1.add(Calendar.MONTH, startMonth); 
-		calendar1.set(Calendar.DATE, 10);
-		calendar1.set(Calendar.HOUR_OF_DAY, 0);  
-		calendar1.set(Calendar.MINUTE, 0);  
-		calendar1.set(Calendar.SECOND, 0);  
-		calendar1.set(Calendar.MILLISECOND, 0);
-		Date startDate = calendar1.getTime();
-		
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.MONTH, 6); 
-		calendar.set(Calendar.DATE, 9);
-		calendar.set(Calendar.HOUR_OF_DAY, 0);  
-		calendar.set(Calendar.MINUTE, 0);  
-		calendar.set(Calendar.SECOND, 0);  
-		calendar.set(Calendar.MILLISECOND, 0);
-		Date endDate = calendar.getTime();
-		
-		Calendar calendar2 = Calendar.getInstance();
-		calendar2.set(Calendar.HOUR_OF_DAY, 0);  
-		calendar2.set(Calendar.MINUTE, 0);  
-		calendar2.set(Calendar.SECOND, 0);  
-		calendar2.set(Calendar.MILLISECOND, 0);
-		Date nowDate = calendar2.getTime();
-		
-		Calendar calendar3 = Calendar.getInstance();
-		monthPoz = startMonth+1;
-		calendar3.add(Calendar.MONTH, monthPoz); 
-		calendar3.set(Calendar.DATE, 9);
-		calendar3.set(Calendar.HOUR_OF_DAY, 0);  
-		calendar3.set(Calendar.MINUTE, 0);  
-		calendar3.set(Calendar.SECOND, 0);  
-		calendar3.set(Calendar.MILLISECOND, 0);
-		Date endOfInterval = calendar3.getTime();
-		
-		if(endDate.getTime() > nowDate.getTime()){
-			int q = 0;
-			int instalmentPoz = 0;
-			for(q=0; nowDate.getTime() > endOfInterval.getTime() ; q++){	
-				Calendar calendar4 = Calendar.getInstance();
-				monthPoz = monthPoz+1;
-				calendar4.add(Calendar.MONTH, monthPoz); 
-				calendar4.set(Calendar.DATE, 9);
-				calendar4.set(Calendar.HOUR_OF_DAY, 0);  
-				calendar4.set(Calendar.MINUTE, 0);  
-				calendar4.set(Calendar.SECOND, 0);  
-				calendar4.set(Calendar.MILLISECOND, 0);
-				endOfInterval = calendar4.getTime();
-			}
-			instalmentPoz = q+2;
-			getInstalmentsEndOfInervalDate(startMonth, 9, instalmentPoz);
-		    System.out.println(">>>>>>>>>>>>>>>>"+endOfInterval);
-		}
-
-		/*Account acc = getAccountNumber("104");
-		ServiceItem si = saveServiceItem("Solar Cooker","9300", 1);
-		Target tgt = createTarget(acc, si, startDate, endDate);
-		targetId = tgt.getId();
-		createIncomingPayment("0723000000","4500","Mr. Renyenjes", acc, tgt);
-		createIncomingPayment("0723000000","2500","Mr. Renyenjes", acc, tgt);
-		createIncomingPayment("0723000000","2000","Mr. Renyenjes", acc, tgt);*/
-		
+	private Calendar setStartOfDay(Calendar cal){
+		cal.set(Calendar.HOUR_OF_DAY, 0);  
+		cal.set(Calendar.MINUTE, 0);  
+		cal.set(Calendar.SECOND, 0);  
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal;
 	}
 	
-	private Date getInstalmentsEndOfInervalDate(int monthNum, int dayNum, int instalmentPoz){
-		Calendar calendar4 = Calendar.getInstance();
-		calendar4.add(Calendar.MONTH, monthNum+instalmentPoz); 
-		calendar4.set(Calendar.DATE, dayNum);
-		calendar4.set(Calendar.HOUR_OF_DAY, 0);  
-		calendar4.set(Calendar.MINUTE, 0);  
-		calendar4.set(Calendar.SECOND, 0);  
-		calendar4.set(Calendar.MILLISECOND, 0);
-
-		return calendar4.getTime();
+	private Calendar setEndOfDay(Calendar cal){
+		cal.set(Calendar.HOUR_OF_DAY, 24);  
+		cal.set(Calendar.MINUTE, 0);  
+		cal.set(Calendar.SECOND, -1);  
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal;
 	}
-	
+
 	private void setUpTestData() throws DuplicateKeyException{
-		Calendar calendar1 = Calendar.getInstance();
-		calendar1.set(Calendar.HOUR_OF_DAY, 0);  
-		calendar1.set(Calendar.MINUTE, 0);  
-		calendar1.set(Calendar.SECOND, 0);  
-		calendar1.set(Calendar.MILLISECOND, 0);
-		Date startDate = calendar1.getTime();
+		Calendar calStartDat = Calendar.getInstance();
+		calStartDat.add(Calendar.MONTH, -11);  
+		calStartDat.add(Calendar.DATE, 1);
+		calStartDat = setStartOfDay(calStartDat);
+		Date startDate = calStartDat.getTime();
 		
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.DATE, 4);
-		calendar.set(Calendar.HOUR_OF_DAY, 0);  
-		calendar.set(Calendar.MINUTE, 0);  
-		calendar.set(Calendar.SECOND, 0);  
-		calendar.set(Calendar.MILLISECOND, 0);
-		Date endDate = calendar.getTime();
+		Calendar calEndDate = Calendar.getInstance();
+		calEndDate.add(Calendar.MONTH, 7);  
+		calEndDate = setEndOfDay(calEndDate);
+		Date endDate = calEndDate.getTime();
+		endOfIntervalDate = endDate;
 
 		Account acc = getAccountNumber("104");
 		ServiceItem si = saveServiceItem("Solar Cooker","9300", 1);

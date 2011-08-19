@@ -72,6 +72,18 @@ public class HibernateIncomingPaymentDao extends
 		return super.getList(criteria);
 	}
 	
+	public List<IncomingPayment> getActiveIncomingPaymentsByTargetAndDates(long targetId, Date startDate,
+			Date endDate) {
+		
+		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria accountCriteria = criteria.createCriteria("target");
+		criteria.add(Restrictions.eq("active", true));
+		criteria.add(Restrictions.between("timePaid", startDate.getTime(), endDate.getTime()));
+		accountCriteria.add(Restrictions.eq("id", targetId));
+		
+		return super.getList(criteria);
+	}
+	
 	public List<IncomingPayment> getActiveIncomingPaymentsByAccountNumber(String accountNumber) {
 		DetachedCriteria criteria = super.getCriterion();
 		criteria.add(Restrictions.eq("active", true));
