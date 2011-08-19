@@ -93,13 +93,16 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 			}else{
 				lastDatePaid = ui.createTableCell("No payment done yet");
 			}
-
 			String targetStatusStr = targetAnalytics.getStatus(target.getId()).toString();
-			
 			Object targetStatus = ui.createTableCell(targetStatusStr);
 			Object savingsTarget = ui.createTableCell(target.getServiceItem().getAmount().toString());
 			Object startDate = ui.createTableCell(dateFormat.format(target.getStartDate()));
 			Object endDate = ui.createTableCell(dateFormat.format(target.getEndDate()));
+			
+			targetAnalytics.computeAnalyticsIntervalDatesAndSavings(target.getId());
+			Object monthlyAmountSaved = ui.createTableCell(targetAnalytics.getMonthlyAmountSaved().toString());
+			Object monthlyAmountDue = ui.createTableCell(targetAnalytics.getMonthlyAmountDue().toString());
+			Object endOfMonthlyInterval = ui.createTableCell(targetAnalytics.getEndMonthInterval().toString());
 			
 			ui.add(row, name);
 			ui.add(row, startDate);
@@ -109,6 +112,11 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 			ui.add(row, percentageToGo);
 			ui.add(row, lastAmountPaid);
 			ui.add(row, lastDatePaid);
+			
+			ui.add(row, monthlyAmountSaved);
+			ui.add(row, monthlyAmountDue);
+			ui.add(row, endOfMonthlyInterval);			
+			
 			ui.add(row, daysRemaining);
 			ui.add(row, targetStatus);
 			
