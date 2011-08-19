@@ -20,6 +20,7 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
+import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
@@ -48,6 +49,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private Date startDate;
 	private Date endDate;
 	protected int totalItemCount = 0;
+	private ClientDao clientDao;
 
 
 	public IncomingPaymentsTabHandler(UiGeneratorController ui,
@@ -56,6 +58,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.logMessageDao = pluginController.getLogMessageDao();
 		this.pluginController = pluginController;
+		this.clientDao = pluginController.getClientDao();
 		ui.getFrontlineController().getEventBus().registerObserver(this);
 		init();
 	}
@@ -72,15 +75,15 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		this.ui.add(pnlIncomingPaymentsTableComponent, this.incomingPaymentsTablePager.getPanel());
 		return incomingPaymentsTab;
 	}
-
+	
 	protected String getXMLFile() {
 		return XML_INCOMING_PAYMENTS_TAB;
 	}
-
+	
 	public Object getRow(IncomingPayment incomingPayment) {
 		Object row = ui.createTableRow(incomingPayment);
 
-		ui.add(row, ui.createTableCell(incomingPayment.getPaymentBy()));
+		ui.add(row, ui.createTableCell(clientDao.getClientByPhoneNumber(incomingPayment.getPhoneNumber()).getFullName()));
 		ui.add(row, ui.createTableCell(incomingPayment.getPhoneNumber()));
 		ui.add(row, ui.createTableCell(incomingPayment.getAmountPaid().toPlainString()));
 		ui.add(row, ui.createTableCell(InternationalisationUtils.getDatetimeFormat().format(new Date(incomingPayment.getTimePaid()))));
