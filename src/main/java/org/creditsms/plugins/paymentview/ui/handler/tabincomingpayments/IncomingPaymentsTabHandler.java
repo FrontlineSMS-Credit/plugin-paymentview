@@ -259,6 +259,10 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		dialogConfirmation = this.ui.showConfirmationDialog(methodToBeCalled, this, CONFIRM_DELETE_INCOMING);
 	}
 	
+	public final void showAutoReplyDialog(){
+		
+	}
+	
 	public void showDateSelecter(Object textField) {
 		((UiGeneratorController) ui).showDateSelecter(textField);
 	}
