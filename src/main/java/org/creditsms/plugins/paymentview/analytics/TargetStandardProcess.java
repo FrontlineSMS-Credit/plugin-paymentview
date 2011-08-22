@@ -25,12 +25,15 @@ public class TargetStandardProcess extends TargetCreationProcess{
 			try {
 				this.getAccountDao().saveAccount(this.getAccount());
 			} catch (DuplicateKeyException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			// attach new account to the client
 			// create new target
-			this.setTarget(new Target(targetStartDate, targetEndDate, serviceItem, this.account));
+			Target temp= new Target(targetStartDate, targetEndDate, serviceItem, this.account);
+			this.setTarget(temp);
+			client.getTargets().add(temp);
+			this.getClientDao().saveClient(client);
+			
             this.getTargetDao().saveTarget(this.getTarget());
             this.getAccount().setActiveAccount(true);
             this.getAccountDao().updateAccount(this.getAccount());

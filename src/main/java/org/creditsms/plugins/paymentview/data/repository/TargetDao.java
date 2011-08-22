@@ -105,7 +105,7 @@ public interface TargetDao {
 	 *            string to be used to match the names
 	 * @return
 	 */
-	public List<Target> getTargetsByServiceItemByClient(long serviceItemId, long clientId);
+	public List<Target> getActiveTargetsByServiceItemByClient(long serviceItemId, long clientId);
 	
 	/** @return number of Target in the system */
 	public int getTargetCount();

@@ -12,7 +12,7 @@ public class SelectClientsTableHandler extends BaseSelectClientTableHandler {
 	public SelectClientsTableHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui, pluginController);
 	}
-
+	
 	@Override
 	protected String getClientsTableName() {
 		return TBL_CLIENTS;

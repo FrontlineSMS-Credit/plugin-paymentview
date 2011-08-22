@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <panel name="pnl_clients" columns="1" weightx="1" weighty="1" gap="10">
-	<table name="tbl_clients" action="selectUsers(this)" weightx="1" weighty="1" selection="single">
-		<header/>
+	<panel weightx="1" gap="5">
+		<label font="20 Bold" text="View Client progress" weightx="1" />
+		<panel weightx="1" />
+		<panel weightx="1" />
+		<panel weightx="1" />
+		<textfield name="clientsFilter" tooltip="i18n.tooltip.search.here"
+			weightx="1" perform="filterClients(clientsFilter.text)" />
+		<button icon="/icons/search.png" text="i18n.common.search"
+			action="filterClients(clientsFilter.text)" />
+	</panel>
+	<table colspan="2" name="tbl_clients" weightx="1" weighty="1">
+		<header action="updateClientsList">
+			<column text="Name" sort="ascent" width="150" icon="/icons/user.png" />
+			<column text="Product" sort="ascent" width="150" />
+			<column text="Start date" width="100" icon="/icons/date.png" />
+			<column text="End date" width="100" icon="/icons/date.png" />
+			<column text="Savings target" width="120" />
+			<column text="Amount saved" width="120" />
+			<column text="Percentage" sort="ascent" width="100" />
+			<column text="Last payment" width="100" />
+			<column text="Last payment Date" width="150" />
+			<column text="Days remaining" width="100" />
+			<column text="Target Status" sort="ascent" width="100" />
+		</header>
 	</table>
 </panel>

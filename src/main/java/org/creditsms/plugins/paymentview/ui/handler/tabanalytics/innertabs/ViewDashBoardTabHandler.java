@@ -4,7 +4,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard.SelectTargetSavingsHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard.CreateSettingsHandler;
 
 public class ViewDashBoardTabHandler extends BaseTabHandler {
 	private static final String TAB_VIEW_DASHBOARD = "tab_viewDashBoard";
@@ -27,8 +27,7 @@ public class ViewDashBoardTabHandler extends BaseTabHandler {
 
 	@Override
 	public Object initialiseTab() {
-		// ui.add(createDashboardTab, stepCreateSettings.getPanelComponent());
-		setCurrentStepPanel(new SelectTargetSavingsHandler(ui, pluginController, this).getPanelComponent());
+		setCurrentStepPanel(new CreateSettingsHandler(ui, this, pluginController).getPanelComponent());
 		return viewDashboardTab;
 	}
 
@@ -43,6 +42,6 @@ public class ViewDashBoardTabHandler extends BaseTabHandler {
 
 		ui.add(viewDashboardTab, panel);
 		currentPanel = panel;
-		ViewDashBoardTabHandler.this.refresh();
+		this.refresh();
 	}
 }

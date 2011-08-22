@@ -1,11 +1,14 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.addclient;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 
+import net.frontlinesms.ui.Icon;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.ui.handler.BaseClientTable;
 
 public class ReviewClientTableHandler extends BaseClientTable{
@@ -29,6 +32,46 @@ public class ReviewClientTableHandler extends BaseClientTable{
 			ReviewHandler reviewHandler) {
 		super(ui, pluginController);
 		this.reviewHandler = reviewHandler;
+	}
+	
+	protected void createHeader() {
+		ui.removeAll(tableClients);
+
+		Object header = ui.createTableHeader();
+
+		Object name = ui.createColumn("Name", "name");
+		ui.setWidth(name, 200);
+		ui.setIcon(name, Icon.CONTACT);
+		ui.add(header, name);
+		
+		ui.add(header, ui.createColumn("Product", "product"));
+
+		Object phone = ui.createColumn("Phone", "phone");
+		ui.setWidth(phone, 150);
+		ui.setIcon(phone, Icon.PHONE_NUMBER);
+		ui.add(header, phone);
+		
+		List<CustomField> allCustomFields = this.customFieldDao
+				.getAllActiveUsedCustomFields();
+		if (!allCustomFields.isEmpty()) {
+			for (CustomField cf : allCustomFields) {
+				Object column = ui.createColumn(cf.getReadableName(),
+						cf.getCamelCaseName());
+				ui.setWidth(column, 110);
+				ui.add(header, column);
+			}
+		}
+		ui.add(this.tableClients, header);
+	}
+	
+	protected Object getRow(Client client) {
+		Object row = ui.createTableRow(client);
+
+		ui.add(row, ui.createTableCell(client.getFullName()));
+		ui.add(row, ui.createTableCell(reviewHandler.getSelectedServiceItem().getTargetName()));
+		ui.add(row, ui.createTableCell(client.getPhoneNumber()));
+
+		return addCustomData(client, row);
 	}
 	
 	@Override

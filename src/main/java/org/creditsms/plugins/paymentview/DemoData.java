@@ -53,13 +53,14 @@ public class DemoData {
 		return accountNumberGeneratedStr;
 	}
 	
-	private void createDummyIncomingPayment(String paymentBy,
+	private void createDummyIncomingPayment(String confirmationCode, String paymentBy,
 			String phoneNumber, String timePaid, BigDecimal amountPaid,
 			String accountNumber, Target target) {
 		IncomingPayment i = new IncomingPayment();
 		i.setAmountPaid(amountPaid);
 		Account myAcc = getAccountDao().getAccountByAccountNumber(accountNumber);
 		i.setAccount(myAcc);
+		i.setConfirmationCode(confirmationCode);
 		i.setPaymentBy(paymentBy);
 		i.setPhoneNumber(phoneNumber);
 		i.setTarget(target);
@@ -115,7 +116,7 @@ public class DemoData {
 		createDummyClient("Mitawi Kisio", "+254724630345");
 		createDummyClient("Angela Koki", "+254724634495");
 		createDummyClient("Edith Khalai", "+254726745415");
-		createDummyClient("Juma Omondi", "+254726712345");
+		createDummyClient("Batista Omondi", "+254726712345");
 		createDummyClient("Harry Mwabare", "+254725702345");
 		createDummyClient("Wambui Waweru", "+254720144545");
 		createDummyClient("Lavender Akoth", "+254725565345");
@@ -145,19 +146,19 @@ public class DemoData {
 		String accountNumber = createAccountNumber();
 		Target tgt = createDummyTargets(si,createDummyAccount(clnt, accountNumber), startDate, endDate);
 		
-		createDummyIncomingPayment("Alice Wangare", "+254701103438", "1300560000000", new BigDecimal("4500.00"), accountNumber, tgt);
-		createDummyIncomingPayment("Alice Wangare", "+254701103438", "1300560000100", new BigDecimal("1300.00"), accountNumber, tgt);
-		createDummyIncomingPayment("Alice Wangare", "+254701103438", "1300560000200", new BigDecimal("1200.00"), accountNumber, tgt);
-		createDummyIncomingPayment("Alice Wangare", "+254701103438", "1300560200300", new BigDecimal("7400.00"), accountNumber, tgt);
+		createDummyIncomingPayment("BSD454494", "Alice Wangare", "+254701103438", "1300560000000", new BigDecimal("4500.00"), accountNumber, tgt);
+		createDummyIncomingPayment("BSD45D594", "Alice Wangare", "+254701103438", "1300560000100", new BigDecimal("1300.00"), accountNumber, tgt);
+		createDummyIncomingPayment("BSDSFJ94F", "Alice Wangare", "+254701103438", "1300560000200", new BigDecimal("1200.00"), accountNumber, tgt);
+		createDummyIncomingPayment("BSD4SDF94", "Alice Wangare", "+254701103438", "1300560200300", new BigDecimal("7400.00"), accountNumber, tgt);
 
 		Client clnt1 = getClientDao().getClientByPhoneNumber("+254720547355");
 		accountNumber = createAccountNumber();
 		Target tgt1 = createDummyTargets(si,createDummyAccount(clnt1, accountNumber), startDate, endDate);
 		
-		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560000000", new BigDecimal("14500.00"), accountNumber, tgt1);
-		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560000100", new BigDecimal("11300.00"), accountNumber, tgt1);
-		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560000200", new BigDecimal("11200.00"), accountNumber, tgt1);
-		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560200300", new BigDecimal("37400.00"), accountNumber, tgt1);
+		createDummyIncomingPayment("BSD4SDFGF", "John Kamau", "+254720547355", "1300560000000", new BigDecimal("14500.00"), accountNumber, tgt1);
+		createDummyIncomingPayment("BS3534DDF", "John Kamau", "+254720547355", "1300560000100", new BigDecimal("11300.00"), accountNumber, tgt1);
+		createDummyIncomingPayment("BSGSD78SF", "John Kamau", "+254720547355", "1300560000200", new BigDecimal("11200.00"), accountNumber, tgt1);
+		createDummyIncomingPayment("BSSDFD5DF", "John Kamau", "+254720547355", "1300560200300", new BigDecimal("37400.00"), accountNumber, tgt1);
 	
 	}
 	
