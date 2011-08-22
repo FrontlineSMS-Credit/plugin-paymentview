@@ -17,9 +17,10 @@
 		colspan="10" selection="multiple" name="tbl_clientList" width="1000"
 		weightx="1" weighty="1" tooltip="Right-click for options">
 		<popupmenu name="menu" menushown="populateGroups(this, tbl_clientList)">
-			<menu icon="/icons/group_join.png" name="groupsMenu" text="i18n.action.add.to.group"/>
-	                    <menu icon="/icons/group_leave.png" name="groupsMenuRemove" text="i18n.action.delete.from.group"/>
-	                    <separator name="sp1"/>
+			<!--<menu icon="/icons/group_join.png" name="groupsMenu" text="i18n.action.add.to.group"/>
+            <menu icon="/icons/group_leave.png" name="groupsMenuRemove" text="i18n.action.delete.from.group"/>
+            <separator name="sp1"/>
+	         -->
 			<menuitem action="editClient" icon="/icons/edit.png" name="miEditClient"
 				text="Edit Client" />
 			<menuitem action="showDeleteConfirmationDialog('deleteClient')"

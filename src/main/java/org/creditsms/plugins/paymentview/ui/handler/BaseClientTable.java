@@ -1,8 +1,11 @@
 package org.creditsms.plugins.paymentview.ui.handler;
 
+import static net.frontlinesms.FrontlineSMSConstants.PROPERTY_FIELD;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import net.frontlinesms.data.Order;
 import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
@@ -17,12 +20,16 @@ import net.frontlinesms.ui.handler.PagedListDetails;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.Client.Field;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
+
+import thinlet.Thinlet;
+import thinlet.ThinletText;
 
 public abstract class BaseClientTable implements PagedComponentItemProvider,
 		ThinletUiEventHandler, EventObserver {
@@ -37,9 +44,12 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	protected Object tableClientsPanel;
 	protected List<Client> clientListForAnalytics;
 	private int totalItemCount = 0;
+	
+	protected final PaymentViewPluginController pluginController;
 
 	public BaseClientTable(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		this.ui = ui;
+		this.pluginController = pluginController;
 		this.clientDao = pluginController.getClientDao();
 		this.customFieldDao = pluginController.getCustomFieldDao();
 		this.customValueDao = pluginController.getCustomValueDao();
@@ -55,12 +65,10 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 		tableClientsPanel = ui.loadComponentFromFile(getClientsPanelFilePath(), this);
 		tableClients = ui.find(tableClientsPanel, getClientsTableName());
 		clientsTablePager = new ComponentPagingHandler(ui, this, tableClients);
-		this.createHeader();
 		this.ui.add(tableClientsPanel, this.clientsTablePager.getPanel());
 	}
-
+	
 	protected abstract String getClientsTableName();
-
 	protected abstract String getClientsPanelFilePath();
 
 	protected Object[] toThinletComponents(List<Client> clients) {
@@ -73,11 +81,8 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	}
 
 	protected PagedListDetails getClientListDetails(int startIndex, int limit) {
-		List<Client> clients = null;
-		clients = getClients(clientFilter, startIndex, limit);	
-		return new PagedListDetails(totalItemCount, toThinletComponents(clients));
+		return new PagedListDetails(totalItemCount, toThinletComponents(getClients(clientFilter, startIndex, limit)));
 	}
-
 
 	protected List<Client> getClients(String clientFilter, int startIndex, int limit) {
 		if (!clientFilter.trim().isEmpty()) {
@@ -85,8 +90,10 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 			return this.clientDao.getClientsByFilter(clientFilter, startIndex, limit);
 		}else{
 			if (clientListForAnalytics.isEmpty()){
-				totalItemCount = this.clientDao.getAllActiveClients().size();
-				return this.clientDao.getAllActiveClients(startIndex, limit);
+				List<Client> activeClientsSorted = this.clientDao.getAllActiveClientsSorted
+										(startIndex, limit, getClientsSortField(), getClientsSortOrder());
+				totalItemCount = activeClientsSorted.size();
+				return activeClientsSorted;
 			} else {
 				totalItemCount = clientListForAnalytics.size();
 				if (clientsTablePager.getMaxItemsPerPage() < clientListForAnalytics.size()){					
@@ -112,6 +119,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	}
 
 	public void updateClientsList() {
+		this.createHeader();
 		this.clientsTablePager.setCurrentPage(0);
 		this.clientsTablePager.refresh();
 	}
@@ -136,15 +144,11 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	}
 
 	protected Object addCustomData(Client client, Object row) {
-		List<CustomField> allCustomFields = this.customFieldDao
-				.getAllCustomFields();
-		List<CustomValue> allCustomValues = this.customValueDao
-				.getCustomValuesByClientId(client.getId());
-
-		if (!allCustomFields.isEmpty()) {
-			for (CustomField cf : allCustomFields) {
+		if (!this.customFieldDao.getAllCustomFields().isEmpty()) {
+			for (CustomField cf : this.customFieldDao
+					.getAllCustomFields()) {
 				if (cf.isUsed() & cf.isActive()){
-					for (CustomValue cv : allCustomValues) {
+					for (CustomValue cv : this.customValueDao.getCustomValuesByClientId(client.getId())) {
 						if (cv.getCustomField().equals(cf)) {
 							ui.add(row, ui.createTableCell(cv.getStrValue()));
 						}
@@ -170,25 +174,30 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 
 	protected void createHeader() {
 		ui.removeAll(tableClients);
-
+		
 		Object header = ui.createTableHeader();
 
 		Object name = ui.createColumn("Name", "name");
+		ui.putProperty(name, PROPERTY_FIELD, Client.Field.FIRST_NAME);
 		ui.setWidth(name, 200);
+		//ui.setString(name, Thinlet.SORT, Thinlet.DESCENT);
 		ui.setIcon(name, Icon.CONTACT);
 		ui.add(header, name);
 
 		Object phone = ui.createColumn("Phone", "phone");
+		ui.putProperty(phone, PROPERTY_FIELD, Client.Field.PHONE_NUMBER);
 		ui.setWidth(phone, 150);
 		ui.setIcon(phone, Icon.PHONE_NUMBER);
 		ui.add(header, phone);
 		
 		List<CustomField> allCustomFields = this.customFieldDao
 				.getAllActiveUsedCustomFields();
+		
 		if (!allCustomFields.isEmpty()) {
 			for (CustomField cf : allCustomFields) {
 				Object column = ui.createColumn(cf.getReadableName(),
 						cf.getCamelCaseName());
+				ui.putProperty(column, PROPERTY_FIELD, cf.getCamelCaseName());
 				ui.setWidth(column, 110);
 				ui.add(header, column);
 			}
@@ -256,4 +265,28 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 			}
 		}.execute();
 	}
+	
+	/** @return the field to sort clients in the client list by */
+	private Field getClientsSortField() {
+		Object header = Thinlet.get(this.tableClients, ThinletText.HEADER);
+		Object tableColumn = ui.getSelectedItem(header);
+		Client.Field field = Client.Field.FIRST_NAME;
+		if (tableColumn != null) {
+			field = (Client.Field) ui.getProperty(tableColumn, PROPERTY_FIELD);
+		}
+		
+		return field;
+	}
+	
+	/** @return the sorting order for the message list */
+	private Order getClientsSortOrder() {
+		Object header = Thinlet.get(this.tableClients, ThinletText.HEADER);
+		Object tableColumn = ui.getSelectedItem(header);
+		Order order = Order.ASCENDING;
+		if (tableColumn != null) {
+			order = Thinlet.get(tableColumn, ThinletText.SORT).equals(ThinletText.ASCENT) ? Order.ASCENDING : Order.DESCENDING;
+		}
+		return order;
+	}
+	
 }

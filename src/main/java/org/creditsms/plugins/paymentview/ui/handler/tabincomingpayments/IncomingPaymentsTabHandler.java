@@ -122,7 +122,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		String strStartDate = ui.getText(fldStartDate);
 		String strEndDate = ui.getText(fldEndDate);
 		
-		if (!strStartDate.equals("")){
+		if (!strStartDate.isEmpty()){
 			try {
 				startDate = InternationalisationUtils.getDateFormat().parse(strStartDate);
 			} catch (ParseException e) {
@@ -131,7 +131,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			}
 		}
 
-		if (!strEndDate.equals("")){
+		if (!strEndDate.isEmpty()){
 			try {
 				endDate = InternationalisationUtils.getDateFormat().parse(strEndDate);
 			} catch (ParseException e) {
@@ -141,16 +141,16 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		}
 
 			
-		if (strStartDate.equals("") && strEndDate.equals("")) {
+		if (strStartDate.isEmpty() && strEndDate.isEmpty()) {
 			totalItemCount = this.incomingPaymentDao.getActiveIncomingPayments().size();
 			incomingPayments = this.incomingPaymentDao.getActiveIncomingPayments(startIndex, limit);
 		} else {
-			if (strStartDate.equals("") && endDate != null){
+			if (strStartDate.isEmpty() && endDate != null){
 				totalItemCount = this.incomingPaymentDao.getIncomingPaymentsByEndDate(endDate).size();
 				incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByEndDate(endDate, startIndex, limit);
 				
 			} else {
-				if (strEndDate.equals("") && startDate != null){
+				if (strEndDate.isEmpty() && startDate != null){
 					totalItemCount = this.incomingPaymentDao.getIncomingPaymentsByStartDate(startDate).size();
 					incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByStartDate(startDate, startIndex, limit);
 				} else {
@@ -232,14 +232,14 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		} catch (ParseException e) {
 		}
 			
-		if (strStartDate.equals("") && strEndDate.equals("")) {
+		if (strStartDate.isEmpty() && strEndDate.isEmpty()) {
 			incomingPayments = this.incomingPaymentDao.getActiveIncomingPayments();
 		} else {
-			if (strStartDate.equals("")){
+			if (strStartDate.isEmpty()){
 				incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByEndDate(endDate);
 				
 			} else {
-				if (strEndDate.equals("")){
+				if (strEndDate.isEmpty()){
 					incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByStartDate(startDate);
 				} else {
 					incomingPayments = this.incomingPaymentDao.getIncomingPaymentsByDateRange(startDate, endDate);

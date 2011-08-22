@@ -85,13 +85,14 @@ public class DemoData {
 		return accountNumberGeneratedStr;
 	}
 	
-	private void createDummyIncomingPayment(String paymentBy,
+	private void createDummyIncomingPayment(String confirmationCode, String paymentBy,
 			String phoneNumber, String timePaid, BigDecimal amountPaid,
 			String accountNumber, Target target) {
 		IncomingPayment i = new IncomingPayment();
 		i.setAmountPaid(amountPaid);
 		Account myAcc = getAccountDao().getAccountByAccountNumber(accountNumber);
 		i.setAccount(myAcc);
+		i.setConfirmationCode(confirmationCode);
 		i.setPaymentBy(paymentBy);
 		i.setPhoneNumber(phoneNumber);
 		i.setTarget(target);
@@ -155,36 +156,6 @@ public class DemoData {
 	 */
 	private void createDummyData() throws DuplicateKeyException{
 		// Create dummy clients
-		/*createDummyClient("Alice Wangare", "+254724574645", new String[] { "4343625", "247362623" });
-		createDummyClient("John Kamau", "+254720547355", new String[] { "82666633", "23233423" });
-		createDummyClient("Wekalao Matanda", "+254725452345", new String[] { "4323425", "234327443" });
-		createDummyClient("Ismael Koli", "+254720445345", new String[] { "434147425", "2439423" });
-		createDummyClient("Alice Wayua", "+254720459345", new String[] { "81672323", "25467623" });
-		createDummyClient("Laura Agutu", "+254720546415", new String[] { "88882672", "233854323" });
-		createDummyClient("Wangunyu Maigua", "+254724504645", new String[] { "454264435", "265373423" });
-		createDummyClient("Stephen Kalungi", "+254725044545", new String[] { "432957346", "23643523" });
-		createDummyClient("Mitawi Kisio", "+254724630345", new String[] { "430002454", "2334423" });
-		createDummyClient("Angela Koki", "+254724634495", new String[] { "9923623", "232255000" });
-		createDummyClient("Edith Khalai", "+254726745415", new String[] { "433599009", "23355753" });
-		createDummyClient("Juma Omondi", "+254726712345", new String[] { "432592853", "57437263" });
-		createDummyClient("Harry Mwabare", "+254725702345", new String[] { "459732535", "37334423" });
-		createDummyClient("Wambui Waweru", "+254720144545", new String[] { "443600833", "33736423" });
-		createDummyClient("Lavender Akoth", "+254725565345", new String[] { "434584239", "36734723" });
-		createDummyClient("Sammy Kitonyi", "+254724412345", new String[] { "343763254", "37356723" });
-		createDummyClient("Isiah Muchene", "+254723312235", new String[] { "463537445", "59536723" });
-		createDummyClient("Onesmus Mukewa", "+254730612345", new String[] { "50962324", "25798563" });
-		createDummyClient("Roy Owino", "+254725512345", new String[] { "88851243","232259896" });
-		createDummyClient("Justin Mwakidedi", "+254725412345", new String[] { "232492474", "25857623" });
-		createDummyClient("Mario Mwangi", "+254720542345", new String[] { "434322934", "23278523" });
-		createDummyClient("Peter Kamau", "+254724555345", new String[] { "343972222", "24373423" });
-		createDummyClient("Phanice Nafula", "+254724552345", new String[] { "872243234", "27434523" });
-		createDummyClient("Isiah Mwiki", "+254728012345", new String[] { "77175292","108949744" });
-		createDummyClient("Kimani Karao", "+254720347345", new String[] { "00425425", "22456483" });
-		createDummyClient("Lowuya Lamini", "+254720455345", new String[] { "00023225", "232363547" });
-		createDummyClient("Charlene Nyambura", "+254720762345", new String[] { "43330025", "23432674" });
-		createDummyClient("Tangus Koech", "+254721012326", new String[] { "42400255", "24343423" });
-		createDummyClient("Justus Matanda", "+254725014545", new String[] { "42547455", "43493444" });*/
-		
 		
 		createDummyClient("Kim Wangare", "+254701103438");
 		createDummyClient("John Kamau", "+254720547355");
@@ -197,7 +168,7 @@ public class DemoData {
 		createDummyClient("Mitawi Kisio", "+254724630345");
 		createDummyClient("Angela Koki", "+254724634495");
 		createDummyClient("Edith Khalai", "+254726745415");
-		createDummyClient("Juma Omondi", "+254726712345");
+		createDummyClient("Batista Omondi", "+254726712345");
 		createDummyClient("Harry Mwabare", "+254725702345");
 		createDummyClient("Wambui Waweru", "+254720144545");
 		createDummyClient("Lavender Akoth", "+254725565345");
@@ -231,47 +202,24 @@ public class DemoData {
 		String accountNumber = createAccountNumber();
 		Target tgt = createDummyTargets(si,createDummyAccount(clnt, accountNumber), startDate, endDate);
 		
-		createDummyIncomingPayment("Alice Wangare", "+254701103438", "1300560000000", new BigDecimal("4500.00"), accountNumber, tgt);
-		createDummyIncomingPayment("Alice Wangare", "+254701103438", "1300560000100", new BigDecimal("1300.00"), accountNumber, tgt);
-		createDummyIncomingPayment("Alice Wangare", "+254701103438", "1300560000200", new BigDecimal("1200.00"), accountNumber, tgt);
-		createDummyIncomingPayment("Alice Wangare", "+254701103438", "1300560200300", new BigDecimal("7400.00"), accountNumber, tgt);
+		createDummyIncomingPayment("BSD454494", "Alice Wangare", "+254701103438", "1300560000000", new BigDecimal("4500.00"), accountNumber, tgt);
+		createDummyIncomingPayment("BSD45D594", "Alice Wangare", "+254701103438", "1300560000100", new BigDecimal("1300.00"), accountNumber, tgt);
+		createDummyIncomingPayment("BSDSFJ94F", "Alice Wangare", "+254701103438", "1300560000200", new BigDecimal("1200.00"), accountNumber, tgt);
+		createDummyIncomingPayment("BSD4SDF94", "Alice Wangare", "+254701103438", "1300560200300", new BigDecimal("7400.00"), accountNumber, tgt);
 
 		Client clnt1 = getClientDao().getClientByPhoneNumber("+254720547355");
 		accountNumber = createAccountNumber();
 		Target tgt1 = createDummyTargets(si,createDummyAccount(clnt1, accountNumber), startDate, endDate);
 		
-		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560000000", new BigDecimal("14500.00"), accountNumber, tgt1);
-		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560000100", new BigDecimal("11300.00"), accountNumber, tgt1);
-		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560000200", new BigDecimal("11200.00"), accountNumber, tgt1);
-		createDummyIncomingPayment("John Kamau", "+254720547355", "1300560200300", new BigDecimal("37400.00"), accountNumber, tgt1);
+		createDummyIncomingPayment("BSD4SDFGF", "John Kamau", "+254720547355", "1300560000000", new BigDecimal("14500.00"), accountNumber, tgt1);
+		createDummyIncomingPayment("BS3534DDF", "John Kamau", "+254720547355", "1300560000100", new BigDecimal("11300.00"), accountNumber, tgt1);
+		createDummyIncomingPayment("BSGSD78SF", "John Kamau", "+254720547355", "1300560000200", new BigDecimal("11200.00"), accountNumber, tgt1);
+		createDummyIncomingPayment("BSSDFD5DF", "John Kamau", "+254720547355", "1300560200300", new BigDecimal("37400.00"), accountNumber, tgt1);
 		
 		Client clnt2 = getClientDao().getClientByPhoneNumber("+254725452345");
 		accountNumber = createAccountNumber();
 		Target tgt2 = createDummyTargets(si,createDummyAccount(clnt2, accountNumber), startDate, endDate);
 		
-		/*
-		createDummyServiceItem_Targets("Solar Panel", "120000", new String[][]{{"232492474","24/08/2011", "24/05/2011"},{"9923623","24/08/2011", "24/05/2011"}});
-		createDummyServiceItem_Targets("Solar Panel Generator", "290000", new String[][]{{"00023225","24/08/2011", "24/05/2011"},{"434322934","21/08/2011", "21/05/2011"}});
-		createDummyServiceItem_Targets("Bore Hole", "10000", new String[][]{{"459732535","24/08/2011", "24/05/2011"},{"9923623","28/08/2011", "28/05/2011"}});
-		
-		createDummyIncomingPayment("Isiah Muchene", "+254723312235", "1300560000000", new BigDecimal("4513.20"), "59536723");
-		createDummyIncomingPayment("Tangus Koech", "+25472762345", "1300560000100", new BigDecimal("300.00"), "42400255");
-		createDummyIncomingPayment("Justin Mwakidedi", "+25475412345", "1300560000200", new BigDecimal("420.00"), "25857623");
-		createDummyIncomingPayment("Charlene Nyambura", "+25472012326", "1300560200300", new BigDecimal("400.00"), "24343423");
-		
-	
-		createDummyIncomingPayment("Angela Koki", "+254720999345", "1300564344000", new BigDecimal("4000.95"), "9923623");
-		createDummyIncomingPayment("Isiah Mwiki", "+254720785345", "1300232333300", new BigDecimal("8800.00"), "233854323");
-		createDummyIncomingPayment("Roy Owino", "+254720487545", "1302304299006", new BigDecimal("10000.00"), "25857623");
-		createDummyIncomingPayment("Wambui Waweru", "+254720113445", "1302304299996", new BigDecimal("1780.00"), "232363547");
-		createDummyIncomingPayment("Lavendar Akoth", "+254724666645", "1302304299996", new BigDecimal("2000.00"), "232255000");
-	
-		createDummyOutgoingPayment("Isiah Muchene", "+254723312233", "1302560000896", new BigDecimal("3000.00"), "463537445");
-		createDummyOutgoingPayment("Tangus Koech", "+254727623453", "1300000000896", new BigDecimal("4000.00"), "42400255");
-		createDummyOutgoingPayment("Justin Mwakidedi", "+254754123445", "1302300049896", new BigDecimal("100.00"), "25857623");
-		createDummyOutgoingPayment("Charlene Nyambura", "+254720123426", "1302000034896", new BigDecimal("500.00"), "24343423");
-		createDummyOutgoingPayment("Phanice Nafula", "+254720145345", "1302000500896", new BigDecimal("4200.00"), "27434523");
-		*/
 	}
 	
 	private Account createDummyAccount(Client client, String accountNumber) {

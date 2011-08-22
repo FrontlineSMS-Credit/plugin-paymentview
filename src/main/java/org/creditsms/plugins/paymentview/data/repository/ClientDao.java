@@ -2,7 +2,10 @@ package org.creditsms.plugins.paymentview.data.repository;
 
 import java.util.List;
 
+import net.frontlinesms.data.Order;
+
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.Client.Field;
 
 public interface ClientDao {
 	/**
@@ -16,7 +19,12 @@ public interface ClientDao {
 	 * return all the clients in the system
 	 * **/
 	public List<Client> getAllClients();
-
+	
+	/**
+	 * return all the clients in the system sorted
+	 * **/
+	public List<Client> getAllActiveClientsSorted(int startIndex, int limit, Field sortBy, Order order);
+	
 	/**
 	 * Returns all clients from a particular start index with a maximum number
 	 * of returned clients set.

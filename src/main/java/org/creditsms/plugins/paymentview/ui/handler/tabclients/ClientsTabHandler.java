@@ -1,7 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabclients;
 
 import static net.frontlinesms.FrontlineSMSConstants.ACTION_ADD_TO_GROUP;
-import static net.frontlinesms.ui.UiGeneratorControllerConstants.COMPONENT_CONTACT_MANAGER_CONTACT_LIST;
 import static net.frontlinesms.ui.UiGeneratorControllerConstants.COMPONENT_GROUPS_MENU;
 import static net.frontlinesms.ui.UiGeneratorControllerConstants.COMPONENT_MENU_ITEM_MSG_HISTORY;
 import static net.frontlinesms.ui.UiGeneratorControllerConstants.COMPONENT_MENU_ITEM_VIEW_CONTACT;

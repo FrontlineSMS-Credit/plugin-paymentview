@@ -4,6 +4,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,11 +48,11 @@ public class Client {
 	@Column(name = FIELD_ACTIVE, nullable = false)
 	private boolean active = true;
 
-	//@OneToMany(fetch = FetchType.EAGER)
-	//private Set<Account> accounts = new HashSet<Account>();
-
 	@OneToMany
-	private Set<CustomValue> customValue;
+	private Set<CustomValue> customValues;
+	
+	@OneToMany(fetch = FetchType.EAGER)
+	private Set<Target> targets;
 	
 	public enum Field implements EntityField<Client> {
 		ID(FIELD_ID),
@@ -81,10 +82,6 @@ public class Client {
 		this.phoneNumber = phoneNumber;
 	}
 
-	//public void addAccount(Account account) {
-	//	this.accounts.add(account);
-	//}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -102,12 +99,8 @@ public class Client {
 		return true;
 	}
 
-	//public Set<Account> getAccounts() {
-	//	return accounts;
-	//}
-
-	public Set<CustomValue> getCustomValue() {
-		return customValue;
+	public Set<CustomValue> getCustomValues() {
+		return customValues;
 	}
 
 	public String getFirstName() {
@@ -143,12 +136,8 @@ public class Client {
 		return result;
 	}
 
-	//public void setAccounts(Set<Account> accounts) {
-	//	this.accounts = accounts;
-	//}
-
 	public void setCustomValue(Set<CustomValue> customValue) {
-		this.customValue = customValue;
+		this.customValues = customValue;
 	}
 
 	public void setFirstName(String firstName) {
@@ -194,5 +183,13 @@ public class Client {
 	 */
 	public boolean isSelected() {
 		return selected;
+	}
+
+	public void setTargets(Set<Target> targets) {
+		this.targets = targets;
+	}
+
+	public Set<Target> getTargets() {
+		return targets;
 	}
 }

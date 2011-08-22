@@ -2,9 +2,11 @@ package org.creditsms.plugins.paymentview.data.repository.hibernate;
 
 import java.util.List;
 
+import net.frontlinesms.data.Order;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.Client.Field;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
@@ -49,6 +51,14 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements
 		return getAllActiveClients().size();
 	}
 
+	public List<Client> getAllActiveClientsSorted(int startIndex, int limit,
+			Field sortBy, Order order) {
+		DetachedCriteria criteria = super.getSortCriterion(sortBy, order);
+		criteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
+				Boolean.TRUE));
+		return super.getList(criteria, startIndex, limit);
+	}
+	
 	public List<Client> getClientsByFilter(String filter) {
 		DetachedCriteria subCriteria = DetachedCriteria.forClass(CustomValue.class);
 		subCriteria.add(Restrictions.ilike("strValue", filter.trim(),MatchMode.ANYWHERE));
