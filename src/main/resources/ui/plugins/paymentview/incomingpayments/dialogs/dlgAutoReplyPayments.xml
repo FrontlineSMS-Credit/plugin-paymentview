@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dialog name="dialog_auto_reply_payments" text="Auto Reply Payments" icon="/icons/sms_autoReply.png" resizable="true" 
+ closable="true" close="removeDialog(this)" width="550" height="400">
+    <panel gap="5" halign="center">
+        <button type="default" icon="/icons/tick.png" text="i18n.action.save" action="save" name="btSave"/>
+		<button type="cancel" action="removeDialog()" halign="left" icon="/icons/cross.png" text="i18n.action.cancel" />
+    </panel>
+</dialog>

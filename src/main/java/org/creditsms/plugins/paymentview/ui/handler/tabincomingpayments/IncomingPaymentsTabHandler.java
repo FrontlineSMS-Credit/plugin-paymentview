@@ -24,6 +24,7 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.AutoReplyPaymentsDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.EditIncomingPaymentDialogHandler;
 
 public class IncomingPaymentsTabHandler extends BaseTabHandler implements
@@ -45,6 +46,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private Object dialogConfirmation;
 	private Object fldStartDate;
 	private Object fldEndDate;
+	private Object dialogAutoReplyPayments;
 	private Date startDate;
 	private Date endDate;
 	protected int totalItemCount = 0;
@@ -260,7 +262,8 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 	
 	public final void showAutoReplyDialog(){
-		
+		dialogAutoReplyPayments = new AutoReplyPaymentsDialogHandler(ui, pluginController).getDialog();
+		ui.add(dialogAutoReplyPayments);
 	}
 	
 	public void showDateSelecter(Object textField) {

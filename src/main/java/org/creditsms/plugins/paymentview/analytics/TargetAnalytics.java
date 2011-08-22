@@ -349,27 +349,6 @@ public class TargetAnalytics {
 
 		return  getAmountSaved(targetId, startDate, nowDate);
 	}
-	
-	private BigDecimal getAmntPaidInterval(long targetId, Date endOfIntervalDate) {
-		int endDay = 0;
-		int endMonth = 0;
-		
-		Calendar calEndDate = Calendar.getInstance();
-		calEndDate.setTime(endOfIntervalDate);
-		endDay = calEndDate.get(Calendar.DAY_OF_MONTH);
-		endMonth = calEndDate.get(Calendar.MONTH);
-		calEndDate = setEndOfDay(calEndDate);
-		Date endDate = calEndDate.getTime();
-		
-		Calendar calStartDate = Calendar.getInstance(); 
-		calStartDate.setTime(endOfIntervalDate);
-		calStartDate.set(Calendar.MONTH, endMonth-1);  
-		calStartDate.set(Calendar.DATE, endDay);  
-		calStartDate = setStartOfDay(calStartDate);
-		Date startDate = calStartDate.getTime();
-
-		return  getAmountSaved(targetId, startDate, endDate);
-	}
 
 	private Date getInstalmentPozEndOfIntervalDate(int monthNum, int dayNum, int instalmentPoz){
 		Calendar calInstalEOD = Calendar.getInstance();
