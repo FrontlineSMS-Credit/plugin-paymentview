@@ -136,8 +136,6 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 		}
 	}
 
-
-
 	public void sendPayment() throws PaymentServiceException {
 		try {
 			outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
