@@ -42,6 +42,8 @@
 			<!-- <combobox name="cmb_mobilePaymentAccount" width="250" weightx="1"
 				text="Select Mobile payment account" /> -->
 			<panel weightx="1"/>
+			<button icon="/icons/sms_autoReply.png" action="showAutoReplyDialog" halign="right" name="btn_autoReplySetup"
+				text="Auto Reply Setup" />
 			<button action="showDeleteConfirmationDialog('showAuthCode')"
 				icon="/icons/delete.png" name="miDeleteIncoming"
 				text="i18n.plugins.paymentview.action.deleteincoming" />
