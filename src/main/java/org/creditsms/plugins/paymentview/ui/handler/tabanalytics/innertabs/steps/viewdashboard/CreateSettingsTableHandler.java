@@ -120,6 +120,11 @@ public class CreateSettingsTableHandler extends BaseClientTable{
 			Object startDate = ui.createTableCell(dateFormat.format(target.getStartDate()));
 			Object endDate = ui.createTableCell(dateFormat.format(target.getEndDate()));
 			
+			targetAnalytics.computeAnalyticsIntervalDatesAndSavings(target.getId());
+		    Object monthlyAmountSaved = ui.createTableCell(targetAnalytics.getMonthlyAmountSaved().toString());
+		    Object monthlyAmountDue = ui.createTableCell(targetAnalytics.getMonthlyAmountDue().toString());
+		 	Object endOfMonthlyInterval = ui.createTableCell(dateFormat.format(targetAnalytics.getEndMonthInterval()));
+			
 			ui.add(row, name);
 			ui.add(row, ui.createTableCell(target.getServiceItem().getTargetName()));
 			ui.add(row, startDate);
@@ -129,12 +134,51 @@ public class CreateSettingsTableHandler extends BaseClientTable{
 			ui.add(row, percentageToGo);
 			ui.add(row, lastAmountPaid);
 			ui.add(row, lastDatePaid);
+			
+			ui.add(row, monthlyAmountSaved);
+			ui.add(row, monthlyAmountDue);
+			ui.add(row, endOfMonthlyInterval);
+			
 			ui.add(row, daysRemaining);
 			ui.add(row, targetStatus);
 			
 			trgtRowLst.add(row);
 		}
 		return trgtRowLst;
+	}
+	
+	protected List<Client> getClients(String filter, int startIndex, int limit) {
+		if (!filter.trim().isEmpty()) {
+			totalItemCount  = this.clientDao.getClientsByFilter(filter).size();
+			List<Client> clients = this.clientDao.getClientsByFilter(filter, startIndex, limit);
+			
+			for (ServiceItem si : this.serviceItemDao.getServiceItemsLikeName(filter)) {
+				for(Target t : si.getTargets()){
+					Client client = t.getAccount().getClient();
+					if (!clients.contains(client)){clients.add(client);}
+				}
+			}
+			
+			return clients;
+		}else{
+			if (clientListForAnalytics.isEmpty()){
+				List<Client> activeClientsSorted = this.clientDao.getAllActiveClientsSorted
+										(startIndex, limit, getClientsSortField(), getClientsSortOrder());
+				totalItemCount = activeClientsSorted.size();
+				return activeClientsSorted;
+			} else {
+				totalItemCount = clientListForAnalytics.size();
+				if (clientsTablePager.getMaxItemsPerPage() < clientListForAnalytics.size()){					
+					if( (startIndex+limit) < clientListForAnalytics.size()){
+						return clientListForAnalytics.subList(startIndex, startIndex+limit);
+					} else {
+						return clientListForAnalytics.subList(startIndex, clientListForAnalytics.size());
+					}
+				}else{
+					return clientListForAnalytics;
+				}
+			}
+		}
 	}
 	
 	public void notify(final FrontlineEventNotification notification) {

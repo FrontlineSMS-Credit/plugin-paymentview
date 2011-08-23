@@ -43,7 +43,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	protected AccountDao accountDao;
 	protected Object tableClientsPanel;
 	protected List<Client> clientListForAnalytics;
-	private int totalItemCount = 0;
+	protected int totalItemCount = 0;
 	
 	protected final PaymentViewPluginController pluginController;
 
@@ -267,7 +267,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	}
 	
 	/** @return the field to sort clients in the client list by */
-	private Field getClientsSortField() {
+	protected Field getClientsSortField() {
 		Object header = Thinlet.get(this.tableClients, ThinletText.HEADER);
 		Object tableColumn = ui.getSelectedItem(header);
 		Client.Field field = Client.Field.FIRST_NAME;
@@ -279,7 +279,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	}
 	
 	/** @return the sorting order for the message list */
-	private Order getClientsSortOrder() {
+	protected Order getClientsSortOrder() {
 		Object header = Thinlet.get(this.tableClients, ThinletText.HEADER);
 		Object tableColumn = ui.getSelectedItem(header);
 		Order order = Order.ASCENDING;

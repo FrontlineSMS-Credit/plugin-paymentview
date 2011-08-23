@@ -208,7 +208,7 @@ public class TargetAnalytics {
 		BigDecimal amountPaid = new BigDecimal(amntPaid);
 
 		return amountPaid.multiply(paymentDuration.stripTrailingZeros()).
-		divide(premium, 4, RoundingMode.HALF_UP).intValue()+1;
+			divide(premium, 4, RoundingMode.HALF_UP).intValue()+1;
 	}
     
 	public void computeAnalyticsIntervalDatesAndSavings(long targetId){

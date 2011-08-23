@@ -13,6 +13,8 @@ public interface ServiceItemDao {
 	 * @param serviceItem
 	 */
 	public void deleteServiceItem(ServiceItem serviceItem);
+	
+	public List<ServiceItem> getServiceItemsLikeName(String serviceItemName);
 
 	/**
 	 * return all the ServiceItem in the system

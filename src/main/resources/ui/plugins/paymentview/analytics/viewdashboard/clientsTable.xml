@@ -14,15 +14,20 @@
 		<header action="updateClientsList">
 			<column text="Name" sort="ascent" width="150" icon="/icons/user.png" />
 			<column text="Product" width="150" />
-			<column text="Start date" width="100" icon="/icons/date.png" />
-			<column text="End date" width="100" icon="/icons/date.png" />
-			<column text="Savings target" width="120" />
-			<column text="Amount saved" width="120" />
-			<column text="Percentage"  width="100" />
-			<column text="Last payment" width="100" />
-			<column text="Last payment Date" width="150" />
+			<column text="Start date" width="85" icon="/icons/date.png" />
+			<column text="End date" width="85" icon="/icons/date.png" />
+			<column text="Savings target" width="95" />
+			<column text="Amount saved" width="100" />
+			<column text="Percentage"  width="80" />
+			<column text="Last payment" width="95" />
+			<column text="Last payment Date" width="120" />
+			
+			<column text="Monthly Amount" width="100" />
+            <column text="Due This Month" width="100" />
+            <column text="End Of Month Interval" width="120" />
+			
 			<column text="Days remaining" width="100" />
-			<column text="Target Status" width="100" />
+			<column text="Target Status" width="90" />
 		</header>
 	</table>
 </panel>

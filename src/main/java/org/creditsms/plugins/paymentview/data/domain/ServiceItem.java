@@ -25,8 +25,8 @@ import org.hibernate.annotations.IndexColumn;
 public class ServiceItem {
 	public static final String TABLE_NAME = "ServiceItem";
 
-	public static final String FIELD_AMOUNT = "amount";
-	public static final String FIELD_TARGET_NAME = "targetName";
+	private static final String FIELD_AMOUNT = "amount";
+	private static final String FIELD_TARGET_NAME = "targetName";
 	
 	@Id
 	@IndexColumn(name = "id")
@@ -38,7 +38,7 @@ public class ServiceItem {
 	private BigDecimal amount;
 
 	@OneToMany(fetch=FetchType.EAGER)
-	private Set<Target> target;
+	private Set<Target> targets;
 
 	@Column(name = FIELD_TARGET_NAME, nullable = false, unique = false)
 	private String targetName;
@@ -69,8 +69,8 @@ public class ServiceItem {
 		return id;
 	}
 
-	public Set<Target> getTarget() {
-		return target;
+	public Set<Target> getTargets() {
+		return targets;
 	}
 
 	public String getTargetName() {
@@ -85,8 +85,8 @@ public class ServiceItem {
 		this.id = id;
 	}
 
-	public void setTarget(Set<Target> target) {
-		this.target = target;
+	public void setTarget(Set<Target> targets) {
+		this.targets = targets;
 	}
 
 	public void setTargetName(String targetName) {

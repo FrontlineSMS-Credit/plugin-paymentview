@@ -8,6 +8,7 @@ import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
 /**
@@ -36,6 +37,12 @@ public class HibernateServiceItemDao extends BaseHibernateDao<ServiceItem>
 		DetachedCriteria criteria = super.getCriterion();
 		criteria.add(Restrictions.eq("id", id));
 		return super.getUnique(criteria);
+	}
+	
+	public List<ServiceItem> getServiceItemsLikeName(String serviceItemName) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.ilike("targetName", serviceItemName.trim(), MatchMode.ANYWHERE));
+		return super.getList(criteria);
 	}
 
 	public List<ServiceItem> getServiceItemsByName(String serviceItemName) {
