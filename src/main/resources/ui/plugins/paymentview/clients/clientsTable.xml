@@ -27,7 +27,8 @@
 				text="i18n.plugins.paymentview.action.deleteclient" />
 			<menuitem action="exportClient" icon="/icons/export.png"
 				name="miExportClient" text="i18n.plugins.paymentview.action.exportclient" />
-			<menuitem action="copyToContacts" name="miCopyClientToContacts" text="Copy to Contacts" />
+			<menuitem action="copyToContacts" name="miCopyClientToContacts" 
+			text="Copy to Contacts" icon="/icons/user_sender.png"/>
 		</popupmenu>
 	</table>
 </panel>

@@ -4,14 +4,8 @@
 
 	<panel columns="2" gap="5" weightx="1" weighty="1" name="pnlClientsTableHolder">
 		<!-- Table goes here... -->
-				
-				<column text="Monthly Amount" width="100" />
-				<column text="Due This Month" width="100" />
-				<column text="End Of Month Interval" width="150" />
-				
 	</panel>
 	<panel gap="5" weightx="1">
-		<!-- button action="createAlert" icon="/icons/task_next_execution.png" text="Create Alert" /> -->
 		<button action="export" icon="/icons/export.png" text="Export" />
 		<panel weightx="1"/>
 	</panel>

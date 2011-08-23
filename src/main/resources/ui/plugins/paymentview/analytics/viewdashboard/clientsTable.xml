@@ -13,16 +13,16 @@
 	<table colspan="2" name="tbl_clients" weightx="1" weighty="1">
 		<header action="updateClientsList">
 			<column text="Name" sort="ascent" width="150" icon="/icons/user.png" />
-			<column text="Product" sort="ascent" width="150" />
+			<column text="Product" width="150" />
 			<column text="Start date" width="100" icon="/icons/date.png" />
 			<column text="End date" width="100" icon="/icons/date.png" />
 			<column text="Savings target" width="120" />
 			<column text="Amount saved" width="120" />
-			<column text="Percentage" sort="ascent" width="100" />
+			<column text="Percentage"  width="100" />
 			<column text="Last payment" width="100" />
 			<column text="Last payment Date" width="150" />
 			<column text="Days remaining" width="100" />
-			<column text="Target Status" sort="ascent" width="100" />
+			<column text="Target Status" width="100" />
 		</header>
 	</table>
 </panel>

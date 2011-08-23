@@ -7,7 +7,7 @@
 				text="i18n.plugins.paymentview.tab.outgoingpayments.sendnewpayments.title" />
 		</panel>
 	</panel>
-	<panel halign="right" weightx="1">
+	<panel halign="right" weightx="1" bottom="5" right="5">
 		<button icon="/icons/right.png" action="sendPaymentForClient" name="btnNext"
 			text="Send New Payment" />
 	</panel>

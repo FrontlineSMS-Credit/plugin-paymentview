@@ -10,6 +10,7 @@ import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Account;
@@ -167,116 +168,124 @@ public class EditClientHandler extends BaseDialog{
 	}
 
 	public void saveClient() throws DuplicateKeyException {
-		if (validate()){
-			if (editMode) {
-				this.client.setFirstName(ui.getText(fieldFirstName));
-				this.client.setOtherName(ui.getText(fieldOtherName));
-				this.client.setPhoneNumber(ui.getText(fieldPhoneNumber));
+		new FrontlineUiUpateJob() {
+			public void run() {
+				try{
+					if (editMode) {
+						EditClientHandler.this.client.setFirstName(ui.getText(fieldFirstName));
+						EditClientHandler.this.client.setOtherName(ui.getText(fieldOtherName));
+						EditClientHandler.this.client.setPhoneNumber(ui.getText(fieldPhoneNumber));
+						
+						//test if phoneNumber already linked to another client
+						Client clientInDb = clientDao.getClientByPhoneNumber(client.getPhoneNumber());
+						if (clientInDb!=null && clientInDb.getId()!=client.getId()){
+							ui.infoMessage("The phone number " + client.getPhoneNumber() + " is already set up for "+ clientInDb.getFullName() + ".");
+						} else {
+							EditClientHandler.this.clientDao.updateClient(EditClientHandler.this.client);
+							
+							Contact fromMsisdn = contactDao.getFromMsisdn(client.getPhoneNumber());
+							if (fromMsisdn != null){
+								fromMsisdn.setName(client.getFullName());
+								fromMsisdn.setPhoneNumber(client.getPhoneNumber());
+								contactDao.updateContact(fromMsisdn);
+							}else{
+								//Start Save the Client as a contact to the core project
+								Contact contact = new Contact(client.getFullName(), client.getPhoneNumber(), "", "", "", true);
+								contactDao.saveContact(contact);
+								//Finish save
+							}
 				
-				//test if phoneNumber already linked to another client
-				Client clientInDb = clientDao.getClientByPhoneNumber(client.getPhoneNumber());
-				if (clientInDb!=null && clientInDb.getId()!=client.getId()){
-					ui.infoMessage("The phone number " + client.getPhoneNumber() + " is already set up for "+ clientInDb.getFullName() + ".");
-				} else {
-					this.clientDao.updateClient(this.client);
-					
-					Contact fromMsisdn = contactDao.getFromMsisdn(client.getPhoneNumber());
-					if (fromMsisdn != null){
-						fromMsisdn.setName(client.getFullName());
-						fromMsisdn.setPhoneNumber(client.getPhoneNumber());
-						contactDao.updateContact(fromMsisdn);
-					}else{
-						//Start Save the Client as a contact to the core project
-						Contact contact = new Contact(client.getFullName(), client.getPhoneNumber(), "", "", "", true);
-						contactDao.saveContact(contact);
-						//Finish save
-					}
-		
-					List<CustomField> allCustomFields = this.customFieldDao
-							.getAllActiveUsedCustomFields();
-		
-					if (!allCustomFields.isEmpty()) {
-						for (CustomField cf : allCustomFields) {
-							List<CustomValue> cvs = customValueDao.getCustomValuesByClientId(client.getId());
-							CustomValue cv = null;
-		
-							for (CustomValue _cv : cvs) {
-								if (_cv.getCustomField().equals(cf)) {
-									cv = _cv;
-								}
-		
-							}
-							if (cv == null) {
-								cv = new CustomValue(ui.getText(customComponents.get(cf)), cf, client);
-								try {
-									customValueDao.saveCustomValue(cv);
-								} catch (DuplicateKeyException e) {
-									throw new RuntimeException(e);
-								}
-							} else {
-								cv.setStrValue(ui.getText(customComponents.get(cf)));
-		
-								try {
-									customValueDao.updateCustomValue(cv);
-								} catch (DuplicateKeyException e) {
-									throw new RuntimeException(e);
+							List<CustomField> allCustomFields = EditClientHandler.this.customFieldDao
+									.getAllActiveUsedCustomFields();
+				
+							if (!allCustomFields.isEmpty()) {
+								for (CustomField cf : allCustomFields) {
+									List<CustomValue> cvs = customValueDao.getCustomValuesByClientId(client.getId());
+									CustomValue cv = null;
+				
+									for (CustomValue _cv : cvs) {
+										if (_cv.getCustomField().equals(cf)) {
+											cv = _cv;
+										}
+				
+									}
+									if (cv == null) {
+										cv = new CustomValue(ui.getText(customComponents.get(cf)), cf, client);
+										try {
+											customValueDao.saveCustomValue(cv);
+										} catch (DuplicateKeyException e) {
+											throw new RuntimeException(e);
+										}
+									} else {
+										cv.setStrValue(ui.getText(customComponents.get(cf)));
+				
+										try {
+											customValueDao.updateCustomValue(cv);
+										} catch (DuplicateKeyException e) {
+											throw new RuntimeException(e);
+										}
+									}
 								}
 							}
+							removeDialog();
+							clientsTabHandler.refresh();
 						}
-					}
-					removeDialog();
-					clientsTabHandler.refresh();
-				}
-			} else {
-				String fn = ui.getText(fieldFirstName);
-				String on = ui.getText(fieldOtherName);
-				String phone = ui.getText(fieldPhoneNumber);
-				//test if phoneNumber already linked to another client
-				Client clientInDb = clientDao.getClientByPhoneNumber(phone);
-				if (clientInDb!=null ){
-					if (clientInDb.isActive()){
-						ui.infoMessage("The phone number " + phone + " is already set up for "+ clientInDb.getFullName() + ".");
 					} else {
-						//TODO: Make sure that the user is active if we add a client that has same phone number...
-						//ui.showConfirmationDialog("An inactive client with this phone number '" + phone + "' exists." +
-						//		"Would you like to reactivate it?", "", this);
-						removeDialog();
-						ui.infoMessage("The phone number " + phone + " was previously set up for "+ clientInDb.getFullName() + " and will be reactivated.");
-						clientInDb.setActive(true);
-						this.clientDao.updateClient(clientInDb);
-					}
-					
-				} else {
-					Client client = new Client(fn, on, phone);
-					this.clientDao.saveClient(client);
-					
-					//Start Save the Client as a contact to the core project
-					Contact contact = new Contact(client.getFullName(), client.getPhoneNumber(), "", "", "", true);
-					contactDao.saveContact(contact);
-					//Finish save
-		
-					List<CustomField> allUsedCustomFields = this.customFieldDao
-							.getAllActiveUsedCustomFields();
-		
-					if (!allUsedCustomFields.isEmpty()) {
-						for (CustomField cf : allUsedCustomFields) {
-							CustomValue cv = new CustomValue(
-									ui.getText(customComponents.get(cf)), cf, client);
-							try {
-								customValueDao.saveCustomValue(cv);
-							} catch (DuplicateKeyException e) {
-								throw new RuntimeException(e);
+						String fn = ui.getText(fieldFirstName);
+						String on = ui.getText(fieldOtherName);
+						String phone = ui.getText(fieldPhoneNumber);
+						//test if phoneNumber already linked to another client
+						Client clientInDb = clientDao.getClientByPhoneNumber(phone);
+						if (clientInDb!=null ){
+							if (clientInDb.isActive()){
+								ui.infoMessage("The phone number " + phone + " is already set up for "+ clientInDb.getFullName() + ".");
+							} else {
+								//TODO: Make sure that the user is active if we add a client that has same phone number...
+								//ui.showConfirmationDialog("An inactive client with this phone number '" + phone + "' exists." +
+								//		"Would you like to reactivate it?", "", this);
+								removeDialog();
+								ui.infoMessage("The phone number " + phone + " was previously set up for "+ clientInDb.getFullName() + " and will be reactivated.");
+								clientInDb.setActive(true);
+								EditClientHandler.this.clientDao.updateClient(clientInDb);
 							}
+							
+						} else {
+							Client client = new Client(fn, on, phone);
+							EditClientHandler.this.clientDao.saveClient(client);
+							
+							//Start Save the Client as a contact to the core project
+							Contact contact = new Contact(client.getFullName(), client.getPhoneNumber(), "", "", "", true);
+							contactDao.saveContact(contact);
+							//Finish save
+				
+							List<CustomField> allUsedCustomFields = EditClientHandler.this.customFieldDao
+									.getAllActiveUsedCustomFields();
+				
+							if (!allUsedCustomFields.isEmpty()) {
+								for (CustomField cf : allUsedCustomFields) {
+									CustomValue cv = new CustomValue(
+											ui.getText(customComponents.get(cf)), cf, client);
+									try {
+										customValueDao.saveCustomValue(cv);
+									} catch (DuplicateKeyException e) {
+										throw new RuntimeException(e);
+									}
+								}
+							}
+							
+							Account account = new Account(createAccountNumber(),client,false,true);
+							EditClientHandler.this.accountDao.saveAccount(account);
+							removeDialog();
+							clientsTabHandler.refresh();
 						}
 					}
-					
-					Account account = new Account(createAccountNumber(),client,false,true);
-					this.accountDao.saveAccount(account);
-					removeDialog();
-					clientsTabHandler.refresh();
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				} catch (DuplicateKeyException e) {
+					e.printStackTrace();
 				}
 			}
-		}
+		}.execute();
 	}
 	
 	/**
