@@ -266,8 +266,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 	
 	public final void showAutoReplyDialog(){
-		dialogAutoReplyPayments = new AutoReplyPaymentsDialogHandler(ui, pluginController).getDialog();
-		ui.add(dialogAutoReplyPayments);
+		ui.add(new AutoReplyPaymentsDialogHandler(ui, pluginController).getDialog());
 	}
 	
 	public void showDateSelecter(Object textField) {

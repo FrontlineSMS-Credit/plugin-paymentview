@@ -24,9 +24,21 @@ import org.creditsms.plugins.paymentview.data.repository.TargetDao;
  */
 public class TargetAnalytics {
 	public enum Status {
+		PAYING,
+		OVERDUE,
+		INACTIVE,
+		PAID;
+		
+		/*
 		DELAYED,
 		ON_TRACK,
 		COMPLETED;
+			PAYING - Default
+			OVERDUE - Did not save target amount by deadline
+			INACTIVE - Has not saved in 1 month
+			PAID - Reached total
+		  */
+		
 		
 		@Override
 		public String toString() {
@@ -106,39 +118,46 @@ public class TargetAnalytics {
 		BigDecimal amountPaid = calculateAmount(incomingPayments);
 		BigDecimal totalTargetCost = targetDao.getTargetById(targetId).
 				getServiceItem().getAmount();
-		
-		if(amountPaid.compareTo(totalTargetCost) >=0){
-			return Status.COMPLETED;
-		}
-		
-		BigDecimal amountRem = totalTargetCost.subtract(amountPaid);
-		long remDays = getDaysRemaining(targetId);
 
 		long endTime = targetDao.getTargetById(targetId).getEndDate().getTime();
-		long startTime = targetDao.getTargetById(targetId).getStartDate().getTime();
-		long targetDays = getDateDiffDays(startTime, endTime);
-		BigDecimal initAmntRate;
-		BigDecimal remAmntRate;
-		
-		if (targetDays>0){
-			initAmntRate = totalTargetCost.divide(BigDecimal.valueOf(targetDays), 2, RoundingMode.HALF_UP);
-		} else {
-			initAmntRate = totalTargetCost;
-		}
-		
-		if (remDays>0){
-			remAmntRate = amountRem.divide(BigDecimal.valueOf(remDays), 2, RoundingMode.HALF_UP);
-		} else {
-			remAmntRate = amountRem;
-		}
+		Calendar calNowDate = Calendar.getInstance();
+		long nowTime = calNowDate.getTime().getTime();
 
-		if(initAmntRate.compareTo(remAmntRate) >= 0){
-			return Status.ON_TRACK;
-		}else{
-			return Status.DELAYED;
+		Date lastPaymentdate = new Date();
+		if(getLastDatePaid(targetId)==null){
+			lastPaymentdate = targetDao.getTargetById(targetId).getStartDate();
+		} else {
+			lastPaymentdate = getLastDatePaid(targetId);
 		}
+		Calendar startCalDate = Calendar.getInstance();
+		startCalDate.setTime(lastPaymentdate);
+		
+		if(amountPaid.compareTo(totalTargetCost) >=0){
+			return Status.PAID;
+		}
+		
+		if(nowTime > endTime && amountPaid.compareTo(totalTargetCost) < 0){
+			return Status.OVERDUE;
+		}else if(nowTime < endTime && amountPaid.compareTo(totalTargetCost) < 0 
+				&& getMonthsDiffFromStart(startCalDate, calNowDate) == 0){
+			return Status.PAYING;
+		}else if(getMonthsDiffFromStart(startCalDate, calNowDate) > 0 
+				&& amountPaid.compareTo(totalTargetCost) < 0){
+			return Status.INACTIVE;	
+		}
+		return null;
 	}
 
+	public BigDecimal getDateLastPaid(long tartgetId){
+	    List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(tartgetId);
+	    if(incomingPayments.size()==0){
+	    	return new BigDecimal("0.00");
+	    }else{
+		    int lastPoz = incomingPayments.size()-1;
+		    return incomingPayments.get(lastPoz).getAmountPaid();	
+	    }
+	}
+	
 	private Long getDateDiffDays(long startTime, long endTime){
 	    long diff = endTime - startTime;
 		long targetDays = diff / (1000 * 60 * 60 * 24);

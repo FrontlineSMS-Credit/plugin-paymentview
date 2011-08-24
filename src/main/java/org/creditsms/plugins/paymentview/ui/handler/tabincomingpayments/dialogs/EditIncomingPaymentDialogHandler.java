@@ -75,7 +75,6 @@ public class EditIncomingPaymentDialogHandler extends BaseDialog{
 			removeDialog();
 	}
 	
-	
 	public void assertMaxLength(Object component, int maxLength) {
 		String text = ui.getText(component);
 		if(text.length() > maxLength) {
