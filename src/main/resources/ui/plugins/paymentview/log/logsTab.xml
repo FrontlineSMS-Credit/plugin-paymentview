@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name="tab_logs" text="Logs" icon="/icons/keyword.png">
-	<panel weightx="1" weighty="1" top="5" right="5" left="5"
-		columns="1" gap="10">
+	<panel weightx="1" weighty="1" top="5" bottom="5" right="5" left="5"
+		columns="1" gap="5">
 		<label text="PaymentView Logs" font="20 Bold" weightx="1"/>
-		<panel columns="1" gap="5" name="pnl_logs" weightx="1"
-			weighty="1">
+		<panel columns="1" name="pnl_logs" weightx="1"
+			weighty="1" gap="5">
 			<table name="tbl_logs" weightx="1" weighty="1" perform="viewLog()">
 				<header>					
 					<column text="Level" width="100"/>
@@ -16,7 +16,9 @@
 				</popupmenu>
 			</table>
 		</panel>
-		<panel gap="5" bottom="5" name="pnl_buttons" weightx="1">
-		</panel>
+		<!--
+			<panel gap="5" bottom="5" name="pnl_buttons" weightx="1">
+			</panel>
+		-->
 	</panel>
 </tab>

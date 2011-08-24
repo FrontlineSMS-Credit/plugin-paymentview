@@ -153,7 +153,7 @@ public class CreateSettingsTableHandler extends BaseClientTable{
 			List<Client> clients = this.clientDao.getClientsByFilter(filter, startIndex, limit);
 			
 			for (ServiceItem si : this.serviceItemDao.getServiceItemsLikeName(filter)) {
-				for(Target t : si.getTargets()){
+				for(Target t : targetDao.getTargetsByServiceItem(si.getId())){
 					Client client = t.getAccount().getClient();
 					if (!clients.contains(client)){clients.add(client);}
 				}

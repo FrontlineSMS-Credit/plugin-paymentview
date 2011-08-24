@@ -28,9 +28,7 @@ public class ExportClientsTabHandler extends BaseTabHandler {
 	@Override
 	protected Object initialiseTab() {
 		clientsTab = ui.loadComponentFromFile(XML_EXPORT_CLIENTS_TAB, this);
-
 		clientsTableHandler = new ExportClientsTable(ui, pluginController);
-
 		pnlClientsTableHolder = ui.find(clientsTab, PNL_CLIENTS_TABLE_HOLDER);
 		this.ui.add(pnlClientsTableHolder,
 				clientsTableHandler.getClientsTablePanel());
