@@ -294,8 +294,6 @@ public class TargetAnalytics {
 			(calStartDate.get(Calendar.MONTH)- calNowDate.get(Calendar.MONTH)) + 
 			(calStartDate.get(Calendar.DAY_OF_MONTH) >= calNowDate.get(Calendar.DAY_OF_MONTH)? 0: -1); 			
 		}
-		
-
 	}
 
 	private void getRemAmnt(int datepoz, int amntPoz, int startMonth, int endDay, 

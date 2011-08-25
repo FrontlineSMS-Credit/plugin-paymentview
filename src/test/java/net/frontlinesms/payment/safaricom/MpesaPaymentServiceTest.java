@@ -152,7 +152,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		clientDao = mock(ClientDao.class);
 		accountDao = mock(AccountDao.class);
 		targetAnalytics = mock(TargetAnalytics.class);
-		when(targetAnalytics.getStatus(anyLong())).thenReturn(TargetAnalytics.Status.ON_TRACK);
+		when(targetAnalytics.getStatus(anyLong())).thenReturn(TargetAnalytics.Status.PAYING);
 		
 		pluginController = mock(PaymentViewPluginController.class);
 		ui = mock(UiGeneratorController.class);
