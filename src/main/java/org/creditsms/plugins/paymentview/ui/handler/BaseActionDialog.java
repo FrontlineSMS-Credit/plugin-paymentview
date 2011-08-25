@@ -8,11 +8,12 @@ import static net.frontlinesms.ui.UiGeneratorControllerConstants.COMPONENT_TF_ST
 import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.handler.keyword.FormatterMarkerType;
 import net.frontlinesms.ui.handler.keyword.KeywordTabHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.apache.log4j.Logger;
+import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
+import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.FormatterMarkerType;
 
 /**
  * Base class containing shared attributes and behaviour of {@link KeywordAction} edit dialogs. 
@@ -54,11 +55,7 @@ public abstract class BaseActionDialog implements ThinletUiEventHandler {
 	
 	public void init() {
 		loadDialogFromFile();
-		_init();
 	}
-
-	/** Initialise the dialog before displaying it. */
-	protected abstract void _init();
 
 	/** Load the dialog for displaying. */
 	private void loadDialogFromFile() {
@@ -124,9 +121,38 @@ public abstract class BaseActionDialog implements ThinletUiEventHandler {
 	
 	public static void addConstantToCommand(UiGeneratorController ui, String currentText, Object textArea, String type) {
 		String toAdd = "";
-		
-//		switch (FormatterMarkerType.valueOf(enumType, name)) {
-//		}
+		switch (FormatterMarkerType.valueOf(type)) {
+			case CLIENT_NAME:
+				toAdd = PaymentViewCsvUtils.CLIENT_NAME;
+				break;
+			case AMOUNT_PAID:
+				toAdd = PaymentViewCsvUtils.AMOUNT_PAID;
+				break;
+			case AMOUNT_REMAINING:
+				toAdd = PaymentViewCsvUtils.AMOUNT_REMAINING;
+				break;
+			case DATE_PAID:
+				toAdd = PaymentViewCsvUtils.DATE_PAID;
+				break;
+			case DAYS_REMAINING:
+				toAdd = PaymentViewCsvUtils.DAYS_REMAINING;
+				break;
+			case MONTHLY_DUE:
+				toAdd = PaymentViewCsvUtils.MONTHLY_DUE;
+				break;
+			case MONTHLY_DUEDATE:
+				toAdd = PaymentViewCsvUtils.MONTHLY_DUEDATE;
+				break;
+			case MONTHLY_SAVINGS:
+				toAdd = PaymentViewCsvUtils.MONTHLY_SAVINGS;
+				break;
+			case RECEPIENT_NAME:
+				toAdd = PaymentViewCsvUtils.RECEPIENT_NAME;
+				break;
+			case TARGET_ENDDATE:
+				toAdd = PaymentViewCsvUtils.TARGET_ENDDATE;
+				break;
+		}
 		
 		StringBuilder sb = new StringBuilder(currentText);
 		int caretPosition = ui.getCaretPosition(textArea);

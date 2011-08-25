@@ -4,18 +4,26 @@ import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.BaseActionDialog;
+import org.creditsms.plugins.paymentview.userhomepropeties.incomingpayments.AutoReplyProperties;
 
 public class AutoReplyPaymentsDialogHandler extends BaseActionDialog  {
 	private static final String XML_AUTO_REPLY_PAYMENTS_DIALOG = "/ui/plugins/paymentview/incomingpayments/dialogs/dlgAutoReplyPayments.xml";
-
+	private AutoReplyProperties autoReplyProperties = AutoReplyProperties.getInstance();
+	
 	public AutoReplyPaymentsDialogHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui);
 		init();
 	}
 	
+	@Override
+	public void init() {
+		super.init();
+		ui.setText(ui.find(this.getDialogComponent(), "replyContent"), autoReplyProperties.getMessage());
+	}
+	
 	/** Save auto reply details */
-	public void save() {
-		
+	public void save(String message) {
+		autoReplyProperties.setMessage(message);
 	}
 	
 	/** Remove a dialog from view. */
@@ -23,14 +31,8 @@ public class AutoReplyPaymentsDialogHandler extends BaseActionDialog  {
 		this.ui.removeDialog(dialog);
 	}
 
-	@Override
-	protected void _init() {
-		// TODO Auto-generated method stub
-	}
-	
-	public void addConstantToDialog(String type) {
-		Object messageTextArea = ui.find(this.getDialogComponent(), "tfMessage");
-		addConstantToCommand(ui.getText(messageTextArea), messageTextArea, type);
+	public void addConstantToDialog(String text, Object object, String type) {
+		addConstantToCommand(text, object, type);
 	}
 
 	@Override
@@ -43,9 +45,6 @@ public class AutoReplyPaymentsDialogHandler extends BaseActionDialog  {
 		return XML_AUTO_REPLY_PAYMENTS_DIALOG;
 	}
 	
-	private void refresh() {
-	}
-
 	public Object getDialog() {
 		return this.getDialogComponent();
 	}

@@ -8,25 +8,25 @@
 	    	<label weightx="1" text="Check to include:" font="bold"/>
 	    	<panel bottom="4" gap="3" columns="3" weightx="1">
 	    		<panel gap="3" columns="1" weightx="1">
-			    	<checkbox name="clientName" action="addConstantToDialog('SENDER_NAME')" text="Name" selected="false"/>
-			    	<checkbox name="recepientName" action="addConstantToDialog('SENDER_NAME')" text="Recipient Name" selected="false"/>
-			    	<checkbox name="amountPaid" text="Amount Paid" action="addConstantToDialog('SENDER_NAME')" selected="false"/>
-					<checkbox name="datePaid" text="Date Paid" action="addConstantToDialog('SENDER_NAME')" selected="false"/>
-			    	<checkbox name="amountRemaining" text="Amount Remaining" action="addConstantToDialog('SENDER_NAME')" selected="false"/>
+			    	<checkbox name="clientName" action="addConstantToDialog(replyContent.text, replyContent, 'CLIENT_NAME')" text="Name" selected="false"/>
+			    	<checkbox name="recepientName" action="addConstantToDialog(replyContent.text, replyContent, 'RECEPIENT_NAME')" text="Recipient Name" selected="false"/>
+			    	<checkbox name="amountPaid" text="Amount Paid" action="addConstantToDialog(replyContent.text, replyContent, 'AMOUNT_PAID')" selected="false"/>
+					<checkbox name="datePaid" text="Date Paid" action="addConstantToDialog(replyContent.text, replyContent, 'DATE_PAID')" selected="false"/>
+			    	<checkbox name="amountRemaining" text="Amount Remaining" action="addConstantToDialog(replyContent.text, replyContent, 'AMOUNT_REMAINING')" selected="false"/>
 			    </panel>
 			    <panel weightx="1"/>
 			    <panel gap="3" columns="1" weightx="1">
-			    	<checkbox name="targetEndDate" text="Target End Date" selected="false"/>
-			     	<checkbox name="daysRemaining" text="Days Remaining" selected="false"/>
-					<checkbox name="monthlySavings" text="Monthly Savings" selected="false"/>
-			    	<checkbox name="monthlyDue" text="Monthly Amount Remaining" selected="false"/>
-			    	<checkbox name="monthlyDueDate" text="Monthly Due Date" selected="false"/>
+			    	<checkbox name="targetEndDate" text="Target End Date" action="addConstantToDialog(replyContent.text, replyContent, 'TARGET_ENDDATE')" selected="false"/>
+			     	<checkbox name="daysRemaining" text="Days Remaining" action="addConstantToDialog(replyContent.text, replyContent, 'DAYS_REMAINING')" selected="false"/>
+					<checkbox name="monthlySavings" text="Monthly Savings" action="addConstantToDialog(replyContent.text, replyContent, 'MONTHLY_SAVINGS')" selected="false"/>
+			    	<checkbox name="monthlyDue" text="Monthly Amount Remaining" action="addConstantToDialog(replyContent.text, replyContent, 'MONTHLY_DUE')" selected="false"/>
+			    	<checkbox name="monthlyDueDate" text="Monthly Due Date" action="addConstantToDialog(replyContent.text, replyContent, 'MONTHLY_DUEDATE')" selected="false"/>
 			    </panel>
 	    	</panel>
 	    </panel>
 		<separator/>
 	    <panel gap="5" halign="center">
-	        <button type="default" icon="/icons/tick.png" text="i18n.action.save" action="save" name="btSave"/>
+	        <button type="default" icon="/icons/tick.png" text="i18n.action.save" action="save(replyContent.text)" name="btSave"/>
 			<button type="cancel" action="removeDialog()" halign="left" icon="/icons/cross.png" text="i18n.action.cancel" />
 	    </panel>
     </panel>
