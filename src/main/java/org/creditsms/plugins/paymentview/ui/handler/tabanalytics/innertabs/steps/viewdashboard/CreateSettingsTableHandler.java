@@ -123,8 +123,15 @@ public class CreateSettingsTableHandler extends BaseClientTable{
 			targetAnalytics.computeAnalyticsIntervalDatesAndSavings(target.getId());
 		    Object monthlyAmountSaved = ui.createTableCell(targetAnalytics.getMonthlyAmountSaved().toString());
 		    Object monthlyAmountDue = ui.createTableCell(targetAnalytics.getMonthlyAmountDue().toString());
-		 	Object endOfMonthlyInterval = ui.createTableCell(dateFormat.format(targetAnalytics.getEndMonthInterval()));
-			
+		    
+		    Object endOfMonthlyInterval = "";
+			if(targetAnalytics.getEndMonthInterval() != null){
+				endOfMonthlyInterval = ui.createTableCell(dateFormat.format(targetAnalytics.getEndMonthInterval()));
+			}else{
+				endOfMonthlyInterval = ui.createTableCell("Target end date passed");
+			}
+		 			 	
+		 	targetAnalytics.clearAnalyticsComputations();
 			ui.add(row, name);
 			ui.add(row, ui.createTableCell(target.getServiceItem().getTargetName()));
 			ui.add(row, startDate);

@@ -167,7 +167,12 @@ public class TargetAnalytics {
 	
 	public Long getDaysRemaining(long tartgetId){
 		long endTime = targetDao.getTargetById(tartgetId).getEndDate().getTime();
-		return getDateDiffDays(new Date().getTime(), endTime);
+		
+	    if(getDateDiffDays(new Date().getTime(), endTime)<0){
+	    	return (long) 0;
+		} else {
+			return getDateDiffDays(new Date().getTime(), endTime);
+		}
 	}
 	
 	public Date getLastDatePaid(long tartgetId){
@@ -229,7 +234,7 @@ public class TargetAnalytics {
 		return amountPaid.multiply(paymentDuration.stripTrailingZeros()).
 			divide(premium, 4, RoundingMode.HALF_UP).intValue()+1;
 	}
-    
+	
 	public void computeAnalyticsIntervalDatesAndSavings(long targetId){
 		
 		int startMonth = 0;
@@ -338,6 +343,14 @@ public class TargetAnalytics {
 		}
 		setMonthlyAmountSaved(amntSavedForPeriod);
 		setMonthlyAmountDue(amntRem);
+	}
+	
+	public void clearAnalyticsComputations(){
+		setInstalments(0);
+		setMonthlyTarget(BigDecimal.ZERO);
+		setEndMonthInterval(null);
+		setMonthlyAmountSaved(BigDecimal.ZERO);
+		setMonthlyAmountDue(BigDecimal.ZERO);
 	}
 	
 	private BigDecimal getAmntPaidFromStart(long targetId, Date startDate, Date endDate) {
