@@ -145,7 +145,7 @@ public class TargetAnalytics {
 				&& amountPaid.compareTo(totalTargetCost) < 0){
 			return Status.INACTIVE;	
 		}
-		return null;
+		return Status.INACTIVE;
 	}
 
 	public BigDecimal getDateLastPaid(long tartgetId){
