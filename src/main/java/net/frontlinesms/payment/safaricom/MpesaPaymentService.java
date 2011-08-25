@@ -229,7 +229,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							incomingPaymentDao.saveIncomingPayment(payment);
 
 							// Check if the client has reached his targeted amount
-							if (targetAnalytics.getStatus(tgt.getId()) == TargetAnalytics.Status.COMPLETED){
+							if (targetAnalytics.getStatus(tgt.getId()) == TargetAnalytics.Status.PAID){
 								//Update target.completedDate
 								final Calendar calendar = Calendar.getInstance();
 								tgt.setCompletedDate(calendar.getTime());

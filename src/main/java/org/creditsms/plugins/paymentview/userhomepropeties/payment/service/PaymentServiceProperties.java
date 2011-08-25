@@ -1,4 +1,4 @@
-package org.creditsms.plugins.paymentview.paymentsettings;
+package org.creditsms.plugins.paymentview.userhomepropeties.payment.service;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.resources.UserHomeFilePropertySet;
 

@@ -1,9 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<dialog name="dialog_auto_reply_payments" text="Auto Reply Payments" icon="/icons/sms_autoReply.png" resizable="true" 
- closable="true" close="removeDialog(this)" width="550" height="400">
-    <checkbox text="CheckBox" selected="true"/>
-    <panel gap="5" halign="center">
-        <button type="default" icon="/icons/tick.png" text="i18n.action.save" action="save" name="btSave"/>
-		<button type="cancel" action="removeDialog()" halign="left" icon="/icons/cross.png" text="i18n.action.cancel" />
+<dialog name="dialog_auto_reply_payments" right="5" left ="5" top="7" bottom="5" text="Auto Reply Payments" icon="/icons/sms_autoReply.png" resizable="true" 
+ closable="true" close="removeDialog(this)" width="430" height="380">
+ 	<panel gap="5" columns="1" weightx="1" weighty="1">
+	 	<textarea name="replyContent" wrap="true" weightx="1" weighty="1" />
+	    <separator/>
+	    <panel gap="3" columns="1" weightx="1">
+	    	<label weightx="1" text="Check to include:" font="bold"/>
+	    	<panel bottom="4" gap="3" columns="3" weightx="1">
+	    		<panel gap="3" columns="1" weightx="1">
+			    	<checkbox name="clientName" action="addConstantToDialog(replyContent.text, replyContent, 'CLIENT_NAME')" text="Name" selected="false"/>
+			    	<checkbox name="recepientName" action="addConstantToDialog(replyContent.text, replyContent, 'RECEPIENT_NAME')" text="Recipient Name" selected="false"/>
+			    	<checkbox name="amountPaid" text="Amount Paid" action="addConstantToDialog(replyContent.text, replyContent, 'AMOUNT_PAID')" selected="false"/>
+					<checkbox name="datePaid" text="Date Paid" action="addConstantToDialog(replyContent.text, replyContent, 'DATE_PAID')" selected="false"/>
+			    	<checkbox name="amountRemaining" text="Amount Remaining" action="addConstantToDialog(replyContent.text, replyContent, 'AMOUNT_REMAINING')" selected="false"/>
+			    </panel>
+			    <panel weightx="1"/>
+			    <panel gap="3" columns="1" weightx="1">
+			    	<checkbox name="targetEndDate" text="Target End Date" action="addConstantToDialog(replyContent.text, replyContent, 'TARGET_ENDDATE')" selected="false"/>
+			     	<checkbox name="daysRemaining" text="Days Remaining" action="addConstantToDialog(replyContent.text, replyContent, 'DAYS_REMAINING')" selected="false"/>
+					<checkbox name="monthlySavings" text="Monthly Savings" action="addConstantToDialog(replyContent.text, replyContent, 'MONTHLY_SAVINGS')" selected="false"/>
+			    	<checkbox name="monthlyDue" text="Monthly Amount Remaining" action="addConstantToDialog(replyContent.text, replyContent, 'MONTHLY_DUE')" selected="false"/>
+			    	<checkbox name="monthlyDueDate" text="Monthly Due Date" action="addConstantToDialog(replyContent.text, replyContent, 'MONTHLY_DUEDATE')" selected="false"/>
+			    </panel>
+	    	</panel>
+	    </panel>
+		<separator/>
+	    <panel gap="5" halign="center">
+	        <button type="default" icon="/icons/tick.png" text="i18n.action.save" action="save(replyContent.text)" name="btSave"/>
+			<button type="cancel" action="removeDialog()" halign="left" icon="/icons/cross.png" text="i18n.action.cancel" />
+	    </panel>
     </panel>
 </dialog>
