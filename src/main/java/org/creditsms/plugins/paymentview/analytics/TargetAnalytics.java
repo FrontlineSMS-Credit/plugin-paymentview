@@ -412,6 +412,7 @@ public class TargetAnalytics {
 	public void setEndMonthInterval(Date endMonthInterval) {
 		this.endMonthInterval = endMonthInterval;
 	}
+	
 	public BigDecimal getMonthlyTarget() {
 		return monthlyTarget.setScale(2, BigDecimal.ROUND_HALF_DOWN);
 	}

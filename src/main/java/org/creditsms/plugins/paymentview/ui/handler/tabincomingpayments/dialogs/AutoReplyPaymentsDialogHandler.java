@@ -24,6 +24,7 @@ public class AutoReplyPaymentsDialogHandler extends BaseActionDialog  {
 	/** Save auto reply details */
 	public void save(String message) {
 		autoReplyProperties.setMessage(message);
+		this.removeDialog();
 	}
 	
 	/** Remove a dialog from view. */

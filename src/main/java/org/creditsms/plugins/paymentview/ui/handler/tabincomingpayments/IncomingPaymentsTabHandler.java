@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
@@ -27,13 +28,28 @@ import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.AutoReplyPaymentsDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.EditIncomingPaymentDialogHandler;
+import org.creditsms.plugins.paymentview.userhomepropeties.incomingpayments.AutoReplyProperties;
+import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
 
 public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		PagedComponentItemProvider, EventObserver{
+	private static final String CONFIRM_DIALOG = "confirmDialog";
+	private static final String INVALID_DATE = "Please enter a correct starting date.";
+	private static final String ENABLE_AUTOREPLY = "Enable autoreply";
+	private static final String TXT_END_DATE = "txt_endDate";
+	private static final String TXT_START_DATE = "txt_startDate";
+	private static final String DISABLE_AUTOREPLY = "Disable autoreply";
 	private static final String COMPONENT_INCOMING_PAYMENTS_TABLE = "tbl_clients";
 	private static final String COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE = "pnl_clients";
 	private static final String XML_INCOMING_PAYMENTS_TAB = "/ui/plugins/paymentview/incomingpayments/tabincomingpayments.xml";
 	private static final String CONFIRM_DELETE_INCOMING = "message.confirm.delete.incoming";
+	
+	private AutoReplyProperties autoReplyProperties = AutoReplyProperties.getInstance();
+	
+	private static final String ICON_STATUS_TRUE = "/icons/led_green.png";
+	private static final String STATUS_LABEL_COMPONENT = "status";
+	private static final String ICON_STATUS_FALSE = "/icons/led_red.png";
+	private Object status_label;
 	
 	protected IncomingPaymentDao incomingPaymentDao;
 	private LogMessageDao logMessageDao;
@@ -52,6 +68,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private Date endDate;
 	protected int totalItemCount = 0;
 	private ClientDao clientDao;
+	private FrontlineSMS frontlineController;
 
 
 	public IncomingPaymentsTabHandler(UiGeneratorController ui,
@@ -61,21 +78,44 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		clientDao = pluginController.getClientDao();
 		this.logMessageDao = pluginController.getLogMessageDao();
 		this.pluginController = pluginController;
-		ui.getFrontlineController().getEventBus().registerObserver(this);
+		frontlineController = ui.getFrontlineController();
+		frontlineController.getEventBus().registerObserver(this);
 		init();
 	}
 	
 	@Override
 	protected Object initialiseTab() {
 		incomingPaymentsTab = ui.loadComponentFromFile(getXMLFile(), this);
-		fldStartDate = ui.find(incomingPaymentsTab, "txt_startDate");
-		fldEndDate = ui.find(incomingPaymentsTab, "txt_endDate");
+		fldStartDate = ui.find(incomingPaymentsTab, TXT_START_DATE);
+		fldEndDate = ui.find(incomingPaymentsTab, TXT_END_DATE);
+		status_label = ui.find(incomingPaymentsTab, STATUS_LABEL_COMPONENT);
+		
+		toggleAutoReplyOn();
 		
 		incomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_INCOMING_PAYMENTS_TABLE);
 		incomingPaymentsTablePager = new ComponentPagingHandler(ui, this, incomingPaymentsTableComponent);
 		pnlIncomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE);
 		this.ui.add(pnlIncomingPaymentsTableComponent, this.incomingPaymentsTablePager.getPanel());
 		return incomingPaymentsTab;
+	}
+	
+	public void tryToggleAutoReply(){
+		if (!autoReplyProperties.isAutoReplyOn()){
+			ui.showConfirmationDialog("toggleAutoReplyOn", this, PaymentPluginConstants.AUTO_REPLY_CONFIRMATION);
+		}else{
+			toggleAutoReplyOn();
+		}
+	}
+
+	public void toggleAutoReplyOn() {
+		boolean was_selected = autoReplyProperties.isAutoReplyOn(); 
+		autoReplyProperties.toggleAutoReply();
+		boolean autoReplyOn = autoReplyProperties.isAutoReplyOn();
+		ui.setIcon(status_label, autoReplyOn ? ICON_STATUS_TRUE : ICON_STATUS_FALSE);
+		ui.setText(status_label, (autoReplyOn ? DISABLE_AUTOREPLY : ENABLE_AUTOREPLY));
+		ui.setSelected(status_label, autoReplyOn);
+		
+		ui.removeDialog(ui.find(CONFIRM_DIALOG));
 	}
 
 	protected String getXMLFile() {
@@ -128,7 +168,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			try {
 				startDate = InternationalisationUtils.getDateFormat().parse(strStartDate);
 			} catch (ParseException e) {
-				ui.infoMessage("Please enter a correct starting date.");
+				ui.infoMessage(INVALID_DATE);
 				return Collections.emptyList();
 			}
 		}
@@ -273,6 +313,8 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		((UiGeneratorController) ui).showDateSelecter(textField);
 	}
 	
+	
+	
 //> INCOMING PAYMENT NOTIFICATION...
 	@SuppressWarnings("rawtypes")
 	public void notify(final FrontlineEventNotification notification) {
@@ -285,6 +327,9 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
 				if (entity instanceof IncomingPayment) {
 					IncomingPaymentsTabHandler.this.refresh();
+					if(autoReplyProperties.isAutoReplyOn()){
+						//Send Payment...
+					}
 				}
 			}
 		}.execute();

@@ -15,5 +15,6 @@ public final class PaymentPluginConstants {
 	public static final String COMMON_PHONE = "plugins.paymentview.common.phone";
 	public static final String COMMON_TIME_PAID = "plugins.paymentview.common.timepaid";
 	public static final String COMMON_STATUS = "plugins.paymentview.common.status";
+	public static final String AUTO_REPLY_CONFIRMATION = "plugins.paymentview.auto.reply.confirmation";
 	
 }
