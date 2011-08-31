@@ -1,22 +1,16 @@
 package org.creditsms.plugins.paymentview.ui.handler;
 
-import static net.frontlinesms.FrontlineSMSConstants.COMMON_UNDEFINED;
-import static net.frontlinesms.FrontlineSMSConstants.DEFAULT_END_DATE;
 import static net.frontlinesms.ui.UiGeneratorControllerConstants.COMPONENT_BT_SAVE;
-import static net.frontlinesms.ui.UiGeneratorControllerConstants.COMPONENT_TF_END_DATE;
-import static net.frontlinesms.ui.UiGeneratorControllerConstants.COMPONENT_TF_START_DATE;
 import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.handler.keyword.KeywordTabHandler;
-import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.FormatterMarkerType;
 
 /**
- * Base class containing shared attributes and behaviour of {@link KeywordAction} edit dialogs. 
+ * Base class containing shared attributes and behaviour of edit dialogs. 
  * @author aga
  */
 public abstract class BaseActionDialog implements ThinletUiEventHandler {
@@ -32,18 +26,9 @@ public abstract class BaseActionDialog implements ThinletUiEventHandler {
 	protected final UiGeneratorController ui;
 	/** The UI dialog component */
 	private Object dialogComponent;
-	/**
-	 * The object that this dialog is dealing with.  This should either be a {@link Keyword}, if
-	 * we are creating a new action, or a {@link KeywordAction} if we are editing an existing action.
-	 */
 	private Object targetObject;
 
 //> CONSTRUCTORS
-	/**
-	 * Create a new instance, setting required fields.
-	 * @param ui the UI which this is tied to
-	 * @param owner the {@link KeywordTabHandler} which spawned this
-	 */
 	protected BaseActionDialog(UiGeneratorController ui) {
 		this.ui = ui;
 	}
@@ -120,47 +105,13 @@ public abstract class BaseActionDialog implements ThinletUiEventHandler {
 	}
 	
 	public static void addConstantToCommand(UiGeneratorController ui, String currentText, Object textArea, String type) {
-		String toAdd = "";
-		switch (FormatterMarkerType.valueOf(type)) {
-			case CLIENT_NAME:
-				toAdd = PaymentViewCsvUtils.CLIENT_NAME;
-				break;
-			case AMOUNT_PAID:
-				toAdd = PaymentViewCsvUtils.AMOUNT_PAID;
-				break;
-			case AMOUNT_REMAINING:
-				toAdd = PaymentViewCsvUtils.AMOUNT_REMAINING;
-				break;
-			case DATE_PAID:
-				toAdd = PaymentViewCsvUtils.DATE_PAID;
-				break;
-			case DAYS_REMAINING:
-				toAdd = PaymentViewCsvUtils.DAYS_REMAINING;
-				break;
-			case MONTHLY_DUE:
-				toAdd = PaymentViewCsvUtils.MONTHLY_DUE;
-				break;
-			case MONTHLY_DUEDATE:
-				toAdd = PaymentViewCsvUtils.MONTHLY_DUEDATE;
-				break;
-			case MONTHLY_SAVINGS:
-				toAdd = PaymentViewCsvUtils.MONTHLY_SAVINGS;
-				break;
-			case RECEPIENT_NAME:
-				toAdd = PaymentViewCsvUtils.RECEPIENT_NAME;
-				break;
-			case TARGET_ENDDATE:
-				toAdd = PaymentViewCsvUtils.TARGET_ENDDATE;
-				break;
-		}
-		
 		StringBuilder sb = new StringBuilder(currentText);
 		int caretPosition = ui.getCaretPosition(textArea);
-		sb.insert(caretPosition, toAdd);
+		sb.insert(caretPosition, FormatterMarkerType.valueOf(type).getMarker());
 		String newText = sb.toString();
 		
 		ui.setText(textArea, newText);
-		ui.setCaretPosition(textArea, caretPosition + toAdd.length());
+		ui.setCaretPosition(textArea, caretPosition + FormatterMarkerType.valueOf(type).getMarker().length());
 		ui.setFocus(textArea);
 	}
 	

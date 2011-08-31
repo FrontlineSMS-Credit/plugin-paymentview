@@ -17,7 +17,7 @@ import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
-import org.creditsms.plugins.paymentview.paymentsettings.phone.no.pattern.PhoneNumberPattern;
+import org.creditsms.plugins.paymentview.utils.PhoneNumberPattern;
 
 /**
  * @author Ian Onesmus Mukewa <ian@frontlinesms.com>, Roy
