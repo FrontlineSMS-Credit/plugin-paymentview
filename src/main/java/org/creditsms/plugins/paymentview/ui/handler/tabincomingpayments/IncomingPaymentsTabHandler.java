@@ -89,9 +89,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		fldStartDate = ui.find(incomingPaymentsTab, TXT_START_DATE);
 		fldEndDate = ui.find(incomingPaymentsTab, TXT_END_DATE);
 		status_label = ui.find(incomingPaymentsTab, STATUS_LABEL_COMPONENT);
-		
-		toggleAutoReplyOn();
-		
 		incomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_INCOMING_PAYMENTS_TABLE);
 		incomingPaymentsTablePager = new ComponentPagingHandler(ui, this, incomingPaymentsTableComponent);
 		pnlIncomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE);
@@ -160,6 +157,9 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 
 	protected List<IncomingPayment> getIncomingPaymentsForUI(int startIndex, int limit) {
+		//Just a hack...
+		toggleAutoReplyOn();
+		
 		List<IncomingPayment> incomingPayments;
 		String strStartDate = ui.getText(fldStartDate);
 		String strEndDate = ui.getText(fldEndDate);
@@ -312,8 +312,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	public void showDateSelecter(Object textField) {
 		((UiGeneratorController) ui).showDateSelecter(textField);
 	}
-	
-	
 	
 //> INCOMING PAYMENT NOTIFICATION...
 	@SuppressWarnings("rawtypes")

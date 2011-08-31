@@ -13,14 +13,11 @@ import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.Incoming
 
 public class IncomingPaymentsDialogHandler extends IncomingPaymentsTabHandler {
 	private static final String XML_INCOMING_PAYMENTS_DIALOG = "/ui/plugins/paymentview/clients/dialogs/dlgIncomingPayments.xml";
-
 	private List<Client> selectedClients;
-
 
 	public IncomingPaymentsDialogHandler(UiGeneratorController ui, PaymentViewPluginController pluginController,	List<Client> selectedClients) {
 		super(ui, pluginController);
 		this.selectedClients = selectedClients;
-		this.refresh();
 	}
 
 	@Override
@@ -67,7 +64,6 @@ public class IncomingPaymentsDialogHandler extends IncomingPaymentsTabHandler {
 			} 
 			return listedIncomingPayments;
 		}
-		
 	}
 
 	public Object getDialog() {
