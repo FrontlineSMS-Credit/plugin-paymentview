@@ -9,11 +9,13 @@ import java.util.regex.Pattern;
 
 import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
+import net.frontlinesms.data.domain.SmsInternetServiceSettings;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
+import net.frontlinesms.messaging.sms.internet.SmsInternetService;
 import net.frontlinesms.payment.PaymentJob;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
@@ -26,6 +28,7 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
+import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
@@ -71,6 +74,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 //> INSTANCE PROPERTIES
 	protected Logger pvLog = Logger.getLogger(this.getClass());
 	private CService cService;
+	/** Settings for this service */
+	private PaymentServiceSettings settings;
 
 	//> DAOs
 	AccountDao accountDao;
@@ -86,7 +91,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	protected EventBus eventBus;
 	private TargetAnalytics targetAnalytics;
 	private ContactDao contactDao;
+	private Object paymentServiceSettingsDao;
 	
+	//configureModem
 	public void configureModem() throws PaymentServiceException {
 		try{
 			this.cService.doSynchronized(new SynchronizedWorkflow<Object>() {
@@ -105,7 +112,18 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		
 	}	
 	
-	//configureModem
+	/** @return the settings attached to this {@link SmsInternetService} instance. */
+	public PaymentServiceSettings getSettings() {
+		return settings;
+	}
+	
+	/**
+	 * Initialise the service using the supplied properties.
+	 * @see SmsInternetService#setSettings(SmsInternetServiceSettings)
+	 */
+	public void setSettings(PaymentServiceSettings settings) {
+		this.settings = settings;
+	}
 	
 	
 //> STK & PAYMENT ACCOUNT
@@ -560,6 +578,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.logMessageDao = pluginController.getLogMessageDao();
 		this.balance = Balance.getInstance().getLatest();
 		this.contactDao = pluginController.getUiGeneratorController().getFrontlineController().getContactDao();
+		this.paymentServiceSettingsDao = pluginController.getPaymentServiceSettingsDao();
 		this.registerToEventBus(
 			pluginController.getUiGeneratorController()
 			.getFrontlineController().getEventBus()

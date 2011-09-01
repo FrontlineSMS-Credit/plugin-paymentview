@@ -31,6 +31,7 @@ import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
@@ -61,6 +62,7 @@ public class PaymentViewPluginController extends BasePluginController
 	private CustomFieldDao customFieldDao;
 	private IncomingPaymentDao incomingPaymentDao;
 	private OutgoingPaymentDao outgoingPaymentDao;
+	private PaymentServiceSettingsDao paymentServiceSettingsDao;
 	private TargetDao targetDao;
 	private ServiceItemDao serviceItemDao;
 	private LogMessageDao logMessageDao;
@@ -96,6 +98,7 @@ public class PaymentViewPluginController extends BasePluginController
 		customFieldDao 		= (CustomFieldDao) applicationContext.getBean("customFieldDao");
 		incomingPaymentDao 	= (IncomingPaymentDao) applicationContext.getBean("incomingPaymentDao");
 		outgoingPaymentDao 	= (OutgoingPaymentDao) applicationContext.getBean("outgoingPaymentDao");
+		paymentServiceSettingsDao 	= (PaymentServiceSettingsDao) applicationContext.getBean("paymentServiceSettingsDao");
 		serviceItemDao 		= (ServiceItemDao) applicationContext.getBean("serviceItemDao");
 		targetDao 			= (TargetDao) applicationContext.getBean("targetDao");
 		logMessageDao       = (LogMessageDao) applicationContext.getBean("logMessageDao");
@@ -141,6 +144,10 @@ public class PaymentViewPluginController extends BasePluginController
 	
 	public OutgoingPaymentDao getOutgoingPaymentDao() {
 		return outgoingPaymentDao;
+	}
+	
+	public PaymentServiceSettingsDao getPaymentServiceSettingsDao() {
+		return paymentServiceSettingsDao;
 	}
 	
 	public ClientDao getClientDao() {

@@ -2,7 +2,11 @@ package net.frontlinesms.payment;
 
 import java.math.BigDecimal;
 
+import net.frontlinesms.data.domain.SmsInternetServiceSettings;
+import net.frontlinesms.messaging.sms.internet.SmsInternetService;
+
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 
 public interface PaymentService {
 	String getPin();
@@ -33,4 +37,13 @@ public interface PaymentService {
 	void checkBalance() throws PaymentServiceException;
 	void configureModem() throws PaymentServiceException;
 	void stop();
+	
+	/** @return the settings attached to this {@link PaymentService} instance. */
+	public PaymentServiceSettings getSettings();
+
+	/**
+	 * Initialise the service using the supplied properties.
+	 * @param settings
+	 */
+	public void setSettings(PaymentServiceSettings settings);
 }

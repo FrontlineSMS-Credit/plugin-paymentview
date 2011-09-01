@@ -1,5 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
+import java.util.Collection;
+
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
@@ -20,11 +22,12 @@ import net.frontlinesms.ui.handler.BaseTabHandler;
 import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
+import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
+import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.UpdateAuthorizationCodeDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings.MobilePaymentServiceSettingsInitialisationDialog;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance.BalanceEventNotification;
-import org.creditsms.plugins.paymentview.userhomepropeties.payment.service.PaymentServiceProperties;
 
 public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	private static final String BTN_CREATE_NEW_SERVICE = "btn_createNewService";
@@ -42,7 +45,8 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	private final PaymentViewPluginController pluginController;
 	private EventBus eventBus;
 	private LogMessageDao logMessageDao;
-	private PaymentServiceProperties paymentSettingsProp = PaymentServiceProperties.getInstance();
+	private PaymentServiceSettingsDao paymentServiceSettingsDao;
+//	private PaymentServiceProperties paymentSettingsProp = PaymentServiceProperties.getInstance();
 	
 	protected Logger pvLog = Logger.getLogger(this.getClass());
 
@@ -50,6 +54,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 		super(ui);
 		this.pluginController = pluginController;
 		this.logMessageDao = pluginController.getLogMessageDao();
+		this.paymentServiceSettingsDao = pluginController.getPaymentServiceSettingsDao();
 		eventBus = ui.getFrontlineController().getEventBus();
 		eventBus.registerObserver(this);
 		init();
@@ -133,13 +138,9 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 			__paymentService.stop();
 			//then notify listeners 
 			eventBus.notifyObservers(new PaymentServiceStoppedNotification(__paymentService));
-			//memory leaks?
+			paymentServiceSettingsDao.deletePaymentServiceSettings(__paymentService.getSettings());
+			//TODO -> list of payment service - delete only the selected one
 			pluginController.setPaymentService(null);
-			
-			paymentSettingsProp.setPaymentServiceClass(null);
-			paymentSettingsProp.setPin("");
-			paymentSettingsProp.setSmsModem("");
-			paymentSettingsProp.saveToDisk();
 		}else{
 			ui.alert("Please select an account to delete.");
 		}
@@ -151,32 +152,33 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 				if(notification instanceof SmsModemStatusNotification &&
 						((SmsModemStatusNotification) notification).getStatus() == SmsModemStatus.CONNECTED) {
 					final SmsModem connectedModem = ((SmsModemStatusNotification) notification).getService();
-					PaymentServiceProperties props = PaymentServiceProperties.getInstance();
-					if(props.getSmsModemSerial()!=null){
-						if(props.getSmsModemSerial().equals(connectedModem.getSerial())) {
-							// We've just connected the configured device, so start up the payment service...
-							//...if it's not already running!
-							MpesaPaymentService mpesaPaymentService = (MpesaPaymentService) props.initPaymentService();
-							if(mpesaPaymentService != null) {
-								if(props.getPin() != null) {
-									mpesaPaymentService.setPin(props.getPin());
-									mpesaPaymentService.setCService(connectedModem.getCService());
-									mpesaPaymentService.initDaosAndServices(pluginController);
-									EventBus eventBus = ui.getFrontlineController().getEventBus();
-									eventBus.registerObserver(mpesaPaymentService);
-									pluginController.setPaymentService(mpesaPaymentService);
-									eventBus.notifyObservers(new PaymentServiceStartedNotification(mpesaPaymentService));
+					Collection<PaymentServiceSettings> paymentServiceSettingsList = paymentServiceSettingsDao.getPaymentServiceAccounts();
+					if (!paymentServiceSettingsList.isEmpty()){
+						for (PaymentServiceSettings psSettings : paymentServiceSettingsList){
+							if (psSettings.getPsSmsModemSerial().equals(connectedModem.getSerial())) {
+								// We've just connected the configured device, so start up the payment service...
+								//...if it's not already running!
+								MpesaPaymentService mpesaPaymentService = (MpesaPaymentService) psSettings.initPaymentService();
+								if(mpesaPaymentService != null) {
+									if(psSettings.getPsPin() != null) {
+										mpesaPaymentService.setPin(psSettings.getPsPin());
+										mpesaPaymentService.setCService(connectedModem.getCService());
+										mpesaPaymentService.setSettings(psSettings);
+										mpesaPaymentService.initDaosAndServices(pluginController);
+										EventBus eventBus = ui.getFrontlineController().getEventBus();
+										eventBus.registerObserver(mpesaPaymentService);
+										//TODO -> add to list of paymentservices
+										pluginController.setPaymentService(mpesaPaymentService);
+										eventBus.notifyObservers(new PaymentServiceStartedNotification(mpesaPaymentService));										
+									}
+								} else {
+									ui.alert("Please setup payment service");
 								}
-								// TODO configure the payment service from the properties file
-								// TODO set the payment service in the plugin controller
-								// TODO start the payment service
-							} else {
-								ui.alert("Please setup payment service");
 							}
 						}	
 					} else {
 						ui.alert("Please setup payment service");
-					}
+					}				
 				}else if (notification instanceof BalanceEventNotification) {
 					ui.alert(((BalanceEventNotification)notification).getMessage());
 					SettingsTabHandler.this.refresh();

@@ -11,5 +11,6 @@
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.ServiceItem" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.Target" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.LogMessage" />
+    	<mapping class="org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings" />
 	</session-factory>
 </hibernate-configuration>

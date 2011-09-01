@@ -1,5 +1,8 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings;
 
+import java.math.BigDecimal;
+
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.messaging.sms.modem.SmsModem;
 import net.frontlinesms.payment.PaymentService;
@@ -8,6 +11,8 @@ import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
+import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.service.PaymentServiceProperties;
@@ -19,12 +24,12 @@ public class EnterPinDialog extends BaseDialog {
 	private static final String XML_ENTER_PIN = "/ui/plugins/paymentview/settings/dialogs/createnewpaymentsteps/dlgCreateNewAccountStep2.xml";
 	private final PaymentViewPluginController pluginController;
 	private final MpesaPaymentService paymentService;
+	private PaymentServiceSettings paymentServiceSettings;
 	private final SmsModem modem;
 	private Object pin;
 	private Object vpin;
-	private Class<? extends PaymentService> paymentServiceCls;
-
-	private PaymentServiceProperties paymentSettingsPropPin = PaymentServiceProperties.getInstance();
+//	private Class<? extends PaymentService> paymentServiceCls;
+	private PaymentServiceSettingsDao paymentServiceSettingsDao;
 
 	
 	private PaymentService initPaymentService(Class<?> paymentService) {
@@ -39,9 +44,11 @@ public class EnterPinDialog extends BaseDialog {
 	
 	public EnterPinDialog(UiGeneratorController ui, PaymentViewPluginController pluginController,Class<? extends PaymentService> paymentService, SmsModem modem) {
 		super(ui);		
-		this.paymentServiceCls = paymentService;
+//		this.paymentServiceCls = paymentService;
 		this.pluginController = pluginController;
 		this.paymentService = (MpesaPaymentService) initPaymentService(paymentService);
+		this.paymentServiceSettingsDao = pluginController.getPaymentServiceSettingsDao();
+		this.paymentServiceSettings = new PaymentServiceSettings(this.paymentService);
 		this.modem = modem;
 
 		init();
@@ -54,16 +61,17 @@ public class EnterPinDialog extends BaseDialog {
 		
 	}
 	
-	public void next() {
+	public void next() throws DuplicateKeyException {
 		setUpThePaymentService(ui.getText(pin), ui.getText(vpin));
 	}
 
-	public void setUpThePaymentService(final String pin, final String vPin) {			
+	public void setUpThePaymentService(final String pin, final String vPin) throws DuplicateKeyException {			
 		if(checkValidityOfPinFields(pin, vPin)){
 			paymentService.setPin(pin);
 			paymentService.setCService(modem.getCService());
 			paymentService.initDaosAndServices(pluginController);
-			persistPaymentService(pin);
+			persistPaymentServiceSettings(pin);
+			
 			removeDialog();
 			new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog("create", this);
 		} else {
@@ -71,12 +79,14 @@ public class EnterPinDialog extends BaseDialog {
 		}
 	}
 	
-	private void persistPaymentService(String pin){
-		String modemSerial = this.modem.getSerial().toString();
-		paymentSettingsPropPin.setPaymentServiceClass(this.paymentServiceCls);
-		paymentSettingsPropPin.setSmsModem(modemSerial);
-		paymentSettingsPropPin.setPin(pin);
-		paymentSettingsPropPin.saveToDisk();
+	private void persistPaymentServiceSettings(String pin)throws DuplicateKeyException{
+		paymentServiceSettings.setPsPin(pin);
+		paymentServiceSettings.setPsSmsModemSerial(this.modem.getSerial().toString());
+		paymentServiceSettings.setPsBalance(new BigDecimal(0));
+		
+		paymentService.setSettings(paymentServiceSettings);
+		paymentServiceSettingsDao.savePaymentServiceSettings(paymentServiceSettings);
+		
 	}
 	
 	public void create() {
