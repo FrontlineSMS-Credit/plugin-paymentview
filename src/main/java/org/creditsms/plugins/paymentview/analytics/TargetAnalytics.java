@@ -148,16 +148,16 @@ public class TargetAnalytics {
 		return Status.INACTIVE;
 	}
 
-	public BigDecimal getDateLastPaid(long tartgetId){
-		//FIXME: WHAT is going on here? date last paid should return a date or?
-	    List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(tartgetId);
-	    if(incomingPayments.size()==0){
-	    	return new BigDecimal("0.00");
-	    }else{
-		    int lastPoz = incomingPayments.size()-1;
-		    return incomingPayments.get(lastPoz).getAmountPaid();	
-	    }
-	}
+//	public BigDecimal getDateLastPaid(long tartgetId){
+//		//FIXME: WHAT is going on here? date last paid should return a date or?
+//	    List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(tartgetId);
+//	    if(incomingPayments.size()==0){
+//	    	return new BigDecimal("0.00");
+//	    }else{
+//		    int lastPoz = incomingPayments.size()-1;
+//		    return incomingPayments.get(lastPoz).getAmountPaid();	
+//	    }
+//	}
 	
 	private Long getDateDiffDays(long startTime, long endTime){
 	    long diff = endTime - startTime;

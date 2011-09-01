@@ -395,9 +395,9 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			      case MONTHLY_DUE:
 			    	message.replace(fe.getMarker(), targetAnalytics.getMonthlyAmountDue().toString());
 			        break;
-//			      case MONTHLY_DUEDATE:
-//			    	message.replace(fe.getMarker(), targetAnalytics.getMo.toString());
-//			        break;
+			      case END_MONTH_INTERVAL:
+			    	message.replace(fe.getMarker(), PvUtils.formatDate(targetAnalytics.getEndMonthInterval()));
+			        break;
 			      case MONTHLY_SAVINGS:
 			    	  message.replace(fe.getMarker(), targetAnalytics.getMonthlyTarget().toString());
 			        break;
