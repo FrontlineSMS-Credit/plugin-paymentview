@@ -67,7 +67,7 @@ public class PaymentViewPluginController extends BasePluginController
 	
 	private TargetAnalytics targetAnalytics;
 	
-	private PaymentViewThinletTabController tabController;
+	private PaymentViewThinletTabController paymentViewThinletTabController;
 	private UiGeneratorController ui;
 	
 	/** Currently we will allow only one payment service to be configured TO MAKE THINGS SIMPLER */
@@ -125,9 +125,9 @@ public class PaymentViewPluginController extends BasePluginController
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
 	@Override
 	public Object initThinletTab(UiGeneratorController ui) {
-		tabController = new PaymentViewThinletTabController(this, ui);
+		paymentViewThinletTabController = new PaymentViewThinletTabController(this, ui);
 		this.ui = ui;
-		return tabController.getPaymentViewTab();
+		return paymentViewThinletTabController.getPaymentViewTab();
 	}
 	
 //> ACCESSORS
@@ -180,6 +180,14 @@ public class PaymentViewPluginController extends BasePluginController
 		else {
 			return Arrays.asList(new PaymentService[] { this.paymentService });
 		}
+	}
+
+	public void updateStatusBar(String message) {
+		paymentViewThinletTabController.updateStatusBar(message);
+	}
+	
+	public void clearStatusBar(String message) {
+		updateStatusBar("");
 	}
 
 	public void setPaymentService(PaymentService service) {

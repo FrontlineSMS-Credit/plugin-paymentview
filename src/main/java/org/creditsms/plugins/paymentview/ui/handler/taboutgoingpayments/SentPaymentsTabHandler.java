@@ -104,7 +104,6 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 		List<OutgoingPayment> sentPayments = new ArrayList<OutgoingPayment>();
 		sentPayments = getSentPaymentsForUI(startIndex, limit);
 		Object[] listItems = toThinletComponents(sentPayments);
-
 		return new PagedListDetails(totalItemCount, listItems);
 	}
 

@@ -34,16 +34,16 @@ public class LogMessage {
 	private long id;
 
 	@Column(name = FIELD_LOG_TIMESTAMP)
-	private Long logTimestamp;
+	private Long logTimestamp; // TODO rename as 'timestamp' - we know it is related to the log
 
 	@Column(name = FIELD_LOG_LEVEL)
-	private LogLevel logLevel;
+	private LogLevel logLevel; // TODO rename as 'level' - we know it is related to the log
 	
 	@Column(name = FIELD_LOG_TITLE)
-	private String logTitle;
+	private String logTitle; // TODO rename as 'title' - we know it is related to the log
 
 	@Column(name = FIELD_LOG_CONTENT)
-	private String logContent;
+	private String logContent; // TODO rename as 'content' - we know it is related to the log
 	
 	public enum Field implements EntityField<LogMessage> {
 		ID(FIELD_ID),
@@ -81,7 +81,8 @@ public class LogMessage {
 		this.logContent = logContent;
 	}
 
-	public static enum LogLevel {
+	// TODO move this to top of class
+	public static enum LogLevel { // TODO rename as Level - we know it is related to the log
 		INFO("Info","/icons/log_info.png"),
 		WARNING("Warning", "/icons/log_warning.png"),
 		ERROR("Error", "/icons/log_error.png");
@@ -121,27 +122,27 @@ public class LogMessage {
 		this.logTimestamp = timestamp;
 	}
 	
-	public LogLevel getLogLevel() {
+	public LogLevel getLogLevel() { // TODO rename as 'getLevel' - we know it is related to the log
 		return logLevel;
 	}
 
-	public void setLogLevel(LogLevel logLevel) {
+	public void setLogLevel(LogLevel logLevel) { // TODO rename as 'setLevel' - we know it is related to the log
 		this.logLevel = logLevel;
 	}
 
-	public String getLogTitle() {
+	public String getLogTitle() { // TODO rename as 'getTitle' - we know it is related to the log
 		return logTitle;
 	}
 
-	public void setLogTitle(String logTitle) {
+	public void setLogTitle(String logTitle) { // TODO rename as 'setTitle' - we know it is related to the log
 		this.logTitle = logTitle;
 	}
 
-	public String getLogContent() {
+	public String getLogContent() { // TODO rename as 'getContent)(' - we know it is related to the log
 		return logContent;
 	}
 
-	public void setLogContent(String logContent) {
+	public void setLogContent(String logContent) { // TODO rename as 'setContent' - we know it is related to the log
 		this.logContent = logContent;
 	}
 
@@ -203,5 +204,10 @@ public class LogMessage {
 	 */
 	public boolean isSelected() {
 		return selected;
+	}
+
+//> FACTORY METHODS
+	public static LogMessage error(String title, String content) {
+		return new LogMessage(LogLevel.ERROR, title, content);
 	}
 }
