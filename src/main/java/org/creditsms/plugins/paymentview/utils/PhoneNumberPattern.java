@@ -1,4 +1,4 @@
-package org.creditsms.plugins.paymentview.paymentsettings.phone.no.pattern;
+package org.creditsms.plugins.paymentview.utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

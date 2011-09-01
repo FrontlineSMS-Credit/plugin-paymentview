@@ -235,7 +235,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			public void run() {
 				try {
 					final IncomingPayment payment = new IncomingPayment();
-					
 					// retrieve applicable account if the client exists
 					Account account = getAccount(message);
 					updateStatus(Status.RECEIVING);

@@ -138,6 +138,7 @@ public class TargetAnalytics {
 	}
 
 	public BigDecimal getDateLastPaid(long tartgetId){
+		//FIXME: WHAT is going on here? date last paid should return a date or?
 	    List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(tartgetId);
 	    if(incomingPayments.size()==0){
 	    	return new BigDecimal("0.00");

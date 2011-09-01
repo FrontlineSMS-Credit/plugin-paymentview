@@ -19,17 +19,26 @@ import net.frontlinesms.ui.handler.PagedListDetails;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
+import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
+import org.creditsms.plugins.paymentview.data.domain.Account;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
+import org.creditsms.plugins.paymentview.data.domain.Target;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
+import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.AutoReplyPaymentsDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.EditIncomingPaymentDialogHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.FormatterMarkerType;
 import org.creditsms.plugins.paymentview.userhomepropeties.incomingpayments.AutoReplyProperties;
 import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
+import org.creditsms.plugins.paymentview.utils.PvUtils;
 
 public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		PagedComponentItemProvider, EventObserver{
@@ -69,17 +78,25 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	protected int totalItemCount = 0;
 	private ClientDao clientDao;
 	private FrontlineSMS frontlineController;
+	private TargetAnalytics targetAnalytics;
+	private AccountDao accountDao;
+	private TargetDao targetDao;
 
 
 	public IncomingPaymentsTabHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController) {
 		super(ui);
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
-		clientDao = pluginController.getClientDao();
+		this.clientDao = pluginController.getClientDao();
 		this.logMessageDao = pluginController.getLogMessageDao();
 		this.pluginController = pluginController;
-		frontlineController = ui.getFrontlineController();
-		frontlineController.getEventBus().registerObserver(this);
+		this.frontlineController = ui.getFrontlineController();
+		this.frontlineController.getEventBus().registerObserver(this);
+		this.targetAnalytics = new TargetAnalytics();
+		this.targetAnalytics.setIncomingPaymentDao(pluginController.getIncomingPaymentDao());
+		this.targetDao = pluginController.getTargetDao();
+		this.targetAnalytics.setTargetDao(targetDao);
+		this.accountDao = pluginController.getAccountDao();
 		init();
 	}
 	
@@ -89,9 +106,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		fldStartDate = ui.find(incomingPaymentsTab, TXT_START_DATE);
 		fldEndDate = ui.find(incomingPaymentsTab, TXT_END_DATE);
 		status_label = ui.find(incomingPaymentsTab, STATUS_LABEL_COMPONENT);
-		
-		toggleAutoReplyOn();
-		
 		incomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_INCOMING_PAYMENTS_TABLE);
 		incomingPaymentsTablePager = new ComponentPagingHandler(ui, this, incomingPaymentsTableComponent);
 		pnlIncomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE);
@@ -160,6 +174,9 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 
 	protected List<IncomingPayment> getIncomingPaymentsForUI(int startIndex, int limit) {
+		//Just a hack...
+		toggleAutoReplyOn();
+		
 		List<IncomingPayment> incomingPayments;
 		String strStartDate = ui.getText(fldStartDate);
 		String strEndDate = ui.getText(fldEndDate);
@@ -313,8 +330,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		((UiGeneratorController) ui).showDateSelecter(textField);
 	}
 	
-	
-	
 //> INCOMING PAYMENT NOTIFICATION...
 	@SuppressWarnings("rawtypes")
 	public void notify(final FrontlineEventNotification notification) {
@@ -328,10 +343,73 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				if (entity instanceof IncomingPayment) {
 					IncomingPaymentsTabHandler.this.refresh();
 					if(autoReplyProperties.isAutoReplyOn()){
-						//Send Payment...
+						IncomingPaymentsTabHandler.this.replyToPayment((IncomingPayment) entity);
 					}
 				}
 			}
 		}.execute();
+	}
+
+	protected void replyToPayment(IncomingPayment incomingPayment) {
+		String message = replaceFormats(incomingPayment, autoReplyProperties.getMessage());
+		frontlineController.sendTextMessage(incomingPayment.getPhoneNumber(), message);
+	}
+	
+	Account getAccount(String phoneNumber) {
+		Client client = clientDao.getClientByPhoneNumber(phoneNumber);
+		if (client != null) {
+			List<Account> activeNonGenericAccountsByClientId = accountDao.getActiveNonGenericAccountsByClientId(client.getId());
+			if(!activeNonGenericAccountsByClientId.isEmpty()){
+				return activeNonGenericAccountsByClientId.get(0);
+			} else {
+				return accountDao.getGenericAccountsByClientId(client.getId());
+			}
+		}
+		return null;
+	}
+	
+	private String replaceFormats(IncomingPayment incomingPayment, String message) {
+		FormatterMarkerType[] formatEnums = FormatterMarkerType.values();
+		final Target tgt = targetDao.getActiveTargetByAccount(
+			getAccount(incomingPayment.getPhoneNumber()).getAccountNumber()
+		);
+		
+		for (FormatterMarkerType fe : formatEnums) {
+			if(message.contains(fe.getMarker())){
+				switch (fe) {
+			      case CLIENT_NAME:
+			    	message.replace(fe.getMarker(), incomingPayment.getPaymentBy());
+			        break;
+			      case AMOUNT_PAID:
+			    	message.replace(fe.getMarker(), incomingPayment.getAmountPaid().toString());
+			        break;
+			      case AMOUNT_REMAINING:
+			    	message.replace(fe.getMarker(), targetAnalytics.getLastAmountPaid(tgt.getId()).toString());
+			        break;
+			      case DATE_PAID:
+			    	  //message.replace(fe.getMarker(), PvUtils.formatDate(targetAnalytics.getDateLastPaid(tgt.getId())));
+			        break;
+			      case DAYS_REMAINING:
+			    	  message.replace(fe.getMarker(), targetAnalytics.getDaysRemaining(tgt.getId()).toString());
+			        break;
+			      case MONTHLY_DUE:
+			    	message.replace(fe.getMarker(), targetAnalytics.getMonthlyAmountDue().toString());
+			        break;
+//			      case MONTHLY_DUEDATE:
+//			    	message.replace(fe.getMarker(), targetAnalytics.getMo.toString());
+//			        break;
+			      case MONTHLY_SAVINGS:
+			    	  message.replace(fe.getMarker(), targetAnalytics.getMonthlyTarget().toString());
+			        break;
+			      case RECEPIENT_NAME:
+			    	message.replace(fe.getMarker(), incomingPayment.getPaymentBy());
+			        break;
+			      case TARGET_ENDDATE:
+			    	  message.replace(fe.getMarker(), PvUtils.formatDate(targetAnalytics.getEndMonthInterval()));
+			        break;
+			    }
+			}
+		}
+		return message;
 	}
 }
