@@ -14,7 +14,6 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.OutgoingPaymentsImportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SchedulePaymentAuthDialogHandler;
@@ -42,10 +41,6 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	private Object importPaymentsTab;
 	private OutgoingPaymentDao outgoingPaymentDao;
 	private MpesaPaymentService paymentService;
-	private LogMessageDao logMessageDao;
-
-	private int paymentCountPositive;
-	private int paymentCountNegative;
 
 	private List<OutgoingPayment> outgoingPaymentsLst;
 
@@ -55,7 +50,6 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 		clientDao = pluginController.getClientDao();
 		this.pluginController = pluginController;
 		outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
-		logMessageDao = pluginController.getLogMessageDao();
 		importPaymentsTab = ui.find(tabOutgoingPayments, TAB_IMPORTNEWPAYMENTS);
 		init();
 	}
@@ -176,8 +170,6 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 		try {
 			List<OutgoingPayment> newPaymentsLst = getOutgoingPaymentsLst();
 			int itemPaymentServices = 0;
-			paymentCountNegative = 0;
-			paymentCountPositive = 0;
 			if (newPaymentsLst != null){
 				for(OutgoingPayment o:newPaymentsLst){
 					outgoingPaymentDao.saveOutgoingPayment(getTheOutgoingPayment(o));
