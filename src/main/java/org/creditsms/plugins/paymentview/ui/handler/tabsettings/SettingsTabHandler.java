@@ -14,6 +14,7 @@ import net.frontlinesms.payment.PaymentServiceStartedNotification;
 import net.frontlinesms.payment.PaymentServiceStoppedNotification;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService.BalanceFraudNotification;
+import net.frontlinesms.payment.safaricom.MpesaPaymentService.PaymentStatusEventNotification;
 import net.frontlinesms.ui.UiDestroyEvent;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
@@ -179,19 +180,21 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 					} else {
 						ui.alert("Please setup payment service");
 					}				
-				}else if (notification instanceof BalanceEventNotification) {
+				} else if (notification instanceof BalanceEventNotification) {
 					ui.alert(((BalanceEventNotification)notification).getMessage());
 					SettingsTabHandler.this.refresh();
-				}else if (notification instanceof PaymentServiceStartedNotification) {
+				} else if (notification instanceof PaymentServiceStartedNotification) {
 					SettingsTabHandler.this.refresh();
 					ui.setEnabled(ui.find(settingsTab, BTN_CREATE_NEW_SERVICE), false);
-				}else if (notification instanceof PaymentServiceStoppedNotification) {
+				} else if (notification instanceof PaymentServiceStoppedNotification) {
 					SettingsTabHandler.this.refresh();
 					ui.setEnabled(ui.find(settingsTab, BTN_CREATE_NEW_SERVICE), true);
-				}else if(notification instanceof BalanceFraudNotification){
+				} else if (notification instanceof BalanceFraudNotification){
 					ui.alert(((BalanceFraudNotification)notification).getMessage());
 					SettingsTabHandler.this.refresh();
-				}else if (notification instanceof UiDestroyEvent) {
+				} else if (notification instanceof PaymentStatusEventNotification){
+					pluginController.updateStatusBar(((PaymentStatusEventNotification)notification).getPaymentStatus().toString());
+				} else if (notification instanceof UiDestroyEvent) {
 					if(((UiDestroyEvent) notification).isFor(ui)) {
 						ui.getFrontlineController().getEventBus().unregisterObserver(SettingsTabHandler.this);
 					}

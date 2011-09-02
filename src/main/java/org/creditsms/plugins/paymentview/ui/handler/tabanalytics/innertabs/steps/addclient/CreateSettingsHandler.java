@@ -24,6 +24,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	private static final String TXT_START_DATE = "txt_StartDate";
 	private static final String ENTER_NEW_TARGET = "Enter New Target";
 	private static final String XML_STEP_CREATE_SETTINGS = "/ui/plugins/paymentview/analytics/addclient/stepcreatesettings.xml";
+	private static String CONFIRM_ACCEPT_PARSED_DATE = "";
 	
 	private final AddClientTabHandler addClientTabHandler;
 	private final SelectClientsHandler previousSelectClientsHandler;
@@ -33,6 +34,9 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	private Object pnlFields;
 	private Object txtStartDate;
 	private Object txtEndDate;
+	
+	private Object dialogConfimParsedEndDate;
+	
 	private Date startDate;
 	private Date endDate;
 	private ServiceItem selectedServiceItem;
@@ -134,6 +138,9 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 			calEndDate.setTime(endDate);
 			calEndDate = setEndOfDay(calEndDate);
 			
+			int startDay = calStartDate.get(Calendar.DAY_OF_MONTH);
+			int endDay = calEndDate.get(Calendar.DAY_OF_MONTH);
+			
 			if(calStartDate.get(Calendar.YEAR)==calEndDate.get(Calendar.YEAR)){
 				if(calStartDate.get(Calendar.MONTH)==calEndDate.get(Calendar.MONTH)){
 					ui.alert("Target duration cannot be less than a month.");
@@ -155,18 +162,32 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 				}
 			} else {
 				int monthDiff = getMonthsDiffFromStart(calEndDate, calStartDate);
+				String methodToBeCalled = "setParsedEndDate";
+
 				calEndDate.setTime(calStartDate.getTime());
 				calEndDate.add(Calendar.MONTH, monthDiff);
 				calEndDate.add(Calendar.DATE, -1);
 				calEndDate = setEndOfDayFormat(calEndDate);
-				this.endDate = calEndDate.getTime();
-				this.startDate = calStartDate.getTime();
-				return true;
+				CONFIRM_ACCEPT_PARSED_DATE="The selected end date is incorrect. The parsed end date is: "+ calEndDate.getTime() +". Do you want to proceed?";
+				
+				if(startDay!=(endDay+2)){		
+					dialogConfimParsedEndDate = ((UiGeneratorController) ui).showConfirmationDialog(methodToBeCalled, this, CONFIRM_ACCEPT_PARSED_DATE);
+					return false;
+				} else {
+					this.endDate = calEndDate.getTime();
+					this.startDate = calStartDate.getTime();
+					return true;
+				}
 			}
 		}else{
 			ui.alert("Invalid End Date");
 			return false;
 		}
+	}
+	
+	public boolean setParsedEndDate(){
+		ui.alert("mimii!");
+		return false;
 	}
 	
 	public boolean parseDateRange(){

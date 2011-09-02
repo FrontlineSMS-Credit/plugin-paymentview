@@ -7,8 +7,11 @@ import java.util.regex.Pattern;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.payment.PaymentJob;
+import net.frontlinesms.payment.PaymentServiceException;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
+import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 
 public class MpesaPayBillService extends MpesaPaymentService {
 	private static final String STR_PAYBILL_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n"
@@ -28,6 +31,7 @@ public class MpesaPayBillService extends MpesaPaymentService {
 		+ "Time: ([0-2]\\d|[3][0-1])/(0[1-9]|1[0-2])/(20[1][1-2]) (([2][0-3]|[0-1]\\d):([0-5]\\d):([0-5]\\d))";
 	
 	private static final Pattern BALANCE_REGEX_PATTERN = Pattern.compile(STR_BALANCE_REGEX_PATTERN);
+	
 	@Override
 	protected boolean isValidBalanceMessage(FrontlineMessage message){
 		return BALANCE_REGEX_PATTERN.matcher(message.getTextContent()).matches();
@@ -35,11 +39,11 @@ public class MpesaPayBillService extends MpesaPaymentService {
 	
 	@Override
 	protected void processBalance(FrontlineMessage message){
-		new PaymentJob() {
+		queueJob(new PaymentJob() {
 			public void run() {
-				
+				// FIXME this appears to do nothing
 			}
-		}.execute();
+		});
 	}
 	
 	@Override
@@ -82,10 +86,14 @@ public class MpesaPayBillService extends MpesaPaymentService {
 	boolean isMessageTextValid(String messageText) {
 		return PAYBILL_REGEX_PATTERN.matcher(messageText).matches();
 	}
+	
+	public void makePayment(Client client, OutgoingPayment op)
+			throws PaymentServiceException {
+		throw new PaymentServiceException("Making payments is not possible with a PayBill account.");
+	}
 
 	@Override
 	public String toString() {
 		return "Mpesa Kenya: Paybill Service";
 	}
-
 }

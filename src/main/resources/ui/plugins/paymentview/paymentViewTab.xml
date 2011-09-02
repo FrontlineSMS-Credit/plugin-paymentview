@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tab name=":paymentView" text="i18n.plugins.paymentview.manager" icon="/icons/big_creditsms.png">
-	<panel  bottom="9" columns="2" gap="9" left="9" top="9" weightx="1" weighty="1">
-		<panel columns="1" gap="9" right="4" top="9" weighty="1">
+	<panel bottom="5" columns="2" gap="10" left="5" top="5" weightx="1" weighty="1">
+		<panel columns="1" gap="10" right="5" top="5" weighty="1">
 	    	<label icon="/icons/header/paymentView.png" valign="top"/>
 	    	<panel weighty="1"/>
 	    	<button tooltip="i18n.tooltip.click.for.help" valign="bottom" action="showHelpPage('paymentview.htm')" icon="/icons/big_help.png" type="link"/>
 	    </panel>
-		<panel columns="1" gap="9" right="9" weighty="1" weightx="1">
+		<panel columns="1" gap="10" right="5" weighty="1" weightx="1">
 			<tabbedpane name="tabP_mainPane" weightx="1" weighty="1"/>
+			<label name="statusBar" text="..."/>
 		</panel>
 	</panel>
 </tab>
