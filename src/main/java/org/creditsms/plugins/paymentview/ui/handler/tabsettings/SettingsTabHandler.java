@@ -13,6 +13,7 @@ import net.frontlinesms.payment.PaymentServiceStoppedNotification;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService.BalanceFraudNotification;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService.PaymentStatusEventNotification;
+import net.frontlinesms.payment.safaricom.MpesaPaymentService.Status;
 import net.frontlinesms.ui.UiDestroyEvent;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
@@ -167,6 +168,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 									eventBus.registerObserver(mpesaPaymentService);
 									pluginController.setPaymentService(mpesaPaymentService);
 									eventBus.notifyObservers(new PaymentServiceStartedNotification(mpesaPaymentService));
+									mpesaPaymentService.updateStatus(Status.PAYMENTSERVICE_ON);
 								}
 								// TODO configure the payment service from the properties file
 								// TODO set the payment service in the plugin controller

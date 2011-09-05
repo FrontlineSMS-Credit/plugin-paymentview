@@ -20,7 +20,6 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
-import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
@@ -72,7 +71,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private Object dialogConfirmation;
 	private Object fldStartDate;
 	private Object fldEndDate;
-	private Object dialogAutoReplyPayments;
 	private Date startDate;
 	private Date endDate;
 	protected int totalItemCount = 0;
@@ -122,7 +120,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 
 	public void toggleAutoReplyOn() {
-		boolean was_selected = autoReplyProperties.isAutoReplyOn(); 
+		//boolean was_selected = autoReplyProperties.isAutoReplyOn(); 
 		autoReplyProperties.toggleAutoReply();
 		boolean autoReplyOn = autoReplyProperties.isAutoReplyOn();
 		ui.setIcon(status_label, autoReplyOn ? ICON_STATUS_TRUE : ICON_STATUS_FALSE);
@@ -369,43 +367,55 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 	
 	private String replaceFormats(IncomingPayment incomingPayment, String message) {
+		String formed_message = "";
 		FormatterMarkerType[] formatEnums = FormatterMarkerType.values();
 		final Target tgt = targetDao.getActiveTargetByAccount(
 			getAccount(incomingPayment.getPhoneNumber()).getAccountNumber()
 		);
+		targetAnalytics.computeAnalyticsIntervalDatesAndSavings(tgt.getId());
 		
 		for (FormatterMarkerType fe : formatEnums) {
 			if(message.contains(fe.getMarker())){
 				switch (fe) {
 			      case CLIENT_NAME:
-			    	message.replace(fe.getMarker(), incomingPayment.getPaymentBy());
+			    	  formed_message = message.replace(fe.getMarker(), incomingPayment.getPaymentBy());
+			    	  message = formed_message ;
 			        break;
 			      case AMOUNT_PAID:
-			    	message.replace(fe.getMarker(), incomingPayment.getAmountPaid().toString());
+			    	  formed_message = message.replace(fe.getMarker(), incomingPayment.getAmountPaid().toString());
+			    	  message = formed_message ;
 			        break;
 			      case AMOUNT_REMAINING:
-			    	message.replace(fe.getMarker(), targetAnalytics.getLastAmountPaid(tgt.getId()).toString());
+			    	  formed_message = message.replace(fe.getMarker(), tgt.getServiceItem().getAmount().subtract(targetAnalytics.getAmountSaved(tgt.getId())).toString());
+			    	  message = formed_message ;
 			        break;
 			      case DATE_PAID:
-			    	  //message.replace(fe.getMarker(), PvUtils.formatDate(targetAnalytics.getDateLastPaid(tgt.getId())));
+			    	  formed_message = message.replace(fe.getMarker(), PvUtils.formatDate(incomingPayment.getTimePaid()));
+			    	  message = formed_message ;
 			        break;
 			      case DAYS_REMAINING:
-			    	  message.replace(fe.getMarker(), targetAnalytics.getDaysRemaining(tgt.getId()).toString());
+			    	  formed_message = message.replace(fe.getMarker(), targetAnalytics.getDaysRemaining(tgt.getId()).toString());
+			    	  message = formed_message ;
 			        break;
 			      case MONTHLY_DUE:
-			    	message.replace(fe.getMarker(), targetAnalytics.getMonthlyAmountDue().toString());
+			    	  formed_message = message.replace(fe.getMarker(), targetAnalytics.getMonthlyAmountDue().toString());
+			    	  message = formed_message ;
 			        break;
-//			      case MONTHLY_DUEDATE:
-//			    	message.replace(fe.getMarker(), targetAnalytics.getMo.toString());
-//			        break;
+			      case MONTHLY_DUEDATE:
+			    	  formed_message = message.replace(fe.getMarker(), PvUtils.formatDate(targetAnalytics.getEndMonthInterval()));
+			    	  message = formed_message ;
+			        break;
 			      case MONTHLY_SAVINGS:
-			    	  message.replace(fe.getMarker(), targetAnalytics.getMonthlyTarget().toString());
+			    	  formed_message = message.replace(fe.getMarker(), targetAnalytics.getMonthlyAmountSaved().toString());
+			    	  message = formed_message ;
 			        break;
 			      case RECEPIENT_NAME:
-			    	message.replace(fe.getMarker(), incomingPayment.getPaymentBy());
+			    	  formed_message = message.replace(fe.getMarker(), incomingPayment.getPaymentBy());
+			    	  message = formed_message ;
 			        break;
 			      case TARGET_ENDDATE:
-			    	  message.replace(fe.getMarker(), PvUtils.formatDate(targetAnalytics.getEndMonthInterval()));
+			    	  formed_message = message.replace(fe.getMarker(), PvUtils.formatDate(tgt.getEndDate()));
+			    	  message = formed_message ;
 			        break;
 			    }
 			}

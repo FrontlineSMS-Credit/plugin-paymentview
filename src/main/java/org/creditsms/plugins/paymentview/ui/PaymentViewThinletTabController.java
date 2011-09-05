@@ -5,6 +5,7 @@
 package org.creditsms.plugins.paymentview.ui;
 
 import net.frontlinesms.BuildProperties;
+
 import net.frontlinesms.plugins.BasePluginThinletTabController;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;

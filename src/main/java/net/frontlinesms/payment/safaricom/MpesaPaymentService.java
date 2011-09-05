@@ -78,6 +78,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		CONFIGURE_STARTED("Configuring Modem ..."),
 		CONFIGURE_COMPLETE("Modem Configuration Complete."),
 		
+		PAYMENTSERVICE_OFF("Payment Service Not Setup."),
+		PAYMENTSERVICE_ON("Payment Service is now Setup."),
+		
 		ERROR("Error occurred.");
 		
 		private final String statusMessage;
@@ -262,7 +265,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 								payment.getAccount().setActiveAccount(false);
 								accountDao.updateAccount(payment.getAccount());
 							}
-
+							updateStatus(Status.PROCESSED);
 						} else {
 							//account is a generic one(standard) or a non-generic without any active target(paybill)
 							payment.setAccount(account);
@@ -276,6 +279,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							performIncominPaymentFraudCheck(message, payment);
 							
 							incomingPaymentDao.saveIncomingPayment(payment);
+							updateStatus(Status.PROCESSED);
 						}
 					} else {
 						// paybill - account does not exist (typing error) but client exists
