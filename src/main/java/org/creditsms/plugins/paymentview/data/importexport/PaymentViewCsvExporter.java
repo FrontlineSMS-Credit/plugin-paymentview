@@ -155,7 +155,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						PaymentViewCsvUtils.MARKER_PAYMENT_BY,
 						incomingPayment.getPaymentBy(),
 						PaymentViewCsvUtils.MARKER_PHONE_NUMBER,
-						PvUtils.formatPhoneForExcel(incomingPayment.getPhoneNumber() + "\""),
+						PvUtils.formatPhoneForExcel(incomingPayment.getPhoneNumber()),
 						PaymentViewCsvUtils.MARKER_AMOUNT_PAID,
 						incomingPayment.getAmountPaid().toString(),
 						PaymentViewCsvUtils.MARKER_TIME_PAID,

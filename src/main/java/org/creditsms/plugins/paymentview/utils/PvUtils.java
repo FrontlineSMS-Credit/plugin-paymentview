@@ -35,6 +35,6 @@ public class PvUtils {
 	}
 
 	public static String formatPhoneForExcel(String phoneNumber) {
-		return "=\"" + phoneNumber;
+		return "=\"" + phoneNumber + "\"";
 	}
 }
