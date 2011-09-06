@@ -339,10 +339,10 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		
 				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
 				if (entity instanceof IncomingPayment) {
-					IncomingPaymentsTabHandler.this.refresh();
 					if(autoReplyProperties.isAutoReplyOn()){
 						IncomingPaymentsTabHandler.this.replyToPayment((IncomingPayment) entity);
 					}
+					IncomingPaymentsTabHandler.this.refresh();
 				}
 			}
 		}.execute();
