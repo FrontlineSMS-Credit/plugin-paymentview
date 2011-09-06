@@ -27,4 +27,10 @@ public class PvUtils {
 	public static String formatDate(Long timePaid) {
 		return formatDate(new Date(timePaid));
 	}
+
+	public static String parsePhoneFromExcel(String phoneNumber) {
+		phoneNumber.replace("\"", "");
+		phoneNumber.replace("=", "");
+		return phoneNumber;
+	}
 }
