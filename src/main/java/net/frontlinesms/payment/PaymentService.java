@@ -1,8 +1,7 @@
 package net.frontlinesms.payment;
 
-import java.math.BigDecimal;
-
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 
 public interface PaymentService {
 	String getPin();
@@ -29,7 +28,7 @@ public interface PaymentService {
 		}
 	}
 	
-	void makePayment(Client client, BigDecimal amount) throws PaymentServiceException;
+	void makePayment(Client client, OutgoingPayment outgoingPayment) throws PaymentServiceException;
 	void checkBalance() throws PaymentServiceException;
 	void configureModem() throws PaymentServiceException;
 	void stop();

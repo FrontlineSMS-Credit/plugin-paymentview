@@ -5,6 +5,7 @@
 package org.creditsms.plugins.paymentview.ui;
 
 import net.frontlinesms.BuildProperties;
+
 import net.frontlinesms.plugins.BasePluginThinletTabController;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -26,6 +27,7 @@ public class PaymentViewThinletTabController extends
 		BasePluginThinletTabController<PaymentViewPluginController> implements
 		ThinletUiEventHandler {
 
+	private static final String STATUS_BAR = "statusBar";
 	private static final String TABP_MAIN_PANE = "tabP_mainPane";
 	private static final String XML_PAYMENT_VIEW_TAB = "/ui/plugins/paymentview/paymentViewTab.xml";
 
@@ -41,6 +43,7 @@ public class PaymentViewThinletTabController extends
 	private PvDebugTabController cdtController;
 //	private ExportTabHandler exportTab;
 	private LogTabHandler logsTab;
+	private Object statusBar;
 
 	/**
 	 * 
@@ -59,6 +62,8 @@ public class PaymentViewThinletTabController extends
 	public void initTabs() {	
 		this.paymentViewTab = ui.loadComponentFromFile(XML_PAYMENT_VIEW_TAB, this);
 			
+		statusBar = ui.find(this.paymentViewTab, STATUS_BAR);
+		
 		mainPane = ui.find(this.paymentViewTab, TABP_MAIN_PANE);
 		clientsTab = new ClientsTabHandler(ui, getPluginController());
 		clientsTab.refresh();
@@ -96,6 +101,10 @@ public class PaymentViewThinletTabController extends
 			cdtController.setMessageDao(ui.getFrontlineController().getMessageDao());
 			ui.add(mainPane, cdtController.getTab());
 		}
+	}
+	
+	public void updateStatusBar(String message){
+		ui.setText(statusBar, message);
 	}
 
 	/**

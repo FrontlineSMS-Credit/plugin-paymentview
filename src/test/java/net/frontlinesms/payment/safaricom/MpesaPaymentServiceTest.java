@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -37,6 +38,7 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment.Status;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
@@ -256,7 +258,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		mpesaPaymentService.setPin("1234");
 		
 		// when
-		mpesaPaymentService.makePayment(CLIENT_1, new BigDecimal("500"));
+		mpesaPaymentService.makePayment(CLIENT_1, getOutgoingPayment(CLIENT_1));
 		
 		// then
 		InOrder inOrder = inOrder(cService);
@@ -455,6 +457,16 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		when(m.getSenderMsisdn()).thenReturn(from);
 		when(m.getTextContent()).thenReturn(text);
 		return new EntitySavedNotification<FrontlineMessage>(m);
+	}
+	
+	private OutgoingPayment getOutgoingPayment(Client client){
+		OutgoingPayment outgoingPayment = new OutgoingPayment();
+		outgoingPayment.setClient(client);
+		outgoingPayment.setAmountPaid(new BigDecimal("500"));
+		outgoingPayment.getStatus();
+		outgoingPayment.setStatus(Status.CREATED);
+		outgoingPayment.setTimePaid(Calendar.getInstance().getTime());
+		return outgoingPayment;
 	}
 	
 	private Set<Account> mockAccounts(String... accountNumbers) {

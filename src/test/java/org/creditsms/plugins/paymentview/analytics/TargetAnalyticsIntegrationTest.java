@@ -181,5 +181,4 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		this.hibernateIncomingPaymentDao.saveIncomingPayment(ip);
 		return ip;
 	}
-
 }

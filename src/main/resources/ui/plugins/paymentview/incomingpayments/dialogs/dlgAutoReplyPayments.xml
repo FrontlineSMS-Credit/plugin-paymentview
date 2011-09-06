@@ -9,7 +9,7 @@
 	    	<panel bottom="4" gap="3" columns="3" weightx="1">
 	    		<panel gap="3" columns="1" weightx="1">
 			    	<checkbox name="clientName" action="addConstantToDialog(replyContent.text, replyContent, 'CLIENT_NAME')" text="Name" selected="false"/>
-			    	<checkbox name="recepientName" action="addConstantToDialog(replyContent.text, replyContent, 'RECEPIENT_NAME')" text="Recipient Name" selected="false"/>
+			    	<!--  checkbox name="recepientName" action="addConstantToDialog(replyContent.text, replyContent, 'RECEPIENT_NAME')" text="Recipient Name" selected="false"/-->
 			    	<checkbox name="amountPaid" text="Amount Paid" action="addConstantToDialog(replyContent.text, replyContent, 'AMOUNT_PAID')" selected="false"/>
 					<checkbox name="datePaid" text="Date Paid" action="addConstantToDialog(replyContent.text, replyContent, 'DATE_PAID')" selected="false"/>
 			    	<checkbox name="amountRemaining" text="Amount Remaining" action="addConstantToDialog(replyContent.text, replyContent, 'AMOUNT_REMAINING')" selected="false"/>

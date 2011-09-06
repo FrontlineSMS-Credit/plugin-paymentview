@@ -29,17 +29,6 @@ public class TargetAnalytics {
 		INACTIVE,
 		PAID;
 		
-		/*
-		DELAYED,
-		ON_TRACK,
-		COMPLETED;
-			PAYING - Default
-			OVERDUE - Did not save target amount by deadline
-			INACTIVE - Has not saved in 1 month
-			PAID - Reached total
-		  */
-		
-		
 		@Override
 		public String toString() {
 			return name().toLowerCase().replace('_', ' ');
