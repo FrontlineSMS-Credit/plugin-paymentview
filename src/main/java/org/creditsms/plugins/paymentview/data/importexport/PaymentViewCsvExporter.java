@@ -86,7 +86,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 				items.add(PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME);
 				items.add(client.getOtherName());
 				items.add(PaymentViewCsvUtils.MARKER_CLIENT_PHONE);
-				items.add("=\""+client.getPhoneNumber()+"\"");
+				items.add(PvUtils.formatPhoneForExcel(client.getPhoneNumber()));
 
 				if (!usedCustomFields.isEmpty()) {
 					CustomField curr = null;
@@ -155,7 +155,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						PaymentViewCsvUtils.MARKER_PAYMENT_BY,
 						incomingPayment.getPaymentBy(),
 						PaymentViewCsvUtils.MARKER_PHONE_NUMBER,
-						"=\"" + incomingPayment.getPhoneNumber() + "\"",
+						PvUtils.formatPhoneForExcel(incomingPayment.getPhoneNumber() + "\""),
 						PaymentViewCsvUtils.MARKER_AMOUNT_PAID,
 						incomingPayment.getAmountPaid().toString(),
 						PaymentViewCsvUtils.MARKER_TIME_PAID,
@@ -210,7 +210,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 					PaymentViewCsvUtils.MARKER_CLIENT_NAME,
 					outgoingPayment.getClient().getFullName(),
 					PaymentViewCsvUtils.MARKER_CLIENT_PHONE,
-					"=\""+outgoingPayment.getClient().getPhoneNumber()+"\"",
+					PvUtils.formatPhoneForExcel(outgoingPayment.getClient().getPhoneNumber()),
 					PaymentViewCsvUtils.MARKER_AMOUNT_PAID,
 					outgoingPayment.getAmountPaid().toString(),
 					PaymentViewCsvUtils.MARKER_TIME_PAID,

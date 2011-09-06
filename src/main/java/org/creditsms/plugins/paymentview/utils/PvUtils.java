@@ -33,4 +33,8 @@ public class PvUtils {
 		phoneNumber.replace("=", "");
 		return phoneNumber;
 	}
+
+	public static String formatPhoneForExcel(String phoneNumber) {
+		return "=\"" + phoneNumber;
+	}
 }
