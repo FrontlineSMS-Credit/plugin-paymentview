@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -85,7 +86,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 				items.add(PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME);
 				items.add(client.getOtherName());
 				items.add(PaymentViewCsvUtils.MARKER_CLIENT_PHONE);
-				items.add(client.getPhoneNumber());
+				items.add("=\""+client.getPhoneNumber()+"\"");
 
 				if (!usedCustomFields.isEmpty()) {
 					CustomField curr = null;
@@ -154,11 +155,11 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						PaymentViewCsvUtils.MARKER_PAYMENT_BY,
 						incomingPayment.getPaymentBy(),
 						PaymentViewCsvUtils.MARKER_PHONE_NUMBER,
-						incomingPayment.getPhoneNumber(),
+						"=\"" + incomingPayment.getPhoneNumber() + "\"",
 						PaymentViewCsvUtils.MARKER_AMOUNT_PAID,
 						incomingPayment.getAmountPaid().toString(),
 						PaymentViewCsvUtils.MARKER_TIME_PAID,
-						PvUtils.formatDate(incomingPayment.getTimePaid()),
+						InternationalisationUtils.getDatetimeFormat().format(new Date(incomingPayment.getTimePaid())),
 						PaymentViewCsvUtils.MARKER_PAYMENT_ID,
 						incomingPayment.getPaymentId(),
 						PaymentViewCsvUtils.MARKER_NOTES,
@@ -201,34 +202,33 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 							PaymentViewCsvUtils.MARKER_PAYMENT_ID,
 							InternationalisationUtils.getI18nString(COMMON_PAYMENT_ID),							
 							PaymentViewCsvUtils.MARKER_NOTES,
-							InternationalisationUtils.getI18nString(COMMON_NOTES));
+							InternationalisationUtils.getI18nString(COMMON_NOTES)
+			);
 			
 			for (OutgoingPayment outgoingPayment : outgoingPayments) {
 				CsvUtils.writeLine(out, outgoingPaymentFormat,
-						PaymentViewCsvUtils.MARKER_CLIENT_NAME,
-						outgoingPayment.getClient().getFullName(),
-						PaymentViewCsvUtils.MARKER_CLIENT_PHONE,
-						outgoingPayment.getClient().getPhoneNumber(),
-						PaymentViewCsvUtils.MARKER_AMOUNT_PAID,
-						outgoingPayment.getAmountPaid().toString(),
-						PaymentViewCsvUtils.MARKER_TIME_PAID,
-						Long.toString(outgoingPayment.getTimePaid()),
-						PaymentViewCsvUtils.MARKER_OUTGOING_STATUS,
-						outgoingPayment.getStatus().toString(),
-						PaymentViewCsvUtils.MARKER_OUTGOING_CONFIRMATION_CODE,
-						outgoingPayment.getConfirmationCode(),
-						PaymentViewCsvUtils.MARKER_PAYMENT_ID,
-						outgoingPayment.getPaymentId(),	
-						PaymentViewCsvUtils.MARKER_NOTES,
-						outgoingPayment.getNotes());
-
+					PaymentViewCsvUtils.MARKER_CLIENT_NAME,
+					outgoingPayment.getClient().getFullName(),
+					PaymentViewCsvUtils.MARKER_CLIENT_PHONE,
+					"=\""+outgoingPayment.getClient().getPhoneNumber()+"\"",
+					PaymentViewCsvUtils.MARKER_AMOUNT_PAID,
+					outgoingPayment.getAmountPaid().toString(),
+					PaymentViewCsvUtils.MARKER_TIME_PAID,
+					InternationalisationUtils.getDatetimeFormat().format(new Date(outgoingPayment.getTimePaid())),
+					PaymentViewCsvUtils.MARKER_OUTGOING_STATUS,
+					outgoingPayment.getStatus().toString(),
+					PaymentViewCsvUtils.MARKER_OUTGOING_CONFIRMATION_CODE,
+					outgoingPayment.getConfirmationCode(),
+					PaymentViewCsvUtils.MARKER_PAYMENT_ID,
+					outgoingPayment.getPaymentId(),	
+					PaymentViewCsvUtils.MARKER_NOTES,
+					outgoingPayment.getNotes());
 			}
 		} finally {
 			if (out != null)
 				out.close();
 			LOG.trace("EXIT");
 		}
-
 	}
 
 }

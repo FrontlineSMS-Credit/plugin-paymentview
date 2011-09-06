@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
+import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.PaybillSendDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.UpdateAuthorizationCodeDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings.MobilePaymentServiceSettingsInitialisationDialog;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance.BalanceEventNotification;
@@ -122,6 +123,10 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	
 	public void updateAuthCode() {
 		new UpdateAuthorizationCodeDialog(ui, pluginController).showDialog();
+	}
+	
+	public void sendToPaybillAccount() {
+		new PaybillSendDialogHandler(ui, pluginController).showDialog();
 	}
 	
 	public void deleteAccount() {
