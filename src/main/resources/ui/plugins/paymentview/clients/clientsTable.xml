@@ -29,6 +29,8 @@
 				name="miExportClient" text="i18n.plugins.paymentview.action.exportclient" />
 			<menuitem action="copyToContacts" name="miCopyClientToContacts" 
 			text="Copy to Contacts" icon="/icons/user_sender.png"/>
+			<menuitem action="viewIncomingPaymentByClient"
+				name="mi_viewIncoming" text="i18n.plugins.paymentview.action.viewIncomingPayments" />
 		</popupmenu>
 	</table>
 </panel>

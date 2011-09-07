@@ -165,22 +165,22 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	}
 	
 	public void viewIncomingPaymentByClient() {
-		Object[] selectedItems = ui.getSelectedItems(clientsTableComponent);
-		List<Client> selectedClients = new ArrayList<Client>(selectedItems.length);
-		if (selectedItems.length <= 0){
+		Object[] selectedClientRows = ui.getSelectedItems(clientsTableComponent);
+		List<Client> selectedClientsList = null;
+		if (selectedClientRows.length <= 0){
 			if (clientTableHandler.getClientFilter().isEmpty()){
-				selectedClients = this.clientDao.getAllActiveClients();
+				selectedClientsList = this.clientDao.getAllActiveClients();
 			} else {
-				selectedClients = this.clientDao.getClientsByFilter(clientTableHandler.getClientFilter());
+				selectedClientsList = this.clientDao.getClientsByFilter(clientTableHandler.getClientFilter());
 			}
-			
 		}else{
-			for (Object o : selectedItems) {
-				selectedClients.add(ui.getAttachedObject(o, Client.class));
+			selectedClientsList = new ArrayList<Client>(selectedClientRows.length);
+			for (Object clientRow : selectedClientRows) {
+				selectedClientsList.add(ui.getAttachedObject(clientRow, Client.class));
 			}
 		}
 		
-		incomingPaymentsDialog = new IncomingPaymentsDialogHandler(ui,pluginController, selectedClients).getDialog();
+		incomingPaymentsDialog = new IncomingPaymentsDialogHandler(ui,pluginController, selectedClientsList).getDialog();
 		ui.add(incomingPaymentsDialog);
 	}
 	

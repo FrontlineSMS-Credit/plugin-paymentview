@@ -133,7 +133,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	protected String getXMLFile() {
 		return XML_INCOMING_PAYMENTS_TAB;
 	}
-
+	
 	public Object getRow(IncomingPayment incomingPayment) {
 		Object row = ui.createTableRow(incomingPayment);
 		
@@ -144,9 +144,10 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		ui.add(row, ui.createTableCell(InternationalisationUtils.getDatetimeFormat().format(new Date(incomingPayment.getTimePaid()))));
 		ui.add(row, ui.createTableCell(incomingPayment.getPaymentId()));
 		ui.add(row, ui.createTableCell(incomingPayment.getNotes()));
+		
 		return row;
 	}
-
+	
 	@Override
 	public void refresh() {
 		this.updateIncomingPaymentsList();
@@ -172,7 +173,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 
 	protected List<IncomingPayment> getIncomingPaymentsForUI(int startIndex, int limit) {
-		//Just a hack...
 		toggleAutoReplyOn();
 		
 		List<IncomingPayment> incomingPayments;
@@ -401,7 +401,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			    	  formed_message = message.replace(fe.getMarker(), targetAnalytics.getMonthlyAmountDue().toString());
 			    	  message = formed_message ;
 			        break;
-			      case MONTHLY_DUEDATE:
+			      case END_MONTH_INTERVAL:
 			    	  formed_message = message.replace(fe.getMarker(), PvUtils.formatDate(targetAnalytics.getEndMonthInterval()));
 			    	  message = formed_message ;
 			        break;

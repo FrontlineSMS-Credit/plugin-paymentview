@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.EntitySavedNotification;
@@ -27,6 +28,7 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
@@ -38,6 +40,7 @@ import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balan
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
 import org.smslib.handler.ATHandler.SynchronizedWorkflow;
+import org.smslib.stk.StkConfirmationPrompt;
 import org.smslib.stk.StkMenu;
 import org.smslib.stk.StkMenuItemNotFoundException;
 import org.smslib.stk.StkRequest;
@@ -144,6 +147,45 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			}
 		});
 	}	
+	
+	public void sendAmountToPaybillAccount(final BigDecimal amount) {
+		final CService cService = this.cService;
+		queueJob(new PaymentJob() {
+			public void run() {
+				try {
+					cService.doSynchronized(new SynchronizedWorkflow<Object>() {
+						public Object run() throws SMSLibDeviceException,
+								IOException {
+
+							initIfRequired();
+							final StkMenu mPesaMenu = getMpesaMenu();
+							final StkResponse sendMoneyResponse = cService
+								.stkRequest(mPesaMenu.getRequest("Send money"));
+
+							StkValuePrompt enterPhoneNumberPrompt;
+							if (sendMoneyResponse instanceof StkMenu) {
+								enterPhoneNumberPrompt = (StkValuePrompt) cService
+										.stkRequest(((StkMenu) sendMoneyResponse)
+												.getRequest("Enter phone no."));
+							} else {
+								enterPhoneNumberPrompt = (StkValuePrompt) sendMoneyResponse;
+							}
+							return enterPhoneNumberPrompt;
+						}
+					});
+
+				} catch (final SMSLibDeviceException ex) {
+					logMessageDao.saveLogMessage(LogMessage.error(
+							"SMSLibDeviceException in makePayment()",
+							ex.getMessage()));
+				} catch (final IOException ex) {
+					logMessageDao.saveLogMessage(LogMessage.error(
+							"IOException in makePayment()", ex.getMessage()));
+				}
+			}
+		});
+
+	}
 	
 	public void checkBalance() throws PaymentServiceException {
 		final String pin = this.pin;

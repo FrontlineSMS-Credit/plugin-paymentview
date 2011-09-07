@@ -128,7 +128,16 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	}
 	
 	public void sendToPaybillAccount() {
-		new PaybillSendDialogHandler(ui, pluginController).showDialog();
+		Object selectedItem = this.ui.getSelectedItem(settingsTableComponent);
+		if (selectedItem != null) {
+			if (selectedItem instanceof MpesaPaymentService){
+				new PaybillSendDialogHandler(ui, pluginController, (MpesaPaymentService)selectedItem).showDialog();
+			}else{
+				ui.alert("This functionality is only open to Safaricom Service.");
+			}
+		}else{
+			ui.alert("Please select an account to use.");
+		}
 	}
 	
 	public void deleteAccount() {
