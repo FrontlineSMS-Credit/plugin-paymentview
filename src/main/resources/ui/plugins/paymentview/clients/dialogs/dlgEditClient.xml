@@ -6,10 +6,10 @@
 	
 	<panel name="pnlFields" columns="3" weightx="1" gap="10">
 		<label icon="/icons/user.png" text="First Name:" />
-		<textfield columns="50" name="fldFirstName" colspan="2" />
+		<textfield columns="40" name="fldFirstName" colspan="2" />
 		
 		<label icon="/icons/user.png" text="Second Name:" />
-		<textfield columns="50" name="fldOtherName" colspan="2" />
+		<textfield columns="40" name="fldOtherName" colspan="2" />
 	
 		<label icon="/icons/phone.png" text="i18n.common.phone.number" />
 		<textfield name="fldPhoneNumber" colspan="2" />
