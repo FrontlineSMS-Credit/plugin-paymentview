@@ -33,19 +33,19 @@ public class BalanceProperties extends UserHomeFilePropertySet {
 	}
 	
 	private String getDateTimeForPaymentService(PaymentService paymentService) {
-		return DATETIME_KEY + paymentService.getSettings().getPsSmsModemSerial();
+		return DATETIME_KEY +"-"+ paymentService.getSettings().getPsSmsModemSerial();
 	}
 	
 	private String getConfirmationCodeForPaymentService(PaymentService paymentService) {
-		return CONFIRMATION_CODE_KEY + paymentService.getSettings().getPsSmsModemSerial();
+		return CONFIRMATION_CODE_KEY +"-"+ paymentService.getSettings().getPsSmsModemSerial();
 	}
 	
 	private String getAmountKeyForPaymentService(PaymentService paymentService) {
-		return BALANCE_AMOUNT_KEY + paymentService.getSettings().getPsSmsModemSerial();
+		return BALANCE_AMOUNT_KEY +"-"+ paymentService.getSettings().getPsSmsModemSerial();
 	}
 	
 	private String getBalanceUpdateMethodForPaymentService(PaymentService paymentService) {
-		return BALANCE_UPDATE_METHOD_KEY + paymentService.getSettings();
+		return BALANCE_UPDATE_METHOD_KEY +"-"+ paymentService.getSettings().getPsSmsModemSerial();
 	}
 	
 	private synchronized Date getPropertyAsDate(String key) throws NumberFormatException {
@@ -77,7 +77,7 @@ public class BalanceProperties extends UserHomeFilePropertySet {
 	}
 
 	private synchronized void setBalanceAmount(Balance balance) {
-		this.setProperty(getDateTimeForPaymentService(balance.getPaymentService()), 
+		this.setProperty(getAmountKeyForPaymentService(balance.getPaymentService()), 
 				balance.getBalanceAmount().toString());
 	}
 	

@@ -3,7 +3,6 @@ package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.c
 import java.math.BigDecimal;
 
 import net.frontlinesms.data.DuplicateKeyException;
-import net.frontlinesms.events.EventBus;
 import net.frontlinesms.messaging.sms.modem.SmsModem;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceStartedNotification;
@@ -68,9 +67,6 @@ public class EnterPinDialog extends BaseDialog {
 		if(checkValidityOfPinFields(pin, vPin)){
 			paymentService.setPin(pin);
 			paymentService.setCService(modem.getCService());
-			paymentService.initDaosAndServices(pluginController);
-			persistPaymentServiceSettings(pin);
-			
 			removeDialog();
 			new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog("create", this);
 		} else {
@@ -78,25 +74,21 @@ public class EnterPinDialog extends BaseDialog {
 		}
 	}
 	
-	private void persistPaymentServiceSettings(String pin)throws DuplicateKeyException{
-		paymentServiceSettings.setPsPin(pin);
+	private void persistPaymentServiceSettings()throws DuplicateKeyException{
+		paymentServiceSettings.setPsPin(paymentService.getPin());
 		paymentServiceSettings.setPsSmsModemSerial(this.modem.getSerial().toString());
 		paymentServiceSettings.setPsBalance(new BigDecimal(0));
 		
 		paymentService.setSettings(paymentServiceSettings);
 		paymentServiceSettingsDao.savePaymentServiceSettings(paymentServiceSettings);
-		pluginController.addPaymentService(paymentService);
+		//Now, Initialise
+		paymentService.initDaosAndServices(pluginController);
 	}
 	
-	public void create() {
-		EventBus eventBus = ui.getFrontlineController().getEventBus();
-		eventBus.registerObserver(paymentService);
-		
-		//then
-		pluginController.addPaymentService(paymentService);
-		//then
-		eventBus.notifyObservers(new PaymentServiceStartedNotification(paymentService));
-		
+	public void create() throws DuplicateKeyException {
+		persistPaymentServiceSettings();
+		ui.getFrontlineController().getEventBus().
+		notifyObservers(new PaymentServiceStartedNotification(paymentService));
 		ui.alert("The Payment service has been created successfully!");
 		removeDialog(ui.find(DLG_VERIFICATION_CODE));
 	}

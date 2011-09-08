@@ -9,13 +9,11 @@ import java.util.regex.Pattern;
 
 import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.data.domain.SmsInternetServiceSettings;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
-import net.frontlinesms.messaging.sms.internet.SmsInternetService;
 import net.frontlinesms.payment.PaymentJob;
 import net.frontlinesms.payment.PaymentJobProcessor;
 import net.frontlinesms.payment.PaymentService;
@@ -345,6 +343,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							payment.setConfirmationCode(getConfirmationCode(message));
 							payment.setPaymentBy(getPaymentBy(message));
 							payment.setTimePaid(getTimePaid(message));
+							payment.setPaymentServiceSettings(MpesaPaymentService.this.getSettings());
 							
 							performIncominPaymentFraudCheck(message, payment);
 							incomingPaymentDao.saveIncomingPayment(payment);
@@ -412,6 +411,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 						payment.setConfirmationCode(getConfirmationCode(message));
 						payment.setPaymentBy(getPaymentBy(message));
 						payment.setTimePaid(getTimePaid(message));
+						payment.setPaymentServiceSettings(MpesaPaymentService.this.getSettings());
 						
 						performIncominPaymentFraudCheck(message, payment);
 						incomingPaymentDao.saveIncomingPayment(payment);
@@ -496,7 +496,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		if (expectedBalance.compareTo(new BigDecimal(0)) >= 0) {//Now we don't want Mathematical embarrassment...
 			informUserOnFraud(expectedBalance, actualBalance, !expectedBalance.equals(actualBalance), messageContent);
 		}else{
-			pvLog.error("Balance is way low: than expected " + actualBalance + " instead of : "+ expectedBalance);
+			pvLog.error("Balance for:"+ this.toString() +" is way low: than expected " + actualBalance + " instead of : "+ expectedBalance);
 		}
 	}
 
@@ -544,11 +544,11 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	
 	void informUserOnFraud(BigDecimal expected, BigDecimal actual, boolean fraudCommited, String messageContent) {
 		if (fraudCommited) {
-			String message = "Fraud commited? Was expecting balance as: "+expected+", But was "+actual;
+			String message = "Fraud commited on "+ this.toString() +"? Was expecting balance as: "+expected+", But was "+actual;
 
 			logMessageDao.saveLogMessage(
 					new LogMessage(LogMessage.LogLevel.WARNING,
-						   	"Fraud commited? Was expecting balance as: "+expected+", But was "+actual,
+						   	message,
 						    messageContent));
 			pvLog.warn(message);
 			this.eventBus.notifyObservers(new BalanceFraudNotification(message));
@@ -694,6 +694,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.balance = BalanceProperties.getInstance().getBalance(this).getLatest();
 		this.contactDao = pluginController.getUiGeneratorController().getFrontlineController().getContactDao();
 		this.paymentServiceSettingsDao = pluginController.getPaymentServiceSettingsDao();
+		
 		this.registerToEventBus(
 			pluginController.getUiGeneratorController().getFrontlineController().getEventBus()
 		);
