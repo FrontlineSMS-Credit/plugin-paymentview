@@ -1,9 +1,7 @@
 package net.frontlinesms.payment;
 
-import net.frontlinesms.data.domain.SmsInternetServiceSettings;
-import net.frontlinesms.messaging.sms.internet.SmsInternetService;
-
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 
 public interface PaymentService {

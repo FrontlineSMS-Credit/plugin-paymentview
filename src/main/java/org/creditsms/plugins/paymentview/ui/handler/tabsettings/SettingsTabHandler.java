@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
+import java.io.IOException;
 import java.util.Collection;
 
 import net.frontlinesms.events.EventBus;
@@ -26,6 +27,7 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
+import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.PaybillSendDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.UpdateAuthorizationCodeDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings.MobilePaymentServiceSettingsInitialisationDialog;
@@ -88,8 +90,8 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	@Override
 	public void refresh() {
 		ui.removeAll(settingsTableComponent);
-		if (this.pluginController.getPaymentService() != null){
-			ui.add(settingsTableComponent, getRow((MpesaPaymentService)this.pluginController.getPaymentService()));
+		if (this.pluginController.getPaymentServices() != null){
+			ui.add(settingsTableComponent, getRow((MpesaPaymentService)this.pluginController.getPaymentServices()));
 		}
 	}
 	
@@ -158,7 +160,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 			eventBus.notifyObservers(new PaymentServiceStoppedNotification(__paymentService));
 			paymentServiceSettingsDao.deletePaymentServiceSettings(__paymentService.getSettings());
 			//TODO -> list of payment service - delete only the selected one
-			pluginController.setPaymentService(null);
+			pluginController.addPaymentService(null);
 		}else{
 			ui.alert("Please select an account to delete.");
 		}
@@ -186,7 +188,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 										EventBus eventBus = ui.getFrontlineController().getEventBus();
 										eventBus.registerObserver(mpesaPaymentService);
 										//TODO -> add to list of paymentservices
-										pluginController.setPaymentService(mpesaPaymentService);
+										pluginController.addPaymentService(mpesaPaymentService);
 										eventBus.notifyObservers(new PaymentServiceStartedNotification(mpesaPaymentService));										
 									mpesaPaymentService.updateStatus(Status.PAYMENTSERVICE_ON);
 									}
@@ -196,7 +198,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 							}
 						}	
 					} else {
-						ui.alert("Please setup payment service");
+						ui.alert("Please setup a payment service");
 					}				
 				} else if (notification instanceof BalanceEventNotification) {
 					ui.alert(((BalanceEventNotification)notification).getMessage());

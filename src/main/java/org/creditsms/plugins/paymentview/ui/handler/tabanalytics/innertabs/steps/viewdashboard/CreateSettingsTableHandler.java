@@ -156,7 +156,7 @@ public class CreateSettingsTableHandler extends BaseClientTable{
 	
 	protected List<Client> getClients(String filter, int startIndex, int limit) {
 		if (!filter.trim().isEmpty()) {
-			totalItemCount  = this.clientDao.getClientsByFilter(filter).size();
+			totalItemCount  = this.clientDao.getClientsByNameFilter(filter).size();
 			List<Client> clients = this.clientDao.getClientsByFilter(filter, startIndex, limit);
 			
 			for (ServiceItem si : this.serviceItemDao.getServiceItemsLikeName(filter)) {

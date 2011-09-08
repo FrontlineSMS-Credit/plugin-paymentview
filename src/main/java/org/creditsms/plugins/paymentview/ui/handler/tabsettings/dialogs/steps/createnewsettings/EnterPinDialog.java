@@ -15,7 +15,6 @@ import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
-import org.creditsms.plugins.paymentview.userhomepropeties.payment.service.PaymentServiceProperties;
 
 
 public class EnterPinDialog extends BaseDialog {
@@ -86,7 +85,7 @@ public class EnterPinDialog extends BaseDialog {
 		
 		paymentService.setSettings(paymentServiceSettings);
 		paymentServiceSettingsDao.savePaymentServiceSettings(paymentServiceSettings);
-		
+		pluginController.addPaymentService(paymentService);
 	}
 	
 	public void create() {
@@ -94,7 +93,7 @@ public class EnterPinDialog extends BaseDialog {
 		eventBus.registerObserver(paymentService);
 		
 		//then
-		pluginController.setPaymentService(paymentService);
+		pluginController.addPaymentService(paymentService);
 		//then
 		eventBus.notifyObservers(new PaymentServiceStartedNotification(paymentService));
 		

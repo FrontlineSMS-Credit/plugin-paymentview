@@ -46,6 +46,7 @@ import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance;
+import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.BalanceProperties;
 import org.mockito.InOrder;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
@@ -94,7 +95,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		balance = Balance.getInstance();
+		this.balance = BalanceProperties.getInstance().getBalance(mpesaPaymentService).getLatest();
 		
 		this.mpesaPaymentService = createNewTestClass();
 		this.cService = SmsLibTestUtils.mockCService();

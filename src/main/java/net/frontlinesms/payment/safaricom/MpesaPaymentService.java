@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.domain.SmsInternetServiceSettings;
@@ -39,6 +38,7 @@ import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance;
+import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.BalanceProperties;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
 import org.smslib.handler.ATHandler.SynchronizedWorkflow;
@@ -118,6 +118,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	LogMessageDao logMessageDao;
 	private ContactDao contactDao;
 	private Object paymentServiceSettingsDao;
+	private PaymentServiceSettings settings;
 	
 	//configureModem
 	public void configureModem() throws PaymentServiceException {
@@ -174,18 +175,18 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 								enterBusinessNumberPrompt = (StkValuePrompt) payBillResponse;
 							}
 							
-	/** @return the settings attached to this {@link SmsInternetService} instance. */
-	public PaymentServiceSettings getSettings() {
-		return settings;
-	}
-	
-	/**
-	 * Initialise the service using the supplied properties.
-	 * @see SmsInternetService#setSettings(SmsInternetServiceSettings)
-	 */
-	public void setSettings(PaymentServiceSettings settings) {
-		this.settings = settings;
-	}
+							final StkResponse enterBusinessNumberResponse = cService.stkRequest(
+									enterBusinessNumberPrompt.getRequest(), businessNo);
+							try {							
+								if (!(enterBusinessNumberResponse instanceof StkValuePrompt)) {
+									logMessageDao.saveLogMessage(LogMessage.error(
+											"Business number rejected", ""));
+									throw new RuntimeException(
+											"Business number rejected");
+								}
+								final StkResponse enterAccountNumberResponse = cService.stkRequest(
+											((StkValuePrompt) enterBusinessNumberResponse)
+													.getRequest(), accountNo
 										);
 								if (!(enterAccountNumberResponse instanceof StkValuePrompt)) {
 									logMessageDao.saveLogMessage(LogMessage.error(
@@ -237,9 +238,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 				}
 			}
 		});
-
 	}
-	
+
 	public void checkBalance() throws PaymentServiceException {
 		final String pin = this.pin;
 		final CService cService = this.cService;
@@ -287,7 +287,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	}
 	
 	public static class PaymentStatusEventNotification implements FrontlineEventNotification {
-
 		private final Status status;
 		public PaymentStatusEventNotification(Status status) {
 			this.status = status;
@@ -659,7 +658,19 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			this.eventBus.registerObserver(this);
 		}
 	}
-
+	
+	/** @return the settings attached to this instance. */
+	public PaymentServiceSettings getSettings() {
+		return settings;
+	}
+	
+	/**
+	 * Initialise the service using the supplied properties.
+	 */
+	public void setSettings(PaymentServiceSettings settings) {
+		this.settings = settings;
+	}
+	
 	public void setPin(final String pin) {
 		this.pin = pin;
 	}
@@ -680,7 +691,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.targetAnalytics = pluginController.getTargetAnalytics();
 		this.logMessageDao = pluginController.getLogMessageDao();
-		this.balance = Balance.getInstance().getLatest();
+		this.balance = BalanceProperties.getInstance().getBalance(this).getLatest();
 		this.contactDao = pluginController.getUiGeneratorController().getFrontlineController().getContactDao();
 		this.paymentServiceSettingsDao = pluginController.getPaymentServiceSettingsDao();
 		this.registerToEventBus(
