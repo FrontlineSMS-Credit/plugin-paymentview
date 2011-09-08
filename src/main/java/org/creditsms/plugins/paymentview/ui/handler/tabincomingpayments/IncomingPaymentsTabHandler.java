@@ -120,14 +120,15 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 
 	public void toggleAutoReplyOn() {
-		//boolean was_selected = autoReplyProperties.isAutoReplyOn(); 
 		autoReplyProperties.toggleAutoReply();
-		boolean autoReplyOn = autoReplyProperties.isAutoReplyOn();
-		ui.setIcon(status_label, autoReplyOn ? ICON_STATUS_TRUE : ICON_STATUS_FALSE);
-		ui.setText(status_label, (autoReplyOn ? DISABLE_AUTOREPLY : ENABLE_AUTOREPLY));
-		ui.setSelected(status_label, autoReplyOn);
-		
+		setUpAutoReplyUI();
 		ui.removeDialog(ui.find(CONFIRM_DIALOG));
+	}
+	
+	private void setUpAutoReplyUI() {
+		ui.setIcon(status_label, autoReplyProperties.isAutoReplyOn() ? ICON_STATUS_TRUE : ICON_STATUS_FALSE);
+		ui.setText(status_label, (autoReplyProperties.isAutoReplyOn() ? DISABLE_AUTOREPLY : ENABLE_AUTOREPLY));
+		ui.setSelected(status_label, autoReplyProperties.isAutoReplyOn());
 	}
 
 	protected String getXMLFile() {
@@ -173,7 +174,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 
 	protected List<IncomingPayment> getIncomingPaymentsForUI(int startIndex, int limit) {
-		toggleAutoReplyOn();
+		setUpAutoReplyUI();
 		
 		List<IncomingPayment> incomingPayments;
 		String strStartDate = ui.getText(fldStartDate);
