@@ -80,6 +80,25 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements
 		return super.getList(criteria);
 	}
 	
+	public List<Client> getClientsByNameFilter(String filter) {
+		DetachedCriteria subCriteria = DetachedCriteria.forClass(CustomValue.class);
+		subCriteria.add(Restrictions.ilike("strValue", filter.trim(),MatchMode.ANYWHERE));
+		DetachedCriteria customFieldSubCriteria = subCriteria.createCriteria("customField");
+		customFieldSubCriteria.add(Restrictions.eq(CustomField.Field.USED.getFieldName(),Boolean.TRUE));
+		subCriteria.setProjection(Projections.distinct(Projections.property("client")));
+
+		DetachedCriteria criteria = super.getCriterion().add(
+				Restrictions
+						.disjunction()
+						.add(Restrictions.ilike("firstName", filter.trim(),
+								MatchMode.ANYWHERE))
+						.add(Restrictions.ilike("otherName", filter.trim(),
+								MatchMode.ANYWHERE))
+						.add(Subqueries.propertyIn("id", subCriteria)));
+		criteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),Boolean.TRUE));
+		return super.getList(criteria);
+	}
+	
 	public List<Client> getClientsByFilter(String filter, int startIndex,int limit) {
 		DetachedCriteria subCriteria = DetachedCriteria.forClass(CustomValue.class);
 		subCriteria.add(Restrictions.ilike("strValue", filter.trim(),MatchMode.ANYWHERE));

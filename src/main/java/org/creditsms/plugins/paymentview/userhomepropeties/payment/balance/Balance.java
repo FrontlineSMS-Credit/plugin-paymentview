@@ -5,6 +5,7 @@ import java.util.Date;
 
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.FrontlineEventNotification;
+import net.frontlinesms.payment.PaymentService;
 
 import org.creditsms.plugins.paymentview.utils.PvUtils;
 
@@ -13,12 +14,12 @@ public class Balance {
 	private BigDecimal balanceAmount;
 	private Date dateTime;
 
-	private static final Balance INSTANCE = new Balance();
 	private EventBus eventBus;
 	private String balanceUpdateMethod;
+	
+	private PaymentService paymentService;
 
-	private Balance() {
-	}
+	Balance(){}
 
 	public String getConfirmationCode() {
 		return confirmationCode;
@@ -37,7 +38,7 @@ public class Balance {
 	}
 	
 	public void setBalanceAmount(String balanceAmount) {
-		this.balanceAmount = new BigDecimal(balanceAmount);
+		setBalanceAmount(new BigDecimal(balanceAmount));
 	}
 
 	public Date getDateTime() {
@@ -50,7 +51,7 @@ public class Balance {
 
 	public synchronized Balance getLatest() {
 		try {
-			return BalanceProperties.getInstance().getBalance();
+			return BalanceProperties.getInstance().getBalance(this.paymentService);
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
@@ -58,14 +59,10 @@ public class Balance {
 	}
 
 	public void updateBalance() {
-		BalanceProperties.getInstance().updateBalance();
+		BalanceProperties.getInstance().updateBalance(this);
 		if (eventBus != null){
 			eventBus.notifyObservers(new BalanceEventNotification());
 		}
-	}
-
-	public static Balance getInstance() {
-		return INSTANCE;
 	}
 
 	public void setEventBus(EventBus eventBus) {
@@ -90,18 +87,25 @@ public class Balance {
 		}
 
 		public String getMessage() {
-			return String.format("%s New Balance is: %s", Balance.getInstance()
-					.getConfirmationCode(), Balance.getInstance()
-					.getBalanceAmount().toString());
+			return String.format("%s New Balance is: %s", Balance.this.getConfirmationCode(), 
+					Balance.this.getBalanceAmount().toString());
 		}
 	}
 
 	public void reset() {
-		setBalanceAmount(new BigDecimal(0));
+		setBalanceAmount("0");
 		setDateTime(new Date(0));
 		setConfirmationCode("");
 		setBalanceUpdateMethod("");
 		
 		updateBalance();
+	}
+
+	public void setPaymentService(PaymentService paymentService) {
+		this.paymentService = paymentService;
+	}
+
+	public PaymentService getPaymentService() {
+		return paymentService;
 	}
 }

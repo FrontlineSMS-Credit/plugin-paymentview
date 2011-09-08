@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
+import java.io.IOException;
 import java.util.Collection;
 
 import net.frontlinesms.events.EventBus;
@@ -15,6 +16,7 @@ import net.frontlinesms.payment.PaymentServiceStoppedNotification;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService.BalanceFraudNotification;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService.PaymentStatusEventNotification;
+import net.frontlinesms.payment.safaricom.MpesaPaymentService.Status;
 import net.frontlinesms.ui.UiDestroyEvent;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
@@ -26,12 +28,12 @@ import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
+import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.PaybillSendDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.UpdateAuthorizationCodeDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings.MobilePaymentServiceSettingsInitialisationDialog;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance.BalanceEventNotification;
 
 public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
-	private static final String BTN_CREATE_NEW_SERVICE = "btn_createNewService";
 	private static final String COMPONENT_SETTINGS_TABLE = "tbl_accounts";
 	private static final String CONFIRM_CHECK_BALANCE = "message.confirm.checkbalance";
 	private static final String CONFIRM_CHECK_CONFIGURE_MODEM = "message.confirm.configure.modem";
@@ -74,19 +76,23 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	
 	public Object getRow(MpesaPaymentService paymentService) {
 		Object row = ui.createTableRow(paymentService);
-		Object paymentServiceName = ui.createTableCell(paymentService.toString());
-		Object balance = ui.createTableCell(paymentService.getBalance().getBalanceAmount().toString());
-		ui.add(row, paymentServiceName);
-		ui.add(row, ui.createTableCell("Not configured"));
-		ui.add(row, balance);
+		ui.add(row, ui.createTableCell(paymentService.toString()));
+		try {
+			ui.add(row, ui.createTableCell(paymentService.getCService().getMsisdn()));
+		} catch (IOException e) {
+			ui.add(row, ui.createTableCell("Not configured"));
+		}
+		ui.add(row, ui.createTableCell(paymentService.getBalance().getBalanceAmount().toString()));
 		return row;
 	}
 
 	@Override
 	public void refresh() {
 		ui.removeAll(settingsTableComponent);
-		if (this.pluginController.getPaymentService() != null){
-			ui.add(settingsTableComponent, getRow((MpesaPaymentService)this.pluginController.getPaymentService()));
+		if (this.pluginController.getPaymentServices() != null){
+			for (PaymentService paymentService : this.pluginController.getPaymentServices()){
+				ui.add(settingsTableComponent, getRow((MpesaPaymentService)paymentService));
+			}
 		}
 	}
 	
@@ -130,6 +136,20 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 		new UpdateAuthorizationCodeDialog(ui, pluginController).showDialog();
 	}
 	
+	public void sendToPaybillAccount() {
+		Object selectedItem = this.ui.getSelectedItem(settingsTableComponent);
+		if (selectedItem != null) {
+			PaymentService paymentService = ui.getAttachedObject(selectedItem, PaymentService.class);
+			if (paymentService instanceof MpesaPaymentService){
+				new PaybillSendDialogHandler(ui, pluginController, (MpesaPaymentService)paymentService).showDialog();
+			}else{
+				ui.alert("This functionality is only open to Safaricom Service.");
+			}
+		}else{
+			ui.alert("Please select an account to use.");
+		}
+	}
+	
 	public void deleteAccount() {
 		ui.remove(dialogDeleteMobilePaymentAccount);
 		Object selectedItem = this.ui.getSelectedItem(settingsTableComponent);
@@ -141,7 +161,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 			eventBus.notifyObservers(new PaymentServiceStoppedNotification(__paymentService));
 			paymentServiceSettingsDao.deletePaymentServiceSettings(__paymentService.getSettings());
 			//TODO -> list of payment service - delete only the selected one
-			pluginController.setPaymentService(null);
+			pluginController.getPaymentServices().remove(__paymentService);
 		}else{
 			ui.alert("Please select an account to delete.");
 		}
@@ -165,12 +185,10 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 										mpesaPaymentService.setPin(psSettings.getPsPin());
 										mpesaPaymentService.setCService(connectedModem.getCService());
 										mpesaPaymentService.setSettings(psSettings);
+										
 										mpesaPaymentService.initDaosAndServices(pluginController);
-										EventBus eventBus = ui.getFrontlineController().getEventBus();
-										eventBus.registerObserver(mpesaPaymentService);
-										//TODO -> add to list of paymentservices
-										pluginController.setPaymentService(mpesaPaymentService);
-										eventBus.notifyObservers(new PaymentServiceStartedNotification(mpesaPaymentService));										
+										eventBus.notifyObservers(new PaymentServiceStartedNotification(mpesaPaymentService));
+										mpesaPaymentService.updateStatus(Status.PAYMENTSERVICE_ON);
 									}
 								} else {
 									ui.alert("Please setup payment service");
@@ -178,17 +196,15 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 							}
 						}	
 					} else {
-						ui.alert("Please setup payment service");
-					}				
+						ui.alert("Please setup a payment service");
 				} else if (notification instanceof BalanceEventNotification) {
+
 					ui.alert(((BalanceEventNotification)notification).getMessage());
 					SettingsTabHandler.this.refresh();
 				} else if (notification instanceof PaymentServiceStartedNotification) {
 					SettingsTabHandler.this.refresh();
-					ui.setEnabled(ui.find(settingsTab, BTN_CREATE_NEW_SERVICE), false);
 				} else if (notification instanceof PaymentServiceStoppedNotification) {
 					SettingsTabHandler.this.refresh();
-					ui.setEnabled(ui.find(settingsTab, BTN_CREATE_NEW_SERVICE), true);
 				} else if (notification instanceof BalanceFraudNotification){
 					ui.alert(((BalanceFraudNotification)notification).getMessage());
 					SettingsTabHandler.this.refresh();

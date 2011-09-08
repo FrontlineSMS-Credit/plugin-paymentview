@@ -4,7 +4,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.ui.handler.BaseSelectClientTableHandler;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseSelectClientTableHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabexport.dialogs.ExportByClientXticsStep1Handler;
 
 public class ExportClientsTabHandler extends BaseTabHandler {

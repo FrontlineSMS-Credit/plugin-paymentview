@@ -9,13 +9,11 @@ import java.util.regex.Pattern;
 
 import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.data.domain.SmsInternetServiceSettings;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
-import net.frontlinesms.messaging.sms.internet.SmsInternetService;
 import net.frontlinesms.payment.PaymentJob;
 import net.frontlinesms.payment.PaymentJobProcessor;
 import net.frontlinesms.payment.PaymentService;
@@ -38,9 +36,11 @@ import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance;
+import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.BalanceProperties;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
 import org.smslib.handler.ATHandler.SynchronizedWorkflow;
+import org.smslib.stk.StkConfirmationPrompt;
 import org.smslib.stk.StkMenu;
 import org.smslib.stk.StkMenuItemNotFoundException;
 import org.smslib.stk.StkRequest;
@@ -81,6 +81,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		CONFIGURE_STARTED("Configuring Modem ..."),
 		CONFIGURE_COMPLETE("Modem Configuration Complete."),
 		
+		PAYMENTSERVICE_OFF("Payment Service Not Setup."),
+		PAYMENTSERVICE_ON("Payment Service is now Setup."),
+		
 		ERROR("Error occurred.");
 		
 		private final String statusMessage;
@@ -98,9 +101,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 //> INSTANCE PROPERTIES
 	protected Logger pvLog = Logger.getLogger(this.getClass());
 	CService cService;
-	/** Settings for this service */
-	private PaymentServiceSettings settings;
-
         String pin;
 	Balance balance;
 	EventBus eventBus;
@@ -116,6 +116,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	LogMessageDao logMessageDao;
 	private ContactDao contactDao;
 	private Object paymentServiceSettingsDao;
+	private PaymentServiceSettings settings;
 	
 	//configureModem
 	public void configureModem() throws PaymentServiceException {
@@ -147,20 +148,96 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 				}
 			}
 		});
-	}	
-	
-	/** @return the settings attached to this {@link SmsInternetService} instance. */
-	public PaymentServiceSettings getSettings() {
-		return settings;
 	}
 	
-	/**
-	 * Initialise the service using the supplied properties.
-	 * @see SmsInternetService#setSettings(SmsInternetServiceSettings)
-	 */
-	public void setSettings(PaymentServiceSettings settings) {
-		this.settings = settings;
+	public void sendAmountToPaybillAccount(final String businessNo, final String accountNo, final BigDecimal amount) {
+		final CService cService = this.cService;
+		queueJob(new PaymentJob() {
+			public void run() {
+				try {
+					cService.doSynchronized(new SynchronizedWorkflow<Object>() {
+						public Object run() throws SMSLibDeviceException,
+								IOException {
+
+							initIfRequired();
+							final StkMenu mPesaMenu = getMpesaMenu();
+							final StkResponse payBillResponse = cService
+								.stkRequest(mPesaMenu.getRequest("Pay Bill"));
+
+							StkValuePrompt enterBusinessNumberPrompt;
+							if (payBillResponse instanceof StkMenu) {
+								enterBusinessNumberPrompt = (StkValuePrompt) cService
+										.stkRequest(((StkMenu) payBillResponse)
+												.getRequest("Enter business no."));
+							} else {
+								enterBusinessNumberPrompt = (StkValuePrompt) payBillResponse;
+							}
+							
+							final StkResponse enterBusinessNumberResponse = cService.stkRequest(
+									enterBusinessNumberPrompt.getRequest(), businessNo);
+							try {							
+								if (!(enterBusinessNumberResponse instanceof StkValuePrompt)) {
+									logMessageDao.saveLogMessage(LogMessage.error(
+											"Business number rejected", ""));
+									throw new RuntimeException(
+											"Business number rejected");
+								}
+								final StkResponse enterAccountNumberResponse = cService.stkRequest(
+											((StkValuePrompt) enterBusinessNumberResponse)
+													.getRequest(), accountNo
+										);
+								if (!(enterAccountNumberResponse instanceof StkValuePrompt)) {
+									logMessageDao.saveLogMessage(LogMessage.error(
+											"Account number rejected", ""));
+									throw new RuntimeException("Account number rejected");
+								}
+								final StkResponse enterAmountResponse = cService
+								.stkRequest(
+										((StkValuePrompt) enterAccountNumberResponse)
+												.getRequest(), amount
+												.toString());
+								if (!(enterAmountResponse instanceof StkValuePrompt)) {
+									logMessageDao.saveLogMessage(LogMessage.error(
+											"amount rejected", ""));
+									throw new RuntimeException("amount rejected");
+								}
+								final StkResponse enterPinResponse = cService
+								.stkRequest(
+										((StkValuePrompt) enterAmountResponse)
+												.getRequest(), pin);
+								if (!(enterPinResponse instanceof StkConfirmationPrompt)) {
+									logMessageDao.saveLogMessage(LogMessage.error(
+											"PIN rejected", ""));
+									throw new RuntimeException("PIN rejected");
+								}
+								final StkResponse confirmationResponse = cService
+										.stkRequest(((StkConfirmationPrompt) enterPinResponse)
+												.getRequest());
+								if (confirmationResponse == StkResponse.ERROR) {
+									logMessageDao.saveLogMessage(LogMessage.error(
+											"Payment failed for some reason.", ""));
+									throw new RuntimeException(
+											"Payment failed for some reason.");
+								}
+							} catch (Throwable e) {
+								e.printStackTrace();
+							}
+							return null;
+						}
+					});
+
+				} catch (final SMSLibDeviceException ex) {
+					logMessageDao.saveLogMessage(LogMessage.error(
+							"SMSLibDeviceException in makePayment()",
+							ex.getMessage()));
+				} catch (final IOException ex) {
+					logMessageDao.saveLogMessage(LogMessage.error(
+							"IOException in makePayment()", ex.getMessage()));
+				}
+			}
+		});
 	}
+
 	public void checkBalance() throws PaymentServiceException {
 		final String pin = this.pin;
 		final CService cService = this.cService;
@@ -208,7 +285,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	}
 	
 	public static class PaymentStatusEventNotification implements FrontlineEventNotification {
-
 		private final Status status;
 		public PaymentStatusEventNotification(Status status) {
 			this.status = status;
@@ -267,6 +343,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							payment.setConfirmationCode(getConfirmationCode(message));
 							payment.setPaymentBy(getPaymentBy(message));
 							payment.setTimePaid(getTimePaid(message));
+							payment.setPaymentServiceSettings(MpesaPaymentService.this.getSettings());
 							
 							performIncominPaymentFraudCheck(message, payment);
 							incomingPaymentDao.saveIncomingPayment(payment);
@@ -281,7 +358,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 								payment.getAccount().setActiveAccount(false);
 								accountDao.updateAccount(payment.getAccount());
 							}
-
+							updateStatus(Status.PROCESSED);
 						} else {
 							//account is a generic one(standard) or a non-generic without any active target(paybill)
 							payment.setAccount(account);
@@ -295,6 +372,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							performIncominPaymentFraudCheck(message, payment);
 							
 							incomingPaymentDao.saveIncomingPayment(payment);
+							updateStatus(Status.PROCESSED);
 						}
 					} else {
 						// paybill - account does not exist (typing error) but client exists
@@ -333,6 +411,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 						payment.setConfirmationCode(getConfirmationCode(message));
 						payment.setPaymentBy(getPaymentBy(message));
 						payment.setTimePaid(getTimePaid(message));
+						payment.setPaymentServiceSettings(MpesaPaymentService.this.getSettings());
 						
 						performIncominPaymentFraudCheck(message, payment);
 						incomingPaymentDao.saveIncomingPayment(payment);
@@ -417,7 +496,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		if (expectedBalance.compareTo(new BigDecimal(0)) >= 0) {//Now we don't want Mathematical embarrassment...
 			informUserOnFraud(expectedBalance, actualBalance, !expectedBalance.equals(actualBalance), messageContent);
 		}else{
-			pvLog.error("Balance is way low: than expected " + actualBalance + " instead of : "+ expectedBalance);
+			pvLog.error("Balance for:"+ this.toString() +" is way low: than expected " + actualBalance + " instead of : "+ expectedBalance);
 		}
 	}
 
@@ -465,11 +544,11 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	
 	void informUserOnFraud(BigDecimal expected, BigDecimal actual, boolean fraudCommited, String messageContent) {
 		if (fraudCommited) {
-			String message = "Fraud commited? Was expecting balance as: "+expected+", But was "+actual;
+			String message = "Fraud commited on "+ this.toString() +"? Was expecting balance as: "+expected+", But was "+actual;
 
 			logMessageDao.saveLogMessage(
 					new LogMessage(LogMessage.LogLevel.WARNING,
-						   	"Fraud commited? Was expecting balance as: "+expected+", But was "+actual,
+						   	message,
 						    messageContent));
 			pvLog.warn(message);
 			this.eventBus.notifyObservers(new BalanceFraudNotification(message));
@@ -579,7 +658,19 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			this.eventBus.registerObserver(this);
 		}
 	}
-
+	
+	/** @return the settings attached to this instance. */
+	public PaymentServiceSettings getSettings() {
+		return settings;
+	}
+	
+	/**
+	 * Initialise the service using the supplied properties.
+	 */
+	public void setSettings(PaymentServiceSettings settings) {
+		this.settings = settings;
+	}
+	
 	public void setPin(final String pin) {
 		this.pin = pin;
 	}
@@ -600,9 +691,10 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.targetAnalytics = pluginController.getTargetAnalytics();
 		this.logMessageDao = pluginController.getLogMessageDao();
-		this.balance = Balance.getInstance().getLatest();
+		this.balance = BalanceProperties.getInstance().getBalance(this).getLatest();
 		this.contactDao = pluginController.getUiGeneratorController().getFrontlineController().getContactDao();
 		this.paymentServiceSettingsDao = pluginController.getPaymentServiceSettingsDao();
+		
 		this.registerToEventBus(
 			pluginController.getUiGeneratorController().getFrontlineController().getEventBus()
 		);
@@ -634,5 +726,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	
 	void queueJob(PaymentJob job) {
 		jobProcessor.queue(job);
+	}
+
+	public CService getCService() {
+		return cService;
 	}
 }

@@ -12,8 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import org.apache.log4j.Logger;
-
 import net.frontlinesms.messaging.sms.internet.SmsInternetService;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
@@ -119,6 +117,7 @@ public class PaymentServiceSettings {
 			try {
 				return (PaymentService) Class.forName(this.serviceClassName).newInstance();
 			} catch (Exception ex) {
+				ex.printStackTrace();
 //				pvLog.warn("Unable to load payment service specified in properties file.", ex);
 			}
 		}

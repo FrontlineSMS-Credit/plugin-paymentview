@@ -8,7 +8,7 @@ import net.frontlinesms.payment.safaricom.MpesaPersonalService;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
 
 public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog {
 	private static final String XML_MOBILE_PAYMENT_SERVICE = "/ui/plugins/paymentview/settings/dialogs/createnewpaymentsteps/dlgCreateNewAccountStep1.xml";
@@ -63,7 +63,6 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 	}
 	
 	private void cleanUp() {
-		//Memory Leaks; Should the Payment Services be Singletons?
 	}
 
 //> ACCESSORS

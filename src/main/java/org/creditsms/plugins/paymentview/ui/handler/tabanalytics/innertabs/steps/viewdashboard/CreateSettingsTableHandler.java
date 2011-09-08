@@ -23,7 +23,7 @@ import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
-import org.creditsms.plugins.paymentview.ui.handler.BaseClientTable;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTable;
 
 import thinlet.Thinlet;
 import thinlet.ThinletText;
@@ -156,7 +156,7 @@ public class CreateSettingsTableHandler extends BaseClientTable{
 	
 	protected List<Client> getClients(String filter, int startIndex, int limit) {
 		if (!filter.trim().isEmpty()) {
-			totalItemCount  = this.clientDao.getClientsByFilter(filter).size();
+			totalItemCount  = this.clientDao.getClientsByNameFilter(filter).size();
 			List<Client> clients = this.clientDao.getClientsByFilter(filter, startIndex, limit);
 			
 			for (ServiceItem si : this.serviceItemDao.getServiceItemsLikeName(filter)) {
