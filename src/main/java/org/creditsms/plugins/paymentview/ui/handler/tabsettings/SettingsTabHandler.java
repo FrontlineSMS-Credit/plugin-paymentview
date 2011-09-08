@@ -197,6 +197,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 						}	
 					} else {
 						ui.alert("Please setup a payment service");
+					}
 				} else if (notification instanceof BalanceEventNotification) {
 
 					ui.alert(((BalanceEventNotification)notification).getMessage());
