@@ -4,16 +4,16 @@
 	right="9" text="Send KES to PayBill account"
 	top="9" resizable="true" modal="true" closable="true">
 
-	<label text="PayBill Number:" />
-	<textfield colspan="2" columns="15" text="" />
+	<label text="Business Number:" />
+	<textfield name="businessNo" colspan="2" columns="25" text="" />
 	<label text="Account Number:" />
-	<textfield colspan="2" columns="15" text="" />
+	<textfield name="accountNo" colspan="2" columns="25" text="" />
 	<label text="Amount to Transfer" />
-	<textfield colspan="2" columns="15" text="" />
+	<textfield name="amountToTransfer" colspan="2" columns="25" text="" />
 
 	<panel colspan="3" weightx="1">
 		<panel weightx="1" />
-		<button icon="/icons/tick.png" text="Send"
+		<button icon="/icons/phone_send.png" text="Send"
 			action="sendPayment" />
 	</panel>
 </dialog>

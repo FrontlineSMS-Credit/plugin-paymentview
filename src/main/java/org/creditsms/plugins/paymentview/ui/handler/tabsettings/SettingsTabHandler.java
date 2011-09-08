@@ -1,5 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
+import java.io.IOException;
+
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
@@ -71,11 +73,13 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	
 	public Object getRow(MpesaPaymentService paymentService) {
 		Object row = ui.createTableRow(paymentService);
-		Object paymentServiceName = ui.createTableCell(paymentService.toString());
-		Object balance = ui.createTableCell(paymentService.getBalance().getBalanceAmount().toString());
-		ui.add(row, paymentServiceName);
-		ui.add(row, ui.createTableCell("Not configured"));
-		ui.add(row, balance);
+		ui.add(row, ui.createTableCell(paymentService.toString()));
+		try {
+			ui.add(row, ui.createTableCell(paymentService.getCService().getMsisdn()));
+		} catch (IOException e) {
+			ui.add(row, ui.createTableCell("Not configured"));
+		}
+		ui.add(row, ui.createTableCell(paymentService.getBalance().getBalanceAmount().toString()));
 		return row;
 	}
 
@@ -130,8 +134,9 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	public void sendToPaybillAccount() {
 		Object selectedItem = this.ui.getSelectedItem(settingsTableComponent);
 		if (selectedItem != null) {
-			if (selectedItem instanceof MpesaPaymentService){
-				new PaybillSendDialogHandler(ui, pluginController, (MpesaPaymentService)selectedItem).showDialog();
+			PaymentService paymentService = ui.getAttachedObject(selectedItem, PaymentService.class);
+			if (paymentService instanceof MpesaPaymentService){
+				new PaybillSendDialogHandler(ui, pluginController, (MpesaPaymentService)paymentService).showDialog();
 			}else{
 				ui.alert("This functionality is only open to Safaricom Service.");
 			}

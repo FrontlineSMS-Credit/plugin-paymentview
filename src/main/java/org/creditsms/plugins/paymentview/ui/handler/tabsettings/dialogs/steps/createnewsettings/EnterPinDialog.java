@@ -9,7 +9,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
-import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.service.PaymentServiceProperties;
 
 

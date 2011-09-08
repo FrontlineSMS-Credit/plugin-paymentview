@@ -14,7 +14,7 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.ui.handler.BaseClientTable;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTable;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientImportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.CustomizeClientDBHandler;

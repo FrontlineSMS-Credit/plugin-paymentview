@@ -5,7 +5,7 @@ import net.frontlinesms.ui.handler.BaseTabHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.ui.handler.BaseClientTable;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTable;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SendNewPaymentDialogHandler;
 
 public class SelectFromClientsTabHandler extends BaseTabHandler {

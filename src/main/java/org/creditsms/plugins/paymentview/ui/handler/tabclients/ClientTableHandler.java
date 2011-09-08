@@ -3,7 +3,7 @@ import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.ui.handler.BaseClientTable;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTable;
 
 public class ClientTableHandler extends BaseClientTable {
 	private static final String PNL_TBL_CLIENT_LIST = "tbl_clientList";

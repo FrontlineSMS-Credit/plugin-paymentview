@@ -17,7 +17,7 @@ import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
-import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
 
 public class SendNewPaymentDialogHandler extends BaseDialog {
 	private static final String XML_SEND_NEW_PAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/dialogs/sendNewPayment.xml";

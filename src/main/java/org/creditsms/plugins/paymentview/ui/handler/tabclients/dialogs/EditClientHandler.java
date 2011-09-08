@@ -21,7 +21,7 @@ import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
-import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
 
 public class EditClientHandler extends BaseDialog{

@@ -146,9 +146,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 				}
 			}
 		});
-	}	
+	}
 	
-	public void sendAmountToPaybillAccount(final BigDecimal amount) {
+	public void sendAmountToPaybillAccount(final String businessNo, final String accountNo, final BigDecimal amount) {
 		final CService cService = this.cService;
 		queueJob(new PaymentJob() {
 			public void run() {
@@ -159,18 +159,68 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 
 							initIfRequired();
 							final StkMenu mPesaMenu = getMpesaMenu();
-							final StkResponse sendMoneyResponse = cService
-								.stkRequest(mPesaMenu.getRequest("Send money"));
+							final StkResponse payBillResponse = cService
+								.stkRequest(mPesaMenu.getRequest("Pay Bill"));
 
-							StkValuePrompt enterPhoneNumberPrompt;
-							if (sendMoneyResponse instanceof StkMenu) {
-								enterPhoneNumberPrompt = (StkValuePrompt) cService
-										.stkRequest(((StkMenu) sendMoneyResponse)
-												.getRequest("Enter phone no."));
+							StkValuePrompt enterBusinessNumberPrompt;
+							if (payBillResponse instanceof StkMenu) {
+								enterBusinessNumberPrompt = (StkValuePrompt) cService
+										.stkRequest(((StkMenu) payBillResponse)
+												.getRequest("Enter business no."));
 							} else {
-								enterPhoneNumberPrompt = (StkValuePrompt) sendMoneyResponse;
+								enterBusinessNumberPrompt = (StkValuePrompt) payBillResponse;
 							}
-							return enterPhoneNumberPrompt;
+							
+							final StkResponse enterBusinessNumberResponse = cService.stkRequest(
+									enterBusinessNumberPrompt.getRequest(), businessNo);
+							try {							
+								if (!(enterBusinessNumberResponse instanceof StkValuePrompt)) {
+									logMessageDao.saveLogMessage(LogMessage.error(
+											"Business number rejected", ""));
+									throw new RuntimeException(
+											"Business number rejected");
+								}
+								final StkResponse enterAccountNumberResponse = cService.stkRequest(
+											((StkValuePrompt) enterBusinessNumberResponse)
+													.getRequest(), accountNo
+										);
+								if (!(enterAccountNumberResponse instanceof StkValuePrompt)) {
+									logMessageDao.saveLogMessage(LogMessage.error(
+											"Account number rejected", ""));
+									throw new RuntimeException("Account number rejected");
+								}
+								final StkResponse enterAmountResponse = cService
+								.stkRequest(
+										((StkValuePrompt) enterAccountNumberResponse)
+												.getRequest(), amount
+												.toString());
+								if (!(enterAmountResponse instanceof StkValuePrompt)) {
+									logMessageDao.saveLogMessage(LogMessage.error(
+											"amount rejected", ""));
+									throw new RuntimeException("amount rejected");
+								}
+								final StkResponse enterPinResponse = cService
+								.stkRequest(
+										((StkValuePrompt) enterAmountResponse)
+												.getRequest(), pin);
+								if (!(enterPinResponse instanceof StkConfirmationPrompt)) {
+									logMessageDao.saveLogMessage(LogMessage.error(
+											"PIN rejected", ""));
+									throw new RuntimeException("PIN rejected");
+								}
+								final StkResponse confirmationResponse = cService
+										.stkRequest(((StkConfirmationPrompt) enterPinResponse)
+												.getRequest());
+								if (confirmationResponse == StkResponse.ERROR) {
+									logMessageDao.saveLogMessage(LogMessage.error(
+											"Payment failed for some reason.", ""));
+									throw new RuntimeException(
+											"Payment failed for some reason.");
+								}
+							} catch (Throwable e) {
+								e.printStackTrace();
+							}
+							return null;
 						}
 					});
 
@@ -660,5 +710,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	
 	void queueJob(PaymentJob job) {
 		jobProcessor.queue(job);
+	}
+
+	public CService getCService() {
+		return cService;
 	}
 }

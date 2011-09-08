@@ -6,16 +6,17 @@
 	
 	<label text="Existing Authorization Code" />
 	<passwordfield name="existing" colspan="2" columns="20" />
-	<panel colspan="3" weightx="1"/>
+	
+	<separator weightx="1" colspan="3"/>
+	
 	<label text="New Authorization Code" />
 	<passwordfield name="newcode" colspan="2" columns="20"  />
 	<label text="Verify New Authorization Code" />
 	<passwordfield name="verifynew" colspan="2" columns="20" />
-
-	<panel colspan="3" weightx="1">
-		<button icon="/icons/tick.png" text="Cancel"
+	
+	<panel colspan="3" weightx="1" halign="center" gap="5" top="10">
+		<button icon="/icons/cross.png" text="Cancel"
 			action="removeDialog" />
-		<panel weightx="1" />
 		<button icon="/icons/tick.png" text="Update"
 			action="updateAuthCode(existing.text, newcode.text, verifynew.text)" />
 	</panel>
