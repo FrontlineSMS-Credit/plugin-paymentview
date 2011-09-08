@@ -1,4 +1,4 @@
-package org.creditsms.plugins.paymentview.ui.handler;
+package org.creditsms.plugins.paymentview.ui.handler.base;
 
 import java.util.ArrayList;
 import java.util.List;

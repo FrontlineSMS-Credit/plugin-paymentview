@@ -13,9 +13,7 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
-import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.OutgoingPaymentsImportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SchedulePaymentAuthDialogHandler;
@@ -43,10 +41,6 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	private Object importPaymentsTab;
 	private OutgoingPaymentDao outgoingPaymentDao;
 	private MpesaPaymentService paymentService;
-	private LogMessageDao logMessageDao;
-
-	private int paymentCountPositive;
-	private int paymentCountNegative;
 
 	private List<OutgoingPayment> outgoingPaymentsLst;
 
@@ -56,7 +50,6 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 		clientDao = pluginController.getClientDao();
 		this.pluginController = pluginController;
 		outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
-		logMessageDao = pluginController.getLogMessageDao();
 		importPaymentsTab = ui.find(tabOutgoingPayments, TAB_IMPORTNEWPAYMENTS);
 		init();
 	}
@@ -177,40 +170,17 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 		try {
 			List<OutgoingPayment> newPaymentsLst = getOutgoingPaymentsLst();
 			int itemPaymentServices = 0;
-			paymentCountNegative = 0;
-			paymentCountPositive = 0;
 			if (newPaymentsLst != null){
 				for(OutgoingPayment o:newPaymentsLst){
 					outgoingPaymentDao.saveOutgoingPayment(getTheOutgoingPayment(o));
 					try {
 						paymentService = (MpesaPaymentService) pluginController.getPaymentServices().get(itemPaymentServices); 
-						paymentService.makePayment(client, outgoingPayment.getAmountPaid());
-						outgoingPayment.setStatus(OutgoingPayment.Status.UNCONFIRMED);
-						
-						logMessageDao.saveLogMessage(
-								new LogMessage(LogMessage.LogLevel.INFO, "Outgoing Payment",outgoingPayment.toStringForLogs()));
+						paymentService.makePayment(client, outgoingPayment);
 					} catch(Exception ex) {
-						logMessageDao.saveLogMessage(
-								new LogMessage(LogMessage.LogLevel.ERROR,"Outgoing Payment: Payment failed.",outgoingPayment.toStringForLogs()));
-						log.warn("Payment failed.", ex);
-						outgoingPayment.setStatus(OutgoingPayment.Status.ERROR);
-					}
-					outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
-					
-					if(outgoingPayment.getStatus() == OutgoingPayment.Status.ERROR) {
-						paymentCountNegative++;
-						ui.infoMessage("Error Occured");
-					} else {
-						paymentCountPositive++;
 					}
 				}
-				ui.setEnabled(ui.find(newPaymentsTab, BTN_SEND_NEW_PAYMENT), false);
-				ui.removeAll(newPaymentsTableComponent);
-				ui.alert(paymentCountPositive+ " outgoing payment(s) created and successfully sent. "+ paymentCountNegative+" error(s) occurred");
 			}
 		} catch (Exception ex) {
-			logMessageDao.saveLogMessage(
-					new LogMessage(LogMessage.LogLevel.ERROR,"Outgoing Payment: Payment failed.",outgoingPayment.toStringForLogs()));
 			throw new RuntimeException(ex);
 		}
 	}

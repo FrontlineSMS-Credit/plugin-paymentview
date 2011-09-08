@@ -29,17 +29,6 @@ public class TargetAnalytics {
 		INACTIVE,
 		PAID;
 		
-		/*
-		DELAYED,
-		ON_TRACK,
-		COMPLETED;
-			PAYING - Default
-			OVERDUE - Did not save target amount by deadline
-			INACTIVE - Has not saved in 1 month
-			PAID - Reached total
-		  */
-		
-		
 		@Override
 		public String toString() {
 			return name().toLowerCase().replace('_', ' ');
@@ -148,16 +137,16 @@ public class TargetAnalytics {
 		return Status.INACTIVE;
 	}
 
-	public BigDecimal getDateLastPaid(long tartgetId){
-		//FIXME: WHAT is going on here? date last paid should return a date or?
-	    List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(tartgetId);
-	    if(incomingPayments.size()==0){
-	    	return new BigDecimal("0.00");
-	    }else{
-		    int lastPoz = incomingPayments.size()-1;
-		    return incomingPayments.get(lastPoz).getAmountPaid();	
-	    }
-	}
+//	public BigDecimal getDateLastPaid(long tartgetId){
+//		//FIXME: WHAT is going on here? date last paid should return a date or?
+//	    List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(tartgetId);
+//	    if(incomingPayments.size()==0){
+//	    	return new BigDecimal("0.00");
+//	    }else{
+//		    int lastPoz = incomingPayments.size()-1;
+//		    return incomingPayments.get(lastPoz).getAmountPaid();	
+//	    }
+//	}
 	
 	private Long getDateDiffDays(long startTime, long endTime){
 	    long diff = endTime - startTime;

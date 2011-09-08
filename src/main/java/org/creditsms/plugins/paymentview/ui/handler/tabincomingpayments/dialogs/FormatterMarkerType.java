@@ -12,7 +12,7 @@ public enum FormatterMarkerType {
 	DAYS_REMAINING("DAYS_REMAINING", PaymentViewCsvUtils.DAYS_REMAINING),
 	MONTHLY_SAVINGS("MONTHLY_SAVINGS", PaymentViewCsvUtils.MONTHLY_SAVINGS), 
 	MONTHLY_DUE("MONTHLY_DUE", PaymentViewCsvUtils.MONTHLY_DUE),
-	MONTHLY_DUEDATE("MONTHLY_DUEDATE", PaymentViewCsvUtils.MONTHLY_DUEDATE);
+	END_MONTH_INTERVAL("MONTHLY_DUEDATE", PaymentViewCsvUtils.END_MONTH_INTERVAL);
 	
 	private String name;
 	private String marker;

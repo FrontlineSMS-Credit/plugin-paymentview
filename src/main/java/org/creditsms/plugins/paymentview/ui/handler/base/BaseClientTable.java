@@ -1,4 +1,4 @@
-package org.creditsms.plugins.paymentview.ui.handler;
+package org.creditsms.plugins.paymentview.ui.handler.base;
 
 import static net.frontlinesms.FrontlineSMSConstants.PROPERTY_FIELD;
 

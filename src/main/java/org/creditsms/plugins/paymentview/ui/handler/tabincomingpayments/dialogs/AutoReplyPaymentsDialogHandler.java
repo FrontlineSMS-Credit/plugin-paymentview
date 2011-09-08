@@ -3,7 +3,7 @@ package org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.ui.handler.BaseActionDialog;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseActionDialog;
 import org.creditsms.plugins.paymentview.userhomepropeties.incomingpayments.AutoReplyProperties;
 
 public class AutoReplyPaymentsDialogHandler extends BaseActionDialog  {

@@ -1,7 +1,5 @@
 package net.frontlinesms.payment;
 
-import java.math.BigDecimal;
-
 import net.frontlinesms.data.domain.SmsInternetServiceSettings;
 import net.frontlinesms.messaging.sms.internet.SmsInternetService;
 
@@ -33,7 +31,7 @@ public interface PaymentService {
 		}
 	}
 	
-	void makePayment(Client client, BigDecimal amount) throws PaymentServiceException;
+	void makePayment(Client client, OutgoingPayment outgoingPayment) throws PaymentServiceException;
 	void checkBalance() throws PaymentServiceException;
 	void configureModem() throws PaymentServiceException;
 	void stop();

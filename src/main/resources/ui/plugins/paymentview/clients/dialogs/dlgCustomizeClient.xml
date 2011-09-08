@@ -9,10 +9,9 @@
 		<panel name="pnlCustomFields" weightx="1" weighty="1" columns="1" border="true"
 		text="Custom Fields" left="4" right="4" bottom="4" gap="5">
 			<list name="lstCustomFields" weightx="1" weighty="1"/>
-			<panel weightx="1" weighty="1" columns="3">
-				<button icon="/icons/tick.png"  name="btAddField" action="showOtherFieldDialog" text="Add Field" />
-				<panel weightx="1"/>
-				<button icon="/icons/tick.png" name="btnRemoveField" action="removeField(lstCustomFields)" text="Remove Field" />
+			<panel weightx="1" weighty="1" columns="3" halign="center" gap="5">
+				<button icon="/icons/helper_add.png"  name="btAddField" action="showOtherFieldDialog" text="Add Field" />
+				<button icon="/icons/delete.png" name="btnRemoveField" action="removeField(lstCustomFields)" text="Remove Field" />
 			</panel>
 		</panel>
 	</panel>
