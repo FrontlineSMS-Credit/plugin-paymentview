@@ -40,7 +40,7 @@
 		<panel gap="5" bottom="5" name="pnl_buttons"
 			weightx="1">
 			<panel height="30">
-				<togglebutton name="status" action="tryToggleAutoReply"/>
+				<checkbox name="status" action="tryToggleAutoReply"/>
 			</panel>
 			<button icon="/icons/sms_autoReply.png" action="showAutoReplyDialog" halign="right" name="btn_autoReplySetup"
 				text="Auto Reply Setup" />
