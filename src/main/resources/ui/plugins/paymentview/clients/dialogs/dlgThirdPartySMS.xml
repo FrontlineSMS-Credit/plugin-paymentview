@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dialog name="dialog_designate_thirdparty_recipients" right="5" left ="5" top="7" bottom="5" text="Designate Third Party SMS Recipient" icon="/icons/sms_autoReply.png" resizable="true" 
+ modal="true" closable="true" close="removeDialog(this)" width="360" height="320">
+ 	<panel gap="5" columns="1" weightx="1" weighty="1">
+ 		<label weightx="1" text="Send To:" font="bold"/>
+ 		
+ 		
+ 			<panel bottom="4" gap="3" columns="3" weightx="1">
+	    		<panel gap="3" columns="1" weightx="1">
+					<list name="lstCustomFields" weightx="1" weighty="1"/>
+			    </panel>
+			    <panel weightx="1"/>
+			    <panel gap="3" columns="1" weightx="1">
+			   		<button icon="/icons/user_receiver.png" action="recipientDialog" name="btRecipient" text="Cancel" />
+			    </panel>
+	    	</panel>
+ 		
+
+ 		<label weightx="1" text="Message Content:" font="bold"/>
+	 	<textarea name="replyContent" wrap="true" weightx="1" weighty="1" wrap="true" width="350"/>
+	    <separator/>
+	    <panel gap="3" columns="1" weightx="1">
+	    	<label weightx="1" text="Check to include:" font="bold"/>
+	    	<panel bottom="4" gap="3" columns="3" weightx="1">
+	    		<panel gap="3" columns="1" weightx="1">
+			    	<checkbox name="amountPaid" text="Amount Paid" action="addConstantToDialog(replyContent.text, replyContent, 'AMOUNT_PAID')" selected="false"/>
+					<checkbox name="datePaid" text="Date Paid" action="addConstantToDialog(replyContent.text, replyContent, 'DATE_PAID')" selected="false"/>
+			    </panel>
+	    	</panel>
+	    </panel>
+		<separator/>
+	    <panel gap="5" halign="center">
+	        <button type="default" icon="/icons/tick.png" text="i18n.action.save" action="save(replyContent.text)" name="btSave"/>
+			<button type="cancel" action="removeDialog()" halign="left" icon="/icons/cross.png" text="i18n.action.cancel" />
+	    </panel>
+    </panel>
+</dialog>

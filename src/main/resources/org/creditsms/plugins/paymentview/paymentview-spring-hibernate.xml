@@ -50,6 +50,14 @@
         <property name="sessionFactory" ref="sessionFactory" />
         <property name="eventBus" ref="eventBus"/>
     </bean>
+    <bean id="thirdPartyResponseDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateThirdPartyResponseDao" parent="baseHibernateDao">
+        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="eventBus" ref="eventBus"/>
+    </bean>
+    <bean id="responseRecipientDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateResponseRecipientDao" parent="baseHibernateDao">
+        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="eventBus" ref="eventBus"/>
+    </bean>
     <bean id="baseHibernateDao" abstract="true" class="net.frontlinesms.data.repository.hibernate">
 		<property name="sessionFactory" ref="sessionFactory"/>
 		<property name="eventBus" ref="eventBus"/>

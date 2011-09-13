@@ -1,5 +1,7 @@
 package org.creditsms.plugins.paymentview.data.repository;
 
+import java.util.List;
+
 import net.frontlinesms.data.DuplicateKeyException;
 
 import org.creditsms.plugins.paymentview.data.domain.ResponseRecipient;
@@ -12,6 +14,12 @@ public interface ResponseRecipientDao {
 	 **/
 	public ResponseRecipient getResponseRecipientByThirdPartyResponseId(long thirdPartyId);
 
+	/**
+	 * Retrieves all the ThirdPartyResponses in the system
+	 *
+	 **/
+	public List<ResponseRecipient> getAllResponseRecipients();
+	
 	/**
 	 * Deletes a ResponseRecipient from the system
 	 * 

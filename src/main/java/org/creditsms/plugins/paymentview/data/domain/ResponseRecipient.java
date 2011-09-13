@@ -23,17 +23,22 @@ public class ResponseRecipient {
 
 	private static final String FIELD_ID = "id";
 	private static final String FIELD_THIRD_PARTY_RESPONSE = "responseId";
+	private static final String FIELD_CLIENT = "clientId";
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@IndexColumn(name = FIELD_ID)
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
-
+	
 	@ManyToOne
 	@JoinColumn(name = FIELD_THIRD_PARTY_RESPONSE)
 	private ThirdPartyResponse thirdPartyResponse;
-	
+
+	@ManyToOne
+	@JoinColumn(name = FIELD_CLIENT)
+	private Client client;
+
 	public long getId() {
 		return id;
 	}
@@ -49,5 +54,12 @@ public class ResponseRecipient {
 	public void setThirdPartyResponse(ThirdPartyResponse thirdPartyResponse) {
 		this.thirdPartyResponse = thirdPartyResponse;
 	}
+	
+	public Client getClient() {
+		return client;
+	}
 
+	public void setClient(Client client) {
+		this.client = client;
+	}
 }

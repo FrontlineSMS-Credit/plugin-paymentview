@@ -29,6 +29,8 @@
 				name="miExportClient" text="i18n.plugins.paymentview.action.exportclient" />
 			<menuitem action="copyToContacts" name="miCopyClientToContacts" 
 			text="Copy to Contacts" icon="/icons/user_sender.png"/>
+			<menuitem action="designateThirdPartySMSRecipient" name="miDesignateThirdPartySMSRecipient" 
+			text="Designate Third Party SMS Recipient" icon="/icons/sms_autoForward.png"/>
 		</popupmenu>
 	</table>
 </panel>

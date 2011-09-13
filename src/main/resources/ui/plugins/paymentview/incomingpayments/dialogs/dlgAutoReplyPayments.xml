@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <dialog name="dialog_auto_reply_payments" right="5" left ="5" top="7" bottom="5" text="Auto Reply Payments" icon="/icons/sms_autoReply.png" resizable="true" 
- closable="true" close="removeDialog(this)" width="430" height="380">
+ closable="true" closable="true" close="removeDialog(this)" width="430" height="380">
  	<panel gap="5" columns="1" weightx="1" weighty="1">
 	 	<textarea name="replyContent" wrap="true" weightx="1" weighty="1" wrap="true" width="410"/>
 	    <separator/>

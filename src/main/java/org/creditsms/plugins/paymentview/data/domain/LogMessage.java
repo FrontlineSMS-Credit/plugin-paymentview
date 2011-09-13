@@ -21,6 +21,8 @@ import org.hibernate.annotations.IndexColumn;
 public class LogMessage {
 	public static final String TABLE_NAME = "LogMessage";
 
+	public static final int LOG_CONTENT_LENGTH = 2000;
+	
 	private static final String FIELD_ID = "id";
 	private static final String FIELD_LOG_TIMESTAMP = "timestamp";
 	private static final String FIELD_LOG_LEVEL = "logLevel";
@@ -42,7 +44,7 @@ public class LogMessage {
 	@Column(name = FIELD_LOG_TITLE)
 	private String logTitle; // TODO rename as 'title' - we know it is related to the log
 
-	@Column(name = FIELD_LOG_CONTENT)
+	@Column(name = FIELD_LOG_CONTENT, length=LOG_CONTENT_LENGTH)
 	private String logContent; // TODO rename as 'content' - we know it is related to the log
 	
 	public enum Field implements EntityField<LogMessage> {

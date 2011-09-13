@@ -1,5 +1,7 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
 
+import java.util.List;
+
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
@@ -40,5 +42,9 @@ ResponseRecipientDao{
 	public void saveResponseRecipient(ResponseRecipient responseRecipient)
 			throws DuplicateKeyException {
 		super.save(responseRecipient);
+	}
+
+	public List<ResponseRecipient> getAllResponseRecipients() {
+		return super.getAll();
 	}
 }
