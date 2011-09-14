@@ -1,4 +1,4 @@
-package org.creditsms.plugins.paymentview.ui.handler;
+package org.creditsms.plugins.paymentview.ui.handler.base;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 
-public abstract class BaseSelectClientTableHandler extends BaseClientTable {
+public abstract class BaseSelectClientTableHandler extends BaseClientTableHandler {
 
 	protected static final String ICONS_CHECKBOX_SELECTED_PNG = "/icons/checkbox-selected.png";
 	protected static final String ICONS_CHECKBOX_UNSELECTED_PNG = "/icons/checkbox-unselected.png";

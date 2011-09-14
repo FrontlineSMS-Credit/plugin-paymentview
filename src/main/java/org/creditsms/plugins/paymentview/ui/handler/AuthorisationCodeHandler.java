@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
 import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.AuthorizationChecker;
 
 public class AuthorisationCodeHandler extends BaseDialog{

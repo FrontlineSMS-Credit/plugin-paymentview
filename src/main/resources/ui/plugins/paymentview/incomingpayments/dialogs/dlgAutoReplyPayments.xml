@@ -20,7 +20,7 @@
 			     	<checkbox name="daysRemaining" text="Days Remaining" action="addConstantToDialog(replyContent.text, replyContent, 'DAYS_REMAINING')" selected="false"/>
 					<checkbox name="monthlySavings" text="Monthly Savings" action="addConstantToDialog(replyContent.text, replyContent, 'MONTHLY_SAVINGS')" selected="false"/>
 			    	<checkbox name="monthlyDue" text="Monthly Amount Remaining" action="addConstantToDialog(replyContent.text, replyContent, 'MONTHLY_DUE')" selected="false"/>
-			    	<checkbox name="monthlyDueDate" text="Monthly Due Date" action="addConstantToDialog(replyContent.text, replyContent, 'MONTHLY_DUEDATE')" selected="false"/>
+			    	<checkbox name="monthlyDueDate" text="Monthly Due Date" action="addConstantToDialog(replyContent.text, replyContent, 'END_MONTH_INTERVAL')" selected="false"/>
 			    </panel>
 	    	</panel>
 	    </panel>

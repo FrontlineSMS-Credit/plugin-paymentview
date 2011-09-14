@@ -1,4 +1,4 @@
-package org.creditsms.plugins.paymentview.ui.handler;
+package org.creditsms.plugins.paymentview.ui.handler.base;
 
 import static net.frontlinesms.FrontlineSMSConstants.PROPERTY_FIELD;
 
@@ -31,7 +31,7 @@ import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import thinlet.Thinlet;
 import thinlet.ThinletText;
 
-public abstract class BaseClientTable implements PagedComponentItemProvider,
+public abstract class BaseClientTableHandler implements PagedComponentItemProvider,
 		ThinletUiEventHandler, EventObserver {
 	protected ComponentPagingHandler clientsTablePager;
 	protected UiGeneratorController ui;
@@ -47,7 +47,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	
 	protected final PaymentViewPluginController pluginController;
 
-	public BaseClientTable(UiGeneratorController ui, PaymentViewPluginController pluginController) {
+	public BaseClientTableHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		this.ui = ui;
 		this.pluginController = pluginController;
 		this.clientDao = pluginController.getClientDao();
@@ -127,9 +127,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	protected Object getRow(Client client) {
 		Object row = ui.createTableRow(client);
 
-		ui.add(row,
-				ui.createTableCell(client.getFirstName() + " "
-						+ client.getOtherName()));
+		ui.add(row, ui.createTableCell(client.getFullName()));
 		ui.add(row, ui.createTableCell(client.getPhoneNumber()));
 
 		return addCustomData(client, row);
@@ -171,7 +169,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 	public String getClientFilter() {
 		return clientFilter;
 	}
-
+	
 	protected void createHeader() {
 		ui.removeAll(tableClients);
 		
@@ -258,7 +256,7 @@ public abstract class BaseClientTable implements PagedComponentItemProvider,
 		
 				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
 				if (entity instanceof Client || entity instanceof Account) {
-					BaseClientTable.this.refresh();
+					BaseClientTableHandler.this.refresh();
 				}else if (entity instanceof CustomField) {
 					revalidateTable();
 				}

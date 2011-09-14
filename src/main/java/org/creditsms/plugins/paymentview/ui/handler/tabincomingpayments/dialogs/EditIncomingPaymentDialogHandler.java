@@ -9,7 +9,7 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
-import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
 
 public class EditIncomingPaymentDialogHandler extends BaseDialog{
 //> CONSTANTS

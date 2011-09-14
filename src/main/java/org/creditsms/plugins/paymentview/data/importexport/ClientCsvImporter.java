@@ -16,6 +16,7 @@ import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
+import org.creditsms.plugins.paymentview.utils.PvUtils;
 import org.hibernate.NonUniqueObjectException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -67,7 +68,8 @@ public class ClientCsvImporter extends CsvImporter {
 			String otherName = rowFormat.getOptionalValue(lineValue, PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME);
 			String phonenumber = rowFormat.getOptionalValue(lineValue, PaymentViewCsvUtils.MARKER_CLIENT_PHONE);
 			
-
+			PvUtils.parsePhoneFromExcel(phonenumber);
+			
 			Client c = new Client(firstname, otherName, phonenumber);
 			try{
 				clientDao.saveClient(c);

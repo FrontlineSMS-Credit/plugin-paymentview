@@ -1,6 +1,7 @@
-package net.frontlinesms.payment;
+package net.frontlinesms.payment.event;
 
 import net.frontlinesms.events.FrontlineEventNotification;
+import net.frontlinesms.payment.PaymentService;
 
 public class PaymentServiceStoppedNotification implements FrontlineEventNotification {
 private PaymentService paymentService;

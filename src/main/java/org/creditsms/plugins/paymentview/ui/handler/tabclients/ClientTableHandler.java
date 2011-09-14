@@ -3,11 +3,11 @@ import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.ui.handler.BaseClientTable;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTableHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.SelectRecipientDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.ThirdPartySMSDialogHandler;
 
-public class ClientTableHandler extends BaseClientTable {
+public class ClientTableHandler extends BaseClientTableHandler {
 	private static final String PNL_TBL_CLIENT_LIST = "tbl_clientList";
 	private static final String XML_CLIENTS_PANEL = "/ui/plugins/paymentview/clients/clientsTable.xml";
 	private ClientsTabHandler clientsTabHandler;
@@ -25,6 +25,10 @@ public class ClientTableHandler extends BaseClientTable {
 	@Override
 	protected String getClientsPanelFilePath() {
 		return XML_CLIENTS_PANEL;
+	}
+
+	public void viewIncomingPaymentByClient() {
+		clientsTabHandler.viewIncomingPaymentByClient();
 	}
 
 	public void deleteClient() {

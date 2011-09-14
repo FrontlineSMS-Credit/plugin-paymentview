@@ -16,10 +16,6 @@
 		colspan="10" selection="multiple" name="tbl_clientList" width="1000"
 		weightx="1" weighty="1" tooltip="Right-click for options">
 		<popupmenu name="menu">
-			<!--<menu icon="/icons/group_join.png" name="groupsMenu" text="i18n.action.add.to.group"/>
-            <menu icon="/icons/group_leave.png" name="groupsMenuRemove" text="i18n.action.delete.from.group"/>
-            <separator name="sp1"/>
-	         -->
 			<menuitem action="editClient" icon="/icons/edit.png" name="miEditClient"
 				text="Edit Client" />
 			<menuitem action="showDeleteConfirmationDialog('deleteClient')"
@@ -29,8 +25,10 @@
 				name="miExportClient" text="i18n.plugins.paymentview.action.exportclient" />
 			<menuitem action="copyToContacts" name="miCopyClientToContacts" 
 			text="Copy to Contacts" icon="/icons/user_sender.png"/>
-			<menuitem action="designateThirdPartySMSRecipient" name="miDesignateThirdPartySMSRecipient" 
-			text="Designate Third Party SMS Recipient" icon="/icons/sms_autoForward.png"/>
+                        <menuitem action="designateThirdPartySMSRecipient" name="miDesignateThirdPartySMSRecipient" 
+			 text="Designate Third Party SMS Recipient" icon="/icons/sms_autoForward.png"/>			
+			<menuitem action="viewIncomingPaymentByClient"
+				name="mi_viewIncoming" text="i18n.plugins.paymentview.action.viewIncomingPayments" />
 		</popupmenu>
 	</table>
 </panel>

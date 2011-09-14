@@ -16,6 +16,8 @@
 						text="i18n.plugins.paymentview.menuitem.examineaccount" />
 					<menuitem action="configureAccount"
 						icon="/icons/keyword.png" name="miConfigureAccount" text="i18n.plugins.paymentview.menuitem.configureaccount" /> -->
+					<menuitem action="sendToPaybillAccount"
+						icon="/icons/keyword.png" name="miSendToPaybillAccount" text="Send KES to PayBill account" />
 					<menuitem action="deleteMobilePaymentAccount('deleteAccount')"
 						icon="/icons/delete.png" name="miDeleteAccount" text="i18n.plugins.paymentview.menuitem.deleteaccount" />
 					<menuitem action="checkBalance('updateAccountBalance')"

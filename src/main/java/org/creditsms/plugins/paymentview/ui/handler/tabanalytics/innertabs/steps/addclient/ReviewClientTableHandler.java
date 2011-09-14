@@ -9,9 +9,9 @@ import net.frontlinesms.ui.UiGeneratorController;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
-import org.creditsms.plugins.paymentview.ui.handler.BaseClientTable;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTableHandler;
 
-public class ReviewClientTableHandler extends BaseClientTable{
+public class ReviewClientTableHandler extends BaseClientTableHandler{
 	private static final String LBL_END_DATE = "endDate";
 	private static final String LBL_START_DATE = "startDate";
 	private static final String LBL_TO_SAVE = "toSave";

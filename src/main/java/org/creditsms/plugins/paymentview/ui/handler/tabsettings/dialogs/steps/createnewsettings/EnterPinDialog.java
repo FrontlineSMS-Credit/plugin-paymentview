@@ -3,13 +3,13 @@ package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.c
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.messaging.sms.modem.SmsModem;
 import net.frontlinesms.payment.PaymentService;
-import net.frontlinesms.payment.PaymentServiceStartedNotification;
+import net.frontlinesms.payment.event.PaymentServiceStartedNotification;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
-import org.creditsms.plugins.paymentview.ui.handler.BaseDialog;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.service.PaymentServiceProperties;
 
 

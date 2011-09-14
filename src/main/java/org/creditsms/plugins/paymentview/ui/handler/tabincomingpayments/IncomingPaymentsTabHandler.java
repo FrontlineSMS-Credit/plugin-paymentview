@@ -32,6 +32,7 @@ import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.ClientSelector;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.AutoReplyPaymentsDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.EditIncomingPaymentDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.FormatterMarkerType;
@@ -43,10 +44,10 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		PagedComponentItemProvider, EventObserver{
 	private static final String CONFIRM_DIALOG = "confirmDialog";
 	private static final String INVALID_DATE = "Please enter a correct starting date.";
-	private static final String ENABLE_AUTOREPLY = "Enable autoreply";
+	private static final String ENABLE_AUTOREPLY = "Autoreply Disabled";
 	private static final String TXT_END_DATE = "txt_endDate";
 	private static final String TXT_START_DATE = "txt_startDate";
-	private static final String DISABLE_AUTOREPLY = "Disable autoreply";
+	private static final String DISABLE_AUTOREPLY = "Autoreply Enabled";
 	private static final String COMPONENT_INCOMING_PAYMENTS_TABLE = "tbl_clients";
 	private static final String COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE = "pnl_clients";
 	private static final String XML_INCOMING_PAYMENTS_TAB = "/ui/plugins/paymentview/incomingpayments/tabincomingpayments.xml";
@@ -120,20 +121,21 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 
 	public void toggleAutoReplyOn() {
-		//boolean was_selected = autoReplyProperties.isAutoReplyOn(); 
 		autoReplyProperties.toggleAutoReply();
-		boolean autoReplyOn = autoReplyProperties.isAutoReplyOn();
-		ui.setIcon(status_label, autoReplyOn ? ICON_STATUS_TRUE : ICON_STATUS_FALSE);
-		ui.setText(status_label, (autoReplyOn ? DISABLE_AUTOREPLY : ENABLE_AUTOREPLY));
-		ui.setSelected(status_label, autoReplyOn);
-		
+		setUpAutoReplyUI();
 		ui.removeDialog(ui.find(CONFIRM_DIALOG));
+	}
+	
+	private void setUpAutoReplyUI() {
+		ui.setIcon(status_label, autoReplyProperties.isAutoReplyOn() ? ICON_STATUS_TRUE : ICON_STATUS_FALSE);
+		ui.setText(status_label, (autoReplyProperties.isAutoReplyOn() ? DISABLE_AUTOREPLY : ENABLE_AUTOREPLY));
+		ui.setSelected(status_label, autoReplyProperties.isAutoReplyOn());
 	}
 
 	protected String getXMLFile() {
 		return XML_INCOMING_PAYMENTS_TAB;
 	}
-
+	
 	public Object getRow(IncomingPayment incomingPayment) {
 		Object row = ui.createTableRow(incomingPayment);
 		
@@ -144,9 +146,10 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		ui.add(row, ui.createTableCell(InternationalisationUtils.getDatetimeFormat().format(new Date(incomingPayment.getTimePaid()))));
 		ui.add(row, ui.createTableCell(incomingPayment.getPaymentId()));
 		ui.add(row, ui.createTableCell(incomingPayment.getNotes()));
+		
 		return row;
 	}
-
+	
 	@Override
 	public void refresh() {
 		this.updateIncomingPaymentsList();
@@ -172,8 +175,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 
 	protected List<IncomingPayment> getIncomingPaymentsForUI(int startIndex, int limit) {
-		//Just a hack...
-		toggleAutoReplyOn();
+		setUpAutoReplyUI();
 		
 		List<IncomingPayment> incomingPayments;
 		String strStartDate = ui.getText(fldStartDate);
@@ -260,6 +262,17 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			}
 			ui.infoMessage("You have successfully deleted the selected incoming payment(s).");	
 		}		
+	}
+	
+	public void reassignIncomingPayment() {
+		Object[] selectedItems = ui.getSelectedItems(incomingPaymentsTableComponent);
+		if (selectedItems.length <= 0){
+			ui.alert("Please select a payment to reassign.");
+		}else if (selectedItems.length > 1){
+			ui.alert("You can only select one payment at a time.");
+		}else{
+			new ClientSelector(ui, pluginController).show();
+		}
 	}
 	
 	// > EXPORTS...
@@ -401,7 +414,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			    	  formed_message = message.replace(fe.getMarker(), targetAnalytics.getMonthlyAmountDue().toString());
 			    	  message = formed_message ;
 			        break;
-			      case MONTHLY_DUEDATE:
+			      case END_MONTH_INTERVAL:
 			    	  formed_message = message.replace(fe.getMarker(), PvUtils.formatDate(targetAnalytics.getEndMonthInterval()));
 			    	  message = formed_message ;
 			        break;

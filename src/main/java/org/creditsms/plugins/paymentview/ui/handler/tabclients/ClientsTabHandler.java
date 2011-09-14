@@ -14,7 +14,7 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.ui.handler.BaseClientTable;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTableHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientImportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.CustomizeClientDBHandler;
@@ -32,10 +32,10 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	private final CustomFieldDao customFieldDao;
 
 	private Object clientsTableComponent;
-	private UiGeneratorController ui;
+	protected UiGeneratorController ui;
 	private Object clientsTab;
 	private Object clientTableHolder;
-	private BaseClientTable clientTableHandler;
+	private BaseClientTableHandler clientTableHandler;
 	private final PaymentViewPluginController pluginController;
 	private Object incomingPaymentsDialog;
 	
@@ -49,13 +49,22 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 		
 		init();
 	}
+
+	protected BaseClientTableHandler getClientTableHandler(UiGeneratorController ui,
+			final PaymentViewPluginController pluginController) {
+		return new ClientTableHandler(ui, pluginController, this);
+	}
 	
 	public void init() {
-		clientsTab = ui.loadComponentFromFile(XML_CLIENTS_TAB, this);
+		clientsTab = ui.loadComponentFromFile(getXMLFile(), this);
 		clientTableHolder = ui.find(clientsTab, PNL_CLIENT_TABLE_HOLDER);
-		clientTableHandler = new ClientTableHandler(ui, pluginController, this);
+		clientTableHandler = getClientTableHandler(ui, pluginController);
 		clientsTableComponent = clientTableHandler.getClientsTable();
 		ui.add(clientTableHolder, clientTableHandler.getClientsTablePanel());
+	}
+
+	protected String getXMLFile() {
+		return XML_CLIENTS_TAB;
 	}
 
 	public void refresh() {
@@ -165,22 +174,22 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	}
 	
 	public void viewIncomingPaymentByClient() {
-		Object[] selectedItems = ui.getSelectedItems(clientsTableComponent);
-		List<Client> selectedClients = new ArrayList<Client>(selectedItems.length);
-		if (selectedItems.length <= 0){
+		Object[] selectedClientRows = ui.getSelectedItems(clientsTableComponent);
+		List<Client> selectedClientsList = null;
+		if (selectedClientRows.length <= 0){
 			if (clientTableHandler.getClientFilter().isEmpty()){
-				selectedClients = this.clientDao.getAllActiveClients();
+				selectedClientsList = this.clientDao.getAllActiveClients();
 			} else {
-				selectedClients = this.clientDao.getClientsByFilter(clientTableHandler.getClientFilter());
+				selectedClientsList = this.clientDao.getClientsByFilter(clientTableHandler.getClientFilter());
 			}
-			
 		}else{
-			for (Object o : selectedItems) {
-				selectedClients.add(ui.getAttachedObject(o, Client.class));
+			selectedClientsList = new ArrayList<Client>(selectedClientRows.length);
+			for (Object clientRow : selectedClientRows) {
+				selectedClientsList.add(ui.getAttachedObject(clientRow, Client.class));
 			}
 		}
 		
-		incomingPaymentsDialog = new IncomingPaymentsDialogHandler(ui,pluginController, selectedClients).getDialog();
+		incomingPaymentsDialog = new IncomingPaymentsDialogHandler(ui,pluginController, selectedClientsList).getDialog();
 		ui.add(incomingPaymentsDialog);
 	}
 	

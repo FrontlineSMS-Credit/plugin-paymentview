@@ -1,5 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
+import java.io.IOException;
+
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
@@ -8,8 +10,8 @@ import net.frontlinesms.messaging.sms.modem.SmsModem;
 import net.frontlinesms.messaging.sms.modem.SmsModemStatus;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
-import net.frontlinesms.payment.PaymentServiceStartedNotification;
-import net.frontlinesms.payment.PaymentServiceStoppedNotification;
+import net.frontlinesms.payment.event.PaymentServiceStartedNotification;
+import net.frontlinesms.payment.event.PaymentServiceStoppedNotification;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService.BalanceFraudNotification;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService.PaymentStatusEventNotification;
@@ -23,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
+import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.PaybillSendDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.UpdateAuthorizationCodeDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings.MobilePaymentServiceSettingsInitialisationDialog;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance.BalanceEventNotification;
@@ -70,11 +73,13 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	
 	public Object getRow(MpesaPaymentService paymentService) {
 		Object row = ui.createTableRow(paymentService);
-		Object paymentServiceName = ui.createTableCell(paymentService.toString());
-		Object balance = ui.createTableCell(paymentService.getBalance().getBalanceAmount().toString());
-		ui.add(row, paymentServiceName);
-		ui.add(row, ui.createTableCell("Not configured"));
-		ui.add(row, balance);
+		ui.add(row, ui.createTableCell(paymentService.toString()));
+		try {
+			ui.add(row, ui.createTableCell(paymentService.getCService().getMsisdn()));
+		} catch (IOException e) {
+			ui.add(row, ui.createTableCell("Not configured"));
+		}
+		ui.add(row, ui.createTableCell(paymentService.getBalance().getBalanceAmount().toString()));
 		return row;
 	}
 
@@ -124,6 +129,20 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	
 	public void updateAuthCode() {
 		new UpdateAuthorizationCodeDialog(ui, pluginController).showDialog();
+	}
+	
+	public void sendToPaybillAccount() {
+		Object selectedItem = this.ui.getSelectedItem(settingsTableComponent);
+		if (selectedItem != null) {
+			PaymentService paymentService = ui.getAttachedObject(selectedItem, PaymentService.class);
+			if (paymentService instanceof MpesaPaymentService){
+				new PaybillSendDialogHandler(ui, pluginController, (MpesaPaymentService)paymentService).showDialog();
+			}else{
+				ui.alert("This functionality is only open to Safaricom Service.");
+			}
+		}else{
+			ui.alert("Please select an account to use.");
+		}
 	}
 	
 	public void deleteAccount() {

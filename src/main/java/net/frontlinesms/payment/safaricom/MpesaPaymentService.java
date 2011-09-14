@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.EntitySavedNotification;
@@ -27,6 +28,7 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
@@ -38,6 +40,7 @@ import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balan
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
 import org.smslib.handler.ATHandler.SynchronizedWorkflow;
+import org.smslib.stk.StkConfirmationPrompt;
 import org.smslib.stk.StkMenu;
 import org.smslib.stk.StkMenuItemNotFoundException;
 import org.smslib.stk.StkRequest;
@@ -143,7 +146,96 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 				}
 			}
 		});
-	}	
+	}
+	
+	public void sendAmountToPaybillAccount(final String businessNo, final String accountNo, final BigDecimal amount) {
+		final CService cService = this.cService;
+		queueJob(new PaymentJob() {
+			public void run() {
+				try {
+					cService.doSynchronized(new SynchronizedWorkflow<Object>() {
+						public Object run() throws SMSLibDeviceException,
+								IOException {
+
+							initIfRequired();
+							final StkMenu mPesaMenu = getMpesaMenu();
+							final StkResponse payBillResponse = cService
+								.stkRequest(mPesaMenu.getRequest("Pay Bill"));
+
+							StkValuePrompt enterBusinessNumberPrompt;
+							if (payBillResponse instanceof StkMenu) {
+								enterBusinessNumberPrompt = (StkValuePrompt) cService
+										.stkRequest(((StkMenu) payBillResponse)
+												.getRequest("Enter business no."));
+							} else {
+								enterBusinessNumberPrompt = (StkValuePrompt) payBillResponse;
+							}
+							
+							final StkResponse enterBusinessNumberResponse = cService.stkRequest(
+									enterBusinessNumberPrompt.getRequest(), businessNo);
+							try {							
+								if (!(enterBusinessNumberResponse instanceof StkValuePrompt)) {
+									logMessageDao.saveLogMessage(LogMessage.error(
+											"Business number rejected", ""));
+									throw new RuntimeException(
+											"Business number rejected");
+								}
+								final StkResponse enterAccountNumberResponse = cService.stkRequest(
+											((StkValuePrompt) enterBusinessNumberResponse)
+													.getRequest(), accountNo
+										);
+								if (!(enterAccountNumberResponse instanceof StkValuePrompt)) {
+									logMessageDao.saveLogMessage(LogMessage.error(
+											"Account number rejected", ""));
+									throw new RuntimeException("Account number rejected");
+								}
+								final StkResponse enterAmountResponse = cService
+								.stkRequest(
+										((StkValuePrompt) enterAccountNumberResponse)
+												.getRequest(), amount
+												.toString());
+								if (!(enterAmountResponse instanceof StkValuePrompt)) {
+									logMessageDao.saveLogMessage(LogMessage.error(
+											"amount rejected", ""));
+									throw new RuntimeException("amount rejected");
+								}
+								final StkResponse enterPinResponse = cService
+								.stkRequest(
+										((StkValuePrompt) enterAmountResponse)
+												.getRequest(), pin);
+								if (!(enterPinResponse instanceof StkConfirmationPrompt)) {
+									logMessageDao.saveLogMessage(LogMessage.error(
+											"PIN rejected", ""));
+									throw new RuntimeException("PIN rejected");
+								}
+								final StkResponse confirmationResponse = cService
+										.stkRequest(((StkConfirmationPrompt) enterPinResponse)
+												.getRequest());
+								if (confirmationResponse == StkResponse.ERROR) {
+									logMessageDao.saveLogMessage(LogMessage.error(
+											"Payment failed for some reason.", ""));
+									throw new RuntimeException(
+											"Payment failed for some reason.");
+								}
+							} catch (Throwable e) {
+								e.printStackTrace();
+							}
+							return null;
+						}
+					});
+
+				} catch (final SMSLibDeviceException ex) {
+					logMessageDao.saveLogMessage(LogMessage.error(
+							"SMSLibDeviceException in makePayment()",
+							ex.getMessage()));
+				} catch (final IOException ex) {
+					logMessageDao.saveLogMessage(LogMessage.error(
+							"IOException in makePayment()", ex.getMessage()));
+				}
+			}
+		});
+
+	}
 	
 	public void checkBalance() throws PaymentServiceException {
 		final String pin = this.pin;
@@ -618,5 +710,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	
 	void queueJob(PaymentJob job) {
 		jobProcessor.queue(job);
+	}
+
+	public CService getCService() {
+		return cService;
 	}
 }

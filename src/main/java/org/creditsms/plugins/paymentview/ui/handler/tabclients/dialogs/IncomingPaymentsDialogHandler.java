@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.handler.PagedListDetails;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
@@ -39,11 +38,6 @@ public class IncomingPaymentsDialogHandler extends IncomingPaymentsTabHandler {
 	}
 
 	// >PAGING METHODS
-	protected PagedListDetails getIncomingPaymentsListDetails(int startIndex,
-			int limit) {
-		return super.getIncomingPaymentsListDetails(startIndex, limit);
-	}
-
 	@Override
 	protected List<IncomingPayment> getIncomingPaymentsForUI(int startIndex, int limit) {
 		if (this.selectedClients.isEmpty()) {
@@ -67,6 +61,7 @@ public class IncomingPaymentsDialogHandler extends IncomingPaymentsTabHandler {
 	}
 
 	public Object getDialog() {
+		updateIncomingPaymentsList();
 		return getTab();
 	}
 }

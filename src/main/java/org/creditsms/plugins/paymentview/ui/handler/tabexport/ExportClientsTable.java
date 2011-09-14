@@ -3,7 +3,7 @@ package org.creditsms.plugins.paymentview.ui.handler.tabexport;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.ui.handler.BaseSelectClientTableHandler;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseSelectClientTableHandler;
 
 public class ExportClientsTable extends BaseSelectClientTableHandler {
 	private static final String TBL_CLIENTS = "tbl_clients";
