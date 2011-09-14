@@ -27,6 +27,7 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
+import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
@@ -35,6 +36,7 @@ import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance;
+import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.BalanceProperties;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
 import org.smslib.handler.ATHandler.SynchronizedWorkflow;
@@ -99,7 +101,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 //> INSTANCE PROPERTIES
 	protected Logger pvLog = Logger.getLogger(this.getClass());
 	CService cService;
-	String pin;
+        String pin;
 	Balance balance;
 	EventBus eventBus;
 	private TargetAnalytics targetAnalytics;
@@ -113,8 +115,10 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	OutgoingPaymentDao outgoingPaymentDao;
 	LogMessageDao logMessageDao;
 	private ContactDao contactDao;
+	private Object paymentServiceSettingsDao;
+	private PaymentServiceSettings settings;
 	
-//> INSTANCE METHODS
+	//configureModem
 	public void configureModem() throws PaymentServiceException {
 		final CService cService = this.cService;
 		queueJob(new PaymentJob() {
@@ -232,9 +236,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 				}
 			}
 		});
-
 	}
-	
+
 	public void checkBalance() throws PaymentServiceException {
 		final String pin = this.pin;
 		final CService cService = this.cService;
@@ -282,7 +285,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	}
 	
 	public static class PaymentStatusEventNotification implements FrontlineEventNotification {
-
 		private final Status status;
 		public PaymentStatusEventNotification(Status status) {
 			this.status = status;
@@ -341,6 +343,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							payment.setConfirmationCode(getConfirmationCode(message));
 							payment.setPaymentBy(getPaymentBy(message));
 							payment.setTimePaid(getTimePaid(message));
+							payment.setPaymentServiceSettings(MpesaPaymentService.this.getSettings());
 							
 							performIncominPaymentFraudCheck(message, payment);
 							incomingPaymentDao.saveIncomingPayment(payment);
@@ -408,6 +411,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 						payment.setConfirmationCode(getConfirmationCode(message));
 						payment.setPaymentBy(getPaymentBy(message));
 						payment.setTimePaid(getTimePaid(message));
+						payment.setPaymentServiceSettings(MpesaPaymentService.this.getSettings());
 						
 						performIncominPaymentFraudCheck(message, payment);
 						incomingPaymentDao.saveIncomingPayment(payment);
@@ -492,7 +496,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		if (expectedBalance.compareTo(new BigDecimal(0)) >= 0) {//Now we don't want Mathematical embarrassment...
 			informUserOnFraud(expectedBalance, actualBalance, !expectedBalance.equals(actualBalance), messageContent);
 		}else{
-			pvLog.error("Balance is way low: than expected " + actualBalance + " instead of : "+ expectedBalance);
+			pvLog.error("Balance for:"+ this.toString() +" is way low: than expected " + actualBalance + " instead of : "+ expectedBalance);
 		}
 	}
 
@@ -540,11 +544,11 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	
 	void informUserOnFraud(BigDecimal expected, BigDecimal actual, boolean fraudCommited, String messageContent) {
 		if (fraudCommited) {
-			String message = "Fraud commited? Was expecting balance as: "+expected+", But was "+actual;
+			String message = "Fraud commited on "+ this.toString() +"? Was expecting balance as: "+expected+", But was "+actual;
 
 			logMessageDao.saveLogMessage(
 					new LogMessage(LogMessage.LogLevel.WARNING,
-						   	"Fraud commited? Was expecting balance as: "+expected+", But was "+actual,
+						   	message,
 						    messageContent));
 			pvLog.warn(message);
 			this.eventBus.notifyObservers(new BalanceFraudNotification(message));
@@ -654,7 +658,19 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			this.eventBus.registerObserver(this);
 		}
 	}
-
+	
+	/** @return the settings attached to this instance. */
+	public PaymentServiceSettings getSettings() {
+		return settings;
+	}
+	
+	/**
+	 * Initialise the service using the supplied properties.
+	 */
+	public void setSettings(PaymentServiceSettings settings) {
+		this.settings = settings;
+	}
+	
 	public void setPin(final String pin) {
 		this.pin = pin;
 	}
@@ -675,8 +691,10 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.targetAnalytics = pluginController.getTargetAnalytics();
 		this.logMessageDao = pluginController.getLogMessageDao();
-		this.balance = Balance.getInstance().getLatest();
+		this.balance = BalanceProperties.getInstance().getBalance(this).getLatest();
 		this.contactDao = pluginController.getUiGeneratorController().getFrontlineController().getContactDao();
+		this.paymentServiceSettingsDao = pluginController.getPaymentServiceSettingsDao();
+		
 		this.registerToEventBus(
 			pluginController.getUiGeneratorController().getFrontlineController().getEventBus()
 		);

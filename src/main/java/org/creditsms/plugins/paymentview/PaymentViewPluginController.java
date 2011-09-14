@@ -7,7 +7,7 @@
  */
 package org.creditsms.plugins.paymentview;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,11 +17,15 @@ import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.payment.PaymentService;
+import net.frontlinesms.payment.PaymentServiceStartedNotification;
+import net.frontlinesms.payment.PaymentServiceStoppedNotification;
 import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.events.FrontlineUiUpateJob;
+
 import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
@@ -31,6 +35,7 @@ import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
@@ -61,6 +66,7 @@ public class PaymentViewPluginController extends BasePluginController
 	private CustomFieldDao customFieldDao;
 	private IncomingPaymentDao incomingPaymentDao;
 	private OutgoingPaymentDao outgoingPaymentDao;
+	private PaymentServiceSettingsDao paymentServiceSettingsDao;
 	private TargetDao targetDao;
 	private ServiceItemDao serviceItemDao;
 	private LogMessageDao logMessageDao;
@@ -71,7 +77,7 @@ public class PaymentViewPluginController extends BasePluginController
 	private UiGeneratorController ui;
 	
 	/** Currently we will allow only one payment service to be configured TO MAKE THINGS SIMPLER */
-	private PaymentService paymentService;
+	private List<PaymentService> paymentServices = new ArrayList<PaymentService>();
 	private FrontlineSMS frontlineController;
 	
 	/** @see net.frontlinesms.plugins.PluginController#deinit() */
@@ -96,6 +102,7 @@ public class PaymentViewPluginController extends BasePluginController
 		customFieldDao 		= (CustomFieldDao) applicationContext.getBean("customFieldDao");
 		incomingPaymentDao 	= (IncomingPaymentDao) applicationContext.getBean("incomingPaymentDao");
 		outgoingPaymentDao 	= (OutgoingPaymentDao) applicationContext.getBean("outgoingPaymentDao");
+		paymentServiceSettingsDao 	= (PaymentServiceSettingsDao) applicationContext.getBean("paymentServiceSettingsDao");
 		serviceItemDao 		= (ServiceItemDao) applicationContext.getBean("serviceItemDao");
 		targetDao 			= (TargetDao) applicationContext.getBean("targetDao");
 		logMessageDao       = (LogMessageDao) applicationContext.getBean("logMessageDao");
@@ -143,6 +150,10 @@ public class PaymentViewPluginController extends BasePluginController
 		return outgoingPaymentDao;
 	}
 	
+	public PaymentServiceSettingsDao getPaymentServiceSettingsDao() {
+		return paymentServiceSettingsDao;
+	}
+	
 	public ClientDao getClientDao() {
 		return clientDao;
 	}
@@ -176,10 +187,8 @@ public class PaymentViewPluginController extends BasePluginController
 	}
 
 	public List<PaymentService> getPaymentServices() {
-		if(this.paymentService == null) return Collections.emptyList();
-		else {
-			return Arrays.asList(new PaymentService[] { this.paymentService });
-		}
+		if(this.paymentServices == null) return Collections.emptyList();
+		else return paymentServices;
 	}
 
 	public void updateStatusBar(String message) {
@@ -190,23 +199,25 @@ public class PaymentViewPluginController extends BasePluginController
 		updateStatusBar("");
 	}
 
-	public void setPaymentService(PaymentService service) {
-		this.paymentService = service;
-	}
-
-	public PaymentService getPaymentService() {
-		return this.paymentService;
-	}
-
-	public void notify(FrontlineEventNotification notification) {
-		//Moved to Settings Tab for consistencies sake
+	public void addPaymentService(PaymentService paymentService) {
+		this.paymentServices.add(paymentService);
 	}
 
 	public Logger getLogger(Class<?> clazz) {
 		return PvUtils.getLogger(clazz);
 	}
 	
-//	public FrontlineSMS getFrontlineController() { // TODO this method shouldn't really be here :)
-//		return this.frontlineController;
-//	}
+	public void notify(final FrontlineEventNotification notification){
+		new FrontlineUiUpateJob() {
+			public void run() {
+				if (notification instanceof PaymentServiceStartedNotification) {
+					paymentServices.add(((PaymentServiceStartedNotification)notification)
+							.getPaymentService());
+				} else if (notification instanceof PaymentServiceStoppedNotification) {
+					paymentServices.remove(((PaymentServiceStartedNotification)notification)
+							.getPaymentService());
+				}
+			}
+		}.execute();
+	}
 }

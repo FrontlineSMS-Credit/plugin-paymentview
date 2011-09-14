@@ -40,8 +40,8 @@ public class ReviewHandler extends BasePanelHandler {
 		this.addClientTabHandler = addClientTabHandler;
 		this.selectedClients = new ArrayList<Client>(previousCreateSettingsHandler.getPreviousSelectClientsHandler().getSelectedClients());
 		//TODO to be modified if several phones are connected
-		PaymentService paymentService = pluginController.getPaymentService();
-		PAYMENT_PROCESS = (paymentService instanceof MpesaPersonalService? "StandardPaymentService" : "PayBillPaymentService");
+		List<PaymentService> paymentServices = pluginController.getPaymentServices();
+		PAYMENT_PROCESS = (paymentServices instanceof MpesaPersonalService? "StandardPaymentService" : "PayBillPaymentService");
 		init();
 	}
 

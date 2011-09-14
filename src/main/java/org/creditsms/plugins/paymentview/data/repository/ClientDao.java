@@ -81,6 +81,8 @@ public interface ClientDao {
 	 * @return
 	 */
 	public List<Client> getClientsByFilter(String filter);
+	
+	public List<Client> getClientsByNameFilter(String filter);
 
 	/**
 	 * Returns a list of clients whose name,phone number or custom value are similar to the specified string
