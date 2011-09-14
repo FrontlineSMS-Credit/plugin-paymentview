@@ -2,11 +2,20 @@
 <dialog bottom="9" close="removeDialog(this)" columns="1" gap="15"
 	left="9" icon="/icons/user.png" name="clientPhoneNumberDialog" right="9"
 	text="Select Client(s)" top="9" resizable="true"
-	modal="true" closable="true">
+	modal="true" closable="true" width="300" height="320">
 	
-    <label weightx="1" text="Select recipient(s):" font="bold"/>
-	<list name="lstCustomFields" weightx="1" weighty="1"/>
+	<panel weightx="1" weighty="1" columns="1" gap="5" left="5"
+	name="pnl_tbl_clientList" right="5" top="5" width="100">
+	
+	    <label weightx="1" text="Select recipient(s):" font="bold"/>
+	    <table colspan="10" selection="multiple" name="tbl_clientContacts" width="200"
+	weightx="1" weighty="1">
+		</table>
+		
+	</panel>
 	<panel weightx="1"/>
-	<button icon="/icons/tick.png"  name="btAddClients" action="addClients" text="Done" />
-	<button icon="/icons/cross.png" action="removeDialog" name="btClose" text="Cancel" />
+	<panel gap="5" halign="center">
+		<button icon="/icons/tick.png"  name="btAddClients" action="addClients" text="Done" />
+		<button icon="/icons/cross.png" action="removeDialog" name="btClose" text="Cancel" />
+	</panel>
 </dialog>

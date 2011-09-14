@@ -51,6 +51,5 @@ public class ThirdPartySMSDialogHandler extends BaseActionDialog  {
 		}
 		
 		public void recipientDialog(){
-			ui.add(new SelectRecipientDialogHandler(ui, this.pluginController).getDialog());
 		}
 	}
