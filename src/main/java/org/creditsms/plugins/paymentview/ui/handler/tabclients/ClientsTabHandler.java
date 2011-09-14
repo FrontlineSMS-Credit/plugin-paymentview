@@ -31,11 +31,10 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	private final ClientDao clientDao;
 	private final CustomFieldDao customFieldDao;
 
-	private Object clientsTableComponent;
 	protected UiGeneratorController ui;
 	private Object clientsTab;
 	private Object clientTableHolder;
-	private BaseClientTableHandler clientTableHandler;
+	protected BaseClientTableHandler clientTableHandler;
 	private final PaymentViewPluginController pluginController;
 	private Object incomingPaymentsDialog;
 	
@@ -50,7 +49,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 		init();
 	}
 
-	protected BaseClientTableHandler getClientTableHandler(UiGeneratorController ui,
+	protected BaseClientTableHandler createClientTableHandler(UiGeneratorController ui,
 			final PaymentViewPluginController pluginController) {
 		return new ClientTableHandler(ui, pluginController, this);
 	}
@@ -58,13 +57,20 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	public void init() {
 		clientsTab = ui.loadComponentFromFile(getXMLFile(), this);
 		clientTableHolder = ui.find(clientsTab, PNL_CLIENT_TABLE_HOLDER);
-		clientTableHandler = getClientTableHandler(ui, pluginController);
-		clientsTableComponent = clientTableHandler.getClientsTable();
+		clientTableHandler = createClientTableHandler(ui, pluginController);
 		ui.add(clientTableHolder, clientTableHandler.getClientsTablePanel());
+	}
+	
+	public BaseClientTableHandler getClientTableHandler() {
+		return clientTableHandler;
 	}
 
 	protected String getXMLFile() {
 		return XML_CLIENTS_TAB;
+	}
+	
+	protected Object getClientTableHolder() {
+		return clientTableHolder;
 	}
 
 	public void refresh() {
@@ -86,7 +92,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	}
 
 	public void deleteClient() {
-		Object[] selectedClients = this.ui.getSelectedItems(clientsTableComponent);
+		Object[] selectedClients = clientTableHandler.getSelectedRows();
 		String clientNameList = "";
 		for (Object selectedClient : selectedClients) {
 			Client attachedClient = ui.getAttachedObject(selectedClient, Client.class);
@@ -104,8 +110,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	}
 
 	public void editClient() {
-		Object[] selectedClients = this.ui.getSelectedItems(clientsTableComponent);
-		for (Object selectedClient : selectedClients) {
+		for (Object selectedClient : clientTableHandler.getSelectedRows()) {
 			Client c = (Client) ui.getAttachedObject(selectedClient);
 			ui.add(new EditClientHandler(ui, c, pluginController, this).getDialog());
 		}
@@ -116,7 +121,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	}
 	
 	public void exportClient(String clientFilter) {
-		Object[] selectedItems = ui.getSelectedItems(clientsTableComponent);
+		Object[] selectedItems = clientTableHandler.getSelectedRows();
 		if (selectedItems.length <= 0){
 			if (clientFilter.isEmpty()){
 				exportClients(clientDao.getAllClients());
@@ -139,7 +144,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	}
 	
 	public void copyToContacts() throws NumberFormatException, DuplicateKeyException {
-		Object[] selectedItems = ui.getSelectedItems(clientsTableComponent);
+		Object[] selectedItems = clientTableHandler.getSelectedRows();
 		if (selectedItems.length <= 0){
 			copyClientsToContacts(clientDao.getAllClients());
 		}else{
@@ -174,7 +179,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	}
 	
 	public void viewIncomingPaymentByClient() {
-		Object[] selectedClientRows = ui.getSelectedItems(clientsTableComponent);
+		Object[] selectedClientRows = clientTableHandler.getSelectedRows();
 		List<Client> selectedClientsList = null;
 		if (selectedClientRows.length <= 0){
 			if (clientTableHandler.getClientFilter().isEmpty()){

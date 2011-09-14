@@ -4,7 +4,6 @@ import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTableHandler;
-import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.SelectRecipientDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.ThirdPartySMSDialogHandler;
 
 public class ClientTableHandler extends BaseClientTableHandler {
@@ -52,7 +51,7 @@ public class ClientTableHandler extends BaseClientTableHandler {
 	}
 	
 	public void designateThirdPartySMSRecipient() {
-		ui.add(new ThirdPartySMSDialogHandler(ui, pluginController).getDialog());
+		ui.add(new ThirdPartySMSDialogHandler(ui, pluginController).getDialogComponent());
 	}
 
 }

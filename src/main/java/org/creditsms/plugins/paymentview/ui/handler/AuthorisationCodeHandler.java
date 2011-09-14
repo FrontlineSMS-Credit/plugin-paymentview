@@ -1,7 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler;
 
-import java.lang.reflect.Method;
-
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -10,8 +8,7 @@ import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.Aut
 
 public class AuthorisationCodeHandler extends BaseDialog{
 	private static final String XML_ENTER_AUTHORIZATION_CODE = "/ui/plugins/paymentview/settings/dialogs/createnewpaymentsteps/dlgCreateNewAccountStep3.xml";
-	private Method authorizationAction;
-	private ThinletUiEventHandler authorizationHandler;
+	private MethodInvoker methodinvoker;
 	
 	public AuthorisationCodeHandler(UiGeneratorController ui) {
 		super(ui);
@@ -20,59 +17,25 @@ public class AuthorisationCodeHandler extends BaseDialog{
 	public void showAuthorizationCodeDialog(String methodToBeCalled, ThinletUiEventHandler eventListener){
 		dialogComponent = ui.loadComponentFromFile(XML_ENTER_AUTHORIZATION_CODE, this);
 		try {
-			setAuthorizationAction(eventListener.getClass().getMethod(methodToBeCalled));
-			setAuthorizationHandler(eventListener);
+			methodinvoker = new MethodInvoker(eventListener, methodToBeCalled);
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
 		ui.add(dialogComponent);
 	}
 	
-	private void setAuthorizationHandler(
-			ThinletUiEventHandler authorizationEventListener) {
-		this.authorizationHandler = authorizationEventListener;
-	}
-
-	private void setAuthorizationAction(Method authorizationAction) {
-		this.authorizationAction = authorizationAction;
-	}
-
  	public void authorize(String authCode, String verifyAuthCode) {
 		if ((authCode.equals(verifyAuthCode)) && AuthorizationChecker.authenticate(authCode)) {
-			if (authorizationAction != null) {
 				try {
-					authorizationAction.invoke(authorizationHandler);
+					methodinvoker.invoke();
 				}  catch (Exception e) {
 					throw new RuntimeException(e);
 				} finally {
-					ui.remove(dialogComponent);
+					removeDialog();
 				}
-			} else {
-				throw new RuntimeException("Null AuthorizationAction!");
-			}
 		} else {
 			ui.alert("Invalid Entry! Enter the Authorization Code Again.");
 		}
-	}
- 	
-	@Override
-	public Object getDialog() {
-		return dialogComponent;
-	}
-
-	@Override
-	public void removeDialog() {
-		this.removeDialog(this.dialogComponent);
-	}
-
-	@Override
-	public void removeDialog(Object dialog) {
-		this.ui.removeDialog(dialog);
-	}
-	
-	@Override
-	public Object find(String object) {
-		return ui.find(this.dialogComponent, object);
 	}
 	
 	@Override

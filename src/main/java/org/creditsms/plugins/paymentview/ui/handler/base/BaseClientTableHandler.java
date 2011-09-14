@@ -215,7 +215,7 @@ public abstract class BaseClientTableHandler implements PagedComponentItemProvid
 
 	public Object getClientsTablePanel() {
 		return this.tableClientsPanel;
-	}
+	} 
 
 	public void showConfirmationDialog(String methodToBeCalled) {
 		ui.showConfirmationDialog(methodToBeCalled, this);
@@ -230,7 +230,20 @@ public abstract class BaseClientTableHandler implements PagedComponentItemProvid
 	public Object getClientsTable() {
 		return this.tableClients;
 	}
-
+	
+	public Object[] getSelectedRows() {
+		return ui.getSelectedItems(tableClients);
+	}
+	
+	public List<Client> getSelectedClients() {
+		Object[] rows = getSelectedRows();
+		List<Client> clients = new ArrayList<Client>(rows.length);
+		for (Object o : rows) {
+			clients.add(ui.getAttachedObject(o, Client.class));
+		}
+		return clients;
+	}
+	
 	/**
 	 * @param clients the clients to set
 	 */
@@ -287,4 +300,8 @@ public abstract class BaseClientTableHandler implements PagedComponentItemProvid
 		return order;
 	}
 	
+	
+	public void setSelectionMethod(String selection) {
+		ui.setChoice(this.tableClients, Thinlet.SELECTION, selection);
+	}
 }

@@ -3,7 +3,7 @@
     <label name="clientSelector_title"/>
     <panel width="200" height="150" name="pnlClientTableHolder" weightx="2" weighty="2"/>
     <panel gap="5" halign="center">
-	    <button icon="/icons/tick.png" name="clientSelector_okButton" text="i18n.action.done"/>
+	    <button action="sendSelectedListOfClients" icon="/icons/tick.png" name="clientSelector_okButton" text="i18n.action.done"/>
 	    <button action="removeDialog" icon="/icons/cross.png" text="i18n.action.cancel"/>
 	</panel>
 </dialog>

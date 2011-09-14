@@ -2,22 +2,15 @@
 <dialog name="dialog_designate_thirdparty_recipients" right="5" left ="5" top="7" bottom="5" text="Designate Third Party SMS Recipient" icon="/icons/sms_autoReply.png" resizable="true" 
  modal="true" closable="true" close="removeDialog(this)" width="420" height="410">
  	<panel gap="5" columns="1" weightx="1" weighty="1">
- 		<label weightx="1" text="Send To:" font="bold"/>
- 		
- 		
- 			<panel bottom="4" gap="5" columns="2" weightx="1">
-	    		<panel gap="5" columns="1" weightx="1">
-				<table colspan="10" selection="multiple" name="tbl_clientContactList" width="400"
-		weightx="1" weighty="1">
-			    </table>
-					
-			    </panel>
-			    <panel gap="1" columns="1" weightx="1">
-			   		<button icon="/icons/user_receiver.png" action="recipientDialog" name="btRecipient" text="Select Recipient" halign="right" />
-			    </panel>
-	    	</panel>
- 		
-
+ 		<panel>
+	 		<label weightx="1" text="Send To:" font="bold"/>
+	 		<button icon="/icons/user_receiver.png" action="recipientDialog" name="btRecipient" tooltip="Select Recipient" />
+		</panel>
+		<panel bottom="4" gap="5" columns="1" weightx="1">
+    		<panel gap="5" columns="1" weightx="1" weighty="1">
+				<table colspan="10" selection="multiple" name="tbl_clientContactList" width="400" weightx="1" weighty="1"/>
+		    </panel>
+    	</panel>
  		<label weightx="1" text="Message Content:" font="bold"/>
 	 	<textarea name="replyContent" wrap="true" weightx="1" weighty="1" wrap="true" width="350"/>
 	    <separator/>
