@@ -43,10 +43,10 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		PagedComponentItemProvider, EventObserver{
 	private static final String CONFIRM_DIALOG = "confirmDialog";
 	private static final String INVALID_DATE = "Please enter a correct starting date.";
-	private static final String ENABLE_AUTOREPLY = "Enable autoreply";
+	private static final String ENABLE_AUTOREPLY = "Autoreply Disabled";
 	private static final String TXT_END_DATE = "txt_endDate";
 	private static final String TXT_START_DATE = "txt_startDate";
-	private static final String DISABLE_AUTOREPLY = "Disable autoreply";
+	private static final String DISABLE_AUTOREPLY = "Autoreply Enabled";
 	private static final String COMPONENT_INCOMING_PAYMENTS_TABLE = "tbl_clients";
 	private static final String COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE = "pnl_clients";
 	private static final String XML_INCOMING_PAYMENTS_TAB = "/ui/plugins/paymentview/incomingpayments/tabincomingpayments.xml";
