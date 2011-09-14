@@ -2,11 +2,14 @@ package org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs;
 
 import java.util.List;
 
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.handler.PagedListDetails;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.ThirdPartyResponse;
+import org.creditsms.plugins.paymentview.data.repository.ResponseRecipientDao;
+import org.creditsms.plugins.paymentview.data.repository.ThirdPartyResponseDao;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseActionDialog;
 
 public class ThirdPartySMSDialogHandler extends BaseActionDialog {
@@ -15,25 +18,38 @@ public class ThirdPartySMSDialogHandler extends BaseActionDialog {
 	PaymentViewPluginController pluginController;
 	private Object clientTableComponent;
 	public List<Client> clients;
-
+	private ThirdPartyResponseDao thirdPartyResponseDao;
+	private ResponseRecipientDao responseRecipientDao;
+    private Client client;
+    Object replyTextMessage;
+    protected Object dialogComponent;
+	
 	public ThirdPartySMSDialogHandler(UiGeneratorController ui,
-			PaymentViewPluginController pluginController) {
+			PaymentViewPluginController pluginController, Client client) {
 		super(ui);
 		init();
 		this.pluginController = pluginController;
+		this.thirdPartyResponseDao = pluginController.getThirdPartyResponseDao();
+		this.responseRecipientDao = pluginController.getResponseRecipientDao();
+		this.client = client;
 	}
 
 	@Override
 	public void init() {
 		super.init();
 		clientTableComponent = ui.find(this.getDialogComponent(), TBL_CLIENT_CONTACT_LIST);
-		// ui.setText(ui.find(this.getDialogComponent(), "replyContent"),
-		// autoReplyProperties.getMessage);
 	}
 
-	/** Save auto reply details */
-	public void save(String message) {
-		// autoReplyProperties.setMessage(message);
+	/** Save auto reply details 
+	 * @throws DuplicateKeyException */
+	public void save(String message) throws DuplicateKeyException {
+		
+		dialogComponent = ui.loadComponentFromFile(XML_THIRD_PARTY_SMS_DIALOG, this);
+		replyTextMessage = ui.find(dialogComponent, "replyContent");
+		ThirdPartyResponse thirdPatyResponse = new ThirdPartyResponse();
+		thirdPatyResponse.setClient(this.client);
+		thirdPatyResponse.setMessage(ui.getText(replyTextMessage));
+		this.thirdPartyResponseDao.saveThirdPartyResponse(thirdPatyResponse);
 		this.removeDialog();
 	}
 
