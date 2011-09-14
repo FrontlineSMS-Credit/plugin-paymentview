@@ -171,6 +171,6 @@ public class ClientImportHandler extends ImportDialogHandler {
 
 	@Override
 	protected void setImporter(String filename) throws CsvParseException {
-		this.importer = new ClientCsvImporter(new File(filename));
+		this.importer = new ClientCsvImporter(new File(filename), pluginController);
 	}
 }

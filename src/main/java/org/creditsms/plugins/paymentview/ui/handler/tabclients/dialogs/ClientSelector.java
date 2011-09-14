@@ -1,13 +1,9 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs;
 
-import java.lang.reflect.InvocationTargetException;
-
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
-import org.apache.log4j.chainsaw.Main;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.ui.handler.MethodInvoker;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTableHandler;
 

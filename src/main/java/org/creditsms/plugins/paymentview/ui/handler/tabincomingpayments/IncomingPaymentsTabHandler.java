@@ -264,15 +264,50 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		}		
 	}
 	
-	public void reassignIncomingPayment() {
+	public Account getAccount(Client client){
+		List<Account> activeNonGenericAccountsByClientId = accountDao
+		.getActiveNonGenericAccountsByClientId(client.getId());
+		if (!activeNonGenericAccountsByClientId.isEmpty()) {
+			return activeNonGenericAccountsByClientId.get(0);
+		} else {
+			return accountDao.getGenericAccountsByClientId(client.getId());
+		}
+	}
+	
+	public void reassignForClient(List<Client> clients){
+		Client client = clients.get(0);//Its a single object list
+		
+		Object selectedItem = ui.getSelectedItem(incomingPaymentsTableComponent);
+		IncomingPayment incomingPayment = ui.getAttachedObject(selectedItem, IncomingPayment.class);
+		String tempPhoneNo = incomingPayment.getPhoneNumber();
+		incomingPayment.setAccount(getAccount(client));
+		incomingPayment.setPhoneNumber(client.getPhoneNumber());
+
+		incomingPaymentDao.updateIncomingPayment(incomingPayment);
+		
+		refresh();
+		logMessageDao.saveLogMessage(
+			new LogMessage(LogMessage.LogLevel.INFO,"Payment Reassigned to different client", 
+					"Incoming Payment ["+incomingPayment.getConfirmationCode()+
+					"] Reassigned from "+ tempPhoneNo  +" to different Client" + 
+					incomingPayment.getPhoneNumber()
+			)
+		);
+	}
+	
+	public void postAuthCodeAction() {
 		Object[] selectedItems = ui.getSelectedItems(incomingPaymentsTableComponent);
 		if (selectedItems.length <= 0){
 			ui.alert("Please select a payment to reassign.");
 		}else if (selectedItems.length > 1){
 			ui.alert("You can only select one payment at a time.");
 		}else{
-			new ClientSelector(ui, pluginController).show();
+			new ClientSelector(ui, pluginController).showClientSelectorDialog(this, "reassignForClient", List.class);
 		}
+	}
+	
+	public void reassignIncomingPayment() {
+		new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog(this, "postAuthCodeAction");
 	}
 	
 	// > EXPORTS...
@@ -326,7 +361,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	
 	public void showAuthCode() {
 		ui.remove(dialogConfirmation);
-		new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog("deleteIncomingPayment", this);
+		new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog(this, "deleteIncomingPayment");
 	}
 	
 	public final void showDeleteConfirmationDialog(String methodToBeCalled){

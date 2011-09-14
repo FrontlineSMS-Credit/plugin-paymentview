@@ -34,7 +34,7 @@ public class PaybillSendDialogHandler extends BaseDialog {
 	}
 	
 	public void sendPayment() {
-		new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog("sendPaymentToPaymentService", this);
+		new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog(this, "sendPaymentToPaymentService");
 	}
 	
 	public void sendPaymentToPaymentService() {

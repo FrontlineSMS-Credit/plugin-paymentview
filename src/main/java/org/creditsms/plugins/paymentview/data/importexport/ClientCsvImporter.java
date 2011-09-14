@@ -31,7 +31,7 @@ public class ClientCsvImporter extends CsvImporter {
 	// > INSTANCE PROPERTIES
 
 	// > CONSTRUCTORS
-	public ClientCsvImporter(File importFile) throws CsvParseException {
+	public ClientCsvImporter(File importFile, PaymentViewPluginController pluginController) throws CsvParseException {
 		super(importFile);
 	}
 
@@ -70,14 +70,26 @@ public class ClientCsvImporter extends CsvImporter {
 			
 			PvUtils.parsePhoneFromExcel(phonenumber);
 			
+			
 			Client c = new Client(firstname, otherName, phonenumber);
 			try{
 				clientDao.saveClient(c);
 			}catch (Exception e){
-				if (e instanceof NonUniqueObjectException
-						|| e instanceof DataIntegrityViolationException
-						|| e instanceof ConstraintViolationException){
-					throw new DuplicateKeyException("You are attempting to import a duplicate phone number: "+phonenumber);
+				if (e instanceof NonUniqueObjectException ||
+					e instanceof DataIntegrityViolationException ||
+					e instanceof ConstraintViolationException){
+					c = clientDao.getClientByPhoneNumber(phonenumber);
+					
+					if (c.isActive()){
+						pluginController
+						.getUiGeneratorController()
+						.alert("A user with similar phone number exists, Update the details?");
+					}else{
+						pluginController
+						.getUiGeneratorController()
+						.alert("A user with similar phone number exists, But is Disabled, Update the details?");
+					}
+					
 				}
 			}
 			

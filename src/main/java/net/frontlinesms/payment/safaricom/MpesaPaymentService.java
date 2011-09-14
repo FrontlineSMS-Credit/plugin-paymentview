@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.EntitySavedNotification;
@@ -28,7 +27,6 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
-import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
@@ -583,7 +581,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	        final String amountWithKsh = balance_part.split("balance is ")[1];
 	        return new BigDecimal(amountWithKsh.substring(3).replaceAll(",", ""));
 		} catch(final ArrayIndexOutOfBoundsException ex) {
-		        throw new IllegalArgumentException(ex);
+			throw new IllegalArgumentException(ex);
 		}
 	}	
 	

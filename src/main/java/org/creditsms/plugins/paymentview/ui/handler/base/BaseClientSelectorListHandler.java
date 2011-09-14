@@ -1,6 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler.base;
 
 import net.frontlinesms.data.Order;
+import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
@@ -22,5 +23,7 @@ public abstract class BaseClientSelectorListHandler extends BaseClientTableHandl
 	protected Object getRow(Client client) {
 		return ui.createListItem(client.getFullName() + " ("+client.getPhoneNumber()+")", client);
 	}
+	
+	public void notify(final FrontlineEventNotification notification) {}
 	
 }

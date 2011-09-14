@@ -19,7 +19,7 @@ public class MethodInvoker {
 	}
 
 	public void invoke() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-		invoke(actionHandler);
+		actionMethod.invoke(actionHandler);
 	}
 	
 }

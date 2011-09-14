@@ -14,7 +14,7 @@ public class AuthorisationCodeHandler extends BaseDialog{
 		super(ui);
 	}
 	
-	public void showAuthorizationCodeDialog(String methodToBeCalled, ThinletUiEventHandler eventListener){
+	public void showAuthorizationCodeDialog(ThinletUiEventHandler eventListener, String methodToBeCalled){
 		dialogComponent = ui.loadComponentFromFile(XML_ENTER_AUTHORIZATION_CODE, this);
 		try {
 			methodinvoker = new MethodInvoker(eventListener, methodToBeCalled);

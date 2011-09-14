@@ -74,9 +74,14 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 		fieldOpMsisdn = ui.find(dialogComponent, COMPONENT_TEXT_OP_MSISDN);
 		fieldOpAmount = ui.find(dialogComponent, COMPONENT_TEXT_OP_AMOUNT);
 		cmbOpMobilePaymentSystem = ui.find(dialogComponent, COMPONENT_CMB_OP_MOBILE_PAYMENT_SYSTEM);
-		ui.add(cmbOpMobilePaymentSystem,ui.createComboboxChoice("Safaricom Mpesa", PaymentService.PaymentServiceType.SAFARICOMMPESA) );
 		fieldOpPaymentId = ui.find(dialogComponent, COMPONENT_TEXT_OP_PAYMENT_ID);
 		fieldOpNotes = ui.find(dialogComponent, COMPONENT_TEXT_OP_NOTES);
+		
+		setupPaymentServices();
+	}
+
+	private void setupPaymentServices() {
+		ui.add(cmbOpMobilePaymentSystem, ui.createComboboxChoice("Safaricom Mpesa", PaymentService.PaymentServiceType.SAFARICOMMPESA) );
 	}
 
 	@Override
@@ -124,7 +129,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 					//TODO the account would have to be filled when specifications are clear!!!!!!!!!!!!!!!1
 					//System.out.println("account:"+accountDao.getAccountsByClientId(client.getId()).get(0).getAccountNumber());
 
-					new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog("sendPayment", this);
+					new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog(this, "sendPayment");
 
 					ui.remove(dialogComponent);
 				} catch (NumberFormatException ex){

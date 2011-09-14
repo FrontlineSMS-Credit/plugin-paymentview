@@ -117,7 +117,7 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 		// get the correct payment service in the paymentServices list
 		if (!pluginController.getPaymentServices().isEmpty()){
 			try {					
-				new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog("sendPayment", this);
+				new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog(this, "sendPayment");
 				//ui.remove(newPaymentsTab);
 			} catch (NumberFormatException ex){
 				ui.infoMessage("Please enter an amount");
