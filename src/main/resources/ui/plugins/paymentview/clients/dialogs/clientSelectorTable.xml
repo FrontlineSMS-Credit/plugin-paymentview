@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel weightx="1" weighty="1" columns="1" gap="5" left="5"
+	name="pnl_tbl_clientList" right="5" top="5">
+	<list width="200" height="150" name="clientSelectorList" weightx="2" weighty="2"/>
+</panel>

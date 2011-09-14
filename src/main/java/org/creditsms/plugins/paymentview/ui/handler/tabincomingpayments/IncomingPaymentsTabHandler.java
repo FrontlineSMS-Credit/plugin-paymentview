@@ -32,6 +32,7 @@ import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.ClientSelector;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.AutoReplyPaymentsDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.EditIncomingPaymentDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.FormatterMarkerType;
@@ -261,6 +262,17 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			}
 			ui.infoMessage("You have successfully deleted the selected incoming payment(s).");	
 		}		
+	}
+	
+	public void reassignIncomingPayment() {
+		Object[] selectedItems = ui.getSelectedItems(incomingPaymentsTableComponent);
+		if (selectedItems.length <= 0){
+			ui.alert("Please select a payment to reassign.");
+		}else if (selectedItems.length > 1){
+			ui.alert("You can only select one payment at a time.");
+		}else{
+			new ClientSelector(ui, pluginController).show();
+		}
 	}
 	
 	// > EXPORTS...

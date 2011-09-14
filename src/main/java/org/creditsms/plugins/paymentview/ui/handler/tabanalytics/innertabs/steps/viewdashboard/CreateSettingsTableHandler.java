@@ -23,12 +23,12 @@ import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
-import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTable;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTableHandler;
 
 import thinlet.Thinlet;
 import thinlet.ThinletText;
 
-public class CreateSettingsTableHandler extends BaseClientTable{
+public class CreateSettingsTableHandler extends BaseClientTableHandler{
 	private static final String XML_VIEWDASHBOARD_CLIENTS_TABLE = "/ui/plugins/paymentview/analytics/viewdashboard/clientsTable.xml";
 	private static final String TBL_CLIENTS = "tbl_clients";
 	

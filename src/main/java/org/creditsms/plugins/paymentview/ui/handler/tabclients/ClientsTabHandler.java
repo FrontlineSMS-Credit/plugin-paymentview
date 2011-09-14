@@ -14,7 +14,7 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
-import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTable;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTableHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientImportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.CustomizeClientDBHandler;
@@ -32,10 +32,10 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	private final CustomFieldDao customFieldDao;
 
 	private Object clientsTableComponent;
-	private UiGeneratorController ui;
+	protected UiGeneratorController ui;
 	private Object clientsTab;
 	private Object clientTableHolder;
-	private BaseClientTable clientTableHandler;
+	private BaseClientTableHandler clientTableHandler;
 	private final PaymentViewPluginController pluginController;
 	private Object incomingPaymentsDialog;
 	
@@ -49,13 +49,22 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 		
 		init();
 	}
+
+	protected BaseClientTableHandler getClientTableHandler(UiGeneratorController ui,
+			final PaymentViewPluginController pluginController) {
+		return new ClientTableHandler(ui, pluginController, this);
+	}
 	
 	public void init() {
-		clientsTab = ui.loadComponentFromFile(XML_CLIENTS_TAB, this);
+		clientsTab = ui.loadComponentFromFile(getXMLFile(), this);
 		clientTableHolder = ui.find(clientsTab, PNL_CLIENT_TABLE_HOLDER);
-		clientTableHandler = new ClientTableHandler(ui, pluginController, this);
+		clientTableHandler = getClientTableHandler(ui, pluginController);
 		clientsTableComponent = clientTableHandler.getClientsTable();
 		ui.add(clientTableHolder, clientTableHandler.getClientsTablePanel());
+	}
+
+	protected String getXMLFile() {
+		return XML_CLIENTS_TAB;
 	}
 
 	public void refresh() {
