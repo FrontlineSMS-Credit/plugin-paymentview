@@ -2,8 +2,8 @@ package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments;
 
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
-import net.frontlinesms.payment.PaymentServiceStartedNotification;
-import net.frontlinesms.payment.PaymentServiceStoppedNotification;
+import net.frontlinesms.payment.event.PaymentServiceStartedNotification;
+import net.frontlinesms.payment.event.PaymentServiceStoppedNotification;
 import net.frontlinesms.payment.safaricom.MpesaPayBillService;
 import net.frontlinesms.ui.UiDestroyEvent;
 import net.frontlinesms.ui.UiGeneratorController;
