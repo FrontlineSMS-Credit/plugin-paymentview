@@ -54,7 +54,7 @@ public class ResponseRecipientIntergrationTest extends HibernateTestCase{
 		ResponseRecipient responseRecipient = createResponseRecipient("0723987098", "Payment received today", "0721876425");
 		hibernateResponseRecipientDao.saveResponseRecipient(responseRecipient);
 		long tpr = hibernateThirdPartyResponseDao.getAllThirdPartyResponses().get(0).getId();
-		responseRecipient = hibernateResponseRecipientDao.getResponseRecipientByThirdPartyResponseId(tpr);
+		responseRecipient = hibernateResponseRecipientDao.getResponseRecipientByThirdPartyResponseId(tpr).get(0);
 		assertEquals("0721876425", responseRecipient.getClient().getPhoneNumber());
 	}	
 	

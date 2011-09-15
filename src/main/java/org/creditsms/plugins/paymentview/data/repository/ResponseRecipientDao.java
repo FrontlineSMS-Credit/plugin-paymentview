@@ -12,7 +12,7 @@ public interface ResponseRecipientDao {
 	 * 
 	 * @param thirdPartyId
 	 **/
-	public ResponseRecipient getResponseRecipientByThirdPartyResponseId(long thirdPartyId);
+	public List<ResponseRecipient> getResponseRecipientByThirdPartyResponseId(long thirdPartyId);
 
 	/**
 	 * Retrieves all the ThirdPartyResponses in the system
