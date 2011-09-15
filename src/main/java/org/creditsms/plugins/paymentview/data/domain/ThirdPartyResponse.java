@@ -32,7 +32,7 @@ public class ThirdPartyResponse {
 	private long id;
 
 	@OneToOne
-	@JoinColumn(name = FIELD_CLIENT)
+	@JoinColumn(name = FIELD_CLIENT, unique = true)
 	private Client client;
 	
 	@Column(name = FIELD_MESSAGE)

@@ -3,6 +3,7 @@ import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTableHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.ThirdPartySMSDialogHandler;
 
@@ -51,7 +52,13 @@ public class ClientTableHandler extends BaseClientTableHandler {
 	}
 	
 	public void designateThirdPartySMSRecipient() {
-		ui.add(new ThirdPartySMSDialogHandler(ui, pluginController).getDialogComponent());
+		Client theClient = new Client();
+		for (int u =0 ; u<this.getSelectedClients().size(); u++) {
+			Client c = (Client) this.getSelectedClients().get(u);
+			if(u==0){
+				theClient = c;
+			}
+		}
+		ui.add(new ThirdPartySMSDialogHandler(ui, pluginController, theClient).getDialogComponent());
 	}
-
 }

@@ -23,12 +23,12 @@ ResponseRecipientDao{
 		super(ResponseRecipient.class);
 	}
 
-	public ResponseRecipient getResponseRecipientByThirdPartyResponseId(
+	public List<ResponseRecipient> getResponseRecipientByThirdPartyResponseId(
 			long thirdPartyId) {
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria thirdPartyResponseCriteria = criteria.createCriteria("thirdPartyResponse");
 		thirdPartyResponseCriteria.add(Restrictions.eq("id", thirdPartyId));
-		return super.getUnique(criteria);
+		return super.getList(criteria);
 	}
 
 	public void deleteResponseRecipient(ResponseRecipient responseRecipient) {

@@ -22,6 +22,7 @@ import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
+
 import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
@@ -31,8 +32,10 @@ import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.ResponseRecipientDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
+import org.creditsms.plugins.paymentview.data.repository.ThirdPartyResponseDao;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.AuthorizationProperties;
 import org.creditsms.plugins.paymentview.utils.PvUtils;
@@ -64,6 +67,8 @@ public class PaymentViewPluginController extends BasePluginController
 	private TargetDao targetDao;
 	private ServiceItemDao serviceItemDao;
 	private LogMessageDao logMessageDao;
+	private ThirdPartyResponseDao thirdPartyResponseDao;
+	private ResponseRecipientDao responseRecipientDao;
 	
 	private TargetAnalytics targetAnalytics;
 	
@@ -99,6 +104,8 @@ public class PaymentViewPluginController extends BasePluginController
 		serviceItemDao 		= (ServiceItemDao) applicationContext.getBean("serviceItemDao");
 		targetDao 			= (TargetDao) applicationContext.getBean("targetDao");
 		logMessageDao       = (LogMessageDao) applicationContext.getBean("logMessageDao");
+		thirdPartyResponseDao  = (ThirdPartyResponseDao) applicationContext.getBean("thirdPartyResponseDao");
+		responseRecipientDao  = (ResponseRecipientDao) applicationContext.getBean("responseRecipientDao");
 		
 		this.frontlineController = frontlineController;
 		
@@ -166,6 +173,15 @@ public class PaymentViewPluginController extends BasePluginController
 	public LogMessageDao getLogMessageDao() {
 		return logMessageDao;
 	}
+	
+	public ThirdPartyResponseDao getThirdPartyResponseDao() {
+		return thirdPartyResponseDao;
+	}
+
+	public ResponseRecipientDao getResponseRecipientDao() {
+		return responseRecipientDao;
+	}
+
 	
 	public UiGeneratorController getUiGeneratorController() {
 		return ui;

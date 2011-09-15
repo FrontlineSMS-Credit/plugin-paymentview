@@ -4,7 +4,7 @@
  	<panel gap="5" columns="1" weightx="1" weighty="1">
  		<panel>
 	 		<label weightx="1" text="Send To:" font="bold"/>
-	 		<button icon="/icons/user_receiver.png" action="recipientDialog" name="btRecipient" tooltip="Select Recipient" />
+	 		<button icon="/icons/user_receiver.png" action="recipientDialog" name="btRecipient" tooltip="Select Recipient(s)" />
 		</panel>
 		<panel bottom="4" gap="5" columns="1" weightx="1">
     		<panel gap="5" columns="1" weightx="1" weighty="1">
@@ -20,6 +20,7 @@
 	    		<panel gap="3" columns="1" weightx="1">
 			    	<checkbox name="amountPaid" text="Amount Paid" action="addConstantToDialog(replyContent.text, replyContent, 'AMOUNT_PAID')" selected="false"/>
 					<checkbox name="datePaid" text="Date Paid" action="addConstantToDialog(replyContent.text, replyContent, 'DATE_PAID')" selected="false"/>
+					<checkbox name="clientName" action="addConstantToDialog(replyContent.text, replyContent, 'CLIENT_NAME')" text="Sender Name" selected="false"/>
 			    </panel>
 	    	</panel>
 	    </panel>
