@@ -24,12 +24,16 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
+import org.creditsms.plugins.paymentview.data.domain.ResponseRecipient;
 import org.creditsms.plugins.paymentview.data.domain.Target;
+import org.creditsms.plugins.paymentview.data.domain.ThirdPartyResponse;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
+import org.creditsms.plugins.paymentview.data.repository.ResponseRecipientDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
+import org.creditsms.plugins.paymentview.data.repository.ThirdPartyResponseDao;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.ClientSelector;
@@ -80,7 +84,8 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private TargetAnalytics targetAnalytics;
 	private AccountDao accountDao;
 	private TargetDao targetDao;
-
+	private ThirdPartyResponseDao thirdPartyResponseDao;
+	private ResponseRecipientDao responseRecipientDao;
 
 	public IncomingPaymentsTabHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController) {
@@ -96,6 +101,8 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		this.targetDao = pluginController.getTargetDao();
 		this.targetAnalytics.setTargetDao(targetDao);
 		this.accountDao = pluginController.getAccountDao();
+		this.thirdPartyResponseDao = pluginController.getThirdPartyResponseDao();
+		this.responseRecipientDao = pluginController.getResponseRecipientDao();
 		init();
 	}
 	
@@ -364,6 +371,18 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	protected void replyToPayment(IncomingPayment incomingPayment) {
 		String message = replaceFormats(incomingPayment, autoReplyProperties.getMessage());
 		frontlineController.sendTextMessage(incomingPayment.getPhoneNumber(), message);
+	
+		ThirdPartyResponse  thirdPartyResponse = this.thirdPartyResponseDao.
+		getThirdPartyResponseByClientId(incomingPayment.getAccount().getClient().getId());
+		List<ResponseRecipient> responseRecipientLst = this.responseRecipientDao.
+		getResponseRecipientByThirdPartyResponseId(thirdPartyResponse.getId());
+		
+		String thirdPartResponseMsg = replaceFormats(incomingPayment, thirdPartyResponse.getMessage());
+		
+		for (ResponseRecipient responseRes : responseRecipientLst) {
+			frontlineController.sendTextMessage(responseRes.getClient().getPhoneNumber(), 
+					thirdPartResponseMsg);
+		}
 	}
 	
 	Account getAccount(String phoneNumber) {
