@@ -1,5 +1,6 @@
 package net.frontlinesms.payment;
 
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 

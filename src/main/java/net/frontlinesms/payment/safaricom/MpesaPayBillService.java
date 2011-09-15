@@ -94,6 +94,6 @@ public class MpesaPayBillService extends MpesaPaymentService {
 
 	@Override
 	public String toString() {
-		return "Mpesa Kenya: Paybill Service";
+		return "M-PESA Kenya: Paybill Service";
 	}
 }

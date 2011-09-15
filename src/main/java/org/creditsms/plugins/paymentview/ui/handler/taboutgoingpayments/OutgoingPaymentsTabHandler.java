@@ -19,6 +19,7 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler implements EventO
 	private SelectFromClientsTabHandler selectFromClientsTab;
 	private SentPaymentsTabHandler sentPaymentsTab;
 	private PaymentViewPluginController pluginController;
+	private ImportNewPaymentsTabHandler importPaymentsTab;
 
 	public OutgoingPaymentsTabHandler(UiGeneratorController ui, final PaymentViewPluginController pluginController) {
 		super(ui);
@@ -31,7 +32,7 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler implements EventO
 	protected Object initialiseTab() {
 		outgoingPaymentsTab = ui.loadComponentFromFile(XML_OUTGOINGPAYMENTS_TAB, this);
 		sentPaymentsTab = new SentPaymentsTabHandler(ui, outgoingPaymentsTab,pluginController);
-//		importPaymentsTab = new ImportNewPaymentsTabHandler(ui, outgoingPaymentsTab,pluginController);
+		importPaymentsTab = new ImportNewPaymentsTabHandler(ui, outgoingPaymentsTab,pluginController);
 		selectFromClientsTab = new SelectFromClientsTabHandler(ui, outgoingPaymentsTab, pluginController);
 
 		return outgoingPaymentsTab;

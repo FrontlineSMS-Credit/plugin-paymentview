@@ -365,6 +365,6 @@ public class MpesaPersonalService extends MpesaPaymentService {
 
 	@Override
 	public String toString() {
-		return "Mpesa Kenya: Personal Service";
+		return "M-PESA Kenya: Personal Service";
 	}
 }
