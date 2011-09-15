@@ -233,7 +233,11 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 				} catch (final IOException ex) {
 					logMessageDao.saveLogMessage(LogMessage.error(
 							"IOException in makePayment()", ex.getMessage()));
+				} catch (final Throwable ex) {
+					logMessageDao.saveLogMessage(LogMessage.error(
+							"Unexpected Exception in makePayment()", ex.getMessage()));
 				}
+				
 			}
 		});
 	}
