@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import net.frontlinesms.data.EntityField;
@@ -70,6 +71,9 @@ public class IncomingPayment {
 	@ManyToOne
 	@JoinColumn(name = FIELD_TARGET, nullable = true) //nullable if payment for generic account
 	private Target target;
+	
+	@OneToOne
+	private PaymentServiceSettings paymentServiceSettings;
 	
 	public enum Field implements EntityField<IncomingPayment> {
 		AMOUNT_PAID(FIELD_AMOUNT_PAID),
@@ -267,5 +271,13 @@ public class IncomingPayment {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy 'at' hh:mm a");
 		return "Incoming payment caracteristics:\nKsh " + this.amountPaid + " received from " + this.paymentBy +" "+ this.phoneNumber 
 		          + " on " + dateFormat.format(this.timePaid); 
+	}
+
+	public void setPaymentServiceSettings(PaymentServiceSettings paymentServiceSettings) {
+		this.paymentServiceSettings = paymentServiceSettings;
+	}
+
+	public PaymentServiceSettings getPaymentServiceSettings() {
+		return paymentServiceSettings;
 	}
 }

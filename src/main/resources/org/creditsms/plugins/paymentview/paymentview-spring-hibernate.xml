@@ -38,6 +38,10 @@
         <property name="sessionFactory" ref="sessionFactory" />
         <property name="eventBus" ref="eventBus"/>
     </bean>    
+    <bean id="paymentServiceSettingsDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernatePaymentServiceSettingsDao" parent="baseHibernateDao">
+        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="eventBus" ref="eventBus"/>
+    </bean>    
 	<bean id="serviceItemDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateServiceItemDao" parent="baseHibernateDao">
 	    <property name="sessionFactory" ref="sessionFactory" />
 	    <property name="eventBus" ref="eventBus"/>

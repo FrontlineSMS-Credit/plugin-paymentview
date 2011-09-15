@@ -63,7 +63,6 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 	}
 	
 	private void cleanUp() {
-		//Memory Leaks; Should the Payment Services be Singletons?
 	}
 
 //> ACCESSORS
