@@ -119,7 +119,7 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		calEndDate = setEndOfDay(calEndDate);
 		Date endDate = calEndDate.getTime();
 		endOfIntervalDate = endDate;
-
+		
 		Account acc = getAccountNumber("104");
 		ServiceItem si = saveServiceItem("Solar Cooker","9300", 1);
 		Target tgt = createTarget(acc, si, startDate, endDate);
