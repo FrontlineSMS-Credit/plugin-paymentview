@@ -29,13 +29,13 @@ public class TargetPayBillProcess  extends TargetCreationProcess{
 				e.printStackTrace();
 			}
 			// create new target
-			this.setTarget(new Target(targetStartDate, targetEndDate, serviceItem, this.account));
+			this.setTarget(new Target(targetStartDate, targetEndDate, this.account));
             this.getTargetDao().saveTarget(this.getTarget());
             this.getAccount().setActiveAccount(true);
             this.getAccountDao().updateAccount(this.getAccount());
 		} else{
 			this.setAccount(inactiveNonGenericAccounts.get(0));
-			this.setTarget(new Target(targetStartDate, targetEndDate, serviceItem, this.account));
+			this.setTarget(new Target(targetStartDate, targetEndDate, this.account));
             this.getTargetDao().saveTarget(this.getTarget());
             this.getAccount().setActiveAccount(true);
             this.getAccountDao().updateAccount(this.getAccount());

@@ -61,47 +61,7 @@ public class HibernateTargetDao extends BaseHibernateDao<Target> implements
 		criteria.add(Restrictions.eq("id", id));
 		return super.getUnique(criteria);
 	}
-
-	public List<Target> getTargetsByName(String targetName) {
-		DetachedCriteria criteria = super.getCriterion();
-		DetachedCriteria targetItemCriteria = criteria
-				.createCriteria("serviceItem");
-		targetItemCriteria.add(Restrictions.eq("targetName", targetName));
-		return super.getList(criteria);
-	}
-
-	public List<Target> getTargetsByName(String targetName, int startIndex,
-			int limit) {
-		DetachedCriteria criteria = super.getCriterion();
-		DetachedCriteria targetItemCriteria = criteria
-				.createCriteria("serviceItem");
-		targetItemCriteria.add(Restrictions.eq("targetName", targetName));
-		return super.getList(criteria, startIndex, limit);
-	}
-
-	public List<Target> getTargetsByServiceItem(long targetItemId) {
-		DetachedCriteria criteria = super.getCriterion();
-		DetachedCriteria targetItemCriteria = criteria
-				.createCriteria("serviceItem");
-		targetItemCriteria.add(Restrictions.eq("id", targetItemId));
-		return super.getList(criteria);
-	}
 	
-	public List<Target> getActiveTargetsByServiceItemByClient(long targetItemId, long clientId) {
-		DetachedCriteria criteria = super.getCriterion();
-		DetachedCriteria targetItemCriteria = criteria
-				.createCriteria("serviceItem");
-		targetItemCriteria.add(Restrictions.eq("id", targetItemId));
-		DetachedCriteria accountCriteria = criteria
-		.createCriteria("account");
-		accountCriteria.add(Restrictions.isNotNull("client"));
-		DetachedCriteria clientCriteria = accountCriteria
-		.createCriteria("client");
-		clientCriteria.add(Restrictions.eq("id", clientId));
-		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
-		return super.getList(criteria);
-	}
-
 	public int getTargetCount() {
 		return super.countAll();
 	}

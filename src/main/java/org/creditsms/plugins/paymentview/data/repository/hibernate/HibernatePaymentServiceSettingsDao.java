@@ -5,13 +5,11 @@ package org.creditsms.plugins.paymentview.data.repository.hibernate;
 
 import java.util.Collection;
 
+import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
+
 import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
-
-import net.frontlinesms.data.DuplicateKeyException;
-import net.frontlinesms.data.domain.SmsInternetServiceSettings;
-import net.frontlinesms.data.repository.SmsInternetServiceSettingsDao;
-import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 /**
  * @author Alex Anderson <alex@frontlinesms.com>
