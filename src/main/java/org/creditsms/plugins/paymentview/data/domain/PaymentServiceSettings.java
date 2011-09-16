@@ -151,7 +151,9 @@ public class PaymentServiceSettings {
 		if (serviceClassName == null) {
 			if (other.serviceClassName != null)
 				return false;
-		} else if (!serviceClassName.equals(other.serviceClassName))
+		} else if (!serviceClassName.equals(other.serviceClassName)){
+			return false;
+		} else if (!psSmsModemSerial.equals(other.psSmsModemSerial))
 			return false;
 		return true;
 	}

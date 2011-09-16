@@ -39,11 +39,6 @@ public class MpesaPayBillService extends MpesaPaymentService {
 	
 	@Override
 	protected void processBalance(FrontlineMessage message){
-		queueJob(new PaymentJob() {
-			public void run() {
-				// FIXME this appears to do nothing
-			}
-		});
 	}
 	
 	@Override

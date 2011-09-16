@@ -18,7 +18,6 @@ import net.frontlinesms.payment.PaymentJob;
 import net.frontlinesms.payment.PaymentJobProcessor;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
-import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 
 import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
@@ -105,7 +104,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	Balance balance;
 	EventBus eventBus;
 	private TargetAnalytics targetAnalytics;
-	private PaymentJobProcessor jobProcessor;
+	private PaymentJobProcessor requestJobProcessor;
+	private PaymentJobProcessor responseJobProcessor;
 	
 //> DAOs
 	AccountDao accountDao;
@@ -121,7 +121,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	//configureModem
 	public void configureModem() throws PaymentServiceException {
 		final CService cService = this.cService;
-		queueJob(new PaymentJob() {
+		queueRequestJob(new PaymentJob() {
 			public void run() {
 				try{
 					cService.doSynchronized(new SynchronizedWorkflow<Object>() {
@@ -152,7 +152,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	
 	public void sendAmountToPaybillAccount(final String businessNo, final String accountNo, final BigDecimal amount) {
 		final CService cService = this.cService;
-		queueJob(new PaymentJob() {
+		queueRequestJob(new PaymentJob() {
 			public void run() {
 				try {
 					cService.doSynchronized(new SynchronizedWorkflow<Object>() {
@@ -204,10 +204,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 										"amount rejected", ""));
 								throw new RuntimeException("amount rejected");
 							}
-							final StkResponse enterPinResponse = cService
-							.stkRequest(
-									((StkValuePrompt) enterAmountResponse)
-											.getRequest(), pin);
+								final StkResponse enterPinResponse = cService.stkRequest(
+										((StkValuePrompt) enterAmountResponse).getRequest(), pin);
 							if (!(enterPinResponse instanceof StkConfirmationPrompt)) {
 								logMessageDao.saveLogMessage(LogMessage.error(
 										"PIN rejected", ""));
@@ -245,7 +243,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	public void checkBalance() throws PaymentServiceException {
 		final String pin = this.pin;
 		final CService cService = this.cService;
-		queueJob(new PaymentJob() {
+		queueRequestJob(new PaymentJob() {
 			public void run() {
 				try {
 					cService.doSynchronized(new SynchronizedWorkflow<Object>() {
@@ -259,6 +257,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							final StkResponse enterPinResponse = cService.stkRequest(((StkValuePrompt) getBalanceResponse).getRequest(), pin);
 							if(enterPinResponse == StkResponse.ERROR) throw new RuntimeException("PIN rejected");
 							updateStatus(Status.CHECK_COMPLETE);
+							BalanceDispatcher.getInstance().queuePaymentService(MpesaPaymentService.this);
 							return null;
 						}
 					});
@@ -330,7 +329,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 
 	private void processIncomingPayment(final FrontlineMessage message) {
 		// TODO this method is ridiculously long
-		queueJob(new PaymentJob() {
+		queueResponseJob(new PaymentJob() {
 			public void run() {
 				try {
 					final IncomingPayment payment = new IncomingPayment();
@@ -449,7 +448,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	}
 	
 	private void processReversePayment(final FrontlineMessage message) {
-		new FrontlineUiUpateJob() {
+		queueResponseJob(new PaymentJob() {
 			public void run() {
 				try {
 					IncomingPayment incomingPayment = incomingPaymentDao.getByConfirmationCode(getReversedConfirmationCode(message));
@@ -469,11 +468,15 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 					e.printStackTrace();
 				}
 			}
-		}.execute();
+		});
 	}
 	
 	protected void processBalance(final FrontlineMessage message){
-		queueJob(new PaymentJob() {
+		BalanceDispatcher.getInstance().notify(message);
+	}
+	
+	void finaliseBalanceProcessing(final FrontlineMessage message) {
+		queueResponseJob(new PaymentJob() {
 			public void run() {
 				performBalanceEnquiryFraudCheck(message);
 				logMessageDao.saveLogMessage(
@@ -622,13 +625,9 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			return false;
 		}
 		
-		if (other.getClass().getName().equals(this.getClass().getName())){ 
-			return true;
-		}
-		
 		return super.equals(other);
 	}
-
+	
 	StkMenu getMpesaMenu() throws StkMenuItemNotFoundException, SMSLibDeviceException, IOException {
 		final StkResponse stkResponse = cService.stkRequest(StkRequest.GET_ROOT_MENU);
 		StkMenu rootMenu = null;
@@ -649,7 +648,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 
 	public void stop() {
 		eventBus.unregisterObserver(this);
-		jobProcessor.stop();
+		requestJobProcessor.stop();
 	}
 	
 	public String getPin() {
@@ -705,8 +704,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		
 		this.balance.setEventBus(this.eventBus);
 		this.pvLog = pluginController.getLogger(this.getClass());
-		this.jobProcessor = new PaymentJobProcessor(this);
-		this.jobProcessor.start();
+		this.requestJobProcessor = new PaymentJobProcessor(this);
+		this.requestJobProcessor.start();
 	}
 	
 	/**
@@ -728,8 +727,12 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		public String getMessage(){return message;}
 	}
 	
-	void queueJob(PaymentJob job) {
-		jobProcessor.queue(job);
+	void queueRequestJob(PaymentJob job) {
+		requestJobProcessor.queue(job);
+	}
+	
+	void queueResponseJob(PaymentJob job) {
+		responseJobProcessor.queue(job);
 	}
 
 	public CService getCService() {
