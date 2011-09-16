@@ -1,16 +1,10 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.junit.HibernateTestCase;
 import net.frontlinesms.payment.safaricom.MpesaPersonalService;
 
-import org.creditsms.plugins.paymentview.data.domain.Account;
-import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
-import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment.Status;
 import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 /**

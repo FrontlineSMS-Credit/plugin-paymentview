@@ -11,6 +11,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import net.frontlinesms.data.EntityField;
+
 import org.hibernate.annotations.IndexColumn;
 
 /**

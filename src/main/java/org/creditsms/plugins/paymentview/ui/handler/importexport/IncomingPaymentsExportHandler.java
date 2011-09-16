@@ -2,7 +2,6 @@ package org.creditsms.plugins.paymentview.ui.handler.importexport;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.csv.CsvRowFormat;

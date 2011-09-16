@@ -58,7 +58,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 			throws PaymentServiceException {
 		final CService cService = super.cService;
 		final BigDecimal amount = outgoingPayment.getAmountPaid();
-		queueJob(new PaymentJob() {
+		queueRequestJob(new PaymentJob() {
 			public void run() {
 				try {
 					cService.doSynchronized(new SynchronizedWorkflow<Object>() {
@@ -203,7 +203,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	}
 
 	private void processOutgoingPayment(final FrontlineMessage message) {
-		queueJob(new PaymentJob() {
+		queueResponseJob(new PaymentJob() {
 			public void run() {
 				try {
 					// Retrieve the corresponding outgoing payment with status
