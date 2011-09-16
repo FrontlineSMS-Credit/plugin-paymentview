@@ -229,7 +229,7 @@ public class PaymentViewPluginController extends BasePluginController
 					paymentServices.add(((PaymentServiceStartedNotification)notification)
 							.getPaymentService());
 				} else if (notification instanceof PaymentServiceStoppedNotification) {
-					paymentServices.remove(((PaymentServiceStartedNotification)notification)
+					paymentServices.remove(((PaymentServiceStoppedNotification)notification)
 							.getPaymentService());
 				}
 			}

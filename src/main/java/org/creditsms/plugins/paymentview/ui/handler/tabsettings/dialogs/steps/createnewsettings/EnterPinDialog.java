@@ -76,7 +76,7 @@ public class EnterPinDialog extends BaseDialog {
 	
 	private void persistPaymentServiceSettings()throws DuplicateKeyException{
 		paymentServiceSettings.setPsPin(paymentService.getPin());
-		paymentServiceSettings.setPsSmsModemSerial(this.modem.getSerial().toString());
+		paymentServiceSettings.setPsSmsModemSerial(this.modem.getSerial());
 		paymentServiceSettings.setPsBalance(new BigDecimal(0));
 		
 		paymentService.setSettings(paymentServiceSettings);

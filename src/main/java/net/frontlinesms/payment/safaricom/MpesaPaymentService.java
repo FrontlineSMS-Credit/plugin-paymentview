@@ -2,8 +2,10 @@ package net.frontlinesms.payment.safaricom;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -115,7 +117,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	OutgoingPaymentDao outgoingPaymentDao;
 	LogMessageDao logMessageDao;
 	private ContactDao contactDao;
-	private Object paymentServiceSettingsDao;
 	private PaymentServiceSettings settings;
 	
 	//configureModem
@@ -235,7 +236,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 					logMessageDao.saveLogMessage(LogMessage.error(
 							"Unexpected Exception in makePayment()", ex.getMessage()));
 				}
-				
 			}
 		});
 	}
@@ -694,9 +694,8 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.targetAnalytics = pluginController.getTargetAnalytics();
 		this.logMessageDao = pluginController.getLogMessageDao();
-		this.balance = BalanceProperties.getInstance().getBalance(this).getLatest();
+		this.balance = BalanceProperties.getInstance().getBalance(this);
 		this.contactDao = pluginController.getUiGeneratorController().getFrontlineController().getContactDao();
-		this.paymentServiceSettingsDao = pluginController.getPaymentServiceSettingsDao();
 		
 		this.registerToEventBus(
 			pluginController.getUiGeneratorController().getFrontlineController().getEventBus()
@@ -704,8 +703,12 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		
 		this.balance.setEventBus(this.eventBus);
 		this.pvLog = pluginController.getLogger(this.getClass());
+		
 		this.requestJobProcessor = new PaymentJobProcessor(this);
 		this.requestJobProcessor.start();
+		
+		this.responseJobProcessor = new PaymentJobProcessor(this);
+		this.responseJobProcessor.start();
 	}
 	
 	/**

@@ -61,7 +61,7 @@ public class Balance {
 	public void updateBalance() {
 		BalanceProperties.getInstance().updateBalance(this);
 		if (eventBus != null){
-			eventBus.notifyObservers(new BalanceEventNotification());
+			eventBus.notifyObservers(new BalanceEventNotification(this.paymentService));
 		}
 	}
 
@@ -83,12 +83,17 @@ public class Balance {
 	}
 	
 	public class BalanceEventNotification implements FrontlineEventNotification {
-		public BalanceEventNotification() {
+		private final PaymentService _paymentService;
+		public BalanceEventNotification(PaymentService paymentService) {
+			_paymentService = paymentService;
 		}
-
 		public String getMessage() {
 			return String.format("%s New Balance is: %s", Balance.this.getConfirmationCode(), 
 					Balance.this.getBalanceAmount().toString());
+		}
+		
+		public PaymentService getPaymentService() {
+			return _paymentService;
 		}
 	}
 

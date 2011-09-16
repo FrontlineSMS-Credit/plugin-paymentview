@@ -87,8 +87,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 								if (!(enterPhoneNumberResponse instanceof StkValuePrompt)) {
 									logMessageDao.saveLogMessage(LogMessage.error(
 											"Phone number rejected", ""));
-									outgoingPayment
-											.setStatus(OutgoingPayment.Status.ERROR);
+									outgoingPayment.setStatus(OutgoingPayment.Status.ERROR);
 	
 										outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
 										updateStatus(Status.ERROR);
@@ -101,23 +100,19 @@ public class MpesaPersonalService extends MpesaPaymentService {
 														.getRequest(), amount
 														.toString());
 								if (!(enterAmountResponse instanceof StkValuePrompt)) {
-									logMessageDao.saveLogMessage(LogMessage.error(
-											"amount rejected", ""));
-									outgoingPayment
-											.setStatus(OutgoingPayment.Status.ERROR);
+									logMessageDao.saveLogMessage(LogMessage.error("amount rejected", ""));
+									outgoingPayment.setStatus(OutgoingPayment.Status.ERROR);
 									outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
 									updateStatus(Status.ERROR);
 									throw new RuntimeException("amount rejected");
 								}
 								final StkResponse enterPinResponse = cService
-										.stkRequest(
-												((StkValuePrompt) enterAmountResponse)
+										.stkRequest(((StkValuePrompt) enterAmountResponse)
 														.getRequest(), pin);
 								if (!(enterPinResponse instanceof StkConfirmationPrompt)) {
 									logMessageDao.saveLogMessage(LogMessage.error(
 											"PIN rejected", ""));
-									outgoingPayment
-											.setStatus(OutgoingPayment.Status.ERROR);
+									outgoingPayment.setStatus(OutgoingPayment.Status.ERROR);
 									outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
 									updateStatus(Status.ERROR);
 									throw new RuntimeException("PIN rejected");
@@ -128,15 +123,13 @@ public class MpesaPersonalService extends MpesaPaymentService {
 								if (confirmationResponse == StkResponse.ERROR) {
 									logMessageDao.saveLogMessage(LogMessage.error(
 											"Payment failed for some reason.", ""));
-									outgoingPayment
-											.setStatus(OutgoingPayment.Status.ERROR);
+									outgoingPayment.setStatus(OutgoingPayment.Status.ERROR);
 									outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
 									updateStatus(Status.ERROR);
 									throw new RuntimeException(
 											"Payment failed for some reason.");
 								}
-								outgoingPayment
-										.setStatus(OutgoingPayment.Status.UNCONFIRMED);
+								outgoingPayment.setStatus(OutgoingPayment.Status.UNCONFIRMED);
 								logMessageDao.saveLogMessage(new LogMessage(
 										LogMessage.LogLevel.INFO,
 										"Outgoing Payment", outgoingPayment
@@ -361,7 +354,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 		return PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN.matcher(message)
 				.matches();
 	}
-
+	
 	@Override
 	public String toString() {
 		return "M-PESA Kenya: Personal Service";
