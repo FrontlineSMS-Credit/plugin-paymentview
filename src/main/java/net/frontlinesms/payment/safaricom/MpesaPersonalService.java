@@ -69,8 +69,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 							updateStatus(Status.SENDING);
 							final StkMenu mPesaMenu = getMpesaMenu();
 							final StkResponse sendMoneyResponse = cService
-									.stkRequest(mPesaMenu
-											.getRequest("Send money"));
+									.stkRequest(mPesaMenu.getRequest("Send money"));
 
 							StkValuePrompt enterPhoneNumberPrompt;
 							if (sendMoneyResponse instanceof StkMenu) {
