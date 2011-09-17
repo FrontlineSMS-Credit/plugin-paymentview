@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.payment.PaymentJob;
 import net.frontlinesms.payment.PaymentServiceException;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
@@ -23,7 +22,8 @@ public class MpesaPayBillService extends MpesaPaymentService {
 	
 	private static final Pattern PAYBILL_REGEX_PATTERN = Pattern.compile(STR_PAYBILL_REGEX_PATTERN);
 	
-	private static final String STR_BALANCE_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n"
+	private static final String STR_BALANCE_REGEX_PATTERN = 
+		"[A-Z0-9]+ Confirmed.\n"
 		+ "on (([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[1-3])) at ([1]?\\d:[0-5]\\d) (AM|PM)\n"
 		+ "Ksh[,|\\d]+ received from ([A-Za-z ]+) 2547[\\d]{8}.\n"
 		+ "Account Number (\\d+)\n"
