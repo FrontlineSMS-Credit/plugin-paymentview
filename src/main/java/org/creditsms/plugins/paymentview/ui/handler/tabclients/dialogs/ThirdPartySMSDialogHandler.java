@@ -33,12 +33,14 @@ public class ThirdPartySMSDialogHandler extends BaseActionDialog {
 		this.thirdPartyResponseDao = pluginController.getThirdPartyResponseDao();
 		this.responseRecipientDao = pluginController.getResponseRecipientDao();
 		this.client = client;
+		
 		init();
 	}
 
 	@Override
 	public void init() {
 		super.init();
+		clients = new ArrayList<Client>();
 		clientTableComponent = ui.find(this.getDialogComponent(), TBL_CLIENT_CONTACT_LIST);
 		String message = "";
 		ThirdPartyResponse tpResponse = new ThirdPartyResponse();
@@ -51,7 +53,6 @@ public class ThirdPartySMSDialogHandler extends BaseActionDialog {
 			ui.setText(ui.find(this.getDialogComponent(), "replyContent"), message);
 			
 			ui.removeAll(clientTableComponent);
-			List<Client> clients = new ArrayList<Client>();
 			List<ResponseRecipient> tempResponseRecipientLst = this.responseRecipientDao.
 			getResponseRecipientByThirdPartyResponseId(tpResponse.getId());
 			
@@ -59,7 +60,6 @@ public class ThirdPartySMSDialogHandler extends BaseActionDialog {
 				clients.add(respRecipient.getClient());
 				ui.add(this.clientTableComponent, getRow(respRecipient.getClient()));
 			}
-			setClients(clients);
 		}
 	}
 
@@ -113,8 +113,8 @@ public class ThirdPartySMSDialogHandler extends BaseActionDialog {
 	
 	public void receiver(List<Client> clients){
 		ui.removeAll(clientTableComponent);
-		setClients(clients);
-		for(Client client : clients){
+		addClients(clients);
+		for(Client client : this.clients){
 			ui.add(this.clientTableComponent, getRow(client));
 		}
 	}
@@ -156,7 +156,10 @@ public class ThirdPartySMSDialogHandler extends BaseActionDialog {
 		return clients;
 	}
 
-	public void setClients(List<Client> clients) {
-		this.clients = clients;
+	public void addClients(List<Client> clients) {
+		for (Client c : clients) {
+			if (!this.clients.contains(c)) 
+				this.clients.add(c);
+		}
 	}
 }

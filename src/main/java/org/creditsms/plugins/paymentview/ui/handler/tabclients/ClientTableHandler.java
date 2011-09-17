@@ -16,6 +16,14 @@ public class ClientTableHandler extends BaseClientTableHandler {
 		super(ui, pluginController);
 		this.clientsTabHandler = clientsTabHandler;
 	}
+	
+	public void addToGroup(Object item) throws DuplicateKeyException {
+		clientsTabHandler.addToGroup(item);
+	}
+	
+	public void populateGroups(Object popUp, Object list) throws DuplicateKeyException {
+		clientsTabHandler.populateGroups(popUp, list);
+	}
 
 	@Override
 	protected String getClientsTableName() {

@@ -8,7 +8,12 @@
 		</panel>
 		<panel bottom="4" gap="5" columns="1" weightx="1">
     		<panel gap="5" columns="1" weightx="1" weighty="1">
-				<table colspan="10" selection="multiple" name="tbl_clientContactList" width="400" weightx="1" weighty="1"/>
+				<table colspan="10" selection="multiple" name="tbl_clientContactList" width="400" weightx="1" weighty="1">
+					<header>
+						<column text="Name" width="200" icon="/icons/user.png" />
+						<column text="Phone" width="150" icon="/icons/phone.png" />
+					</header>
+				</table>
 		    </panel>
     	</panel>
  		<label weightx="1" text="Message Content:" font="bold"/>
