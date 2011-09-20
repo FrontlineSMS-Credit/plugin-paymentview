@@ -190,7 +190,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 		if (isValidOutgoingPaymentConfirmation(message)) {
 			processOutgoingPayment(message);
 		} else if (isFailedMpesaPayment(message)) {
-			// TODO: Implement me!!
+			logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.ERROR,"Payment Message: Failed message",message.getTextContent()));
 		} else {
 			super.processMessage(message);
 		}
