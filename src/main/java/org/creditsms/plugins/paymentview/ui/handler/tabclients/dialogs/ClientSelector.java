@@ -5,6 +5,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.MethodInvoker;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientSelector;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTableHandler;
 
 public class ClientSelector extends BaseClientSelector {

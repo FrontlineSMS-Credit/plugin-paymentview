@@ -8,6 +8,7 @@ import java.util.List;
 
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.events.DatabaseEntityNotification;
+import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -394,18 +395,19 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		
 				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
 				if (entity instanceof IncomingPayment) {
-					if(autoReplyProperties.isAutoReplyOn()){
-						IncomingPaymentsTabHandler.this.replyToPayment((IncomingPayment) entity);
+					if (notification instanceof EntitySavedNotification){
+						if(autoReplyProperties.isAutoReplyOn()){
+							IncomingPaymentsTabHandler.this.replyToPayment((IncomingPayment) entity);
+						}
 					}
-					IncomingPaymentsTabHandler.this.refresh();
 				}
+				IncomingPaymentsTabHandler.this.refresh();
 			}
 		}.execute();
 	}
 
 	protected void replyToPayment(IncomingPayment incomingPayment) {
 		String message = replaceFormats(incomingPayment, autoReplyProperties.getMessage());
-		//Message Being null means that an account/target was not found, going on would be dumb!
 		if (message != null){
 			frontlineController.sendTextMessage(incomingPayment.getPhoneNumber(), message);
 		

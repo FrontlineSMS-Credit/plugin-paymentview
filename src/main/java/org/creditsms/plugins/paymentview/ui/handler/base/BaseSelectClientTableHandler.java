@@ -11,6 +11,8 @@ import org.creditsms.plugins.paymentview.data.domain.CustomField;
 
 public abstract class BaseSelectClientTableHandler extends BaseClientTableHandler {
 
+	private static final String ICONS_USER_PNG = "/icons/user.png";
+	private static final String ICON_PHONE_PNG = "/icons/phone.png";
 	protected static final String ICONS_CHECKBOX_SELECTED_PNG = "/icons/checkbox-selected.png";
 	protected static final String ICONS_CHECKBOX_UNSELECTED_PNG = "/icons/checkbox-unselected.png";
 
@@ -33,12 +35,12 @@ public abstract class BaseSelectClientTableHandler extends BaseClientTableHandle
 	
 		Object name = ui.createColumn("Name", "name");
 		ui.setWidth(name, 200);
-		ui.setIcon(name, "/icons/user.png");
+		ui.setIcon(name, ICONS_USER_PNG);
 		ui.add(header, name);
 	
 		Object phone = ui.createColumn("Phone", "phone");
 		ui.setWidth(phone, 150);
-		ui.setIcon(phone, "/icons/phone.png");
+		ui.setIcon(phone, ICON_PHONE_PNG);
 		ui.add(header, phone);
 	
 		List<CustomField> allCustomFields = this.customFieldDao
