@@ -34,6 +34,13 @@ public class MpesaPersonalService extends MpesaPaymentService {
 			+ "New M-PESA balance is Ksh[,|.|\\d]+";
 	private static final Pattern PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN = Pattern
 			.compile(STR_PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN);
+	
+	private static final String STR_PAYBILL_REGEX_PATTERN = 
+		"([A-Z0-9]+) Confirmed. Ksh([,|.|\\d]+) " 
+		+ "sent to ([A-Za-z ]+) for account ([\\d]+) on " 
+		+ "(([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[1-3])) at ([1]?\\d:[0-5]\\d) ([A|P]M)\n"
+		+ "New M-PESA balance is Ksh([,|.|\\d]+).";
+	private static final Pattern PAYBILL_REGEX_PATTERN = Pattern.compile(STR_PAYBILL_REGEX_PATTERN);
 
 	private static final String STR_MPESA_PAYMENT_FAILURE_PATTERN = "";
 	private static final Pattern MPESA_PAYMENT_FAILURE_PATTERN = Pattern
@@ -351,8 +358,9 @@ public class MpesaPersonalService extends MpesaPaymentService {
 
 	@Override
 	boolean isMessageTextValid(String message) {
-		return PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN.matcher(message)
-				.matches();
+		return PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN.matcher(message).matches() 
+			//|| PAYBILL_REGEX_PATTERN.matcher(message).matches()
+			;
 	}
 	
 	@Override
