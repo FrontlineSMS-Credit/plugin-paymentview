@@ -310,7 +310,15 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		}else if (selectedItems.length > 1){
 			ui.alert("You can only select one payment at a time.");
 		}else{
-			new ClientSelector(ui, pluginController).showClientSelectorDialog(this, "reassignForClient", List.class);
+			List<Client> clients = new ArrayList<Client>(selectedItems.length);
+			for (Object o : selectedItems) {
+				IncomingPayment attachedObject = ui.getAttachedObject(o, IncomingPayment.class);
+				clients.add(clientDao.getClientByPhoneNumber(attachedObject.getPhoneNumber()));
+			}
+			
+			ClientSelector clientSelector = new ClientSelector(ui, pluginController);
+			clientSelector.setExclusionList(clients);
+			clientSelector.showClientSelectorDialog(this, "reassignForClient", List.class);
 		}
 	}
 	

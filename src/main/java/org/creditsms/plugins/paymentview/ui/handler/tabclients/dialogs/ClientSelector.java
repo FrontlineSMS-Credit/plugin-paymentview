@@ -1,9 +1,12 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs;
 
+import java.util.List;
+
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.ui.handler.MethodInvoker;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientSelector;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTableHandler;
@@ -40,6 +43,10 @@ public class ClientSelector extends BaseClientSelector {
 			UiGeneratorController ui,
 			PaymentViewPluginController pluginController) {
 		return new ClientSelectorTableHandler(ui, pluginController);
+	}
+
+	public void setExclusionList(List<Client> exclusionList){
+		((ClientSelectorTableHandler)clientTableHandler).setExclusionList(exclusionList);
 	}
 	
 	@Override
