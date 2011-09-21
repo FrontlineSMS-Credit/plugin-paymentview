@@ -8,11 +8,14 @@
 		</panel>
 		<panel bottom="4" gap="5" columns="1" weightx="1">
     		<panel gap="5" columns="1" weightx="1" weighty="1">
-				<table colspan="10" selection="multiple" name="tbl_clientContactList" width="400" weightx="1" weighty="1">
+				<table colspan="10" selection="multiple" name="tbl_clientContactList" width="400" weightx="1" weighty="1" tooltip="Right-click for options">
 					<header>
 						<column text="Name" width="200" icon="/icons/user.png" />
 						<column text="Phone" width="150" icon="/icons/phone.png" />
 					</header>
+					<popupmenu name="menu">
+						<menuitem action="deleteThirdParty" icon="/icons/delete.png" name="miDeleteThirdParty" text="Delete Third Party SMS recipient" />
+					</popupmenu>
 				</table>
 		    </panel>
     	</panel>

@@ -5,6 +5,7 @@ import java.util.List;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.ResponseRecipient;
 import org.creditsms.plugins.paymentview.data.repository.ResponseRecipientDao;
 import org.hibernate.criterion.DetachedCriteria;
@@ -24,11 +25,20 @@ ResponseRecipientDao{
 	}
 
 	public List<ResponseRecipient> getResponseRecipientByThirdPartyResponseId(
-			long thirdPartyId) {
+			long thirdPartyResponseId) {
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria thirdPartyResponseCriteria = criteria.createCriteria("thirdPartyResponse");
-		thirdPartyResponseCriteria.add(Restrictions.eq("id", thirdPartyId));
+		thirdPartyResponseCriteria.add(Restrictions.eq("id", thirdPartyResponseId));
 		return super.getList(criteria);
+	}
+	
+	public ResponseRecipient getResponseRecipientByTpResponseAndRecipient(
+			long thirdPartyResponseId, Client recipientId) {
+		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria thirdPartyResponseCriteria = criteria.createCriteria("thirdPartyResponse");
+		thirdPartyResponseCriteria.add(Restrictions.eq("id", thirdPartyResponseId));
+		criteria.add(Restrictions.eq("client", recipientId));
+		return super.getUnique(criteria);
 	}
 
 	public void deleteResponseRecipient(ResponseRecipient responseRecipient) {
