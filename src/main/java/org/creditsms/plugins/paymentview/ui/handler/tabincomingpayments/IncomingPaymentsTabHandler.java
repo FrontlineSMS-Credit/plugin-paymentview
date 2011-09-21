@@ -315,7 +315,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				IncomingPayment attachedObject = ui.getAttachedObject(o, IncomingPayment.class);
 				clients.add(clientDao.getClientByPhoneNumber(attachedObject.getPhoneNumber()));
 			}
-			
 			ClientSelector clientSelector = new ClientSelector(ui, pluginController);
 			clientSelector.setExclusionList(clients);
 			clientSelector.showClientSelectorDialog(this, "reassignForClient", List.class);
