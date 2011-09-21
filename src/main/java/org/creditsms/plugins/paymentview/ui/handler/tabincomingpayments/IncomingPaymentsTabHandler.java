@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.FrontlineSMS;
-import net.frontlinesms.data.events.DatabaseEntityNotification;
+import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
@@ -396,18 +396,20 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	public void notify(final FrontlineEventNotification notification) {
 		new FrontlineUiUpateJob() {
 			public void run() {
-				if (!(notification instanceof DatabaseEntityNotification)) {
+				if (!(notification instanceof EntitySavedNotification)) {
 					return;
 				}
 		
-				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
-				if (entity instanceof IncomingPayment) {
+				Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();				
+				if (entity instanceof IncomingPayment){
 					if (notification instanceof EntitySavedNotification){
 						if(autoReplyProperties.isAutoReplyOn()){
 							IncomingPaymentsTabHandler.this.replyToPayment((IncomingPayment) entity);
 						}
+					IncomingPaymentsTabHandler.this.replyToThirdParty((IncomingPayment) entity);
 					}
 				}
+			
 				IncomingPaymentsTabHandler.this.refresh();
 			}
 		}.execute();
@@ -417,22 +419,23 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		String message = replaceFormats(incomingPayment, autoReplyProperties.getMessage());
 		if (message != null){
 			frontlineController.sendTextMessage(incomingPayment.getPhoneNumber(), message);
-		
-			ThirdPartyResponse  thirdPartyResponse = this.thirdPartyResponseDao.
+		}
+	}
+
+	private void replyToThirdParty(IncomingPayment incomingPayment) {
+		ThirdPartyResponse  thirdPartyResponse = this.thirdPartyResponseDao.
 			getThirdPartyResponseByClientId(incomingPayment.getAccount().getClient().getId());
-			if (thirdPartyResponse != null){ 
-				List<ResponseRecipient> responseRecipientLst = this.responseRecipientDao.
+		if (thirdPartyResponse != null){
+			List<ResponseRecipient> responseRecipientLst = this.responseRecipientDao.
 				getResponseRecipientByThirdPartyResponseId(thirdPartyResponse.getId());
-				
+			
 				String thirdPartResponseMsg = replaceFormats(incomingPayment, thirdPartyResponse.getMessage());
-				
 				if (thirdPartResponseMsg != null){
 					for (ResponseRecipient responseRes : responseRecipientLst) {
 						frontlineController.sendTextMessage(responseRes.getClient().getPhoneNumber(), 
 								thirdPartResponseMsg);
 					}
 				}
-			}
 		}
 	}
 	
