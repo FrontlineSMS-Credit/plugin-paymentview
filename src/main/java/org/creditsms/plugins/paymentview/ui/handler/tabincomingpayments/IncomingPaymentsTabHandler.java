@@ -413,23 +413,19 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 
 	private void replyToThirdParty(IncomingPayment incomingPayment) {
-		String message = replaceFormats(incomingPayment, autoReplyProperties.getMessage());
-		if (message != null){
-			ThirdPartyResponse  thirdPartyResponse = this.thirdPartyResponseDao.
+		ThirdPartyResponse  thirdPartyResponse = this.thirdPartyResponseDao.
 			getThirdPartyResponseByClientId(incomingPayment.getAccount().getClient().getId());
-			if (thirdPartyResponse != null){ 
-				List<ResponseRecipient> responseRecipientLst = this.responseRecipientDao.
+		if (thirdPartyResponse != null){
+			List<ResponseRecipient> responseRecipientLst = this.responseRecipientDao.
 				getResponseRecipientByThirdPartyResponseId(thirdPartyResponse.getId());
-				
+			
 				String thirdPartResponseMsg = replaceFormats(incomingPayment, thirdPartyResponse.getMessage());
-				
 				if (thirdPartResponseMsg != null){
 					for (ResponseRecipient responseRes : responseRecipientLst) {
 						frontlineController.sendTextMessage(responseRes.getClient().getPhoneNumber(), 
 								thirdPartResponseMsg);
 					}
 				}
-			}
 		}
 	}
 	
