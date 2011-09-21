@@ -64,14 +64,13 @@ public class ClientCsvImporter extends CsvImporter {
 		log.trace("ENTER");
 
 		for (String[] lineValue : this.getRawValues()) {
-			String firstname = rowFormat.getOptionalValue(lineValue, PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME);
+			String firstName = rowFormat.getOptionalValue(lineValue, PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME);
 			String otherName = rowFormat.getOptionalValue(lineValue, PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME);
 			String phonenumber = rowFormat.getOptionalValue(lineValue, PaymentViewCsvUtils.MARKER_CLIENT_PHONE);
 			
-			PvUtils.parsePhoneFromExcel(phonenumber);
+			phonenumber = PvUtils.parsePhoneFromExcel(phonenumber);
 			
-			
-			Client c = new Client(firstname, otherName, phonenumber);
+			Client c = new Client(firstName, otherName, phonenumber);
 			try{
 				clientDao.saveClient(c);
 			}catch (Exception e){
@@ -80,16 +79,20 @@ public class ClientCsvImporter extends CsvImporter {
 					e instanceof ConstraintViolationException){
 					c = clientDao.getClientByPhoneNumber(phonenumber);
 					
-					if (c.isActive()){
+					if (!c.isActive()){
 						pluginController
 						.getUiGeneratorController()
-						.alert("A user with similar phone number exists, Update the details?");
+						.alert("A user with similar phone number: "+phonenumber+" exists, but is inactive, The user's details will be updated.");
+						c.setActive(true);
 					}else{
 						pluginController
 						.getUiGeneratorController()
-						.alert("A user with similar phone number exists, But is Disabled, Update the details?");
+						.alert("A user with similar phone number: "+phonenumber+" exists, The user's details will be updated.");
 					}
+					c.setFirstName(firstName);
+					c.setOtherName(otherName);
 					
+					clientDao.updateClient(c);
 				}
 			}
 			

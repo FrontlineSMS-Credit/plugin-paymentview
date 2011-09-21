@@ -73,8 +73,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 									.getI18nString(PaymentPluginConstants.COMMON_OTHER_NAME))) {
 			}
 
-			if (lineValues[i].equals(InternationalisationUtils
-					.getI18nString(PaymentPluginConstants.COMMON_PHONE))) {
+			if (lineValues[i].equals("Phone")) {
 				uiController.setWidth(cell, 100);
 			}
 

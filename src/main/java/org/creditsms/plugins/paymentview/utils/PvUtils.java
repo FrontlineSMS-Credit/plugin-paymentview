@@ -29,8 +29,8 @@ public class PvUtils {
 	}
 
 	public static String parsePhoneFromExcel(String phoneNumber) {
-		phoneNumber.replace("\"", "");
-		phoneNumber.replace("=", "");
+		phoneNumber = phoneNumber.replace("=", "");
+		phoneNumber = phoneNumber.replace("\"", "");
 		return phoneNumber;
 	}
 
