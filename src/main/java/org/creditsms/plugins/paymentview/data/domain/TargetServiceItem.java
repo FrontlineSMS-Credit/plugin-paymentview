@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -30,14 +31,14 @@ public class TargetServiceItem {
 	@Column(name = "id", nullable = false, unique = true)
 	private long id;
 	@Column(name = FIELD_QTY)
-	private long serviceItemQty;
+	private int serviceItemQty;
 	@Column(name = FIELD_PRICE_PER_ITEM, nullable = false, unique = false)
 	private BigDecimal amount;
-	@ManyToOne
+	@OneToOne
 	@JoinColumn(name = FIELD_SERVICE_ITEM)
 	private ServiceItem serviceItem;
 	@ManyToOne
-	@JoinColumn(name = FIELD_SERVICE_ITEM)
+	@JoinColumn(name = FIELD_TARGET, nullable = true)
 	private Target target;
 	
 	public long getId() {
@@ -46,10 +47,10 @@ public class TargetServiceItem {
 	public void setId(long id) {
 		this.id = id;
 	}
-	public long getServiceItemQty() {
+	public int getServiceItemQty() {
 		return serviceItemQty;
 	}
-	public void setServiceItemQty(long serviceItemQty) {
+	public void setServiceItemQty(int serviceItemQty) {
 		this.serviceItemQty = serviceItemQty;
 	}
 	public BigDecimal getAmount() {

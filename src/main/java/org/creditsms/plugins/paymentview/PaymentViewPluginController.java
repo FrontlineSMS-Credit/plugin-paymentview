@@ -39,6 +39,7 @@ import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsD
 import org.creditsms.plugins.paymentview.data.repository.ResponseRecipientDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
+import org.creditsms.plugins.paymentview.data.repository.TargetServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.ThirdPartyResponseDao;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.AuthorizationProperties;
@@ -74,6 +75,7 @@ public class PaymentViewPluginController extends BasePluginController
 	private LogMessageDao logMessageDao;
 	private ThirdPartyResponseDao thirdPartyResponseDao;
 	private ResponseRecipientDao responseRecipientDao;
+	private TargetServiceItemDao targetServiceItemDao;
 	
 	private TargetAnalytics targetAnalytics;
 	
@@ -112,7 +114,7 @@ public class PaymentViewPluginController extends BasePluginController
 		logMessageDao       = (LogMessageDao) applicationContext.getBean("logMessageDao");
 		thirdPartyResponseDao  = (ThirdPartyResponseDao) applicationContext.getBean("thirdPartyResponseDao");
 		responseRecipientDao  = (ResponseRecipientDao) applicationContext.getBean("responseRecipientDao");
-		
+		targetServiceItemDao  = (TargetServiceItemDao) applicationContext.getBean("targetServiceItemDao");
 		this.frontlineController = frontlineController;
 		
 		targetAnalytics = new TargetAnalytics();
@@ -144,6 +146,10 @@ public class PaymentViewPluginController extends BasePluginController
 	}
 	
 //> ACCESSORS
+	public TargetServiceItemDao getTargetServiceItemDao() {
+		return targetServiceItemDao;
+	}
+
 	public AccountDao getAccountDao() {
 		return accountDao;
 	}

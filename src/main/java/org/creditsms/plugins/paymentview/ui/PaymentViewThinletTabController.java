@@ -77,12 +77,6 @@ public class PaymentViewThinletTabController extends
 		outgoingPayTab.refresh();
 		ui.add(mainPane, outgoingPayTab.getTab());
 
-		/* UNCOMMENT FOR VERSION 0.1.3... Well, not sure, trash this? 
-		exportTab = new ExportTabHandler(ui, getPluginController());
-		exportTab.refresh();
-		ui.add(mainPane, exportTab.getTab());
-		*/
-		
 		analyticsTab = new AnalyticsTabHandler(ui, getPluginController());
 		analyticsTab.refresh();
 		ui.add(mainPane, analyticsTab.getTab());

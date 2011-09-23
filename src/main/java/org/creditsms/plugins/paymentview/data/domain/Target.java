@@ -49,7 +49,9 @@ public class Target {
 	private Account account;
 	@Column(name = FIELD_TOTAL_TARGET_COST, nullable = false, unique = false)
 	private BigDecimal totalTargetCost;
-	@ManyToOne
+	@OneToMany
+	@JoinColumn(name = FIELD_TARGET_SERVICE_ITEM)
+	private Set<TargetServiceItem> targetServiceItem = new HashSet<TargetServiceItem>();
 	@OneToMany
 	@JoinColumn(name = FIELD_INCOMING_PAYMENT)
 	private Set<IncomingPayment> incomingPayments = new HashSet<IncomingPayment>();
@@ -144,6 +146,14 @@ public class Target {
 
 	public void setTotalTargetCost(BigDecimal totalTargetCost) {
 		this.totalTargetCost = totalTargetCost;
+	}
+	
+	public Set<TargetServiceItem> getTargetServiceItem() {
+		return targetServiceItem;
+	}
+
+	public void setTargetServiceItem(Set<TargetServiceItem> targetServiceItem) {
+		this.targetServiceItem = targetServiceItem;
 	}
 
 	@Override

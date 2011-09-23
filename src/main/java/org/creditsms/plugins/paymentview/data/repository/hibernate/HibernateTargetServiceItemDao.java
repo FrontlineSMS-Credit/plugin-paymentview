@@ -59,4 +59,12 @@ TargetServiceItemDao {
 	public List<TargetServiceItem> getAllTargetServiceItems() {
 		return super.getAll();
 	}
+
+	public List<TargetServiceItem> getAllTargetServiceItemByServiceItemId(
+			long serviceItemId) {
+		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria serviceItemCriteria = criteria.createCriteria("serviceItem");
+		serviceItemCriteria.add(Restrictions.eq("id", serviceItemId));
+		return super.getList(criteria);
+	}
 }

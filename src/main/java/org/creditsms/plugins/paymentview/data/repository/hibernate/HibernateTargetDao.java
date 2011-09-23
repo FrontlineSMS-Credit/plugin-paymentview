@@ -73,5 +73,4 @@ public class HibernateTargetDao extends BaseHibernateDao<Target> implements
 	public void updateTarget(Target target) throws DuplicateKeyException {
 		super.update(target);
 	}
-
 }

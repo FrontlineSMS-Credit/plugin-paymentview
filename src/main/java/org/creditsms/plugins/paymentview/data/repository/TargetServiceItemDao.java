@@ -12,6 +12,8 @@ public interface TargetServiceItemDao {
 	
 	public List<TargetServiceItem> getAllTargetServiceItemByTarget(long targetId);
 	
+	public List<TargetServiceItem> getAllTargetServiceItemByServiceItemId(long serviceItemId);
+	
 	public List<TargetServiceItem> getAllTargetServiceItemByTargetFiltered(long targetId, int startIndex, int limit);
 	
 	/**

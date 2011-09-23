@@ -15,19 +15,49 @@
 			<label text="Creating Settings" />
 		</panel>
 		<label text="3. Create the settings for this client or group of clients" />
-		<panel name="pnlFields" columns="4" bottom="5" gap="5" left="10"
-			right="10" top="10" weightx="1">
-			<label colspan="1" text="What is the Savings target / goal" />
-			<combobox name="cmbtargets" columns="30" colspan="3" action="evaluate"/>
+		<panel name="pnlFields" columns="4" bottom="5" gap="5" right="10" top="10" weightx="1">
 			<label colspan="1" text="What is the start date?" />
-			<panel colspan="3">
+			<panel colspan="1">
 				<textfield columns="27" name="txt_StartDate" />
 				<button action="showDateSelecter(txt_StartDate)" icon="/icons/date.png" />
 			</panel>
 			<label colspan="1" text="What is the end date?" />
-			<panel colspan="3">
+			<panel colspan="1">
 				<textfield columns="27" name="txt_EndDate" />
 				<button action="showDateSelecter(txt_EndDate)" icon="/icons/date.png" />
+			</panel>
+		</panel>
+		<panel name="pnlAddServiceItems" weightx="1" weighty="1" columns="1" border="true" 
+			left="4" right="4" bottom="4" top="6" gap="5">
+			<panel columns="4" weightx="1">
+				<label colspan="1" text="Select a Service Item" />
+		    	<combobox name="cmbtargets" columns="30" colspan="3" action="evaluate"/>
+		    	<label colspan="1" text="Specify Qty" />
+		    	<textfield colspan="1" columns="15" name="qty"  text=""/>
+			</panel>
+			<panel colspan="1" weightx="1" halign="center">
+				<panel weightx="1" />
+				<panel weightx="1" />
+				<button text="Add To Target" action="addServiceItem(qty.text)" />
+			</panel>
+		</panel>
+	    <table perform="editQty" colspan="4" name="tbl_serviceItemList" 
+	    width="400" weightx="1" weighty="1" tooltip="Right-click for options">
+		    <header>
+				<column text="Item Name" width="250" />
+				<column text="Qty"  width="100" />
+				<column text="Price Per Unit" width="120" />
+			</header>
+			<popupmenu name="menu">
+				<menuitem action="removeServiseItemFromTarget" icon="/icons/edit.png" name="rmvServiceItem"
+					text="Remove Service Item From Target" />
+			</popupmenu>
+		</table>
+		<panel weightx="1" weighty="1" columns="1" 
+		left="4" right="4" bottom="4" top="6" gap="5" halign="right">
+			<panel name="pnlTotalCost" columns="2" weightx="1">
+		    	<label colspan="1" text="Total Target Price:" />
+				<label name="txt_TotalAmount" font="bold" colspan="1" text="0.00" />
 			</panel>
 		</panel>
 	</panel>

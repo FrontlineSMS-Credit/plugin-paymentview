@@ -13,7 +13,7 @@
 	<table colspan="2" name="tbl_clients" weightx="1" weighty="1">
 		<header action="updateClientsList">
 			<column text="Name" sort="ascent" width="150" icon="/icons/user.png" />
-			<column text="Product" width="150" />
+			<!--  column text="Product" width="150" />-->
 			<column text="Start date" width="85" icon="/icons/date.png" />
 			<column text="End date" width="85" icon="/icons/date.png" />
 			<column text="Savings target" width="95" />

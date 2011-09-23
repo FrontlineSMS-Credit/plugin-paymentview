@@ -1,6 +1,8 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.addclient;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -13,17 +15,24 @@ import net.frontlinesms.ui.handler.BasePanelHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
+import org.creditsms.plugins.paymentview.data.domain.TargetServiceItem;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateNewServiceItemHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
 import org.creditsms.plugins.paymentview.utils.PvUtils;
 
 public class CreateSettingsHandler extends BasePanelHandler implements EventObserver{
 	private static final String PNL_FIELDS = "pnlFields";
+	private static final String PNL_TOTAL_COST = "pnlTotalCost";
+	private static final String PNL_SERVICEITEM_FIELDS = "pnlAddServiceItems";
 	private static final String CMBTARGETS = "cmbtargets";
 	private static final String TXT_END_DATE = "txt_EndDate";
 	private static final String TXT_START_DATE = "txt_StartDate";
+	private static final String TXT_TOTAL_AMOUNT = "txt_TotalAmount";
 	private static final String ENTER_NEW_TARGET = "Enter New Target";
+	private static final String TXT_QTY = "qty";
+	private static final String TBL_SERVICE_ITEMS_LIST = "tbl_serviceItemList";
 	private static final String XML_STEP_CREATE_SETTINGS = "/ui/plugins/paymentview/analytics/addclient/stepcreatesettings.xml";
 	private static String CONFIRM_ACCEPT_PARSED_DATE = "";
 	
@@ -32,9 +41,15 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	private final PaymentViewPluginController pluginController;
 	
 	private Object cmbtargets;
+	private Object txtQty;
 	private Object pnlFields;
+	private Object pnlAddServiceItems;
+	private boolean editMode = false;
+	private Object pnlTotalCost;
 	private Object txtStartDate;
 	private Object txtEndDate;
+	private Object txtTotalAmount;
+	private Object serviceItemsTableComponent;
 	
 	private Object dialogConfimParsedEndDate;
 	
@@ -45,6 +60,8 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	private Date tempEndDate;
 	
 	private ServiceItem selectedServiceItem;
+	private List<TargetServiceItem> lstTargetServiceItems = new ArrayList<TargetServiceItem>(); 
+	private BigDecimal totalAmount = BigDecimal.ZERO;
 
 	protected CreateSettingsHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, 
 			AddClientTabHandler addClientTabHandler, SelectClientsHandler selectClientsHandler) {
@@ -54,15 +71,20 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		this.previousSelectClientsHandler = selectClientsHandler;
 		ui.getFrontlineController().getEventBus().registerObserver(this);
 		
-		this.loadPanel(XML_STEP_CREATE_SETTINGS);
 		init();
 	}
-
+	
 	private void init() {
+		this.loadPanel(XML_STEP_CREATE_SETTINGS);
 		cmbtargets = ui.find(this.getPanelComponent(), CMBTARGETS);
+		txtQty = ui.find(this.getPanelComponent(), TXT_QTY);
 		pnlFields = ui.find(this.getPanelComponent(), PNL_FIELDS);
+		pnlAddServiceItems = ui.find(this.getPanelComponent(), PNL_SERVICEITEM_FIELDS);
+		pnlTotalCost = ui.find(this.getPanelComponent(), PNL_TOTAL_COST);
+		txtTotalAmount = ui.find(this.pnlTotalCost, TXT_TOTAL_AMOUNT);
 		txtStartDate = ui.find(this.pnlFields, TXT_START_DATE);
 		txtEndDate = ui.find(this.pnlFields, TXT_END_DATE);
+		serviceItemsTableComponent = ui.find(this.getPanelComponent(), TBL_SERVICE_ITEMS_LIST);
 		addChoices();
 	}
 
@@ -233,9 +255,83 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		}
 	}
 
-	@Override
-	public Object getPanelComponent() {
-		return super.getPanelComponent();
+	public void addServiceItem(String qty){
+		if (checkIfInt(qty)){
+			readServiceItem();
+			ServiceItem sItem = getSelectedServiceItem();
+			if (checkIfItemExists(sItem)) {
+				ui.alert(sItem.getTargetName() + " has already been added to the target.");
+			} else {
+				TargetServiceItem tsi = new TargetServiceItem();
+				tsi.setServiceItem(sItem);	
+				tsi.setAmount(sItem.getAmount());
+				tsi.setServiceItemQty(Integer.parseInt(qty));
+			    this.lstTargetServiceItems.add(tsi);
+				totalAmount = totalAmount.add(sItem.getAmount().multiply(new BigDecimal(qty)));
+				ui.add(this.serviceItemsTableComponent, getRow(tsi));
+				ui.setText(txtTotalAmount, totalAmount.toString());
+			}
+		} else {
+			ui.alert("Invalid Quantity");
+		}
+	}
+	
+	public boolean checkIfItemExists(ServiceItem sItem) {
+		List<TargetServiceItem> tsiLst = getTargetLstServiceItems();
+		for (TargetServiceItem tsi: tsiLst) {
+			if (tsi.getServiceItem().equals(sItem)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+    boolean checkIfInt(String in) {
+        try {
+            if(Integer.parseInt(in)==0){
+            	return false;
+            }
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+        return true;
+    }
+    
+    public void editQty(){
+    	TargetServiceItem tgtServiceItem = getSelectedTgtServiceItemInTable();
+    	editMode = true;
+    	ui.setText(txtQty,  Integer.toString(tgtServiceItem.getServiceItemQty()));
+    	//persistQty();
+    }
+    
+	public Object getSelectedServiceItemRow() {
+		return ui.getSelectedItem(serviceItemsTableComponent);
+	}
+    
+	public TargetServiceItem getSelectedTgtServiceItemInTable() {
+		Object row = getSelectedServiceItemRow();
+		TargetServiceItem targetServiceItem = ui.getAttachedObject(row, TargetServiceItem.class);
+		return targetServiceItem;
+	}
+	
+	public void removeServiseItemFromTarget(){
+		
+	}
+	
+	protected Object getRow(TargetServiceItem targeServiceItem) {
+		Object row = ui.createTableRow(targeServiceItem);
+		ui.add(row, ui.createTableCell(targeServiceItem.getServiceItem().getTargetName()));
+		ui.add(row, ui.createTableCell(targeServiceItem.getServiceItemQty()));
+		ui.add(row, ui.createTableCell(targeServiceItem.getAmount().toString()));
+		return row;
+	}
+	
+	public List<TargetServiceItem> getTargetLstServiceItems() {
+		return lstTargetServiceItems;
+	}
+
+	public BigDecimal getTotalAmount() {
+		return totalAmount;
 	}
 	
 	public Date getStartDate() {

@@ -29,7 +29,7 @@ public class TargetStandardProcess extends TargetCreationProcess{
 			}
 			// attach new account to the client
 			// create new target
-			Target temp= new Target(targetStartDate, targetEndDate, serviceItem, this.account);
+			Target temp= new Target(targetStartDate, targetEndDate, this.account);
 			this.setTarget(temp);
 			client.getTargets().add(temp);
 			this.getClientDao().saveClient(client);
@@ -41,7 +41,7 @@ public class TargetStandardProcess extends TargetCreationProcess{
 			//isActiveTarget
 			if(this.getInactiveAccounts().size()!=0){
 				this.setAccount(inactiveNonGenericAccounts.get(0));
-				this.setTarget(new Target(targetStartDate, targetEndDate, serviceItem, this.account));
+				this.setTarget(new Target(targetStartDate, targetEndDate, this.account));
 	            this.getTargetDao().saveTarget(this.getTarget());
 	            this.getAccount().setActiveAccount(true);
 	            this.getAccountDao().updateAccount(this.getAccount());

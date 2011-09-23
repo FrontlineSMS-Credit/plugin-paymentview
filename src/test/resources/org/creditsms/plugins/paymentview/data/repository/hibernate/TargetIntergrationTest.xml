@@ -9,6 +9,5 @@
 	<!-- DAO declarations -->	
 	<bean id="hibernateAccountDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateAccountDao" parent="baseHibernateDao"/>
 	<bean id="hibernateClientDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateClientDao" parent="baseHibernateDao"/>
-	<bean id="hibernateServiceItemDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateServiceItemDao" parent="baseHibernateDao"/>
 	<bean id="hibernateTargetDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateTargetDao" parent="baseHibernateDao"/>
 </beans>

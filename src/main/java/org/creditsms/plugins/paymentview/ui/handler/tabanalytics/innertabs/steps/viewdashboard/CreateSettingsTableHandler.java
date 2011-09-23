@@ -21,8 +21,10 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.Target;
+import org.creditsms.plugins.paymentview.data.domain.TargetServiceItem;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
+import org.creditsms.plugins.paymentview.data.repository.TargetServiceItemDao;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTableHandler;
 
 import thinlet.Thinlet;
@@ -34,9 +36,10 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler{
 	
 	private TargetAnalytics targetAnalytics;
 	private TargetDao targetDao;
-	private Map<Client,ServiceItem> clients_targets;
+	private Map<Client,Target> clients_targets;
 	private DateFormat dateFormat = InternationalisationUtils.getDateFormat();
 	private ServiceItemDao serviceItemDao;
+	private TargetServiceItemDao targetServiceItemDao;
 
 	public CreateSettingsTableHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController,
@@ -48,6 +51,7 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler{
 	private void initDaos() {
 		serviceItemDao = pluginController.getServiceItemDao();
 		targetDao = pluginController.getTargetDao();
+		targetServiceItemDao = pluginController.getTargetServiceItemDao();
 		
 		targetAnalytics = new TargetAnalytics();
 		targetAnalytics.setIncomingPaymentDao(pluginController.getIncomingPaymentDao());
@@ -78,79 +82,75 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler{
 	
 	@Override
 	public void updateClientsList() {
-		clients_targets = new HashMap<Client,ServiceItem>();
+		clients_targets = new HashMap<Client,Target>();
 		this.clientsTablePager.setCurrentPage(0);
 		this.clientsTablePager.refresh();
 	}
 	
 	protected Object[] toThinletComponents(List<Client> clients) {
 		List<Object> rows = new ArrayList<Object>();
-		for(Client client: clients){
-			for (ServiceItem si : serviceItemDao.getAllServiceItems()) {
-				rows.addAll(getRows(client, si));
-			}
+
+		for (Target tgt : targetDao.getAllTargets()) {
+			rows.addAll(getRows(tgt));
 		}
 		return rows.toArray();
 	}
 
-	private List<Object> getRows(Client client, ServiceItem sItem) {
-		List<Target> targets = targetDao.getActiveTargetsByServiceItemByClient(sItem.getId(), client.getId());
+	private List<Object> getRows(Target target) {	
 		List<Object> trgtRowLst = new ArrayList<Object>();
+	
+		Object row = ui.createTableRow(target);		
+		Object name = ui.createTableCell(target.getAccount().
+				getClient().getFullName());
 		
-		for(Target target : targets){
-			Object row = ui.createTableRow(client);		
-			Object name = ui.createTableCell(client.getFullName());
-			
-			Object amountSaved = ui.createTableCell(targetAnalytics.getAmountSaved(target.getId()).toString());
-			Object daysRemaining = ui.createTableCell(targetAnalytics.getDaysRemaining(target.getId()).toString());
-			Object lastAmountPaid = ui.createTableCell(targetAnalytics.getLastAmountPaid(target.getId()).toString());
-			Object percentageToGo = ui.createTableCell(targetAnalytics.getPercentageToGo(target.getId()).toString()+" %");
-			Object lastDatePaid = "";
-			
-			if(targetAnalytics.getLastDatePaid(target.getId()) != null){
-				lastDatePaid = ui.createTableCell(dateFormat.format(targetAnalytics.getLastDatePaid(target.getId())));
-			}else{
-				lastDatePaid = ui.createTableCell("No payment done yet");
-			}
-
-			String targetStatusStr = targetAnalytics.getStatus(target.getId()).toString();
-			
-			Object targetStatus = ui.createTableCell(targetStatusStr);
-			Object savingsTarget = ui.createTableCell(target.getServiceItem().getAmount().toString());
-			Object startDate = ui.createTableCell(dateFormat.format(target.getStartDate()));
-			Object endDate = ui.createTableCell(dateFormat.format(target.getEndDate()));
-			
-			targetAnalytics.computeAnalyticsIntervalDatesAndSavings(target.getId());
-		    Object monthlyAmountSaved = ui.createTableCell(targetAnalytics.getMonthlyAmountSaved().toString());
-		    Object monthlyAmountDue = ui.createTableCell(targetAnalytics.getMonthlyAmountDue().toString());
-		    
-		    Object endOfMonthlyInterval = "";
-			if(targetAnalytics.getEndMonthInterval() != null){
-				endOfMonthlyInterval = ui.createTableCell(dateFormat.format(targetAnalytics.getEndMonthInterval()));
-			}else{
-				endOfMonthlyInterval = ui.createTableCell("Target end date passed");
-			}
-		 			 	
-		 	targetAnalytics.clearAnalyticsComputations();
-			ui.add(row, name);
-			ui.add(row, ui.createTableCell(target.getServiceItem().getTargetName()));
-			ui.add(row, startDate);
-			ui.add(row, endDate);
-			ui.add(row, savingsTarget);
-			ui.add(row, amountSaved);
-			ui.add(row, percentageToGo);
-			ui.add(row, lastAmountPaid);
-			ui.add(row, lastDatePaid);
-			
-			ui.add(row, monthlyAmountSaved);
-			ui.add(row, monthlyAmountDue);
-			ui.add(row, endOfMonthlyInterval);
-			
-			ui.add(row, daysRemaining);
-			ui.add(row, targetStatus);
-			
-			trgtRowLst.add(row);
+		Object amountSaved = ui.createTableCell(targetAnalytics.getAmountSaved(target.getId()).toString());
+		Object daysRemaining = ui.createTableCell(targetAnalytics.getDaysRemaining(target.getId()).toString());
+		Object lastAmountPaid = ui.createTableCell(targetAnalytics.getLastAmountPaid(target.getId()).toString());
+		Object percentageToGo = ui.createTableCell(targetAnalytics.getPercentageToGo(target.getId()).toString()+" %");
+		Object lastDatePaid = "";
+		
+		if(targetAnalytics.getLastDatePaid(target.getId()) != null){
+			lastDatePaid = ui.createTableCell(dateFormat.format(targetAnalytics.getLastDatePaid(target.getId())));
+		}else{
+			lastDatePaid = ui.createTableCell("No payment done yet");
 		}
+		String targetStatusStr = targetAnalytics.getStatus(target.getId()).toString();
+		Object targetStatus = ui.createTableCell(targetStatusStr);
+		Object savingsTarget = ui.createTableCell(target.getTotalTargetCost().toString());
+		Object startDate = ui.createTableCell(dateFormat.format(target.getStartDate()));
+		Object endDate = ui.createTableCell(dateFormat.format(target.getEndDate()));
+		
+		targetAnalytics.computeAnalyticsIntervalDatesAndSavings(target.getId());
+	    Object monthlyAmountSaved = ui.createTableCell(targetAnalytics.getMonthlyAmountSaved().toString());
+	    Object monthlyAmountDue = ui.createTableCell(targetAnalytics.getMonthlyAmountDue().toString());
+	    
+	    Object endOfMonthlyInterval = "";
+		if(targetAnalytics.getEndMonthInterval() != null){
+			endOfMonthlyInterval = ui.createTableCell(dateFormat.format(targetAnalytics.getEndMonthInterval()));
+		}else{
+			endOfMonthlyInterval = ui.createTableCell("Target end date passed");
+		}
+	 			 	
+	 	targetAnalytics.clearAnalyticsComputations();
+		ui.add(row, name);
+		/*ui.add(row, ui.createTableCell(target.getServiceItem().getTargetName()));*/
+		ui.add(row, startDate);
+		ui.add(row, endDate);
+		ui.add(row, savingsTarget);
+		ui.add(row, amountSaved);
+		ui.add(row, percentageToGo);
+		ui.add(row, lastAmountPaid);
+		ui.add(row, lastDatePaid);
+		
+		ui.add(row, monthlyAmountSaved);
+		ui.add(row, monthlyAmountDue);
+		ui.add(row, endOfMonthlyInterval);
+		
+		ui.add(row, daysRemaining);
+		ui.add(row, targetStatus);
+		
+		trgtRowLst.add(row);
+		
 		return trgtRowLst;
 	}
 	
@@ -160,7 +160,10 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler{
 			List<Client> clients = this.clientDao.getClientsByFilter(filter, startIndex, limit);
 			
 			for (ServiceItem si : this.serviceItemDao.getServiceItemsLikeName(filter)) {
-				for(Target t : targetDao.getTargetsByServiceItem(si.getId())){
+				List<TargetServiceItem> targetServiceItems = targetServiceItemDao.
+				getAllTargetServiceItemByServiceItemId(si.getId());
+				for(int y = 0 ; y<targetServiceItems.size(); y++){
+					Target t = targetServiceItems.get(y).getTarget();
 					Client client = t.getAccount().getClient();
 					if (!clients.contains(client)){clients.add(client);}
 				}
@@ -202,7 +205,7 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler{
 						Account a = target.getAccount();
 						if ((a != null) & (a.getClient() != null)) {
 							if (a.getClient().isActive()){
-								clients_targets.put(a.getClient(), target.getServiceItem());
+								clients_targets.put(a.getClient(), target);
 							}
 						}
 					}
