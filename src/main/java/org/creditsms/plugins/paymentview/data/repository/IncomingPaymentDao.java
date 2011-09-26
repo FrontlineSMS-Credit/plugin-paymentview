@@ -76,7 +76,7 @@ public interface IncomingPaymentDao {
 	/**
 	 * returns the last IncomingPayment(s) by accountId
 	 * */
-	public Long getLastActiveIncomingPaymentDateByAccountNumber(
+	public List<IncomingPayment> getActiveIncomingPaymentsByAccountNumberOrderByTimepaid(
 			String accountNumber);
 	
 	/**
