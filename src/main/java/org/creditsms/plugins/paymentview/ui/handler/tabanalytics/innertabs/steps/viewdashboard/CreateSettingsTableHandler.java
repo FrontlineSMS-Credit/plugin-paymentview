@@ -41,11 +41,13 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 	private DateFormat dateFormat = InternationalisationUtils.getDateFormat();
 	private ServiceItemDao serviceItemDao;
 	private TargetServiceItemDao targetServiceItemDao;
+	private CreateSettingsHandler createSettingsHandler;
 
 	public CreateSettingsTableHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController,
 			CreateSettingsHandler createSettingsHandler) {
 		super(ui, pluginController);
+		this.createSettingsHandler = createSettingsHandler;
 		initDaos();
 	}
 	
@@ -200,6 +202,10 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 		trgtRowLst.add(row);
 		
 		return trgtRowLst;
+	}
+	
+	public void refreshSettingsHandler() {
+		createSettingsHandler.refresh();
 	}
 	
 	protected List<Client> getClients(String filter, int startIndex, int limit) {

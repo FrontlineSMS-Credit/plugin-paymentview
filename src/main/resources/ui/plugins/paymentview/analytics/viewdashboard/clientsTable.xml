@@ -10,7 +10,7 @@
 		<button icon="/icons/search.png" text="i18n.common.search"
 			action="filterClients(clientsFilter.text)" />
 	</panel>
-	<table perform="viewEditTargetAnalytics" colspan="2"  name="tbl_clients_analytics" weightx="1" weighty="1">
+	<table perform="viewEditTargetAnalytics" colspan="2"  name="tbl_clients_analytics" weightx="1" weighty="1" tooltip="Right-click for options">
 		<header action="updateClientsList">
 			<column text="Name" sort="ascent" width="150" icon="/icons/user.png" />
 			<column text="Product(s)" width="210" />

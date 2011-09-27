@@ -46,12 +46,9 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	private Object txtEndDate;
 	private Object txtTotalAmount;
 	private Object serviceItemsTableComponent;
-	
 	private Object dialogConfimParsedEndDate;
-	
 	private Date startDate;
 	private Date endDate;
-	
 	private Date tempStartDate;
 	private Date tempEndDate;
 	

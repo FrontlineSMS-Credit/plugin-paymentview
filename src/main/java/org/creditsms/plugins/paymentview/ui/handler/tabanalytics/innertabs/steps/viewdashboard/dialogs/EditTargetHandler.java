@@ -2,9 +2,12 @@ package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.step
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
@@ -16,9 +19,10 @@ import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.domain.TargetServiceItem;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
+import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetServiceItemDao;
-import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.addclient.EditTargetItemQtyHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard.CreateSettingsTableHandler;
+import org.creditsms.plugins.paymentview.utils.PvUtils;
 
 public class EditTargetHandler implements ThinletUiEventHandler {
 	private static final String XML_EDIT_TARGET = "/ui/plugins/paymentview/analytics/viewdashboard/dialogs/dlgEditTarget.xml";
@@ -31,6 +35,8 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 	private static final String TXT_QTY = "qty";
 	private static final String TXT_TARGET_COST = "txt_TotalAmount";
 	private static final String TXT_TARGET_AMOUNT_PAID = "txt_TotalAmountPaid";
+	private static String CONFIRM_ACCEPT_SAVE_TARGET = "";
+	private static String CONFIRM_ACCEPT_PARSED_DATE = "";
 	private DateFormat dateFormat = InternationalisationUtils.getDateFormat();
 	
 	private Object dialogComponent;
@@ -45,24 +51,34 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 	private Object lblTotalTargetCost;
 	private Object lblTotalTargetAmountPaid;
 	private Object txtQty;
+	private Object dialogConfimParsedEndDate;
+	private Object dialogConfimUpdateTarget;
 	
 	private TargetServiceItemDao targetServiceItemDao;
+	private TargetDao targetDao;
 	private ServiceItemDao serviceItemDao;
 	private IncomingPaymentDao incomingPaymentDao;
 	private List<TargetServiceItem> selectedTargetServiceItemsLst;
 	private BigDecimal totalAmountPaid = BigDecimal.ZERO;
 	private BigDecimal totalAmount = BigDecimal.ZERO;
 	private ServiceItem selectedServiceItem;
+	
+	private Date startDate;
+	private Date endDate;
+	private Date tempStartDate;
+	private Date tempEndDate;
 
 	private final CreateSettingsTableHandler createsettingstblhndler;
 	private PaymentViewPluginController pluginController;
 	public EditTargetHandler(PaymentViewPluginController pluginController, Target tgt, CreateSettingsTableHandler createsettingstblhndler) {
 		this.ui = pluginController.getUiGeneratorController();
 		this.tgt = tgt;
+		this.pluginController = pluginController;
 		this.createsettingstblhndler = createsettingstblhndler;
 		this.targetServiceItemDao = pluginController.getTargetServiceItemDao();
 		this.serviceItemDao = pluginController.getServiceItemDao();
 		this.incomingPaymentDao  = pluginController.getIncomingPaymentDao();
+		this.targetDao = pluginController.getTargetDao();
 		init();
 		refresh();	
 	}
@@ -147,27 +163,6 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 	public void removeField() {
 	}
 
-	public void updateServiceItem(String txtServiceItemName, String txtServiceItemAmount) {
-		if (!(txtServiceItemAmount.isEmpty() & txtServiceItemName.isEmpty())){
-			ServiceItemDao serviceItemDao = pluginController.getServiceItemDao();
-			Target target = getTgt();
-			//target.setTargetName(txtServiceItemName);
-			//target.setAmount(new BigDecimal(txtServiceItemAmount));
-//			try {
-//				serviceItemDao.updateServiceItem(this.tgt);
-//				//createsettingstblhndler.refreshServiceItemTable();
-//				ui.alert("Item Updated successfully!");	
-//			} catch (DuplicateKeyException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}								
-			removeDialog();
-		}else{
-			ui.alert("Please fill all the fields!");
-		}
-	}
-	
-	
 	public List<TargetServiceItem> getSelectedTargetServiceItemsLst() {
 		return selectedTargetServiceItemsLst;
 	}
@@ -195,23 +190,106 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 	}
 	
     public void editQty(){
-//    	TargetServiceItem tgtServiceItem = getSelectedTgtServiceItemInTable();
-//    	if(tgtServiceItem!=null){
-//			EditTargetItemQtyHandler editTargetItemQtyHandler = new EditTargetItemQtyHandler(pluginController, tgtServiceItem, this);
-//			ui.add(editTargetItemQtyHandler.getDialog());
-//    	} else {
-//    		ui.alert("No selected Service Items");
-//    	}
+    	TargetServiceItem tgtServiceItem = getSelectedTgtServiceItemInTable();
+    	if(tgtServiceItem!=null){
+    		ViewEditTargetItemQtyHandler editTargetItemQtyHandler = new ViewEditTargetItemQtyHandler(this.pluginController, tgtServiceItem, this);
+			ui.add(editTargetItemQtyHandler.getDialog());
+    	} else {
+    		ui.alert("No selected Service Items");
+    	}
     }
+	public void refreshSelectedTheTargetTable(){
+		List<TargetServiceItem> lstServiceItem = getSelectedTargetServiceItemsLst();
+		ui.removeAll(tblServiceItemsComponent);
+		totalAmount = BigDecimal.ZERO;
+		ui.setText(lblTotalTargetCost, "0.00");
+		for(TargetServiceItem tsi: lstServiceItem){
+			totalAmount = totalAmount.add(tsi.getAmount().multiply(new BigDecimal(tsi.getServiceItemQty())));
+			ui.add(this.tblServiceItemsComponent, getRow(tsi));
+			ui.setText(lblTotalTargetCost, totalAmount.toString());
+		}
+	}
+    
+	public Object getSelectedServiceItemRow() {
+		return ui.getSelectedItem(tblServiceItemsComponent);
+	}
+    
+	public TargetServiceItem getSelectedTgtServiceItemInTable() {
+		Object row = getSelectedServiceItemRow();
+		TargetServiceItem targetServiceItem = ui.getAttachedObject(row, TargetServiceItem.class);
+		return targetServiceItem;
+	}
     
     public void evaluate(){
     	
     }
 	
-    public void updateTarget() {
-    	
+    public void updateTargetAnyway() throws DuplicateKeyException{ 
+    	ui.remove(dialogConfimUpdateTarget);
+		List<TargetServiceItem> lstServiceItem = getSelectedTargetServiceItemsLst();
+		totalAmount = BigDecimal.ZERO;
+		for(TargetServiceItem tsi: lstServiceItem){
+			totalAmount = totalAmount.add(tsi.getAmount().multiply(new BigDecimal(tsi.getServiceItemQty())));
+		}
+		removeDialog();
+		Target tgt = getTgt();
+		tgt.setEndDate(getEndDate());
+		tgt.setTotalTargetCost(totalAmount);
+		targetDao.updateTarget(tgt);
+		for(TargetServiceItem tsi: lstServiceItem){
+			if (tsi.getTarget()!=null) {
+				targetServiceItemDao.updateTargetServiceItem(tsi);
+			} else {
+				tsi.setTarget(tgt);
+				targetServiceItemDao.saveTargetServiceItem(tsi);
+			}
+		}
+		createsettingstblhndler.refreshSettingsHandler();
     }
-
+    
+    public void updateTarget() {
+    	if (validateEndDate()) {
+			String methodToBeCalled = "updateTargetAnyway";
+			CONFIRM_ACCEPT_SAVE_TARGET = "The changes cannot be reversed, do you want to proceed?";
+			dialogConfimUpdateTarget = ((UiGeneratorController) ui).showConfirmationDialogPlainText(methodToBeCalled, this, CONFIRM_ACCEPT_SAVE_TARGET);
+    	}
+    }
+	
+	public void setParsedEndDate() {
+		ui.remove(dialogConfimParsedEndDate);
+		this.endDate = getTempEndDate();
+		this.startDate = getTempStartDate();
+		ui.setText(txtEndDate,  dateFormat.format(getEndDate()));
+		updateTarget();
+	}
+	
+    private boolean validateEndDate() {
+		if (ui.getText(txtEndDate).equals("")) {
+			ui.infoMessage("Please enter an end date.");
+			return false;
+		}
+		
+		if(parseDateRange(getTgt())){
+			return true;
+		}
+		return false;
+    } 
+    
+	public boolean parseDateRange(Target tgt){
+		try {
+			String strEndDate = ui.getText(txtEndDate);
+			startDate = tgt.getStartDate();
+			endDate = InternationalisationUtils.getDateFormat().parse(strEndDate);
+			if(validateEndDate(startDate, endDate)){
+				return true;
+			}else{
+				return false;
+			}
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+	}
+    
     public void addServiceItem(String qty) {
 		if (checkIfInt(qty)){
 			readServiceItem();
@@ -224,10 +302,12 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 				tsi.setAmount(sItem.getAmount());
 				tsi.setServiceItemQty(Integer.parseInt(qty));
 			    this.selectedTargetServiceItemsLst.add(tsi);
-				this.totalAmount = this.totalAmount.add(sItem.getAmount().multiply(new BigDecimal(qty)));
 				ui.add(this.tblServiceItemsComponent, getRow(tsi));
-				ui.setText(lblTotalTargetCost, totalAmount.toString());
 				ui.setText(txtQty, "");
+				for (TargetServiceItem tempTsi: this.selectedTargetServiceItemsLst) {
+					this.totalAmount = this.totalAmount.add(tempTsi.getAmount().multiply(new BigDecimal(qty)));
+				}
+				ui.setText(lblTotalTargetCost, totalAmount.toString());
 			}
 		} else {
 			ui.alert("Invalid Quantity");
@@ -263,8 +343,128 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 	public ServiceItem getSelectedServiceItem() {
 		return selectedServiceItem;
 	}
-
+	
 	public void showDateSelecter(Object textField) {
 		((UiGeneratorController) ui).showDateSelecter(textField);
+	}
+
+	boolean validateEndDate(Date startDate, Date endDate){
+		String methodToBeCalled = "setParsedEndDate";
+		
+		if(startDate.compareTo(endDate)<0){
+			Calendar calStartDate = Calendar.getInstance();
+			calStartDate.setTime(startDate);
+			calStartDate = setStartOfDay(calStartDate);
+
+			Calendar calEndDate = Calendar.getInstance();
+			calEndDate.setTime(endDate);
+			calEndDate = setEndOfDay(calEndDate);		
+			
+			int startDay = calStartDate.get(Calendar.DAY_OF_MONTH);
+			int endDay = calEndDate.get(Calendar.DAY_OF_MONTH);
+			
+			if (calStartDate.get(Calendar.YEAR)==calEndDate.get(Calendar.YEAR)) {
+				if(calStartDate.get(Calendar.MONTH)==calEndDate.get(Calendar.MONTH)){
+					ui.alert("Target duration cannot be less than a month.");
+					return false;
+				} else {
+					int monthDiff = getMonthsDiffFromStart(calEndDate, calStartDate);
+					if(monthDiff==0){
+						ui.alert("Target duration cannot be less than a month.");
+						return false;
+					} else {
+						calEndDate.setTime(calStartDate.getTime());
+						calEndDate.add(Calendar.MONTH, monthDiff);
+						calEndDate.add(Calendar.DATE, -1);
+						calEndDate = setEndOfDayFormat(calEndDate);
+
+						CONFIRM_ACCEPT_PARSED_DATE="The selected end date is incorrect. The parsed end date is: "+ calEndDate.getTime() +". Do you want to proceed?";
+						if(startDay!=endDay){
+							setTempStartDate(calStartDate.getTime());
+							setTempEndDate(calEndDate.getTime());
+							dialogConfimParsedEndDate = ((UiGeneratorController) ui).showConfirmationDialogPlainText(methodToBeCalled, this, CONFIRM_ACCEPT_PARSED_DATE);
+							return false;
+						} else {
+							this.endDate = calEndDate.getTime();
+							this.startDate = calStartDate.getTime();
+							return true;
+						}
+					}
+				}
+			} else {
+				int monthDiff = getMonthsDiffFromStart(calEndDate, calStartDate);
+
+				calEndDate.setTime(calStartDate.getTime());
+				calEndDate.add(Calendar.MONTH, monthDiff);
+				calEndDate.add(Calendar.DATE, -1);
+				calEndDate = setEndOfDayFormat(calEndDate);
+
+				CONFIRM_ACCEPT_PARSED_DATE="The selected end date is incorrect. The parsed end date is: "+ PvUtils.formatDate(calEndDate.getTime()) +". Do you want to proceed?";
+				if(startDay!=endDay){
+					setTempStartDate(calStartDate.getTime());
+					setTempEndDate(calEndDate.getTime());
+					dialogConfimParsedEndDate = ((UiGeneratorController) ui).showConfirmationDialogPlainText(methodToBeCalled, this, CONFIRM_ACCEPT_PARSED_DATE);
+					return false;
+				} else {
+					this.endDate = calEndDate.getTime();
+					this.startDate = calStartDate.getTime();
+					return true;
+				}
+			}
+		}else{
+			ui.alert("Invalid End Date");
+			return false;
+		}
+	}
+	
+	private int getMonthsDiffFromStart(Calendar calStartDate,
+			Calendar calNowDate) {
+		return (calStartDate.get(Calendar.YEAR) - calNowDate.get(Calendar.YEAR)) * 12 +
+		(calStartDate.get(Calendar.MONTH)- calNowDate.get(Calendar.MONTH)) + 
+		(calStartDate.get(Calendar.DAY_OF_MONTH) >= calNowDate.get(Calendar.DAY_OF_MONTH)? 0: -1); 
+	}
+	
+	private Calendar setStartOfDay(Calendar cal){
+		cal.set(Calendar.HOUR_OF_DAY, 0);  
+		cal.set(Calendar.MINUTE, 0);  
+		cal.set(Calendar.SECOND, 0);  
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal;
+	}
+	
+	private Calendar setEndOfDay(Calendar cal){
+		cal.set(Calendar.HOUR_OF_DAY, 24);  
+		cal.set(Calendar.MINUTE, 0);  
+		cal.set(Calendar.SECOND, 0);  
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal;
+	}
+	
+	private Calendar setEndOfDayFormat(Calendar cal){
+		cal.set(Calendar.HOUR_OF_DAY, 24);  
+		cal.set(Calendar.MINUTE, 0);  
+		cal.set(Calendar.SECOND, -1);  
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal;
+	}
+	public Date getStartDate() {
+		return startDate;
+	}
+	
+	public Date getEndDate() {
+		return endDate;
+	}
+	public Date getTempStartDate() {
+		return tempStartDate;
+	}
+	public void setTempStartDate(Date tempStartDate) {
+		this.tempStartDate = tempStartDate;
+	}
+
+	public Date getTempEndDate() {
+		return tempEndDate;
+	}
+	public void setTempEndDate(Date tempEndDate) {
+		this.tempEndDate = tempEndDate;
 	}
 }

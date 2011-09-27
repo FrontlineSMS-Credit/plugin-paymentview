@@ -6,22 +6,22 @@
 			<label text="View/Edit Target" font="20 Bold" weightx="1"/>
 			<separator />
 			<panel name="pnlClientName" columns="2" bottom="2" gap="5" right="10" top="2" weightx="1">
-			    <label colspan="1" text="Client Name" />
+			    <label colspan="1" text="Client Name: " />
 				<label colspan="1" name="clientName" text="" font="14"  />
 			</panel>
 			<panel name="pnlFields" columns="4" bottom="5" gap="5" right="10" top="10" weightx="1">
-				<label colspan="1" text="Start Date" />
+				<label colspan="1" text="Start Date: " />
 				<panel colspan="1">
 					<label colspan="1" name="startDate" text="" font="14"  />
 				</panel>
-				<label colspan="1" text="End Date" />
+				<label colspan="1" text="   End Date: " />
 				<panel colspan="1">
 					<textfield columns="27" name="txt_EndDate" />
 					<button action="showDateSelecter(txt_EndDate)" icon="/icons/date.png" />
 				</panel>
 			</panel>
 			<label text="Service Item(s)" font="13" weightx="1"/>
-			<table  perform="editQty" name="tbl_serviceItems" weightx="1" weighty="1" colspan="2">
+			<table  perform="editQty" name="tbl_serviceItems" weightx="1" weighty="1" colspan="2" tooltip="Right-click for options">
 				<header>
 					<column text="Name" width="200"/>
 					<column text="Qty" width="150" />
@@ -37,7 +37,7 @@
 				<panel columns="4" weightx="1">
 					<label colspan="1" text="Select a Service Item" />
 			    	<combobox name="cmbtargets" columns="30" colspan="3" action="evaluate"/>
-			    	<label colspan="1" text="Specify Qty" />
+			    	<label colspan="1" text="   Specify Qty" />
 			    	<textfield colspan="1" columns="15" name="qty"  text=""/>
 				</panel>
 				<panel colspan="1" weightx="1" halign="right">
@@ -48,7 +48,7 @@
 		   <panel weightx="1" weighty="1" columns="1" 
 			left="4" right="4" bottom="4" top="6" gap="5" halign="right">
 				<panel name="pnlTotalCost" columns="2" weightx="1">
-			    	<label colspan="1" text="Total Target Cost:" />
+			    	<label colspan="1" text="Total Target Cost:  " />
 					<label name="txt_TotalAmount" font="bold" colspan="1" text="0.00" />
 				</panel>
 			</panel>
@@ -59,13 +59,12 @@
 					<column text="Confirmation Code" width="200"/>
 					<column text="Paid By" width="250" />
 					<column text="Amount" width="150" />
-					
 				</header>
 			</table>
 		   <panel weightx="1" weighty="1" columns="1" 
 			left="4" right="4" bottom="4" top="6" gap="5" halign="right">
 				<panel name="pnlTotalAmountPaid" columns="2" weightx="1">
-			    	<label colspan="1" text="Total Amount Paid:" />
+			    	<label colspan="1" text="Total Amount Paid:  " />
 					<label name="txt_TotalAmountPaid" font="bold" colspan="1" text="0.00" />
 				</panel>
 			</panel>
@@ -77,7 +76,7 @@
 				<panel weightx="1"/>
 				<panel weightx="1"/>
 				<button icon="/icons/tick.png" action="updateTarget" name="btnUpdateTgt"
-					text="Update Changes" />
+					text="Update Target" />
 				<panel weightx="1" />
 				<button icon="/icons/cross.png" action="removeDialog" name="btncancelTgtUpdate"
 					text="Cancel" />

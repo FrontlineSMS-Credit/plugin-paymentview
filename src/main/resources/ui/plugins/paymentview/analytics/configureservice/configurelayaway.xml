@@ -8,7 +8,7 @@
 		<panel weightx="1"/>
 		
 		<panel name="pnl_tbl_serviceItem_holder" weightx="1" weighty="1" colspan="3" columns="1">
-			<table perform="editserviceItem" name="tbl_serviceItem" weightx="1" weighty="1">
+			<table perform="editserviceItem" name="tbl_serviceItem" weightx="1" weighty="1" tooltip="Right-click for options">
 				<header>
 					<column text="Target Name" width="200"/>
 					<column text="Target Amount" width="200" icon="/icons/money.png" />
