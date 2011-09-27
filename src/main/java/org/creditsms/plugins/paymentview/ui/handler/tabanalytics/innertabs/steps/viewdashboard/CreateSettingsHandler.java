@@ -58,7 +58,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	public void export() {
 		new ClientExportHandler((UiGeneratorController) ui, pluginController).showWizard();
 	}
-
+	
 	public void showDateSelecter(Object textField) {
 		((UiGeneratorController) ui).showDateSelecter(textField);
 	}

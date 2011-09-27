@@ -38,7 +38,7 @@ public interface TargetDao {
 	 * @param targetId
 	 * @return
 	 */
-	public Target getTargetByAccount(String accountNumber);
+	public List<Target> getTargetsByAccount(String accountNumber);
 
 	/**
 	 * Returns an active Target with Account id

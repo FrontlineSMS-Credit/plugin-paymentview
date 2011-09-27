@@ -10,6 +10,7 @@ import java.util.Map;
 
 import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
@@ -26,14 +27,14 @@ import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetServiceItemDao;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTableHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard.dialogs.EditTargetHandler;
 
 import thinlet.Thinlet;
 import thinlet.ThinletText;
 
-public class CreateSettingsTableHandler extends BaseClientTableHandler{
+public class CreateSettingsTableHandler extends BaseClientTableHandler implements EventObserver{
 	private static final String XML_VIEWDASHBOARD_CLIENTS_TABLE = "/ui/plugins/paymentview/analytics/viewdashboard/clientsTable.xml";
-	private static final String TBL_CLIENTS = "tbl_clients";
-	
+	private static final String TBL_TARGET_ANALYTICS = "tbl_clients_analytics";
 	private TargetAnalytics targetAnalytics;
 	private TargetDao targetDao;
 	private Map<Client,Target> clients_targets;
@@ -56,7 +57,6 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler{
 		targetAnalytics = new TargetAnalytics();
 		targetAnalytics.setIncomingPaymentDao(pluginController.getIncomingPaymentDao());
 		targetAnalytics.setTargetDao(targetDao);
-		
 		initSettingsTableForSorting();
 	}
 	
@@ -72,12 +72,43 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler{
 	
 	@Override
 	protected String getClientsTableName() {
-		return TBL_CLIENTS;
+		return TBL_TARGET_ANALYTICS;
 	}
 
 	@Override
 	protected String getClientsPanelFilePath() {
 		return XML_VIEWDASHBOARD_CLIENTS_TABLE;
+	}
+	
+	private void printAllTableInfo() {
+		System.out.println(">TABLES");
+		Object prev = null;
+		for(Object current = ui.findNextItem(ui.getDesktop(), Thinlet.TABLE, prev);
+				current != null;
+				current = ui.findNextItem(ui.getDesktop(), Thinlet.TABLE, prev)) {
+			printDetails(current);	
+		}
+	}
+
+	private void printDetails(Object t) {
+		System.out.println(">>>Found table: " + ui.getName(t) + " : (" + ui.getItems(t).length + " children)");
+	}
+
+	public Target getSelectedTargetInTable() {
+//		Object row = getSelectedTargetRow();
+		Object row = super.getSelectedRows()[0];
+		Target target = ui.getAttachedObject(row, Target.class);
+		return target;
+	}
+	
+	public void viewEditTargetAnalytics() {
+    	Target tgt = getSelectedTargetInTable();
+    	if(tgt!=null){
+    		EditTargetHandler editTargetHandler = new EditTargetHandler(pluginController, tgt, this);
+			ui.add(editTargetHandler.getDialog());
+    	} else {
+    		ui.alert("No selected Target");
+    	}
 	}
 	
 	@Override
@@ -90,16 +121,21 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler{
 	protected Object[] toThinletComponents(List<Client> clients) {
 		List<Object> rows = new ArrayList<Object>();
 
-		for (Target tgt : targetDao.getAllTargets()) {
-			rows.addAll(getRows(tgt));
+		for(Client client: clients){
+			List<Account> lstAccount = accountDao.
+			getAccountsByClientId(client.getId());
+			for (Account acc: lstAccount) {
+				for (Target tgt : targetDao.getTargetsByAccount(acc.getAccountNumber())) {
+					rows.addAll(getRows(tgt));
+				}
+			}
 		}
 		return rows.toArray();
 	}
 
 	private List<Object> getRows(Target target) {	
 		List<Object> trgtRowLst = new ArrayList<Object>();
-	
-		Object row = ui.createTableRow(target);		
+		
 		Object name = ui.createTableCell(target.getAccount().
 				getClient().getFullName());
 		
@@ -132,8 +168,7 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler{
 		}
 	 			 	
 	 	targetAnalytics.clearAnalyticsComputations();
-		ui.add(row, name);
-		
+	
 		String neededitems = "";
 		List<TargetServiceItem> lstTSI = targetServiceItemDao.getAllTargetServiceItemByTarget(target.getId());
 		for(TargetServiceItem tsi: lstTSI){
@@ -143,8 +178,10 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler{
 				neededitems = neededitems+", "+tsi.getServiceItem().getTargetName();
 			}
 		}
-		
-		ui.add(row, ui.createTableCell(neededitems));
+		Object neededItems = ui.createTableCell(neededitems);
+		Object row = ui.createTableRow(target);
+		ui.add(row, name);
+		ui.add(row, neededItems);
 		ui.add(row, startDate);
 		ui.add(row, endDate);
 		ui.add(row, savingsTarget);
