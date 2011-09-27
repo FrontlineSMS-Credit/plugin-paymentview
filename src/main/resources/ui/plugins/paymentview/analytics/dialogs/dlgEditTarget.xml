@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dialog bottom="9" close="removeDialog(this)" 
+	columns="3" gap="15" left="9" name="editTarget"
+	right="9" text="Edit Service Item"
+	top="9" resizable="true" modal="true" closable="true">
+
+	<label text="Target Name" />
+	<textfield columns="30" name="txtServiceItemName" colspan="2" text=""/>
+	
+	<label text="Target Amount" />
+	<textfield columns="30" name="txtServiceItemAmount" colspan="2" text=""
+	perform="updateServiceItem(txtServiceItemName.text,txtServiceItemAmount.text)"/>
+
+	<panel colspan="3" weightx="1">
+		<panel weightx="1" />
+		<button icon="/icons/tick.png" text="Update"
+			action="updateServiceItem(txtServiceItemName.text,txtServiceItemAmount.text)" />
+	</panel>
+</dialog>

@@ -15,7 +15,6 @@ import net.frontlinesms.ui.handler.BasePanelHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.TargetServiceItem;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateNewServiceItemHandler;
@@ -25,7 +24,6 @@ import org.creditsms.plugins.paymentview.utils.PvUtils;
 public class CreateSettingsHandler extends BasePanelHandler implements EventObserver{
 	private static final String PNL_FIELDS = "pnlFields";
 	private static final String PNL_TOTAL_COST = "pnlTotalCost";
-	private static final String PNL_SERVICEITEM_FIELDS = "pnlAddServiceItems";
 	private static final String CMBTARGETS = "cmbtargets";
 	private static final String TXT_END_DATE = "txt_EndDate";
 	private static final String TXT_START_DATE = "txt_StartDate";
@@ -43,8 +41,6 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	private Object cmbtargets;
 	private Object txtQty;
 	private Object pnlFields;
-	private Object pnlAddServiceItems;
-	private boolean editMode = false;
 	private Object pnlTotalCost;
 	private Object txtStartDate;
 	private Object txtEndDate;
@@ -79,7 +75,6 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		cmbtargets = ui.find(this.getPanelComponent(), CMBTARGETS);
 		txtQty = ui.find(this.getPanelComponent(), TXT_QTY);
 		pnlFields = ui.find(this.getPanelComponent(), PNL_FIELDS);
-		pnlAddServiceItems = ui.find(this.getPanelComponent(), PNL_SERVICEITEM_FIELDS);
 		pnlTotalCost = ui.find(this.getPanelComponent(), PNL_TOTAL_COST);
 		txtTotalAmount = ui.find(this.pnlTotalCost, TXT_TOTAL_AMOUNT);
 		txtStartDate = ui.find(this.pnlFields, TXT_START_DATE);
@@ -270,9 +265,21 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 				totalAmount = totalAmount.add(sItem.getAmount().multiply(new BigDecimal(qty)));
 				ui.add(this.serviceItemsTableComponent, getRow(tsi));
 				ui.setText(txtTotalAmount, totalAmount.toString());
+				ui.setText(txtQty, "");
 			}
 		} else {
 			ui.alert("Invalid Quantity");
+		}
+	}
+	public void refreshSelectedTheTargetTable(){
+		List<TargetServiceItem> lstServiceItem = getTargetLstServiceItems();
+		ui.removeAll(serviceItemsTableComponent);
+		totalAmount = BigDecimal.ZERO;
+		ui.setText(txtTotalAmount, "0.00");
+		for(TargetServiceItem tsi: lstServiceItem){
+			totalAmount = totalAmount.add(tsi.getAmount().multiply(new BigDecimal(tsi.getServiceItemQty())));
+			ui.add(this.serviceItemsTableComponent, getRow(tsi));
+			ui.setText(txtTotalAmount, totalAmount.toString());
 		}
 	}
 	
@@ -299,9 +306,12 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
     
     public void editQty(){
     	TargetServiceItem tgtServiceItem = getSelectedTgtServiceItemInTable();
-    	editMode = true;
-    	ui.setText(txtQty,  Integer.toString(tgtServiceItem.getServiceItemQty()));
-    	//persistQty();
+    	if(tgtServiceItem!=null){
+			EditTargetItemQtyHandler editTargetItemQtyHandler = new EditTargetItemQtyHandler(pluginController, tgtServiceItem, this);
+			ui.add(editTargetItemQtyHandler.getDialog());
+    	} else {
+    		ui.alert("No selected Service Items");
+    	}
     }
     
 	public Object getSelectedServiceItemRow() {
@@ -315,7 +325,19 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	}
 	
 	public void removeServiseItemFromTarget(){
-		
+		TargetServiceItem tgtServiceItem = getSelectedTgtServiceItemInTable();
+		TargetServiceItem rmvTgtServiceItem = new TargetServiceItem();
+		List<TargetServiceItem> lstSTI = getTargetLstServiceItems();
+		for (TargetServiceItem tsi: lstSTI){
+			if (tsi.equals(tgtServiceItem)) {
+				rmvTgtServiceItem = tsi;
+			}
+		}
+		if(rmvTgtServiceItem!=null){
+			lstSTI.remove(rmvTgtServiceItem);	
+		}
+		setTargetLstServiceItems(lstSTI);
+		refreshSelectedTheTargetTable();
 	}
 	
 	protected Object getRow(TargetServiceItem targeServiceItem) {
@@ -330,8 +352,16 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		return lstTargetServiceItems;
 	}
 
+	public void setTargetLstServiceItems(List<TargetServiceItem> lstTargetServiceItems) {
+		this.lstTargetServiceItems = lstTargetServiceItems;
+	}
+	
 	public BigDecimal getTotalAmount() {
 		return totalAmount;
+	}
+	
+	public void setTotalAmount(BigDecimal totalAmount) {
+		this.totalAmount =  totalAmount;
 	}
 	
 	public Date getStartDate() {

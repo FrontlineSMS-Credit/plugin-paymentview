@@ -133,7 +133,18 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler{
 	 			 	
 	 	targetAnalytics.clearAnalyticsComputations();
 		ui.add(row, name);
-		/*ui.add(row, ui.createTableCell(target.getServiceItem().getTargetName()));*/
+		
+		String neededitems = "";
+		List<TargetServiceItem> lstTSI = targetServiceItemDao.getAllTargetServiceItemByTarget(target.getId());
+		for(TargetServiceItem tsi: lstTSI){
+			if (neededitems.length()==0) {
+				neededitems = tsi.getServiceItem().getTargetName();
+			} else {
+				neededitems = neededitems+", "+tsi.getServiceItem().getTargetName();
+			}
+		}
+		
+		ui.add(row, ui.createTableCell(neededitems));
 		ui.add(row, startDate);
 		ui.add(row, endDate);
 		ui.add(row, savingsTarget);

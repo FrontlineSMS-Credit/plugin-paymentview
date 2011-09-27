@@ -1,19 +1,21 @@
 package org.creditsms.plugins.paymentview.analytics;
 
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.Target;
+import org.creditsms.plugins.paymentview.data.domain.TargetServiceItem;
 
 public class TargetStandardProcess extends TargetCreationProcess{
 
-	public  TargetStandardProcess(Client client, Date targetStartDate, Date targetEndDate,ServiceItem serviceItem, PaymentViewPluginController pluginController){
-		super(client, serviceItem, targetStartDate, targetEndDate, pluginController);
+	public  TargetStandardProcess(Client client, Date targetStartDate, Date targetEndDate, List<TargetServiceItem> targetServiceItems, PaymentViewPluginController pluginController, BigDecimal totalTargetAmount){
+		super(client, targetServiceItems, targetStartDate, targetEndDate, pluginController, totalTargetAmount);
 	}
 	
 	@Override
@@ -29,22 +31,39 @@ public class TargetStandardProcess extends TargetCreationProcess{
 			}
 			// attach new account to the client
 			// create new target
-			Target temp= new Target(targetStartDate, targetEndDate, this.account);
+			Target temp= new Target(targetStartDate, targetEndDate, this.account, totalTargetAmount);
 			this.setTarget(temp);
 			client.getTargets().add(temp);
-			this.getClientDao().saveClient(client);
-			
+			//this.getClientDao().saveClient(client);
             this.getTargetDao().saveTarget(this.getTarget());
             this.getAccount().setActiveAccount(true);
             this.getAccountDao().updateAccount(this.getAccount());
+            for (TargetServiceItem tsi: targetServiceItems){
+            	tsi.setTarget(this.getTarget());
+            	try {
+					this.getTargetServiceItemDao().saveTargetServiceItem(tsi);
+				} catch (DuplicateKeyException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            }
 		} else{
 			//isActiveTarget
 			if(this.getInactiveAccounts().size()!=0){
 				this.setAccount(inactiveNonGenericAccounts.get(0));
-				this.setTarget(new Target(targetStartDate, targetEndDate, this.account));
+				this.setTarget(new Target(targetStartDate, targetEndDate, this.account, totalTargetAmount));
 	            this.getTargetDao().saveTarget(this.getTarget());
 	            this.getAccount().setActiveAccount(true);
 	            this.getAccountDao().updateAccount(this.getAccount());
+	            for (TargetServiceItem tsi: targetServiceItems){
+	            	tsi.setTarget(this.getTarget());
+	            	try {
+						this.getTargetServiceItemDao().saveTargetServiceItem(tsi);
+					} catch (DuplicateKeyException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	            }
 			}
 		}
 	}

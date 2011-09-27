@@ -49,7 +49,9 @@
 				<column text="Price Per Unit" width="120" />
 			</header>
 			<popupmenu name="menu">
-				<menuitem action="removeServiseItemFromTarget" icon="/icons/edit.png" name="rmvServiceItem"
+				<menuitem action="editQty" icon="/icons/edit.png" name="editNeedeTargetServiceItem"
+					text="Edit Item's needed qty" />
+				<menuitem action="removeServiseItemFromTarget" icon="/icons/delete.png" name="rmvNeedeTargetServiceItem"
 					text="Remove Service Item From Target" />
 			</popupmenu>
 		</table>

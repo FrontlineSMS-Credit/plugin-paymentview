@@ -1,27 +1,29 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.addclient;
 
+import java.util.List;
+
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.handler.BasePanelHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.TargetServiceItem;
 
-public class EditTargetItemQtyHandler extends BasePanelHandler implements ThinletUiEventHandler {
+public class EditTargetItemQtyHandler implements ThinletUiEventHandler {
 	private static final String XML_TARGET_ITEM_EDIT_QTY = "/ui/plugins/paymentview/analytics/addclient/dlgEditTargetItemQty.xml";
 	private static final String TXT_QTY = "txtPopUpQty";
+	private final CreateSettingsHandler createSettingsHandler;
 
 	private Object dialogComponent;
 	private Object txtQty;
 	private UiGeneratorController ui;
 	private TargetServiceItem tsi;
 
-	public EditTargetItemQtyHandler(UiGeneratorController ui, PaymentViewPluginController pluginController,
-			TargetServiceItem tsi) {
-		super(ui);
+	public EditTargetItemQtyHandler(PaymentViewPluginController pluginController,
+			TargetServiceItem tsi, CreateSettingsHandler createSettingsHandler) {
 		this.tsi = tsi;
 		this.ui = pluginController.getUiGeneratorController();
+		this.createSettingsHandler = createSettingsHandler;
 		init();
 		refresh();
 	}
@@ -37,15 +39,23 @@ public class EditTargetItemQtyHandler extends BasePanelHandler implements Thinle
         return true;
     }
     
-	public void createField(String newQty) throws DuplicateKeyException {
+	public void persistQty(String newQty) throws DuplicateKeyException {
 		if(checkIfInt(newQty)){
             if(tsi.getServiceItemQty()==Integer.parseInt(newQty)){
             	ui.alert(tsi.getServiceItem().getTargetName() + "'s qty has not been changed.");
             	this.removeDialog();
+            } else {
+            	List<TargetServiceItem> lstTargetServiceItems = createSettingsHandler.getTargetLstServiceItems();
+            	for (TargetServiceItem tSI: lstTargetServiceItems){
+            		if (tSI.equals(tsi)) {
+            			tSI.setServiceItemQty(Integer.parseInt(newQty));
+            		}
+            	}
+            	createSettingsHandler.setTargetLstServiceItems(lstTargetServiceItems);
+            	createSettingsHandler.refreshSelectedTheTargetTable();
+    			this.removeDialog();
+    			ui.infoMessage("You have succesfully  changed " + tsi.getServiceItem().getTargetName() + "'s qty.");
             }
-            //todo
-			this.removeDialog();
-			ui.infoMessage("You have succesfully  changed '" + tsi.getServiceItem().getTargetName() + "'s qty.");
 		} else {
 			ui.alert("Invalid Quantity");
 		}
@@ -69,7 +79,9 @@ public class EditTargetItemQtyHandler extends BasePanelHandler implements Thinle
 	}
 
 	public void init() {
-		txtQty = ui.find(this.getPanelComponent(), TXT_QTY);
+		dialogComponent = ui.loadComponentFromFile(XML_TARGET_ITEM_EDIT_QTY, this);
+		ui.setText(dialogComponent, "Edit "+tsi.getServiceItem().getTargetName()+"'s needed Qty");
+		txtQty = ui.find(dialogComponent, TXT_QTY);
 		ui.setText(txtQty,  Integer.toString(tsi.getServiceItemQty()));
 	}
 

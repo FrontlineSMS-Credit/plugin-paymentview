@@ -4,7 +4,7 @@
 	top="9" resizable="true"
 	modal="true" closable="true">
 	
-	<label text="Edit the Amout of needed."/>
+	<label text="Enter the Qty needed."/>
 	<panel name="pnlFields" weightx="1" weighty="1" columns="2" gap="10">
 		<textfield text="" name="txtPopUpQty" weightx="1" columns="20"/><button action="persistQty(txtPopUpQty.text)" text="Update Qty"/>
 	</panel>
