@@ -179,9 +179,9 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		calEndDate = setEndOfDay(calEndDate);
 		endDate = calEndDate.getTime();
 		
-		Account accA = getAccountNumber("105",2);
-		ServiceItem siSolarPanel = saveServiceItem("Solar Panel","20000", 2);
-		Target tgtA = createTarget(accA, siSolarPanel, startDate, endDate);
+		Account acc = getAccountNumber("104");
+		Target tgt = createTarget(acc, new BigDecimal("9300"), startDate, endDate);
+		
 		targetId_clientA = tgtA.getId();
 		Calendar calDate_clientA = Calendar.getInstance();
 		calDate_clientA.add(Calendar.MONTH, -1);

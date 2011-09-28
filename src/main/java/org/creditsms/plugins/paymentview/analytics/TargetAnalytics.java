@@ -202,7 +202,7 @@ public class TargetAnalytics {
 		
 		int endDay = 0;
 		Target tgt = targetDao.getTargetById(targetId);
-		String totalAmount = tgt.getServiceItem().getAmount().toString();
+		String totalAmount = tgt.getTotalTargetCost().toString();;
 		String totalInstalmentsCount = "0";
 		Date startDateStr = tgt.getStartDate();
 		Date endDateStr = tgt.getEndDate();

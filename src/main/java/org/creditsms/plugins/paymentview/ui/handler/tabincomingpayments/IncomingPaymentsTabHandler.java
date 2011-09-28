@@ -473,7 +473,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				    	  message = formed_message ;
 				        break;
 				      case AMOUNT_REMAINING:
-				    	  formed_message = message.replace(fe.getMarker(), tgt.getServiceItem().getAmount().subtract(targetAnalytics.getAmountSaved(tgt.getId())).toString());
+				    	  formed_message = message.replace(fe.getMarker(), tgt.getTotalTargetCost().subtract(targetAnalytics.getAmountSaved(tgt.getId())).toString());
 				    	  message = formed_message ;
 				        break;
 				      case DATE_PAID:
