@@ -35,9 +35,6 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	private long targetId;
 	private Date todaysDate; 
 	private Date endOfIntervalDate;
-	private long targetId_clientA;
-	private long targetId_clientB;
-	private long targetId_clientC;
 	
 	@Override
 	protected void onSetUp() throws Exception {
@@ -70,7 +67,7 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		assertEquals(new BigDecimal("516.67"), this.targetAnalytics.getMonthlyTarget());
 		assertEquals(18, this.targetAnalytics.getInstalments());
 		assertEquals(new BigDecimal("300.06"), this.targetAnalytics.getMonthlyAmountDue());
-		assertEquals(new BigDecimal("9000.00"), this.targetAnalytics.getMonthlyAmountSaved());
+		assertEquals(new BigDecimal("216.61"), this.targetAnalytics.getMonthlyAmountSaved());
 	}
 	
 	public void testGetAmountSaved(){
@@ -93,39 +90,6 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		assertEquals(this.todaysDate, this.targetAnalytics.getLastDatePaid(targetId));	
 	}
 	
-	
-	/*
-	 * Test on client who had consistently saved previous month
-	 */
-	public void testConsistentClient(){
-		this.targetAnalytics.computeAnalyticsIntervalDatesAndSavings(targetId_clientA);
-		assertEquals(new BigDecimal("0.00"), this.targetAnalytics.getMonthlyAmountSaved());	
-		assertEquals(new BigDecimal("5000"), this.targetAnalytics.getAmountSaved(targetId_clientA));
-		assertEquals(new BigDecimal("5000.00"), this.targetAnalytics.getMonthlyAmountDue());
-	}
-	
-	/*
-	 * Test on client who had saved more than expected previous month
-	 */
-	public void testClientPayingMore(){
-		this.targetAnalytics.computeAnalyticsIntervalDatesAndSavings(targetId_clientB);
-		assertEquals(new BigDecimal("0.00"), this.targetAnalytics.getMonthlyAmountSaved());	
-		assertEquals(new BigDecimal("7000"), this.targetAnalytics.getAmountSaved(targetId_clientB));
-		assertEquals(new BigDecimal("3000.00"), this.targetAnalytics.getMonthlyAmountDue());
-	}
-	
-	/*
-	 * Test on client who had saved less than expected previous month
-	 */
-	public void testConsistentClientPayingLess(){
-		this.targetAnalytics.computeAnalyticsIntervalDatesAndSavings(targetId_clientC);
-		assertEquals(new BigDecimal("0.00"), this.targetAnalytics.getMonthlyAmountSaved());	
-		assertEquals(new BigDecimal("2000"), this.targetAnalytics.getAmountSaved(targetId_clientC));
-		assertEquals(new BigDecimal("8000.00"), this.targetAnalytics.getMonthlyAmountDue());
-	}
-	
-	
-	
 	private Calendar setStartOfDay(Calendar cal){
 		cal.set(Calendar.HOUR_OF_DAY, 0);  
 		cal.set(Calendar.MINUTE, 0);  
@@ -135,10 +99,10 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	}
 	
 	private Calendar setEndOfDay(Calendar cal){
-		cal.set(Calendar.HOUR_OF_DAY, 23);  
-		cal.set(Calendar.MINUTE, 59);  
+		cal.set(Calendar.HOUR_OF_DAY, 24);  
+		cal.set(Calendar.MINUTE, 0);  
+		cal.set(Calendar.SECOND, -1);  
 		cal.set(Calendar.MILLISECOND, 0);
-		cal.set(Calendar.SECOND, 59);  
 		return cal;
 	}
 
@@ -155,59 +119,12 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		Date endDate = calEndDate.getTime();
 		endOfIntervalDate = endDate;
 		
-		Account acc = getAccountNumber("104",1);
-		Target tgt = createTarget(acc, new BigDecimal("9300"), startDate, endDate);
-		targetId = tgt.getId();
-		createIncomingPayment("0723000000","4500","Mr. Renyenjes", acc, tgt,new Date());
-		createIncomingPayment("0723000000","2500","Mr. Renyenjes", acc, tgt,new Date());
-		IncomingPayment ip = createIncomingPayment("0723000000","2000","Mr. Renyenjes", acc, tgt,new Date());
-		this.todaysDate = new Date(ip.getTimePaid());
-		
-		
-		/*
-		 * Create client who is consistently saving
-		 */
-		calStartDat = Calendar.getInstance();
-		calStartDat.add(Calendar.MONTH, -1);  
-		calStartDat.add(Calendar.DATE, -10);
-		calStartDat = setStartOfDay(calStartDat);
-		startDate = calStartDat.getTime();
-		
-		calEndDate = Calendar.getInstance();
-		calEndDate.add(Calendar.MONTH, 3);  
-		calEndDate.add(Calendar.DATE, -10);
-		calEndDate = setEndOfDay(calEndDate);
-		endDate = calEndDate.getTime();
-		
 		Account acc = getAccountNumber("104");
 		Target tgt = createTarget(acc, new BigDecimal("9300"), startDate, endDate);
-		
-		targetId_clientA = tgtA.getId();
-		Calendar calDate_clientA = Calendar.getInstance();
-		calDate_clientA.add(Calendar.MONTH, -1);
-		createIncomingPayment("0723000001","5000","Mr Good Client", accA, tgtA,calDate_clientA.getTime());
-		
-		
-		/*
-		 * Create client who has saved more than expected the previous month
-		 */
-		Account accB = getAccountNumber("106",3);
-		Target tgtB = createTarget(accB, siSolarPanel, startDate, endDate);
-		targetId_clientB = tgtB.getId();
-		Calendar calDate_clientB = Calendar.getInstance();
-		calDate_clientB.add(Calendar.MONTH, -1);
-		createIncomingPayment("0723000001","7000","Mr Good Client", accB, tgtB,calDate_clientB.getTime());
-		
-		
-		/*
-		 * Create client who has saved less than expected the previous month
-		 */		
-		Account accC = getAccountNumber("107",4);
-		Target tgtC = createTarget(accC, siSolarPanel, startDate, endDate);
-		targetId_clientC = tgtC.getId();
-		Calendar calDate_clientC = Calendar.getInstance();
-		calDate_clientC.add(Calendar.MONTH, -1);
-		createIncomingPayment("0723000001","2000","Mr Good Client", accC, tgtC,calDate_clientC.getTime());
+		targetId = tgt.getId();
+		createIncomingPayment("0723000000","4500","Mr. Renyenjes", acc, tgt);
+		createIncomingPayment("0723000000","2500","Mr. Renyenjes", acc, tgt);
+		createIncomingPayment("0723000000","2000","Mr. Renyenjes", acc, tgt);
 	}
 
 	private Target createTarget(Account ac, BigDecimal totalTargetCost, Date startDate, Date endDate) throws DuplicateKeyException {
@@ -222,20 +139,18 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		return tgt;
 	}
 
-	private Account getAccountNumber(String accNum, int expectedAccCount) throws DuplicateKeyException{
+	private Account getAccountNumber(String accNum) throws DuplicateKeyException{
 		Account acc = new Account();
 		acc.setAccountNumber(accNum);
 		acc.setActiveAccount(true);
 		this.hibernateAccountDao.saveAccount(acc);
-		assertEquals(expectedAccCount, this.hibernateAccountDao.getAllAcounts().size());
-		return acc;
+		assertEquals(1, this.hibernateAccountDao.getAllAcounts().size());
+		return this.hibernateAccountDao.getAllAcounts().get(0);
 	}
 	
 	private IncomingPayment createIncomingPayment(String phoneNumber, String amount,
-			String by, Account account, Target tgt, Date date) {
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {}
+			String by, Account account, Target tgt) {
+		
 		IncomingPayment ip = new IncomingPayment();
 		ip.setPhoneNumber(phoneNumber);
 		ip.setAmountPaid(new BigDecimal(amount));
@@ -243,9 +158,9 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		ip.setAccount(account);
 		ip.setTarget(tgt);
 		ip.setActive(true);
-
-		
-		ip.setTimePaid(date);
+		Date todaysDatesv = new Date(); 
+		this.todaysDate = todaysDatesv;
+		ip.setTimePaid(todaysDatesv);
 		this.hibernateIncomingPaymentDao.saveIncomingPayment(ip);
 		return ip;
 	}
