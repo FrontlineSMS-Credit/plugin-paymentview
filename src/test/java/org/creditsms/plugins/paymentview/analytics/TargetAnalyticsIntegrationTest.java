@@ -9,7 +9,6 @@ import net.frontlinesms.junit.HibernateTestCase;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
-import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateAccountDao;
 import org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateIncomingPaymentDao;
@@ -157,8 +156,7 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		endOfIntervalDate = endDate;
 		
 		Account acc = getAccountNumber("104",1);
-		ServiceItem si = saveServiceItem("Solar Cooker","9300", 1);
-		Target tgt = createTarget(acc, si, startDate, endDate);
+		Target tgt = createTarget(acc, new BigDecimal("9300"), startDate, endDate);
 		targetId = tgt.getId();
 		createIncomingPayment("0723000000","4500","Mr. Renyenjes", acc, tgt,new Date());
 		createIncomingPayment("0723000000","2500","Mr. Renyenjes", acc, tgt,new Date());
@@ -212,9 +210,9 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		createIncomingPayment("0723000001","2000","Mr Good Client", accC, tgtC,calDate_clientC.getTime());
 	}
 
-	private Target createTarget(Account ac, ServiceItem si, Date startDate, Date endDate) throws DuplicateKeyException {
+	private Target createTarget(Account ac, BigDecimal totalTargetCost, Date startDate, Date endDate) throws DuplicateKeyException {
 		Target tgt = new Target();
-		tgt.setServiceItem(si);
+		tgt.setTotalTargetCost(totalTargetCost);
 		tgt.setAccount(ac);
 
 		tgt.setStartDate(startDate);
@@ -231,21 +229,6 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		this.hibernateAccountDao.saveAccount(acc);
 		assertEquals(expectedAccCount, this.hibernateAccountDao.getAllAcounts().size());
 		return acc;
-	}
-	
-	private ServiceItem saveServiceItem(String serviceItemName, String amount, int expectedCount) throws DuplicateKeyException{
-		ServiceItem si = getServiceItem(serviceItemName, amount);
-		this.hibernateServiceItemDao.saveServiceItem(si);
-		assertEquals(expectedCount, this.hibernateServiceItemDao.getServiceItemCount());
-		
-		return si;
-	}
-	
-	private ServiceItem getServiceItem(String serviceItemName, String amount){
-		ServiceItem si = new ServiceItem();
-		si.setTargetName(serviceItemName);
-		si.setAmount(new BigDecimal(amount));
-		return si;
 	}
 	
 	private IncomingPayment createIncomingPayment(String phoneNumber, String amount,
@@ -266,4 +249,5 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		this.hibernateIncomingPaymentDao.saveIncomingPayment(ip);
 		return ip;
 	}
+	
 }
