@@ -41,8 +41,9 @@
 		</panel>
 		<panel gap="5" bottom="5" name="pnl_buttons"
 			weightx="1">
-			<panel height="30">
+			<panel height="30" gap="5">
 				<button name="status" action="tryToggleAutoReply" tooltip="Click to change Auto-Reply status"/>
+				<label text="Auto-Reply"/>
 			</panel>
 			<button icon="/icons/sms_autoReply.png" action="showAutoReplyDialog" halign="right" name="btn_autoReplySetup"
 				text="Auto Reply Setup" />

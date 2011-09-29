@@ -8,8 +8,6 @@ import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
-import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
-import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.domain.ResponseRecipient;
 import org.creditsms.plugins.paymentview.data.domain.ThirdPartyResponse;
 import org.creditsms.plugins.paymentview.data.repository.ResponseRecipientDao;

@@ -46,8 +46,7 @@ public class TargetAnalytics {
 	private Date endMonthInterval = new Date();
 
 	public BigDecimal getPercentageToGo(long tartgetId){
-	    BigDecimal totalTargetCost = targetDao.getTargetById(tartgetId).
-	    		getServiceItem().getAmount();
+	    BigDecimal totalTargetCost = targetDao.getTargetById(tartgetId).getTotalTargetCost();
 	    List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(tartgetId);
 		
 		return calculatePercentageToGo(totalTargetCost, calculateAmount(incomingPayments));
@@ -99,8 +98,7 @@ public class TargetAnalytics {
 		List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(targetId);
 		
 		BigDecimal amountPaid = calculateAmount(incomingPayments);
-		BigDecimal totalTargetCost = targetDao.getTargetById(targetId).
-				getServiceItem().getAmount();
+		BigDecimal totalTargetCost = targetDao.getTargetById(targetId).getTotalTargetCost();
 
 		long endTime = targetDao.getTargetById(targetId).getEndDate().getTime();
 		Calendar calNowDate = Calendar.getInstance();
@@ -204,7 +202,7 @@ public class TargetAnalytics {
 		
 		int endDay = 0;
 		Target tgt = targetDao.getTargetById(targetId);
-		String totalAmount = tgt.getServiceItem().getAmount().toString();
+		String totalAmount = tgt.getTotalTargetCost().toString();;
 		String totalInstalmentsCount = "0";
 		Date startDateStr = tgt.getStartDate();
 		Date endDateStr = tgt.getEndDate();

@@ -38,7 +38,7 @@ public interface TargetDao {
 	 * @param targetId
 	 * @return
 	 */
-	public Target getTargetByAccount(String accountNumber);
+	public List<Target> getTargetsByAccount(String accountNumber);
 
 	/**
 	 * Returns an active Target with Account id
@@ -66,46 +66,6 @@ public interface TargetDao {
 	 */
 	public Target getTargetById(long targetId);
 
-	/**
-	 * Returns a list of Target whose name is similar to the specified string
-	 * 
-	 * @param target
-	 *            string to be used to match the names
-	 * @return
-	 */
-	public List<Target> getTargetsByName(String targetName);
-
-	/**
-	 * Returns a list of Target whose name is similar to the specified string
-	 * from a particular start index with a maximum number of returned Target
-	 * set
-	 * 
-	 * @param Targetname
-	 * @param startIndex
-	 * @param limit
-	 * @return
-	 */
-	public List<Target> getTargetsByName(String targetName, int startIndex,
-			int limit);
-
-	/**
-	 * Returns a list of Target of specified ServiceItem
-	 * 
-	 * @param target
-	 *            string to be used to match the names
-	 * @return
-	 */
-	public List<Target> getTargetsByServiceItem(long serviceItemId);
-
-	/**
-	 * Returns a list of Target of specified ServiceItem
-	 * and targetOwner
-	 * 
-	 * @param target
-	 *            string to be used to match the names
-	 * @return
-	 */
-	public List<Target> getActiveTargetsByServiceItemByClient(long serviceItemId, long clientId);
 	
 	/** @return number of Target in the system */
 	public int getTargetCount();

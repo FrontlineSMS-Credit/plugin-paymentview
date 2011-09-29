@@ -11,6 +11,7 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.Target;
+import org.creditsms.plugins.paymentview.data.domain.TargetServiceItem;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
@@ -18,6 +19,7 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
+import org.creditsms.plugins.paymentview.data.repository.TargetServiceItemDao;
 import org.springframework.context.ApplicationContext;
 
 public class DemoData {
@@ -29,6 +31,7 @@ public class DemoData {
 	private AccountDao accountDao;
 	private ServiceItemDao serviceItemDao;
 	private TargetDao targetDao;
+	private TargetServiceItemDao targetServiceItemDao;
 
 	private DemoData(ApplicationContext ctx) {
 		this.ctx = ctx;
@@ -75,14 +78,6 @@ public class DemoData {
 		}	
 	}
 
-	private void createDummyServiceItem_Targets(String targetName, String amount){
-		ServiceItem s = new ServiceItem();
-		s.setAmount(new BigDecimal(amount));
-		s.setTargetName(targetName);
-		 	
-		getServiceItemDao().saveServiceItem(s);
-	}
-	
 	private Calendar setStartOfDay(Calendar cal){
 		cal.set(Calendar.HOUR_OF_DAY, 0);  
 		cal.set(Calendar.MINUTE, 0);  
@@ -122,15 +117,6 @@ public class DemoData {
 		createDummyClient("Lavender Akoth", "+254725565345");
 		createDummyClient("Sammy Kitonyi", "+254724412345");
 
-		createDummyServiceItem_Targets("Solar Panel", "120000");
-		createDummyServiceItem_Targets("Solar Generator", "320000");
-		createDummyServiceItem_Targets("Bore Hole", "10000");
-		
-		//createDummyTargets()
-		
-		ServiceItem si = new ServiceItem();
-		si = getServiceItemDao().getServiceItemsByName("Solar Panel").get(0);
-
 		Calendar calStartDat = Calendar.getInstance();
 		calStartDat.add(Calendar.MONTH, -11);  
 		calStartDat.add(Calendar.DATE, 1);
@@ -144,7 +130,7 @@ public class DemoData {
 
 		Client clnt = getClientDao().getClientByPhoneNumber("+254701103438");
 		String accountNumber = createAccountNumber();
-		Target tgt = createDummyTargets(si,createDummyAccount(clnt, accountNumber), startDate, endDate);
+		Target tgt = createDummyTargets(new BigDecimal("120000"),createDummyAccount(clnt, accountNumber), startDate, endDate, "Solar Panel");
 		
 		createDummyIncomingPayment("BSD454494", "Alice Wangare", "+254701103438", "1300560000000", new BigDecimal("4500.00"), accountNumber, tgt);
 		createDummyIncomingPayment("BSD45D594", "Alice Wangare", "+254701103438", "1300560000100", new BigDecimal("1300.00"), accountNumber, tgt);
@@ -153,7 +139,7 @@ public class DemoData {
 
 		Client clnt1 = getClientDao().getClientByPhoneNumber("+254720547355");
 		accountNumber = createAccountNumber();
-		Target tgt1 = createDummyTargets(si,createDummyAccount(clnt1, accountNumber), startDate, endDate);
+		Target tgt1 = createDummyTargets(new BigDecimal("87000"),createDummyAccount(clnt1, accountNumber), startDate, endDate, "Water Pump");
 		
 		createDummyIncomingPayment("BSD4SDFGF", "John Kamau", "+254720547355", "1300560000000", new BigDecimal("14500.00"), accountNumber, tgt1);
 		createDummyIncomingPayment("BS3534DDF", "John Kamau", "+254720547355", "1300560000100", new BigDecimal("11300.00"), accountNumber, tgt1);
@@ -176,19 +162,41 @@ public class DemoData {
 		return ac;
 	}
 	
-	private Target createDummyTargets(ServiceItem targetItem, Account accnt, Date startDate, Date endDate){
+	private Target createDummyTargets(BigDecimal totalTargetCost, 
+			Account accnt, Date startDate, Date endDate, String itemName){
 		Target t = new Target();
 		t.setAccount(accnt);
 		try { 
 			t.setStartDate(startDate);
 			t.setEndDate(endDate);
 			t.setCompletedDate(null);
-			t.setServiceItem(targetItem);
+			t.setTotalTargetCost(totalTargetCost);
 			getTargetDao().saveTarget(t);
+			
+			createTargetServiceItem(t, itemName, totalTargetCost);
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 		return t;
+	}
+	
+	private void createTargetServiceItem(Target t, String targetName, 
+			BigDecimal amount) throws DuplicateKeyException{
+		
+		TargetServiceItem tsi = new TargetServiceItem();
+		tsi.setAmount(amount);
+		tsi.setServiceItem(createServiceItem(targetName, amount));
+		tsi.setServiceItemQty(1);
+		tsi.setTarget(t);	
+		getTargetServiceItemDao().saveTargetServiceItem(tsi);
+	}
+	
+	private ServiceItem createServiceItem(String targetName, BigDecimal amount){
+		ServiceItem s = new ServiceItem();
+		s.setAmount(amount);
+		s.setTargetName(targetName);
+		getServiceItemDao().saveServiceItem(s);
+		return serviceItemDao.getServiceItemsByName(targetName).get(0);
 	}
 	
 	public AccountDao getAccountDao() {
@@ -240,7 +248,12 @@ public class DemoData {
 		return targetDao;
 	}
 
-	
+	private TargetServiceItemDao getTargetServiceItemDao() {
+		if(targetServiceItemDao == null){
+			targetServiceItemDao = (TargetServiceItemDao) ctx.getBean("targetServiceItemDao");
+		}
+		return targetServiceItemDao;
+	}
 //> STATIC METHODS
 	public static void createDemoData(ApplicationContext applicationContext) throws DuplicateKeyException{
 		DemoData d = new DemoData(applicationContext);
