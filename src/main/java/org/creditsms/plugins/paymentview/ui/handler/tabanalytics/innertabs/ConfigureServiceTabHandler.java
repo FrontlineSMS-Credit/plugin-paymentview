@@ -16,6 +16,7 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateNewServiceItemHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.EditServiceItemHandler;
 
 public class ConfigureServiceTabHandler extends BaseTabHandler implements PagedComponentItemProvider, EventObserver{
 
@@ -48,6 +49,29 @@ public class ConfigureServiceTabHandler extends BaseTabHandler implements PagedC
 		ui.add(new CreateNewServiceItemHandler(ui, pluginController).getDialog());
 	}
 
+	public void editserviceItem() {
+		ui.add(new EditServiceItemHandler(ui, pluginController, getSelectedServiceItemInTable(), this).getDialog());
+	}
+	
+ 	public void refreshServiceItemTable(){
+		List<ServiceItem> lstServiceItem = serviceItemDao.getAllServiceItems();
+		ui.removeAll(serviceItemTableComponent);
+		for(ServiceItem si: lstServiceItem){
+			ui.add(this.serviceItemTableComponent, getRow(si));
+		}
+	}
+	
+	public Object getSelectedServiceItemRow() {
+		return ui.getSelectedItem(serviceItemTableComponent);
+	}
+    
+	public ServiceItem getSelectedServiceItemInTable() {
+		Object row = getSelectedServiceItemRow();
+		ServiceItem serviceItem = ui.getAttachedObject(row, ServiceItem.class);
+		return serviceItem;
+	}
+
+	
 	public void deinit() {
 	}
 

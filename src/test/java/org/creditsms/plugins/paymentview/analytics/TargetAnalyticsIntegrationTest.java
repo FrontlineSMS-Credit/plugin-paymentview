@@ -9,7 +9,6 @@ import net.frontlinesms.junit.HibernateTestCase;
 
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
-import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateAccountDao;
 import org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateIncomingPaymentDao;
@@ -121,17 +120,16 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		endOfIntervalDate = endDate;
 		
 		Account acc = getAccountNumber("104");
-		ServiceItem si = saveServiceItem("Solar Cooker","9300", 1);
-		Target tgt = createTarget(acc, si, startDate, endDate);
+		Target tgt = createTarget(acc, new BigDecimal("9300"), startDate, endDate);
 		targetId = tgt.getId();
 		createIncomingPayment("0723000000","4500","Mr. Renyenjes", acc, tgt);
 		createIncomingPayment("0723000000","2500","Mr. Renyenjes", acc, tgt);
 		createIncomingPayment("0723000000","2000","Mr. Renyenjes", acc, tgt);
 	}
 
-	private Target createTarget(Account ac, ServiceItem si, Date startDate, Date endDate) throws DuplicateKeyException {
+	private Target createTarget(Account ac, BigDecimal totalTargetCost, Date startDate, Date endDate) throws DuplicateKeyException {
 		Target tgt = new Target();
-		tgt.setServiceItem(si);
+		tgt.setTotalTargetCost(totalTargetCost);
 		tgt.setAccount(ac);
 
 		tgt.setStartDate(startDate);
@@ -150,21 +148,6 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		return this.hibernateAccountDao.getAllAcounts().get(0);
 	}
 	
-	private ServiceItem saveServiceItem(String serviceItemName, String amount, int expectedCount) throws DuplicateKeyException{
-		ServiceItem si = getServiceItem(serviceItemName, amount);
-		this.hibernateServiceItemDao.saveServiceItem(si);
-		assertEquals(1, this.hibernateServiceItemDao.getServiceItemCount());
-		
-		return si;
-	}
-	
-	private ServiceItem getServiceItem(String serviceItemName, String amount){
-		ServiceItem si = new ServiceItem();
-		si.setTargetName(serviceItemName);
-		si.setAmount(new BigDecimal(amount));
-		return si;
-	}
-	
 	private IncomingPayment createIncomingPayment(String phoneNumber, String amount,
 			String by, Account account, Target tgt) {
 		
@@ -181,4 +164,5 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		this.hibernateIncomingPaymentDao.saveIncomingPayment(ip);
 		return ip;
 	}
+	
 }

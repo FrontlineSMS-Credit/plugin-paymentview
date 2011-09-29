@@ -9,6 +9,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
+import org.creditsms.plugins.paymentview.data.domain.TargetServiceItem;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTableHandler;
 
 public class ReviewClientTableHandler extends BaseClientTableHandler{
@@ -17,7 +18,6 @@ public class ReviewClientTableHandler extends BaseClientTableHandler{
 	private static final String LBL_TO_SAVE = "toSave";
 	private static final String LBL_CLIENT_NAME = "clientName";
 	
-	private static final String EMPTY = "";
 	private static final String ENDING_ON = "Ending on: ";
 	private static final String STARTING_ON = "Starting on: ";
 	private static final String TO_SAVE = "To save: ";
@@ -43,13 +43,17 @@ public class ReviewClientTableHandler extends BaseClientTableHandler{
 		ui.setWidth(name, 200);
 		ui.setIcon(name, Icon.CONTACT);
 		ui.add(header, name);
-		
-		ui.add(header, ui.createColumn("Product", "product"));
 
 		Object phone = ui.createColumn("Phone", "phone");
 		ui.setWidth(phone, 150);
 		ui.setIcon(phone, Icon.PHONE_NUMBER);
 		ui.add(header, phone);
+		
+		Object products = ui.createColumn("Product(s)", "product");
+		ui.setWidth(products, 450);
+		ui.add(header, products);
+		
+		//ui.add(header, ui.createColumn("Product(s)", "product"));
 		
 		List<CustomField> allCustomFields = this.customFieldDao
 				.getAllActiveUsedCustomFields();
@@ -68,9 +72,19 @@ public class ReviewClientTableHandler extends BaseClientTableHandler{
 		Object row = ui.createTableRow(client);
 
 		ui.add(row, ui.createTableCell(client.getFullName()));
-		ui.add(row, ui.createTableCell(reviewHandler.getSelectedServiceItem().getTargetName()));
 		ui.add(row, ui.createTableCell(client.getPhoneNumber()));
-
+		
+		String neededitems = "";
+		
+		for(TargetServiceItem tsi: reviewHandler.getSelectedServiceItems()){
+			if (neededitems.length()==0) {
+				neededitems = tsi.getServiceItem().getTargetName();
+			} else {
+				neededitems = neededitems+", "+tsi.getServiceItem().getTargetName();
+			}
+		}
+		
+		ui.add(row, ui.createTableCell(neededitems));
 		return addCustomData(client, row);
 	}
 	
@@ -92,16 +106,16 @@ public class ReviewClientTableHandler extends BaseClientTableHandler{
 			Client attachedClient = ui.getAttachedObject(selectedItem, Client.class);
 			
 			ui.setText(ui.find(LBL_CLIENT_NAME), NAME + attachedClient.getFullName());
-			ui.setText(ui.find(LBL_TO_SAVE) , TO_SAVE + reviewHandler.getSelectedServiceItem().getAmount().toString());
+			ui.setText(ui.find(LBL_TO_SAVE) , TO_SAVE + reviewHandler.getTotalAmount());
 			ui.setText(ui.find(LBL_START_DATE) , STARTING_ON + sdf.format(reviewHandler.getStartDate()));
 			ui.setText(ui.find(LBL_END_DATE) , ENDING_ON + sdf.format(reviewHandler.getEndDate()));
 			
 		}else{
-			ui.setText(ui.find(LBL_CLIENT_NAME), EMPTY);
-			ui.setText(ui.find(LBL_TO_SAVE) , EMPTY);
-			ui.setText(ui.find(LBL_START_DATE) , EMPTY);
-			ui.setText(ui.find(LBL_END_DATE) , EMPTY);
+			Client fstClient = reviewHandler.getSelectedClients().get(0);
+			ui.setText(ui.find(LBL_CLIENT_NAME), NAME + fstClient.getFirstName());
+			ui.setText(ui.find(LBL_TO_SAVE) , TO_SAVE + reviewHandler.getTotalAmount());
+			ui.setText(ui.find(LBL_START_DATE) , STARTING_ON + sdf.format(reviewHandler.getStartDate()));
+			ui.setText(ui.find(LBL_END_DATE) , ENDING_ON + sdf.format(reviewHandler.getEndDate()));
 		}
-		
 	}
 }

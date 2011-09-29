@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.FrontlineSMS;
-import net.frontlinesms.data.events.DatabaseEntityNotification;
+import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -48,10 +48,10 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		PagedComponentItemProvider, EventObserver{
 	private static final String CONFIRM_DIALOG = "confirmDialog";
 	private static final String INVALID_DATE = "Please enter a correct starting date.";
-	private static final String ENABLE_AUTOREPLY = "Autoreply Disabled";
+	private static final String ENABLE_AUTOREPLY = "OFF";
 	private static final String TXT_END_DATE = "txt_endDate";
 	private static final String TXT_START_DATE = "txt_startDate";
-	private static final String DISABLE_AUTOREPLY = "Autoreply Enabled";
+	private static final String DISABLE_AUTOREPLY = "ON";
 	private static final String COMPONENT_INCOMING_PAYMENTS_TABLE = "tbl_clients";
 	private static final String COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE = "pnl_clients";
 	private static final String XML_INCOMING_PAYMENTS_TAB = "/ui/plugins/paymentview/incomingpayments/tabincomingpayments.xml";
@@ -136,7 +136,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private void setUpAutoReplyUI() {
 		ui.setIcon(status_label, autoReplyProperties.isAutoReplyOn() ? ICON_STATUS_TRUE : ICON_STATUS_FALSE);
 		ui.setText(status_label, (autoReplyProperties.isAutoReplyOn() ? DISABLE_AUTOREPLY : ENABLE_AUTOREPLY));
-		ui.setSelected(status_label, autoReplyProperties.isAutoReplyOn());
 	}
 
 	protected String getXMLFile() {
@@ -311,7 +310,14 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		}else if (selectedItems.length > 1){
 			ui.alert("You can only select one payment at a time.");
 		}else{
-			new ClientSelector(ui, pluginController).showClientSelectorDialog(this, "reassignForClient", List.class);
+			List<Client> clients = new ArrayList<Client>(selectedItems.length);
+			for (Object o : selectedItems) {
+				IncomingPayment attachedObject = ui.getAttachedObject(o, IncomingPayment.class);
+				clients.add(clientDao.getClientByPhoneNumber(attachedObject.getPhoneNumber()));
+			}
+			ClientSelector clientSelector = new ClientSelector(ui, pluginController);
+			clientSelector.setExclusionList(clients);
+			clientSelector.showClientSelectorDialog(this, "reassignForClient", List.class);
 		}
 	}
 	
@@ -390,42 +396,46 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	public void notify(final FrontlineEventNotification notification) {
 		new FrontlineUiUpateJob() {
 			public void run() {
-				if (!(notification instanceof DatabaseEntityNotification)) {
+				if (!(notification instanceof EntitySavedNotification)) {
 					return;
 				}
 		
-				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
-				if (entity instanceof IncomingPayment) {
-					if(autoReplyProperties.isAutoReplyOn()){
-						IncomingPaymentsTabHandler.this.replyToPayment((IncomingPayment) entity);
+				Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();				
+				if (entity instanceof IncomingPayment){
+					if (notification instanceof EntitySavedNotification){
+						if(autoReplyProperties.isAutoReplyOn()){
+							IncomingPaymentsTabHandler.this.replyToPayment((IncomingPayment) entity);
+						}
+					IncomingPaymentsTabHandler.this.replyToThirdParty((IncomingPayment) entity);
 					}
-					IncomingPaymentsTabHandler.this.refresh();
 				}
+			
+				IncomingPaymentsTabHandler.this.refresh();
 			}
 		}.execute();
 	}
 
 	protected void replyToPayment(IncomingPayment incomingPayment) {
 		String message = replaceFormats(incomingPayment, autoReplyProperties.getMessage());
-		//Message Being null means that an account/target was not found, going on would be dumb!
 		if (message != null){
 			frontlineController.sendTextMessage(incomingPayment.getPhoneNumber(), message);
-		
-			ThirdPartyResponse  thirdPartyResponse = this.thirdPartyResponseDao.
+		}
+	}
+
+	private void replyToThirdParty(IncomingPayment incomingPayment) {
+		ThirdPartyResponse  thirdPartyResponse = this.thirdPartyResponseDao.
 			getThirdPartyResponseByClientId(incomingPayment.getAccount().getClient().getId());
-			if (thirdPartyResponse != null){ 
-				List<ResponseRecipient> responseRecipientLst = this.responseRecipientDao.
+		if (thirdPartyResponse != null){
+			List<ResponseRecipient> responseRecipientLst = this.responseRecipientDao.
 				getResponseRecipientByThirdPartyResponseId(thirdPartyResponse.getId());
-				
+			
 				String thirdPartResponseMsg = replaceFormats(incomingPayment, thirdPartyResponse.getMessage());
-				
 				if (thirdPartResponseMsg != null){
 					for (ResponseRecipient responseRes : responseRecipientLst) {
 						frontlineController.sendTextMessage(responseRes.getClient().getPhoneNumber(), 
 								thirdPartResponseMsg);
 					}
 				}
-			}
 		}
 	}
 	
@@ -464,7 +474,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				    	  message = formed_message ;
 				        break;
 				      case AMOUNT_REMAINING:
-				    	  formed_message = message.replace(fe.getMarker(), tgt.getServiceItem().getAmount().subtract(targetAnalytics.getAmountSaved(tgt.getId())).toString());
+				    	  formed_message = message.replace(fe.getMarker(), tgt.getTotalTargetCost().subtract(targetAnalytics.getAmountSaved(tgt.getId())).toString());
 				    	  message = formed_message ;
 				        break;
 				      case DATE_PAID:

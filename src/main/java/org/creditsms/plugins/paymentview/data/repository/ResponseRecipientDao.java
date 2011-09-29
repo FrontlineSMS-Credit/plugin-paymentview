@@ -4,16 +4,26 @@ import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
 
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.ResponseRecipient;
 
 public interface ResponseRecipientDao {
 	/**
-	 * Retrieves the ResponseRecipient with
+	 * Retrieves the ResponseRecipient List with
 	 * 
 	 * @param thirdPartyId
 	 **/
 	public List<ResponseRecipient> getResponseRecipientByThirdPartyResponseId(long thirdPartyId);
 
+	/**
+	 * Retrieves the ResponseRecipient with
+	 * 
+	 * @param thirdPartyId
+	 * @param recipientId
+	 **/
+	public ResponseRecipient getResponseRecipientByTpResponseAndRecipient(
+			long thirdPartyResponseId, Client recipientId);
+	
 	/**
 	 * Retrieves all the ThirdPartyResponses in the system
 	 *

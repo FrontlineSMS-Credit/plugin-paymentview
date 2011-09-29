@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.data.domain;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,7 +29,8 @@ public class Target {
 	public static final String FIELD_END_DATE = "endDate";
 	public static final String FIELD_COMPLETED_DATE = "completedDate";
 	public static final String FIELD_ACCOUNT = "accountId";
-	public static final String FIELD_SERVICE_ITEM = "serviceItemId";
+	public static final String FIELD_TARGET_SERVICE_ITEM = "targetServiceItemId";
+	public static final String FIELD_TOTAL_TARGET_COST = "totalTargetCost";
 	public static final String FIELD_INCOMING_PAYMENT ="incomingPaymentId";
 
 	
@@ -45,9 +47,11 @@ public class Target {
 	@ManyToOne
 	@JoinColumn(name = FIELD_ACCOUNT)
 	private Account account;
-	@ManyToOne
-	@JoinColumn(name = FIELD_SERVICE_ITEM)
-	private ServiceItem serviceItem;
+	@Column(name = FIELD_TOTAL_TARGET_COST, nullable = false, unique = false)
+	private BigDecimal totalTargetCost;
+	@OneToMany
+	@JoinColumn(name = FIELD_TARGET_SERVICE_ITEM)
+	private Set<TargetServiceItem> targetServiceItem = new HashSet<TargetServiceItem>();
 	@OneToMany
 	@JoinColumn(name = FIELD_INCOMING_PAYMENT)
 	private Set<IncomingPayment> incomingPayments = new HashSet<IncomingPayment>();
@@ -57,7 +61,7 @@ public class Target {
 		END_DATE(FIELD_END_DATE),
 		COMPLETED_DATE(FIELD_COMPLETED_DATE),
 		ACCOUNT(FIELD_ACCOUNT),
-		SERVICE_ITEM(FIELD_SERVICE_ITEM),
+		SERVICE_ITEM(FIELD_TARGET_SERVICE_ITEM),
 		INCOMING_PAYMENT(FIELD_INCOMING_PAYMENT);
 		
 		/** name of a field */
@@ -76,12 +80,12 @@ public class Target {
 	}
 	
 	//NEW CONSTRUCTOR
-	public Target(Date targetStartDate,Date targetEndDate, ServiceItem serviceItem, Account account) {
+	public Target(Date targetStartDate,Date targetEndDate, Account account, BigDecimal totalTargetCost) {
 		this.startDate = targetStartDate.getTime();
 		this.endDate = targetEndDate.getTime();
 		this.completedDate = null;
-		this.serviceItem = serviceItem;
 		this.account = account;
+		this.totalTargetCost = totalTargetCost;
 	}
 
 	public Account getAccount() {
@@ -99,10 +103,6 @@ public class Target {
 
 	public long getId() {
 		return id;
-	}
-
-	public ServiceItem getServiceItem() {
-		return serviceItem;
 	}
 
 	public Date getStartDate() {
@@ -128,11 +128,7 @@ public class Target {
 	public void setId(long id) {
 		this.id = id;
 	}
-
-	public void setServiceItem(ServiceItem targetItem) {
-		this.serviceItem = targetItem;
-	}
-
+	
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate.getTime();
 	}
@@ -144,6 +140,22 @@ public class Target {
 	public void setIncomingPayments(Set<IncomingPayment> incomingPayments) {
 		this.incomingPayments = incomingPayments;
 	}
+	
+	public BigDecimal getTotalTargetCost() {
+		return totalTargetCost;
+	}
+
+	public void setTotalTargetCost(BigDecimal totalTargetCost) {
+		this.totalTargetCost = totalTargetCost;
+	}
+	
+	public Set<TargetServiceItem> getTargetServiceItem() {
+		return targetServiceItem;
+	}
+
+	public void setTargetServiceItem(Set<TargetServiceItem> targetServiceItem) {
+		this.targetServiceItem = targetServiceItem;
+	}
 
 	@Override
 	public int hashCode() {
@@ -151,8 +163,8 @@ public class Target {
 		int result = 1;
 		result = prime * result + ((account == null) ? 0 : account.hashCode());
 		result = prime * result + (int) (endDate ^ (endDate >>> 32));
-		result = prime * result
-				+ ((serviceItem == null) ? 0 : serviceItem.hashCode());
+		/*result = prime * result
+				+ ((serviceItem == null) ? 0 : serviceItem.hashCode());*/
 		result = prime * result + (int) (startDate ^ (startDate >>> 32));
 		return result;
 	}
@@ -173,11 +185,11 @@ public class Target {
 			return false;
 		if (endDate != other.endDate)
 			return false;
-		if (serviceItem == null) {
+		/*if (serviceItem == null) {
 			if (other.serviceItem != null)
 				return false;
 		} else if (!serviceItem.equals(other.serviceItem))
-			return false;
+			return false;*/
 		if (startDate != other.startDate)
 			return false;
 		// WARNING => NULL?????
@@ -190,6 +202,6 @@ public class Target {
 	public String toString() {
 		return "Target [id=" + id + ", startDate=" + startDate + ", endDate="
 				+ endDate + ", serviceItem="
-				+ serviceItem + "]";
+				+ totalTargetCost + "]";
 	}
 }

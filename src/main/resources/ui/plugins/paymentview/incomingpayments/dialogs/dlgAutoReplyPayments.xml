@@ -5,22 +5,22 @@
 	 	<textarea name="replyContent" wrap="true" weightx="1" weighty="1" wrap="true" width="410"/>
 	    <separator/>
 	    <panel gap="3" columns="1" weightx="1">
-	    	<label weightx="1" text="Check to include:" font="bold"/>
-	    	<panel bottom="4" gap="3" columns="3" weightx="1">
+	    	<label weightx="1" text="Click to include:" font="bold"/>
+	    	<panel bottom="4" gap="3" columns="4" weightx="1">
+	    	    <panel weightx="1"/>
 	    		<panel gap="3" columns="1" weightx="1">
-			    	<checkbox name="clientName" action="addConstantToDialog(replyContent.text, replyContent, 'CLIENT_NAME')" text="Name" selected="false"/>
-			    	<!--  checkbox name="recepientName" action="addConstantToDialog(replyContent.text, replyContent, 'RECEPIENT_NAME')" text="Recipient Name" selected="false"/-->
-			    	<checkbox name="amountPaid" text="Amount Paid" action="addConstantToDialog(replyContent.text, replyContent, 'AMOUNT_PAID')" selected="false"/>
-					<checkbox name="datePaid" text="Date Paid" action="addConstantToDialog(replyContent.text, replyContent, 'DATE_PAID')" selected="false"/>
-			    	<checkbox name="amountRemaining" text="Amount Remaining" action="addConstantToDialog(replyContent.text, replyContent, 'AMOUNT_REMAINING')" selected="false"/>
+			    	<button name="clientName" action="addConstantToDialog(replyContent.text, replyContent, 'CLIENT_NAME')" text="Name" icon="/icons/user_receiver.png"/>
+			    	<button name="amountPaid" text="Amount Paid" action="addConstantToDialog(replyContent.text, replyContent, 'AMOUNT_PAID')" icon="/icons/money.png"/>
+					<button name="datePaid" text="Date Paid" action="addConstantToDialog(replyContent.text, replyContent, 'DATE_PAID')" icon="/icons/date.png"/>
+			    	<button name="amountRemaining" text="Amount Remaining" action="addConstantToDialog(replyContent.text, replyContent, 'AMOUNT_REMAINING')" icon="/icons/money.png"/>
 			    </panel>
 			    <panel weightx="1"/>
 			    <panel gap="3" columns="1" weightx="1">
-			    	<checkbox name="targetEndDate" text="Target End Date" action="addConstantToDialog(replyContent.text, replyContent, 'TARGET_ENDDATE')" selected="false"/>
-			     	<checkbox name="daysRemaining" text="Days Remaining" action="addConstantToDialog(replyContent.text, replyContent, 'DAYS_REMAINING')" selected="false"/>
-					<checkbox name="monthlySavings" text="Monthly Savings" action="addConstantToDialog(replyContent.text, replyContent, 'MONTHLY_SAVINGS')" selected="false"/>
-			    	<checkbox name="monthlyDue" text="Monthly Amount Remaining" action="addConstantToDialog(replyContent.text, replyContent, 'MONTHLY_DUE')" selected="false"/>
-			    	<checkbox name="monthlyDueDate" text="Monthly Due Date" action="addConstantToDialog(replyContent.text, replyContent, 'END_MONTH_INTERVAL')" selected="false"/>
+			    	<button name="targetEndDate" text="Target End Date" action="addConstantToDialog(replyContent.text, replyContent, 'TARGET_ENDDATE')" icon="/icons/date.png"/>
+			     	<button name="daysRemaining" text="Days Remaining" action="addConstantToDialog(replyContent.text, replyContent, 'DAYS_REMAINING')" icon="/icons/log_info.png"/>
+					<button name="monthlySavings" text="Amount Paid This Month" action="addConstantToDialog(replyContent.text, replyContent, 'MONTHLY_SAVINGS')" icon="/icons/money.png"/>
+			    	<button name="monthlyDue" text="Current Amount Due" action="addConstantToDialog(replyContent.text, replyContent, 'MONTHLY_DUE')" icon="/icons/money.png"/>
+			    	<button name="monthlyDueDate" text="Current Due Date" action="addConstantToDialog(replyContent.text, replyContent, 'END_MONTH_INTERVAL')"  icon="/icons/date.png"/>
 			    </panel>
 	    	</panel>
 	    </panel>

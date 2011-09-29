@@ -25,6 +25,7 @@ public class ThirdPartySMSDialogHandler extends BaseActionDialog {
     private Client client;
     Object replyTextMessage;
     protected Object dialogComponent;
+	private List<Client> deletedClients;
 	
 	public ThirdPartySMSDialogHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController, Client client) {
@@ -41,6 +42,7 @@ public class ThirdPartySMSDialogHandler extends BaseActionDialog {
 	public void init() {
 		super.init();
 		clients = new ArrayList<Client>();
+		deletedClients = new ArrayList<Client>();
 		clientTableComponent = ui.find(this.getDialogComponent(), TBL_CLIENT_CONTACT_LIST);
 		String message = "";
 		ThirdPartyResponse tpResponse = new ThirdPartyResponse();
@@ -66,43 +68,61 @@ public class ThirdPartySMSDialogHandler extends BaseActionDialog {
 	/** Save auto reply details 
 	 * @throws DuplicateKeyException */
 	public void save(String message) throws DuplicateKeyException {
-		
-		if(getClients() == null || getClients().size()==0){
-			ui.alert("Please select the message recipient(s) to proceed.");
+		ThirdPartyResponse thirdPartyResponse = new ThirdPartyResponse();
+		thirdPartyResponse.setClient(this.client);
+		thirdPartyResponse.setMessage(message);
+		if(this.thirdPartyResponseDao.getThirdPartyResponseByClientId(this.client.getId())==null){
+			this.thirdPartyResponseDao.saveThirdPartyResponse(thirdPartyResponse);
 		} else {
-			ThirdPartyResponse thirdPartyResponse = new ThirdPartyResponse();
-			thirdPartyResponse.setClient(this.client);
+			thirdPartyResponse = this.thirdPartyResponseDao.getThirdPartyResponseByClientId(
+					this.client.getId());
 			thirdPartyResponse.setMessage(message);
-			if(this.thirdPartyResponseDao.getThirdPartyResponseByClientId(
-					this.client.getId())==null){
-				this.thirdPartyResponseDao.saveThirdPartyResponse(thirdPartyResponse);
-			} else {
-				thirdPartyResponse = this.thirdPartyResponseDao.getThirdPartyResponseByClientId(
-						this.client.getId());
-				thirdPartyResponse.setMessage(message);
-				this.thirdPartyResponseDao.updateThirdPartyResponse(thirdPartyResponse);
+			this.thirdPartyResponseDao.updateThirdPartyResponse(thirdPartyResponse);
+			
+			//delete clients in DB
+			for (Client deletedClient :deletedClients){
+				ResponseRecipient deletedResponseRecipient = this.responseRecipientDao.
+					getResponseRecipientByTpResponseAndRecipient(thirdPartyResponse.getId(), deletedClient);
+				if (deletedResponseRecipient != null){
+					this.responseRecipientDao.deleteResponseRecipient(deletedResponseRecipient);
+				}
 			}
+		}
 
-			for(int y =0; y<getClients().size(); y++) {
-				ResponseRecipient responseRecipient = new ResponseRecipient();
-				responseRecipient.setClient(getClients().get(y));
-				responseRecipient.setThirdPartyResponse(thirdPartyResponse);
-				
-				boolean addNotResponseRecipient = false;
-				
-				List<ResponseRecipient> tempResponseRecipientLst = this.responseRecipientDao.
+		for(int y =0; y<getClients().size(); y++) {
+			ResponseRecipient responseRecipient = new ResponseRecipient();
+			responseRecipient.setClient(getClients().get(y));
+			responseRecipient.setThirdPartyResponse(thirdPartyResponse);
+			
+			boolean addNotResponseRecipient = false;
+			
+			List<ResponseRecipient> tempResponseRecipientLst = this.responseRecipientDao.
 				getResponseRecipientByThirdPartyResponseId(thirdPartyResponse.getId());
-				
-				for (ResponseRecipient respRec: tempResponseRecipientLst) {
-					if(responseRecipient.getClient().getPhoneNumber().equals(respRec.getClient().getPhoneNumber())){
-						addNotResponseRecipient = true;
-					}
-				}
-				if (!addNotResponseRecipient){
-						this.responseRecipientDao.saveResponseRecipient(responseRecipient);
+			
+			for (ResponseRecipient respRec: tempResponseRecipientLst) {
+				if(responseRecipient.getClient().getPhoneNumber().equals(respRec.getClient().getPhoneNumber())){
+					addNotResponseRecipient = true;
 				}
 			}
-			this.removeDialog();			
+			if (!addNotResponseRecipient){
+				this.responseRecipientDao.saveResponseRecipient(responseRecipient);
+			}
+		}
+		this.removeDialog();			
+	}
+	
+	/** Delete selected Third Party SMS recipient */
+	public void deleteThirdParty(){
+		Object[] selectedThirdPartyRecipients = this.ui.getSelectedItems(clientTableComponent);
+		if (selectedThirdPartyRecipients.length == 0){
+			ui.infoMessage("Please select Third Party SMS recipient(s).");	
+		} else {
+			for (Object selectedThirdPartyRecipient : selectedThirdPartyRecipients) {
+				Client attachedThirdPartyRecipient = ui.getAttachedObject(selectedThirdPartyRecipient, Client.class);
+				clients.remove(attachedThirdPartyRecipient);
+				deletedClients.add(attachedThirdPartyRecipient);
+				this.receiver(clients);
+			}
 		}
 	}
 

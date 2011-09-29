@@ -320,8 +320,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}else if (isValidReverseMessage(message)){
 			processReversePayment(message);
 		} else {
-			// Message is invalid
-			logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.ERROR,"Payment Message: Invalid message",message.getTextContent()));
+			logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.INFO,"Payment Message",message.getTextContent()));
 		}
 	}
 

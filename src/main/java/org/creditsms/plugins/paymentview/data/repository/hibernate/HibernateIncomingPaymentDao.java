@@ -9,10 +9,8 @@ import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.springframework.dao.support.DataAccessUtils;
 
 public class HibernateIncomingPaymentDao extends
 		BaseHibernateDao<IncomingPayment> implements IncomingPaymentDao {
@@ -93,24 +91,15 @@ public class HibernateIncomingPaymentDao extends
 		return super.getList(criteria);
 	}
 
-	public Long getLastActiveIncomingPaymentDateByAccountNumber(
+	public List<IncomingPayment> getActiveIncomingPaymentsByAccountNumberOrderByTimepaid(
 			String accountNumber) {
 		
 		DetachedCriteria criteria = super.getCriterion();
 		criteria.add(Restrictions.eq("active", true));
 		DetachedCriteria accountCriteria = criteria.createCriteria("account");
 		accountCriteria.add(Restrictions.eq("accountNumber", accountNumber));
-		List<IncomingPayment> incomingPaymentsLst = super.getList(criteria);
-		
-		if(incomingPaymentsLst.size()==0){
-			return null;
-		}else{
-			DetachedCriteria criteriafnl = super.getCriterion();
-	        ProjectionList ipProj = Projections.projectionList();
-	        ipProj.add(Projections.max("timePaid"));
-	        criteriafnl.setProjection(ipProj);
-	        return DataAccessUtils.longResult(this.getHibernateTemplate().findByCriteria(criteriafnl));
-		}      
+		criteria.addOrder(Order.desc("timePaid"));
+		return super.getList(criteria);    
 	}
 	
 	public List<IncomingPayment> getIncomingPaymentsByAccountNumberByTimeRange(

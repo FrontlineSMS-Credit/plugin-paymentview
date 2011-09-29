@@ -58,6 +58,16 @@ public class ResponseRecipientIntergrationTest extends HibernateTestCase{
 		assertEquals("0721876425", responseRecipient.getClient().getPhoneNumber());
 	}	
 	
+	public void testGetResponseRecipientByTpResponseAndRecipient() throws DuplicateKeyException{
+		ResponseRecipient responseRecipient = createResponseRecipient("0723987098", "Payment received today", "0721876425");
+		hibernateResponseRecipientDao.saveResponseRecipient(responseRecipient);
+		long tpr = hibernateThirdPartyResponseDao.getAllThirdPartyResponses().get(0).getId();
+		Client recipient = responseRecipient.getClient();
+		responseRecipient = hibernateResponseRecipientDao.getResponseRecipientByTpResponseAndRecipient(tpr,recipient);
+		assertEquals("0721876425", responseRecipient.getClient().getPhoneNumber());
+	}	
+	
+	
 	private Client createClient(String phoneNumber){
 		Client client = new Client();
 		client.setPhoneNumber(phoneNumber);

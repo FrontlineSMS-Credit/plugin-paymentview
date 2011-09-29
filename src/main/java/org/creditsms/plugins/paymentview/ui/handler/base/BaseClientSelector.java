@@ -1,4 +1,4 @@
-package org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs;
+package org.creditsms.plugins.paymentview.ui.handler.base;
 
 import net.frontlinesms.ui.UiGeneratorController;
 

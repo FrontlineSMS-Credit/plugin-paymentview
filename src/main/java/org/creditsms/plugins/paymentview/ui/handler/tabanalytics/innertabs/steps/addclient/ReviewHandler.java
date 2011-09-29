@@ -1,10 +1,12 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.addclient;
 
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPersonalService;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -16,6 +18,7 @@ import org.creditsms.plugins.paymentview.analytics.TargetPayBillProcess;
 import org.creditsms.plugins.paymentview.analytics.TargetStandardProcess;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
+import org.creditsms.plugins.paymentview.data.domain.TargetServiceItem;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
 
 public class ReviewHandler extends BasePanelHandler {
@@ -40,8 +43,8 @@ public class ReviewHandler extends BasePanelHandler {
 		this.addClientTabHandler = addClientTabHandler;
 		this.selectedClients = new ArrayList<Client>(previousCreateSettingsHandler.getPreviousSelectClientsHandler().getSelectedClients());
 		//TODO to be modified if several phones are connected
-		List<PaymentService> paymentServices = pluginController.getPaymentServices();
-		PAYMENT_PROCESS = (paymentServices instanceof MpesaPersonalService? "StandardPaymentService" : "PayBillPaymentService");
+		//List<PaymentService> paymentServices = pluginController.getPaymentServices();
+		//PAYMENT_PROCESS = (paymentServices instanceof MpesaPersonalService? "StandardPaymentService" : "PayBillPaymentService");
 		init();
 	}
 
@@ -53,13 +56,13 @@ public class ReviewHandler extends BasePanelHandler {
 		ui.add(clientTableHolder, clientTableHandler.getClientsTablePanel());
 	}
 
-	public void create() {
+	public void create() throws DuplicateKeyException {
 		for (Client client : selectedClients) {
 			if (PAYMENT_PROCESS.equals("StandardPaymentService")){
 				TargetCreationProcess targetCreationProcess = new TargetStandardProcess(
 						client, previousCreateSettingsHandler.getStartDate(), 
 						previousCreateSettingsHandler.getEndDate(), 
-						previousCreateSettingsHandler.getSelectedServiceItem(), pluginController);
+						previousCreateSettingsHandler.getTargetLstServiceItems(), pluginController, getTotalAmount());
 				
 				if(targetCreationProcess.canCreateTarget()){
 					targetCreationProcess.createTarget();
@@ -72,7 +75,7 @@ public class ReviewHandler extends BasePanelHandler {
 				TargetCreationProcess targetCreationProcess = new TargetPayBillProcess(
 						client, previousCreateSettingsHandler.getStartDate(), 
 						previousCreateSettingsHandler.getEndDate(), 
-						previousCreateSettingsHandler.getSelectedServiceItem(), pluginController);
+						previousCreateSettingsHandler.getTargetLstServiceItems(), pluginController, getTotalAmount());
 					targetCreationProcess.createTarget();
 					ui.alert("New target created for client "+ client.getFullName()+ ".");
 			}
@@ -118,11 +121,23 @@ public class ReviewHandler extends BasePanelHandler {
 		return previousCreateSettingsHandler.getSelectedServiceItem();
 	}
 
+	public List<TargetServiceItem> getSelectedServiceItems() {
+		return previousCreateSettingsHandler.getTargetLstServiceItems();
+	}
+	
+	public BigDecimal getTotalAmount() {
+		return previousCreateSettingsHandler.getTotalAmount();
+	}
+	
 	public Date getStartDate() {
 		return previousCreateSettingsHandler.getStartDate();
 	}
 
 	public Date getEndDate() {
 		return previousCreateSettingsHandler.getEndDate();
+	}
+	
+	public List<Client> getSelectedClients() {
+		return selectedClients;
 	}
 }

@@ -8,11 +8,14 @@
 		</panel>
 		<panel bottom="4" gap="5" columns="1" weightx="1">
     		<panel gap="5" columns="1" weightx="1" weighty="1">
-				<table colspan="10" selection="multiple" name="tbl_clientContactList" width="400" weightx="1" weighty="1">
+				<table colspan="10" selection="multiple" name="tbl_clientContactList" width="400" weightx="1" weighty="1" tooltip="Right-click for options">
 					<header>
 						<column text="Name" width="200" icon="/icons/user.png" />
 						<column text="Phone" width="150" icon="/icons/phone.png" />
 					</header>
+					<popupmenu name="menu">
+						<menuitem action="deleteThirdParty" icon="/icons/delete.png" name="miDeleteThirdParty" text="Delete Third Party SMS recipient" />
+					</popupmenu>
 				</table>
 		    </panel>
     	</panel>
@@ -20,12 +23,12 @@
 	 	<textarea name="replyContent" wrap="true" weightx="1" weighty="1" wrap="true" width="350"/>
 	    <separator/>
 	    <panel gap="3" columns="1" weightx="1">
-	    	<label weightx="1" text="Check to include:" font="bold"/>
+	    	<label weightx="1" text="Click to include:" font="bold"/>
 	    	<panel bottom="4" gap="3" columns="3" weightx="1">
 	    		<panel gap="3" columns="1" weightx="1">
-			    	<checkbox name="amountPaid" text="Amount Paid" action="addConstantToDialog(replyContent.text, replyContent, 'AMOUNT_PAID')" selected="false"/>
-					<checkbox name="datePaid" text="Date Paid" action="addConstantToDialog(replyContent.text, replyContent, 'DATE_PAID')" selected="false"/>
-					<checkbox name="clientName" action="addConstantToDialog(replyContent.text, replyContent, 'CLIENT_NAME')" text="Sender Name" selected="false"/>
+			    	<button icon="/icons/money.png" name="amountPaid" text="Amount Paid" action="addConstantToDialog(replyContent.text, replyContent, 'AMOUNT_PAID')" />
+					<button name="datePaid" icon="/icons/date.png" text="Date Paid" action="addConstantToDialog(replyContent.text, replyContent, 'DATE_PAID')" />
+					<button icon="/icons/user_receiver.png" text="Sender Name"  name="clientName" action="addConstantToDialog(replyContent.text, replyContent, 'CLIENT_NAME')" />
 			    </panel>
 	    	</panel>
 	    </panel>

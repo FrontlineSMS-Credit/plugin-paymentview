@@ -10,10 +10,10 @@
 		<button icon="/icons/search.png" text="i18n.common.search"
 			action="filterClients(clientsFilter.text)" />
 	</panel>
-	<table colspan="2" name="tbl_clients" weightx="1" weighty="1">
+	<table perform="viewEditTargetAnalytics" colspan="2"  name="tbl_clients_analytics" weightx="1" weighty="1" tooltip="Right-click for options">
 		<header action="updateClientsList">
 			<column text="Name" sort="ascent" width="150" icon="/icons/user.png" />
-			<column text="Product" width="150" />
+			<column text="Product(s)" width="210" />
 			<column text="Start date" width="85" icon="/icons/date.png" />
 			<column text="End date" width="85" icon="/icons/date.png" />
 			<column text="Savings target" width="95" />
@@ -22,12 +22,16 @@
 			<column text="Last payment" width="95" />
 			<column text="Last payment Date" width="120" />
 			
-			<column text="Monthly Amount" width="100" />
-            <column text="Due This Month" width="100" />
-            <column text="End Of Month Interval" width="120" />
+			<column text="Paid this month" width="100" />
+            <column text="Current Amount Due" width="120" />
+            <column text="Current Due Date" width="120" />
 			
 			<column text="Days remaining" width="100" />
 			<column text="Target Status" width="90" />
 		</header>
+		<popupmenu name="menu">
+			<menuitem action="viewEditTargetAnalytics" icon="/icons/edit.png" name="viewEditTargetAnalytics"
+				text="View/Edit Target Analytics" />
+		</popupmenu>
 	</table>
 </panel>
