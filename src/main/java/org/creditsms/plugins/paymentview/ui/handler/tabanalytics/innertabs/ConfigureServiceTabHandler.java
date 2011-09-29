@@ -1,6 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
