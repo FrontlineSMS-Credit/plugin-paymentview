@@ -216,7 +216,7 @@ public class IncomingPayment {
 		this.notes = notes;
 	}
 	
-	public boolean isChild() {
+	public boolean isChildPayment() {
 		return isChild;
 	}
 

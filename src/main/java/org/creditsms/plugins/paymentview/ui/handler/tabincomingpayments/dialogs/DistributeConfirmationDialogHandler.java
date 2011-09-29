@@ -9,9 +9,11 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.IncomingPaymentsTabHandler.Child;
@@ -27,6 +29,7 @@ public class DistributeConfirmationDialogHandler extends BaseDialog{
 	private AccountDao accountDao;
 	private TargetDao targetDao;
 	private ClientDao clientDao;
+	private LogMessageDao logMessageDao;
 	
 //UI HELPERS	
 	private IncomingPayment parentIncomingPayment;
@@ -34,6 +37,7 @@ public class DistributeConfirmationDialogHandler extends BaseDialog{
 	private Object tblChildrenComponent;
 	private PaymentViewPluginController pluginController;
 	private Object dialogConfimDistributeIp;
+
 	
 	
 	public DistributeConfirmationDialogHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, 
@@ -44,6 +48,7 @@ public class DistributeConfirmationDialogHandler extends BaseDialog{
 		this.accountDao = pluginController.getAccountDao();
 		this.clientDao = pluginController.getClientDao();
 		this.targetDao = pluginController.getTargetDao();
+		this.logMessageDao = pluginController.getLogMessageDao();
 		this.parentIncomingPayment = parentIncomingPayment;
 		this.children = children;
 		init();
@@ -80,7 +85,7 @@ public class DistributeConfirmationDialogHandler extends BaseDialog{
 	}
 
 	public void create(){
-		CONFIRM_ACCEPT_DISTRIBUTE_IP = "Are you wure you want to distribute this group payment?\n After creating a group payment, this action cannot be undone.";
+		CONFIRM_ACCEPT_DISTRIBUTE_IP = "Are you sure you want to distribute this group payment?\n After creating a group payment, this action cannot be undone.";
 		dialogConfimDistributeIp = ((UiGeneratorController) ui).showConfirmationDialogPlainText("createInvidualIncomingPayments", this, CONFIRM_ACCEPT_DISTRIBUTE_IP);
 	}
 	
@@ -90,6 +95,9 @@ public class DistributeConfirmationDialogHandler extends BaseDialog{
 		//update parent incoming payment;
 		parentIncomingPayment.setActive(false);
 		incomingPaymentDao.updateIncomingPayment(parentIncomingPayment);
+		
+		logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.INFO,"Group incoming payment disaggregated.",
+				parentIncomingPayment.toStringForLogs() + " Confimation Code: " + parentIncomingPayment.getConfirmationCode() ));
 		
 		//create individual incoming payments
 		IncomingPayment individualIncomingPayment = new IncomingPayment();
@@ -107,6 +115,9 @@ public class DistributeConfirmationDialogHandler extends BaseDialog{
 			individualIncomingPayment.setTimePaid(new Date(parentIncomingPayment.getTimePaid()));
 			
 			incomingPaymentDao.saveIncomingPayment(individualIncomingPayment);
+			logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.INFO,"Individual incoming payment created.",
+					child.getClient().getFullName() + " - " + child.getClient().getPhoneNumber() + " - " + child.getAmount() + " KES - "
+					+ parentIncomingPayment.getConfirmationCode()));
 		}
 		this.removeDialog();
 		ui.infoMessage("You have successfully distribute the incoming payment " + parentIncomingPayment.getConfirmationCode());

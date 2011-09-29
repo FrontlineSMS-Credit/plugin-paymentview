@@ -449,7 +449,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				if (entity instanceof IncomingPayment){
 					if (notification instanceof EntitySavedNotification){
 						IncomingPayment incomingPayment = (IncomingPayment) entity;
-						if (!incomingPayment.isChild()){
+						if (!incomingPayment.isChildPayment()){
 							if(autoReplyProperties.isAutoReplyOn()){
 								IncomingPaymentsTabHandler.this.replyToPayment((IncomingPayment) entity);
 							}
