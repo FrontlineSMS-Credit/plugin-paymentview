@@ -26,6 +26,7 @@ public class ThirdPartySMSDialogHandler extends BaseActionDialog {
     Object replyTextMessage;
     protected Object dialogComponent;
 	private List<Client> deletedClients;
+	private ClientSelector clientSelector;
 	
 	public ThirdPartySMSDialogHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController, Client client) {
@@ -132,6 +133,10 @@ public class ThirdPartySMSDialogHandler extends BaseActionDialog {
 	}
 	
 	public void receiver(List<Client> clients){
+		if (clientSelector != null){
+			clientSelector.removeDialog();
+		}
+
 		ui.removeAll(clientTableComponent);
 		addClients(clients);
 		for(Client client : this.clients){
@@ -167,7 +172,7 @@ public class ThirdPartySMSDialogHandler extends BaseActionDialog {
 	}
 
 	public void recipientDialog() {
-		ClientSelector clientSelector = new ClientSelector(ui, pluginController);
+		clientSelector = new ClientSelector(ui, pluginController);
 		clientSelector.setSelectionMethod("multiple");
 		clientSelector.showClientSelectorDialog(this, "receiver", List.class);
 	}

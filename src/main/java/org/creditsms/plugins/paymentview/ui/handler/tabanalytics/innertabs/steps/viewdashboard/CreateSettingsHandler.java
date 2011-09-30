@@ -10,6 +10,7 @@ import net.frontlinesms.ui.handler.BasePanelHandler;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateAlertHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
@@ -71,7 +72,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 				} else {
 					if (notification instanceof DatabaseEntityNotification){
 						Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
-						if (entity instanceof IncomingPayment ) {
+						if (entity instanceof IncomingPayment || entity instanceof ServiceItem) {
 							CreateSettingsHandler.this.refresh();
 						}
 					}
