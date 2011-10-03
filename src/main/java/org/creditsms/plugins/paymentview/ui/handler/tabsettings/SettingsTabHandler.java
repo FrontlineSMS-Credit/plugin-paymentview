@@ -1,6 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
-import java.io.IOException;
 import java.util.Collection;
 
 import net.frontlinesms.events.EventBus;
@@ -77,11 +76,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	public Object getRow(MpesaPaymentService paymentService) {
 		Object row = ui.createTableRow(paymentService);
 		ui.add(row, ui.createTableCell(paymentService.toString()));
-		try {
-			ui.add(row, ui.createTableCell(paymentService.getCService().getMsisdn()));
-		} catch (IOException e) {
-			ui.add(row, ui.createTableCell("Not configured"));
-		}
+		ui.add(row, ui.createTableCell(paymentService.getSettings().getPsSmsModemSerial()));
 		ui.add(row, ui.createTableCell(paymentService.getBalance().getBalanceAmount().toString()));
 		return row;
 	}
@@ -176,7 +171,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 					Collection<PaymentServiceSettings> paymentServiceSettingsList = paymentServiceSettingsDao.getPaymentServiceAccounts();
 					if (!paymentServiceSettingsList.isEmpty()){
 						for (PaymentServiceSettings psSettings : paymentServiceSettingsList){
-							if (psSettings.getPsSmsModemSerial().equals(connectedModem.getSerial())) {
+							if (psSettings.getPsSmsModemSerial().equals(connectedModem.getSerial()+"@"+connectedModem.getImsiNumber())) {
 								// We've just connected the configured device, so start up the payment service...
 								//...if it's not already running!
 								MpesaPaymentService mpesaPaymentService = (MpesaPaymentService) psSettings.initPaymentService();

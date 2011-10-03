@@ -368,6 +368,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 							payment.setConfirmationCode(getConfirmationCode(message));
 							payment.setPaymentBy(getPaymentBy(message));
 							payment.setTimePaid(getTimePaid(message));
+							payment.setPaymentServiceSettings(MpesaPaymentService.this.getSettings());
 							
 							performIncominPaymentFraudCheck(message, payment);
 							
