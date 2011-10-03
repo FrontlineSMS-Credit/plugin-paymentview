@@ -206,8 +206,9 @@ public class MpesaPersonalServiceTest extends MpesaPaymentServiceTest<MpesaPerso
 	String[] getInvalidMessagesText() {
 		return new String[] {
 				"No newline after 'Confirmed.'",
-				"BI94HR849 Confirmed." +
-				"You have received Ksh1,235 from\nJOHN KIU 254723908001\non 3/5/11 at 10:35 PM\n" +
+				"BI94HR84 9 Confirmed." +
+				"You have " +
+				"received Ksh1,235 from\nJOHN KIU 254723908001\non 3/5/11 at 10:35 PM\n" +
 				"New M-PESA balance is Ksh1,236",
 						
 				"American Christmas",
