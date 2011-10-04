@@ -341,7 +341,7 @@ public class TargetAnalytics {
 	}
 	
 	public BigDecimal getMonthlyTarget() {
-		return monthlyTarget.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+		return monthlyTarget;
 	}
 
 	public void setMonthlyTarget(BigDecimal monthlyTarget) {

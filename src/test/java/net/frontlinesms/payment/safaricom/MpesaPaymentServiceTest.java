@@ -39,6 +39,7 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment.Status;
+import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
@@ -46,7 +47,6 @@ import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance;
-import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.BalanceProperties;
 import org.mockito.InOrder;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
@@ -94,14 +94,24 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		
-		this.balance = BalanceProperties.getInstance().getBalance(mpesaPaymentService).getLatest();
-		
+
 		this.mpesaPaymentService = createNewTestClass();
 		this.cService = SmsLibTestUtils.mockCService();
 		this.aTHandler = mock(CATHandler_Wavecom_Stk.class);
 		when(cService.getAtHandler()).thenReturn(aTHandler);
 		mpesaPaymentService.setCService(cService);
+		
+		PaymentServiceSettings paymentServiceSettings = mock(PaymentServiceSettings.class);
+		when(paymentServiceSettings.getPsSmsModemSerial()).thenReturn("093SH5S655");
+		mpesaPaymentService.setSettings(paymentServiceSettings);
+		
+		this.balance = new Balance();
+		balance.setBalanceAmount(new BigDecimal("200"));
+		balance.setBalanceUpdateMethod("balance enquiry");
+		balance.setConfirmationCode("7HHSK457S");
+		balance.setDateTime(new Date());
+		balance.setEventBus(mock(EventBus.class));
+		balance.setPaymentService(mpesaPaymentService);
 		
 		setUpDaos();
 
@@ -115,7 +125,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		mpesaMenu = new StkMenu("M-PESA",
 				sendMoneyMenuItem , "Withdraw cash", "Buy airtime",
 				"Pay Bill", "Buy Goods", "ATM Withdrawal", myAccountMenuItem);
-		when(cService.stkRequest(mpesaMenuItemRequest)).thenReturn(mpesaMenu);	
+		when(cService.stkRequest(mpesaMenuItemRequest)).thenReturn(mpesaMenu);
 		
 		init();
 	}
