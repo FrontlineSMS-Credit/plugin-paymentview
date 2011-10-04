@@ -150,7 +150,10 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	
 	private IncomingPayment createIncomingPayment(String phoneNumber, String amount,
 			String by, Account account, Target tgt) {
-		
+
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {}
 		IncomingPayment ip = new IncomingPayment();
 		ip.setPhoneNumber(phoneNumber);
 		ip.setAmountPaid(new BigDecimal(amount));

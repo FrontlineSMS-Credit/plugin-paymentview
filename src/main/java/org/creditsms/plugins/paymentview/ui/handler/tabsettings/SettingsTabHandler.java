@@ -76,7 +76,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	public Object getRow(MpesaPaymentService paymentService) {
 		Object row = ui.createTableRow(paymentService);
 		ui.add(row, ui.createTableCell(paymentService.toString()));
-		ui.add(row, ui.createTableCell(paymentService.getSettings().getPsSmsModemSerial()));
+		ui.add(row, ui.createTableCell(paymentService.getSettings().getPsSmsModemSerial().replaceAll("@", " : ")));
 		ui.add(row, ui.createTableCell(paymentService.getBalance().getBalanceAmount().toString()));
 		return row;
 	}

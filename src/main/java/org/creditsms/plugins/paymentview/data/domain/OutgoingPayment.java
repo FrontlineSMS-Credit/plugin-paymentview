@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import net.frontlinesms.data.EntityField;
@@ -36,6 +37,7 @@ public class OutgoingPayment {
 	public static final String FIELD_CONFIRMATION_CODE = "confirmationCode";
 	public static final String FIELD_NOTES = "notes";
 	public static final String FIELD_PAYMENT_ID = "paymentId";
+	public static final String FIELD_PAYMENT_SETTINGS = "paymentServiceSettings";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,6 +70,10 @@ public class OutgoingPayment {
 	
 	@Column(name = FIELD_TIME_CONFIRMED, nullable = true, unique = false)
 	private Long timeConfirmed;
+	
+	@OneToOne
+	@Column(name = FIELD_PAYMENT_SETTINGS, nullable = true, unique = false)
+	private PaymentServiceSettings paymentServiceSettings;
 
 	public enum Field implements EntityField<OutgoingPayment> {
 		AMOUNT_PAID(FIELD_AMOUNT_PAID),
@@ -76,7 +82,8 @@ public class OutgoingPayment {
 		TIME_PAID(FIELD_TIME_PAID),
 		TIME_CONFIRMED(FIELD_TIME_CONFIRMED),
 		NOTES(FIELD_NOTES),
-		PAYMENT_ID(FIELD_PAYMENT_ID);
+		PAYMENT_ID(FIELD_PAYMENT_ID),
+		PAYMENT_SETTINGS(FIELD_PAYMENT_SETTINGS);
 		
 		/** name of a field */
 		private final String fieldName;
@@ -233,6 +240,14 @@ public class OutgoingPayment {
 
 	public void setPaymentId(String paymentId) {
 		this.paymentId = paymentId;
+	}
+	
+	public void setPaymentServiceSettings(PaymentServiceSettings paymentServiceSettings) {
+		this.paymentServiceSettings = paymentServiceSettings;
+	}
+
+	public PaymentServiceSettings getPaymentServiceSettings() {
+		return paymentServiceSettings;
 	}
 	
 	@Override

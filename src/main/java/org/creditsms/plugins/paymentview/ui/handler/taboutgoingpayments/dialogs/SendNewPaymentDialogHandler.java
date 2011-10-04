@@ -83,10 +83,12 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	private void setupPaymentServices() {
 		for (PaymentService pService : pluginController.getPaymentServices()){
 			if (!(pService instanceof MpesaPayBillService)) {
-				ui.add(cmbOpMobilePaymentSystem, ui.createComboboxChoice(pService.toString(), pService));
+				ui.add(cmbOpMobilePaymentSystem, ui.createComboboxChoice(pService.toString() + " : " 
+						+ pService.getSettings().getPsSmsModemSerial().substring(0,pService.getSettings().getPsSmsModemSerial().indexOf("@")), pService));
 			}
 		}
 	}
+	
 
 	@Override
 	protected void refresh(){
@@ -115,6 +117,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 				outgoingPayment.setStatus(OutgoingPayment.Status.CREATED);
 				outgoingPayment.setPaymentId(ui.getText(fieldOpPaymentId));
 				outgoingPayment.setConfirmationCode("");
+				outgoingPayment.setPaymentServiceSettings(paymentService.getSettings());
 
 				new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog(this, "sendPayment");
 

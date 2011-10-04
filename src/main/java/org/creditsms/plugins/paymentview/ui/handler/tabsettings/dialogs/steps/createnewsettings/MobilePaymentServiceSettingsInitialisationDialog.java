@@ -35,7 +35,8 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 	}	
 	
 	private Object getComboChoice(SmsModem s) {
-		return ui.createComboboxChoice(s.getServiceName(), s);
+		
+		return ui.createComboboxChoice(s.getServiceName() + ":" + s.getSerial(), s);
 	}
 	
 	private void setUpPaymentServices(Object cmbSelectPaymentService) {
@@ -69,6 +70,9 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 	Class<? extends PaymentService> getPaymentService() {
 		Object paymentServiceCombobox = getServiceCombobox();
 		Object selectedItem = ui.getSelectedItem(paymentServiceCombobox);
+		if (selectedItem == null) {
+			return null;
+		}
 		return ui.getAttachedObject(selectedItem, MpesaPaymentService.class).getClass();
 	}
 
@@ -89,6 +93,9 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 	}
 	
 	SmsModem getModem() {
+		if (ui.getSelectedItem(getModemCombobox()) == null){
+			return null;
+		}
 		return ui.getAttachedObject(ui.getSelectedItem(getModemCombobox()), SmsModem.class);
 	}
 

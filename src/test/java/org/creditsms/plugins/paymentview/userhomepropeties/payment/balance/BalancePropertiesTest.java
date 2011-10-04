@@ -18,6 +18,7 @@ public class BalancePropertiesTest extends BaseTestCase {
 	private Balance balance;
 	private Date datetime;
 	private PaymentService paymentService;
+	private PaymentServiceSettings paymentServiceSettings;
 
 	@Override
 	protected void setUp() throws Exception {
@@ -27,9 +28,11 @@ public class BalancePropertiesTest extends BaseTestCase {
 		
 		paymentService = mock(PaymentService.class);
 		
-		PaymentServiceSettings paymentServiceSettings = mock(PaymentServiceSettings.class);
+	    paymentServiceSettings = mock(PaymentServiceSettings.class);
 		when(paymentService.getSettings()).thenReturn(paymentServiceSettings);
+		when(paymentServiceSettings.getPsSmsModemSerial()).thenReturn("359126030119333@639029400593656");
  
+		balance.setPaymentService(paymentService);
 		balance.setBalanceAmount(new BigDecimal("200.00"));
 		balance.setConfirmationCode("CCVSBB566");
 		balance.setDateTime(datetime);

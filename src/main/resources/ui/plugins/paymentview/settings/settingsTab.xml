@@ -8,7 +8,7 @@
 			<table name="tbl_accounts" weightx="1" weighty="1" delete="showConfirmationDialog('deleteAccount')">
 				<header>					
 					<column text="Account" width="350"/>
-					<column text="Phone Number" width="250" icon="/icons/about.png"/>
+					<column text="Modem Serial Number : SIM IMSI" width="250" icon="/icons/about.png"/>
 					<column text="Balance" width="200"/>
 				</header>
 				<popupmenu name="menu">
