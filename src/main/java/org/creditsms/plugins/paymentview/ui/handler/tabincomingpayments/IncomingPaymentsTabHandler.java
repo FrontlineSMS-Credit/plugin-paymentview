@@ -86,6 +86,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private TargetDao targetDao;
 	private ThirdPartyResponseDao thirdPartyResponseDao;
 	private ResponseRecipientDao responseRecipientDao;
+	private ClientSelector clientSelector;
 
 	public IncomingPaymentsTabHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController) {
@@ -281,26 +282,31 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 	
 	public void reassignForClient(List<Client> clients){
-		Client client = clients.get(0);//Its a single object list
-		
-		Object selectedItem = ui.getSelectedItem(incomingPaymentsTableComponent);
-		IncomingPayment incomingPayment = ui.getAttachedObject(selectedItem, IncomingPayment.class);
-		String tempPhoneNo = incomingPayment.getPhoneNumber();
-		incomingPayment.setAccount(getAccount(client));
-		incomingPayment.setPhoneNumber(client.getPhoneNumber());
-		Target tgt = targetDao.getActiveTargetByAccount(getAccount(incomingPayment.getPhoneNumber()).getAccountNumber());
-		incomingPayment.setTarget(tgt);
-		
-		incomingPaymentDao.updateIncomingPayment(incomingPayment);
-		
-		refresh();
-		logMessageDao.saveLogMessage(
-			new LogMessage(LogMessage.LogLevel.INFO,"Payment Reassigned to different client", 
-					"Incoming Payment ["+incomingPayment.getConfirmationCode()+
-					"] Reassigned from "+ tempPhoneNo  +" to different Client" + 
-					incomingPayment.getPhoneNumber()
-			)
-		);
+		if (clients.size()<=0){
+			ui.alert("Please select a client to reassign.");
+		} else {
+			Client client = clients.get(0);//Its a single object list
+			
+			Object selectedItem = ui.getSelectedItem(incomingPaymentsTableComponent);
+			IncomingPayment incomingPayment = ui.getAttachedObject(selectedItem, IncomingPayment.class);
+			String tempPhoneNo = incomingPayment.getPhoneNumber();
+			incomingPayment.setAccount(getAccount(client));
+			incomingPayment.setPhoneNumber(client.getPhoneNumber());
+			Target tgt = targetDao.getActiveTargetByAccount(getAccount(incomingPayment.getPhoneNumber()).getAccountNumber());
+			incomingPayment.setTarget(tgt);
+			
+			incomingPaymentDao.updateIncomingPayment(incomingPayment);
+			
+			refresh();
+			logMessageDao.saveLogMessage(
+				new LogMessage(LogMessage.LogLevel.INFO,"Payment Reassigned to different client", 
+						"Incoming Payment ["+incomingPayment.getConfirmationCode()+
+						"] Reassigned from "+ tempPhoneNo  +" to different Client" + 
+						incomingPayment.getPhoneNumber()
+				)
+			);
+			clientSelector.removeDialog();
+		}
 	}
 	
 	public void postAuthCodeAction() {
@@ -315,7 +321,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				IncomingPayment attachedObject = ui.getAttachedObject(o, IncomingPayment.class);
 				clients.add(clientDao.getClientByPhoneNumber(attachedObject.getPhoneNumber()));
 			}
-			ClientSelector clientSelector = new ClientSelector(ui, pluginController);
+			clientSelector = new ClientSelector(ui, pluginController);
 			clientSelector.setExclusionList(clients);
 			clientSelector.showClientSelectorDialog(this, "reassignForClient", List.class);
 		}

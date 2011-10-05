@@ -35,7 +35,6 @@ public class ClientSelector extends BaseClientSelector {
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
-		this.removeDialog();
 	}
 	
 	@Override
