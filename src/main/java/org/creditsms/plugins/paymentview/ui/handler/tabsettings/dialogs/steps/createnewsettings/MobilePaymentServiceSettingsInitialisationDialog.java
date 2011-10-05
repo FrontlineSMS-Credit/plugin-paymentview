@@ -2,6 +2,7 @@ package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.c
 
 import net.frontlinesms.messaging.sms.modem.SmsModem;
 import net.frontlinesms.payment.PaymentService;
+import net.frontlinesms.payment.safaricom.AbstractPaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPayBillService;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.payment.safaricom.MpesaPersonalService;
@@ -40,10 +41,10 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 	}
 	
 	private void setUpPaymentServices(Object cmbSelectPaymentService) {
-		MpesaPaymentService mpesaPersonal = new MpesaPersonalService();
+		AbstractPaymentService mpesaPersonal = new MpesaPersonalService();
 		Object comboboxChoice1 = ui.createComboboxChoice(mpesaPersonal.toString(), mpesaPersonal);
 		
-		MpesaPaymentService mpesaPaybill = new MpesaPayBillService();
+		AbstractPaymentService mpesaPaybill = new MpesaPayBillService();
 		Object comboboxChoice2 = ui.createComboboxChoice(mpesaPaybill.toString(), mpesaPaybill);
 
 		ui.add(cmbSelectPaymentService, comboboxChoice1);
@@ -80,7 +81,7 @@ public class MobilePaymentServiceSettingsInitialisationDialog extends BaseDialog
 		return ui.find("cmbSelectPaymentService");
 	}
 
-	public void setPaymentService(MpesaPaymentService paymentService) {
+	public void setPaymentService(AbstractPaymentService paymentService) {
 		Object serviceCombobox = getServiceCombobox();
 		Object[] items = ui.getItems(serviceCombobox);
 		int serviceIndex = -1;

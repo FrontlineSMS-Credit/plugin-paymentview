@@ -7,8 +7,6 @@ import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
-import net.frontlinesms.payment.PaymentService;
-import net.frontlinesms.payment.safaricom.MpesaPersonalService;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 

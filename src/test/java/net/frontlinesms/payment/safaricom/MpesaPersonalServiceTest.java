@@ -59,13 +59,11 @@ public class MpesaPersonalServiceTest extends MpesaPaymentServiceTest<MpesaPerso
 				PHONENUMBER_1, ACCOUNTNUMBER_1_1, "1235", "BC77RI604",
 				"DACON OMONDI", "22/5/11 10:35 PM", OutgoingPayment.Status.CONFIRMED);
 		
-		
 		verify(logger).info("No Fraud occured!");
 		
 		balance.reset();
 		balance.setBalanceAmount("1000");
 		balance.updateBalance();
-		
 		
 		//Test When Payment is successful IncomingPayment
 		testIncomingPaymentProcessing("BI94HR849 Confirmed.\n" +
@@ -81,7 +79,7 @@ public class MpesaPersonalServiceTest extends MpesaPaymentServiceTest<MpesaPerso
 		balance.updateBalance();
 		
 		paymentReversalProcessing(
-				"DXAH67GH9 Confirmed.\n"
+				 "DXAH67GH9 Confirmed.\n"
 				+"Transaction BC77RI604\n"
 				+"has been reversed. Your\n"
 				+"account balance now\n"

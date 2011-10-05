@@ -4,38 +4,19 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.data.events.EntitySavedNotification;
-import net.frontlinesms.data.repository.ContactDao;
-import net.frontlinesms.events.EventBus;
-import net.frontlinesms.events.EventObserver;
-import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.payment.PaymentJob;
-import net.frontlinesms.payment.PaymentJobProcessor;
-import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
 
-import org.apache.log4j.Logger;
-import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
-import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 import org.creditsms.plugins.paymentview.data.domain.Target;
-import org.creditsms.plugins.paymentview.data.repository.AccountDao;
-import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
-import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
-import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
-import org.creditsms.plugins.paymentview.data.repository.TargetDao;
-import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance;
-import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.BalanceProperties;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
 import org.smslib.handler.ATHandler.SynchronizedWorkflow;
@@ -46,7 +27,7 @@ import org.smslib.stk.StkRequest;
 import org.smslib.stk.StkResponse;
 import org.smslib.stk.StkValuePrompt;
 
-public abstract class MpesaPaymentService implements PaymentService, EventObserver  {
+public abstract class MpesaPaymentService extends AbstractPaymentService   {
 //> REGEX PATTERN CONSTANTS
 	protected static final String AMOUNT_PATTERN = "Ksh[,|.|\\d]+";
 	protected static final String SENT_TO = " sent to";
@@ -56,7 +37,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	protected static final String PAID_BY_PATTERN = "([A-Za-z ]+)";
 	protected static final String ACCOUNT_NUMBER_PATTERN = "Account Number [\\d]+";
 	protected static final String RECEIVED_FROM = "received from";
-	
 	
 	private static final int BALANCE_ENQUIRY_CHARGE = 1;
 	private static final BigDecimal BD_BALANCE_ENQUIRY_CHARGE = new BigDecimal(BALANCE_ENQUIRY_CHARGE);
@@ -70,85 +50,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 
 	private static final Pattern REVERSE_REGEX_PATTERN = Pattern.compile(STR_REVERSE_REGEX_PATTERN);
 	
-	public enum Status {
-		SENDING("Sending payment(s) ..."),
-		COMPLETE("Payment Process completed."),
-		RECEIVING("Processing Incoming Payment ..."),
-		PROCESSED("New Incoming Payment has been received."),
-		CHECK_BALANCE("Checking Balance ..."),
-		CHECK_COMPLETE("Check Balance Complete."),
-		CONFIGURE_STARTED("Configuring Modem ..."),
-		CONFIGURE_COMPLETE("Modem Configuration Complete."),
-		
-		PAYMENTSERVICE_OFF("Payment Service Not Setup."),
-		PAYMENTSERVICE_ON("Payment Service is now Setup."),
-		
-		ERROR("Error occurred.");
-		
-		private final String statusMessage;
-
-		Status(String statusMessage){
-			this.statusMessage = statusMessage;
-		}
-		
-		@Override
-		public String toString() {
-			return statusMessage;
-		}
-	}
-	
 //> INSTANCE PROPERTIES
-	protected Logger pvLog = Logger.getLogger(this.getClass());
-	CService cService;
-        String pin;
-	Balance balance;
-	EventBus eventBus;
-	private TargetAnalytics targetAnalytics;
-	private PaymentJobProcessor requestJobProcessor;
-	private PaymentJobProcessor responseJobProcessor;
-	
-//> DAOs
-	AccountDao accountDao;
-	ClientDao clientDao;
-	TargetDao targetDao;
-	IncomingPaymentDao incomingPaymentDao;
-	OutgoingPaymentDao outgoingPaymentDao;
-	LogMessageDao logMessageDao;
-	private ContactDao contactDao;
-	private PaymentServiceSettings settings;
-	
-	//configureModem
-	public void configureModem() throws PaymentServiceException {
-		final CService cService = this.cService;
-		queueRequestJob(new PaymentJob() {
-			public void run() {
-				try{
-					cService.doSynchronized(new SynchronizedWorkflow<Object>() {
-						public Object run() throws SMSLibDeviceException, IOException {
-							updateStatus(Status.CONFIGURE_STARTED);
-							cService.getAtHandler().configureModem();
-							updateStatus(Status.CONFIGURE_COMPLETE);
-							return null;
-						}
-					});
-				} catch (final SMSLibDeviceException ex) {
-					logMessageDao.saveLogMessage(LogMessage.error(
-							"SMSLibDeviceException in configureModem()",
-							ex.getMessage()));
-					updateStatus(Status.ERROR);
-				} catch (final IOException e) {
-					logMessageDao.saveLogMessage(LogMessage.error(
-							"IOException in configureModem()", e.getMessage()));
-					updateStatus(Status.ERROR);
-				} catch (RuntimeException e) {
-					logMessageDao.saveLogMessage(LogMessage.error(
-							"configureModem failed for some reason.", e.getMessage()));
-					updateStatus(Status.ERROR);
-				}
-			}
-		});
-	}
-	
 	public void sendAmountToPaybillAccount(final String businessNo, final String accountNo, final BigDecimal amount) {
 		final CService cService = this.cService;
 		queueRequestJob(new PaymentJob() {
@@ -277,38 +179,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 				}
 			}
 		});
-	}
-
-	public void updateStatus(Status sending) {
-		if (eventBus != null){
-			eventBus.notifyObservers(new PaymentStatusEventNotification(sending));
-		}
-	}
-	
-	public static class PaymentStatusEventNotification implements FrontlineEventNotification {
-		private final Status status;
-		public PaymentStatusEventNotification(Status status) {
-			this.status = status;
-		}
-
-		public Status getPaymentStatus() {
-			return status;
-		}
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public void notify(final FrontlineEventNotification notification) {
-		if (!(notification instanceof EntitySavedNotification)) {
-			return;
-		}
-		
-		//And is of a saved message
-		final Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
-		if (!(entity instanceof FrontlineMessage)) {
-			return;
-		}
-		final FrontlineMessage message = (FrontlineMessage) entity;
-		processMessage(message);
 	}
 
 	protected void processMessage(final FrontlineMessage message) {
@@ -486,7 +356,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	private void performPaymentReversalFraudCheck(String confirmationCode, BigDecimal amountPaid, BigDecimal actualBalance, final FrontlineMessage message) {
 		BigDecimal expectedBalance = balance.getBalanceAmount().subtract(amountPaid);
 		
-		performInform(actualBalance, expectedBalance, message.getTextContent());
+		informUserOfFraudIfCommitted(actualBalance, expectedBalance, message.getTextContent());
 		
 		balance.setBalanceAmount(actualBalance);
 		balance.setBalanceUpdateMethod("PaymentReversal");
@@ -495,14 +365,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		
 		balance.updateBalance();
 
-	}
-
-	private void performInform(BigDecimal actualBalance, BigDecimal expectedBalance, String messageContent) {
-		if (expectedBalance.compareTo(new BigDecimal(0)) >= 0) {//Now we don't want Mathematical embarrassment...
-			informUserOnFraud(expectedBalance, actualBalance, !expectedBalance.equals(actualBalance), messageContent);
-		}else{
-			pvLog.error("Balance for:"+ this.toString() +" is way low: than expected " + actualBalance + " instead of : "+ expectedBalance);
-		}
 	}
 
 	private BigDecimal getReversedPaymentBalance(FrontlineMessage message) {
@@ -521,7 +383,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		BigDecimal expectedBalance = tempBalance.subtract(BD_BALANCE_ENQUIRY_CHARGE);
 		
 		BigDecimal actualBalance = getAmount(message);
-		performInform(actualBalance, expectedBalance, message.getTextContent());
+		informUserOfFraudIfCommitted(actualBalance, expectedBalance, message.getTextContent());
 		
 		balance.setBalanceAmount(actualBalance);
 		balance.setConfirmationCode(getConfirmationCode(message));
@@ -537,7 +399,7 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		BigDecimal expectedBalance = payment.getAmountPaid().add(balance.getBalanceAmount());
 		
 		//c == p + a
-		performInform(actualBalance, expectedBalance, message.getTextContent());
+		informUserOfFraudIfCommitted(actualBalance, expectedBalance, message.getTextContent());
 		
 		balance.setBalanceAmount(actualBalance);
 		balance.setConfirmationCode(payment.getConfirmationCode());
@@ -547,9 +409,14 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		balance.updateBalance();
 	}
 	
-	void informUserOnFraud(BigDecimal expected, BigDecimal actual, boolean fraudCommited, String messageContent) {
-		if (fraudCommited) {
-			String message = "Fraud commited on "+ this.toString() +"? Was expecting balance as: "+expected+", But was "+actual;
+	void informUserOfFraudIfCommitted(BigDecimal expectedBalance, BigDecimal actualBalance, String messageContent) {
+		if(expectedBalance.compareTo(new BigDecimal(0)) < 0) {
+			//Now we don't want Mathematical embarrassment... TODO explain
+			pvLog.error("Balance for: "+ this.toString() +" is much lower than expected: " + actualBalance + " instead of: "+ expectedBalance);
+		} else if(expectedBalance.equals(actualBalance)) {
+			pvLog.info("No Fraud occured!");
+		} else {
+			String message = "Fraud commited on "+ this.toString() +"? Was expecting balance as: "+expectedBalance+", but was "+actualBalance;
 
 			logMessageDao.saveLogMessage(
 					new LogMessage(LogMessage.LogLevel.WARNING,
@@ -557,8 +424,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 						    messageContent));
 			pvLog.warn(message);
 			this.eventBus.notifyObservers(new BalanceFraudNotification(message));
-		}else{
-			pvLog.info("No Fraud occured!");
 		}
 	}
 	
@@ -572,12 +437,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 	private boolean isValidReverseMessage(FrontlineMessage message) {
 		return REVERSE_REGEX_PATTERN.matcher(message.getTextContent()).matches();
 	}
-	
-	abstract Date getTimePaid(FrontlineMessage message);
-	abstract boolean isMessageTextValid(String message);
-	abstract Account getAccount(FrontlineMessage message);
-	abstract String getPaymentBy(FrontlineMessage message);
-	protected abstract boolean isValidBalanceMessage(FrontlineMessage message);
 	
 	BigDecimal getAmount(final FrontlineMessage message) {
 		final String amountWithKsh = getFirstMatch(message, AMOUNT_PATTERN);
@@ -603,29 +462,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		return firstMatch.replace(" Confirmed.", "").trim();
 	}
 
-	protected String getFirstMatch(final String string, final String regexMatcher) {
-		final Matcher matcher = Pattern.compile(regexMatcher).matcher(string);
-		matcher.find();
-		return matcher.group();
-	}
-
-	protected String getFirstMatch(final FrontlineMessage message, final String regexMatcher) {
-		return getFirstMatch(message.getTextContent(), regexMatcher);
-	}
-			
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof PaymentService)){
-			return false;
-		}
-		
-		if (!(other instanceof MpesaPaymentService)){
-			return false;
-		}
-		
-		return super.equals(other);
-	}
-	
 	StkMenu getMpesaMenu() throws StkMenuItemNotFoundException, SMSLibDeviceException, IOException {
 		final StkResponse stkResponse = cService.stkRequest(StkRequest.GET_ROOT_MENU);
 		StkMenu rootMenu = null;
@@ -638,77 +474,6 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 		}
 	}
 
-	void initIfRequired() throws SMSLibDeviceException, IOException {
-		// For now, we assume that init is always required.  If there is a clean way
-		// of identifying when it is and is not, we should perhaps implement this.
-		this.cService.getAtHandler().stkInit();
-	}
-
-	public void stop() {
-		eventBus.unregisterObserver(this);
-		requestJobProcessor.stop();
-	}
-	
-	public String getPin() {
-		return pin;
-	}
-	
-	public void registerToEventBus(final EventBus eventBus) {
-		if (eventBus != null) {
-			this.eventBus = eventBus;
-			this.eventBus.registerObserver(this);
-		}
-	}
-	
-	/** @return the settings attached to this instance. */
-	public PaymentServiceSettings getSettings() {
-		return settings;
-	}
-	
-	/**
-	 * Initialise the service using the supplied properties.
-	 */
-	public void setSettings(PaymentServiceSettings settings) {
-		this.settings = settings;
-	}
-	
-	public void setPin(final String pin) {
-		this.pin = pin;
-	}
-	
-	public void setCService(final CService cService) {
-		this.cService = cService;
-	}
-	
-	public Balance getBalance() {
-		return balance;
-	}
-	
-	public void initDaosAndServices(final PaymentViewPluginController pluginController) {
-		this.accountDao = pluginController.getAccountDao();
-		this.clientDao = pluginController.getClientDao();
-		this.outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
-		this.targetDao = pluginController.getTargetDao();
-		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
-		this.targetAnalytics = pluginController.getTargetAnalytics();
-		this.logMessageDao = pluginController.getLogMessageDao();
-		this.balance = BalanceProperties.getInstance().getBalance(this);
-		this.contactDao = pluginController.getUiGeneratorController().getFrontlineController().getContactDao();
-		
-		this.registerToEventBus(
-			pluginController.getUiGeneratorController().getFrontlineController().getEventBus()
-		);
-		
-		this.balance.setEventBus(this.eventBus);
-		this.pvLog = pluginController.getLogger(this.getClass());
-		
-		this.requestJobProcessor = new PaymentJobProcessor(this);
-		this.requestJobProcessor.start();
-		
-		this.responseJobProcessor = new PaymentJobProcessor(this);
-		this.responseJobProcessor.start();
-	}
-	
 	/**
 	 * 
 	 * @return a generic account number
@@ -720,23 +485,5 @@ public abstract class MpesaPaymentService implements PaymentService, EventObserv
 			accountNumberGeneratedStr = String.format("%05d", ++ accountNumberGenerated);
 		}
 		return accountNumberGeneratedStr;
-	}
-	
-	public class BalanceFraudNotification implements FrontlineEventNotification{
-		private final String message;
-		public BalanceFraudNotification(String message){this.message=message;}
-		public String getMessage(){return message;}
-	}
-	
-	void queueRequestJob(PaymentJob job) {
-		requestJobProcessor.queue(job);
-	}
-	
-	void queueResponseJob(PaymentJob job) {
-		responseJobProcessor.queue(job);
-	}
-
-	public CService getCService() {
-		return cService;
 	}
 }

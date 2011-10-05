@@ -14,7 +14,7 @@ import javax.persistence.Id;
 
 import net.frontlinesms.messaging.sms.internet.SmsInternetService;
 import net.frontlinesms.payment.PaymentService;
-import net.frontlinesms.payment.safaricom.MpesaPaymentService;
+import net.frontlinesms.payment.safaricom.AbstractPaymentService;
 
 /**
  * Class encapsulating settings of a {@link PaymentService}.
@@ -46,7 +46,7 @@ public class PaymentServiceSettings {
 	 * Create a new instance of service settings for the supplied service.
 	 * @param service
 	 */
-	public PaymentServiceSettings(MpesaPaymentService service) {
+	public PaymentServiceSettings(AbstractPaymentService service) {
 		this.serviceClassName = service.getClass().getCanonicalName();
 	}
 	

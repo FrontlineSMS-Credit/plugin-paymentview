@@ -73,8 +73,7 @@ public class Client {
 	}
 
 	/** Empty constructor required for hibernate. */
-	public Client() {
-	}
+	public Client() {}
 
 	public Client(String firstName, String otherName, String phoneNumber) {
 		this.firstName = firstName;

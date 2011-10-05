@@ -34,7 +34,7 @@ public class BalanceDispatcher {
 		ignoredBalanceMessageList.add(message);
 	}
 	
-	public boolean remove(MpesaPaymentService paymentService) {
+	public boolean remove(AbstractPaymentService paymentService) {
 		return queue.remove(paymentService);
 	}
 }

@@ -47,6 +47,7 @@ import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance;
+import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.BalanceProperties;
 import org.mockito.InOrder;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
@@ -90,12 +91,14 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 	protected E mpesaPaymentService;
 	protected Logger logger;
 	private PaymentViewPluginController pluginController;
+	private BalanceProperties properties;
 	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		this.mpesaPaymentService = createNewTestClass();
+		this.mpesaPaymentService = (E) createNewTestClass();
+		
 		this.cService = SmsLibTestUtils.mockCService();
 		this.aTHandler = mock(CATHandler_Wavecom_Stk.class);
 		when(cService.getAtHandler()).thenReturn(aTHandler);
@@ -105,6 +108,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		when(paymentServiceSettings.getPsSmsModemSerial()).thenReturn("093SH5S655");
 		mpesaPaymentService.setSettings(paymentServiceSettings);
 		
+		properties = BalanceProperties.getInstance();
 		this.balance = new Balance();
 		balance.setBalanceAmount(new BigDecimal("200"));
 		balance.setBalanceUpdateMethod("balance enquiry");
@@ -373,8 +377,8 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		
 		WaitingJob.waitForEvent();
 		//verify(mpesaPaymentService).setBalance(new BigDecimal(amount));
-		assertEquals(mpesaPaymentService.getBalance().getBalanceAmount(), new BigDecimal(amount));
-		
+//		assertEquals(mpesaPaymentService.getBalance().getBalanceAmount(), new BigDecimal(amount));
+		assertEquals(properties.getBalance(mpesaPaymentService).getBalanceAmount(), new BigDecimal(amount));
 	}
 	
 	private Date getTimestamp(String dateString) {

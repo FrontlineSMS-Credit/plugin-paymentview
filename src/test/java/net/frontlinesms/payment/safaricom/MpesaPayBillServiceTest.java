@@ -1,5 +1,10 @@
 package net.frontlinesms.payment.safaricom;
 
+import net.frontlinesms.payment.PaymentServiceException;
+
+import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+
 
 public class MpesaPayBillServiceTest extends
 		MpesaPaymentServiceTest<MpesaPayBillService> {
@@ -7,6 +12,15 @@ public class MpesaPayBillServiceTest extends
 	@Override
 	protected MpesaPayBillService createNewTestClass() {
 		return new MpesaPayBillService();
+	}
+	
+	public void testMakePayment(){
+		try{
+			mpesaPaymentService.makePayment(new Client(), new OutgoingPayment());
+			assertFalse(true);
+		}catch (PaymentServiceException e) {
+			assertFalse(false);
+		}
 	}
 
 	public void testIncomingPayBillProcessing() throws Exception {

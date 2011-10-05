@@ -280,8 +280,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 		BigDecimal expectedBalance = (tempBalanceAmount
 				.subtract(outgoingPayment.getAmountPaid().add(transactionFees)));
 
-		informUserOnFraud(currentBalance, expectedBalance,
-				!expectedBalance.equals(currentBalance),
+		informUserOfFraudIfCommitted(expectedBalance, currentBalance,
 				message.getTextContent());
 
 		balance.setBalanceAmount(currentBalance);
