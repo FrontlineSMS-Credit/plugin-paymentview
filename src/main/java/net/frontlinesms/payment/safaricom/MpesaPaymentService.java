@@ -340,7 +340,8 @@ public abstract class MpesaPaymentService extends AbstractPaymentService   {
 	}
 	
 	protected void processBalance(final FrontlineMessage message){
-		BalanceDispatcher.getInstance().notify(message);
+//		BalanceDispatcher.getInstance().notify(message);
+		balanceDispatcher.notify(message);
 	}
 	
 	void finaliseBalanceProcessing(final FrontlineMessage message) {

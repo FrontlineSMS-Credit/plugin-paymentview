@@ -19,6 +19,10 @@ public class BalanceDispatcher {
 		queue.add(paymentService);
 	}
 	
+	public Queue<MpesaPaymentService> getQueue(){
+		return queue;
+	}
+	
 	public void notify(FrontlineMessage message) {
 		if (!ignoredBalanceMessageList.contains(message)){
 			MpesaPaymentService ps = queue.poll();

@@ -49,6 +49,7 @@ public abstract class AbstractPaymentService implements PaymentService, EventObs
 	protected LogMessageDao logMessageDao;
 	protected ContactDao contactDao;
 	private PaymentServiceSettings settings;
+	protected BalanceDispatcher balanceDispatcher;
 	
 	protected Logger pvLog = Logger.getLogger(this.getClass());
 	protected TargetAnalytics targetAnalytics;
@@ -198,6 +199,14 @@ public abstract class AbstractPaymentService implements PaymentService, EventObs
 		this.cService = cService;
 	}
 
+	public void setBalance(Balance balance) {
+		this.balance = balance;
+	}
+	
+	public void setBalanceDispatcher(BalanceDispatcher balanceDispatcher) {
+		this.balanceDispatcher = balanceDispatcher;
+	}
+	
 	public Balance getBalance() {
 		return balance;
 	}
@@ -210,7 +219,8 @@ public abstract class AbstractPaymentService implements PaymentService, EventObs
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.targetAnalytics = pluginController.getTargetAnalytics();
 		this.logMessageDao = pluginController.getLogMessageDao();
-		this.balance = BalanceProperties.getInstance().getBalance(this);
+		if(this.balance == null) this.balance = BalanceProperties.getInstance().getBalance(this);
+		if(this.balanceDispatcher == null) this.balanceDispatcher = BalanceDispatcher.getInstance();
 		this.contactDao = pluginController.getUiGeneratorController().getFrontlineController().getContactDao();
 		
 		this.registerToEventBus(
