@@ -258,6 +258,9 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		mpesaPaymentService.setPin("1234");
 		
 		mpesaPaymentService.checkBalance();
+		
+		WaitingJob.waitForEvent(500);
+		
 		// then
 		InOrder inOrder = inOrder(cService);
 		inOrder.verify(cService).stkRequest(StkRequest.GET_ROOT_MENU);
@@ -268,38 +271,40 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		inOrder.verify(cService).stkRequest(pinRequiredRequest, "1234");
 	}
 	
-//	public void testMakePayment() throws PaymentServiceException, SMSLibDeviceException, IOException  {
-//		// setup
-//		StkValuePrompt phoneNumberRequired = mockInputRequirement("Enter phone no.");
-//		when(cService.stkRequest(sendMoneyMenuItem)).thenReturn(phoneNumberRequired);
-//		
-//		StkRequest phoneNumberRequest = phoneNumberRequired.getRequest();
-//		StkValuePrompt amountRequired = mockInputRequirement("Enter amount");
-//		when(cService.stkRequest(phoneNumberRequest, PHONENUMBER_1)).thenReturn(amountRequired);
-//		
-//		StkRequest amountRequest = amountRequired.getRequest();
-//		StkValuePrompt pinRequired = mockInputRequirement("Enter PIN");
-//		when(cService.stkRequest(amountRequest, "500")).thenReturn(pinRequired);
-//		
-//		StkRequest pinRequiredRequest = pinRequired.getRequest();
-//		StkConfirmationPrompt pinRequiredResponse = mockConfirmation("Send money to "+CLIENT_1.getPhoneNumber()+" Ksh500");
-//		when(cService.stkRequest(pinRequiredRequest, "1234")).thenReturn(pinRequiredResponse);
-//		
-//		// given
-//		mpesaPaymentService.setPin("1234");
-//		
-//		// when
-//		mpesaPaymentService.makePayment(CLIENT_1, getOutgoingPayment(CLIENT_1));
-//		
-//		// then
-//		InOrder inOrder = inOrder(cService);
-//		inOrder.verify(cService).stkRequest(StkRequest.GET_ROOT_MENU);
-//		inOrder.verify(cService).stkRequest(mpesaMenuItemRequest);
-//		inOrder.verify(cService).stkRequest(sendMoneyMenuItem);
-//		inOrder.verify(cService).stkRequest(phoneNumberRequest , PHONENUMBER_1);
-//		inOrder.verify(cService).stkRequest(amountRequest , "500");
-//		inOrder.verify(cService).stkRequest(pinRequiredRequest , "1234");
-//	}
+	public void testMakePayment() throws PaymentServiceException, SMSLibDeviceException, IOException  {
+		// setup
+		StkValuePrompt phoneNumberRequired = mockInputRequirement("Enter phone no.");
+		when(cService.stkRequest(sendMoneyMenuItem)).thenReturn(phoneNumberRequired);
+		
+		StkRequest phoneNumberRequest = phoneNumberRequired.getRequest();
+		StkValuePrompt amountRequired = mockInputRequirement("Enter amount");
+		when(cService.stkRequest(phoneNumberRequest, PHONENUMBER_1)).thenReturn(amountRequired);
+		
+		StkRequest amountRequest = amountRequired.getRequest();
+		StkValuePrompt pinRequired = mockInputRequirement("Enter PIN");
+		when(cService.stkRequest(amountRequest, "500")).thenReturn(pinRequired);
+		
+		StkRequest pinRequiredRequest = pinRequired.getRequest();
+		StkConfirmationPrompt pinRequiredResponse = mockConfirmation("Send money to "+CLIENT_1.getPhoneNumber()+" Ksh500");
+		when(cService.stkRequest(pinRequiredRequest, "1234")).thenReturn(pinRequiredResponse);
+		
+		// given
+		mpesaPaymentService.setPin("1234");
+		
+		// when
+		mpesaPaymentService.makePayment(CLIENT_1, getOutgoingPayment(CLIENT_1));
+		
+		WaitingJob.waitForEvent(1000);
+		
+		// then
+		InOrder inOrder = inOrder(cService);
+		inOrder.verify(cService).stkRequest(StkRequest.GET_ROOT_MENU);
+		inOrder.verify(cService).stkRequest(mpesaMenuItemRequest);
+		inOrder.verify(cService).stkRequest(sendMoneyMenuItem);
+		inOrder.verify(cService).stkRequest(phoneNumberRequest , PHONENUMBER_1);
+		inOrder.verify(cService).stkRequest(amountRequest , "500");
+		inOrder.verify(cService).stkRequest(pinRequiredRequest , "1234");
+	}
 	
 	public void testPaymentReversalProcessing(){
 		paymentReversalProcessing(
@@ -320,7 +325,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		mpesaPaymentService.notify(mockMessageNotification("MPESA", messageText));
 		
 		// then
-		WaitingJob.waitForEvent();
+		WaitingJob.waitForEvent(500);
 		
 		verify(incomingPaymentDao).getByConfirmationCode(reversedConfirmationCode);
 		verify(incomingPaymentDao).updateIncomingPayment(new IncomingPayment() {
@@ -343,8 +348,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		// when
 		mpesaPaymentService.notify(mockMessageNotification("MPESA", messageText));
 		
-		// then
-		WaitingJob.waitForEvent();
+		WaitingJob.waitForEvent(2000);
 		verify(incomingPaymentDao).saveIncomingPayment(new IncomingPayment() {
 			@Override
 			public boolean equals(Object that) {
@@ -526,6 +530,18 @@ class WaitingJob extends FrontlineUiUpateJob {
 			}
 		}
 	}
+		
+	private void block(int intstr) {
+			running = true;
+			execute();
+			while(running) {
+				try {
+					Thread.sleep(intstr);
+				} catch (InterruptedException e) {
+					running = false;
+				}
+			}
+	}
 	
 	public void run() {
 		running = false;
@@ -534,5 +550,8 @@ class WaitingJob extends FrontlineUiUpateJob {
 	/** Put a job on the UI event queue, and block until it has been run. */
 	public static void waitForEvent() {
 		new WaitingJob().block();
+	}
+	public static void waitForEvent(int intstr) {
+		new WaitingJob().block(intstr);
 	}
 }

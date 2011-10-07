@@ -73,46 +73,46 @@ public class MpesaPersonalServiceTest extends MpesaPaymentServiceTest<MpesaPerso
 		
 		verify(logger, times(2)).info("No Fraud occured!");
 		
-		balance.reset();
-		balance.setBalanceAmount("1000");
-		balance.updateBalance();
-		
-		paymentReversalProcessing(
-				 "DXAH67GH9 Confirmed.\n"
-				+"Transaction BC77RI604\n"
-				+"has been reversed. Your\n"
-				+"account balance now\n"
-				+"0Ksh",
-				"DXAH67GH9","BC77RI604");
-		
-		verify(logger, times(3)).info("No Fraud occured!");
-		
-		balance.reset();
-		balance.setBalanceAmount("1000");
-		balance.updateBalance();
-		
-		this.balanceDispatcher.queuePaymentService(mpesaPaymentService);
-		mpesaPaymentService.setBalanceDispatcher(balanceDispatcher);
-		
-		//Test on Balance Inquiry
-		testBalanceProcessing("NB56GF6JK Confirmed.\n" +
-			"Your M-PESA balance was Ksh999\n" +
-			"on 12/2/11 at 12:23 AM",
-		"999", "NB56GF6JK", "12/2/11 12:23 AM");
-		verify(logger, times(4)).info("No Fraud occured!");
-		verify(logger, never()).warn(any(String.class));
+//		balance.reset();
+//		balance.setBalanceAmount("1000");
+//		balance.updateBalance();
+//		
+//		paymentReversalProcessing(
+//				 "DXAH67GH9 Confirmed.\n"
+//				+"Transaction BC77RI604\n"
+//				+"has been reversed. Your\n"
+//				+"account balance now\n"
+//				+"0Ksh",
+//				"DXAH67GH9","BC77RI604");
+//		
+//		verify(logger, times(3)).info("No Fraud occured!");
+//		
+//		balance.reset();
+//		balance.setBalanceAmount("1000");
+//		balance.updateBalance();
+//		
+//		this.balanceDispatcher.queuePaymentService(mpesaPaymentService);
+//		mpesaPaymentService.setBalanceDispatcher(balanceDispatcher);
+//		
+//		//Test on Balance Inquiry
+//		testBalanceProcessing("NB56GF6JK Confirmed.\n" +
+//			"Your M-PESA balance was Ksh999\n" +
+//			"on 12/2/11 at 12:23 AM",
+//		"999", "NB56GF6JK", "12/2/11 12:23 AM");
+//		verify(logger, times(4)).info("No Fraud occured!");
+//		verify(logger, never()).warn(any(String.class));
 	}
 	
-//	public void testInvalidBalanceFraudCheck() throws DuplicateKeyException {
-//		balance.reset();
-//		balance.setBalanceAmount("4265");
-//		balance.updateBalance();
-//		//Test When Payment is successful OutgoingPayment //Ksh100 lost
-//		testOutgoingPaymentProcessing("BC77RI604 Confirmed. " +
-//				"Ksh1,235 sent to DACON OMONDI +254723908001 on 22/5/11 at 10:35 PM " +
-//				"New M-PESA balance is Ksh5,500",
-//				PHONENUMBER_1, ACCOUNTNUMBER_1_1, "1235", "BC77RI604",
-//				"DACON OMONDI", "22/5/11 10:35 PM", OutgoingPayment.Status.CONFIRMED);
+	public void testInvalidBalanceFraudCheck() throws DuplicateKeyException {
+		balance.reset();
+		balance.setBalanceAmount("4265");
+		balance.updateBalance();
+		//Test When Payment is successful OutgoingPayment //Ksh100 lost
+		testOutgoingPaymentProcessing("BC77RI604 Confirmed. " +
+				"Ksh1,235 sent to DACON OMONDI +254723908001 on 22/5/11 at 10:35 PM " +
+				"New M-PESA balance is Ksh5,500",
+				PHONENUMBER_1, ACCOUNTNUMBER_1_1, "1235", "BC77RI604",
+				"DACON OMONDI", "22/5/11 10:35 PM", OutgoingPayment.Status.CONFIRMED);
 		
 //		balance.reset();
 //		balance.setBalanceAmount("1101");
@@ -135,10 +135,10 @@ public class MpesaPersonalServiceTest extends MpesaPaymentServiceTest<MpesaPerso
 //			"on 12/2/11 at 12:23 AM",
 //		"999", "NB56GF6JK", "12/2/11 12:23 AM");
 //		
-//		verify(logger, never()).info("No Fraud occured!");
+		verify(logger, never()).info("No Fraud occured!");
 //		verify(logger, times(3)).warn(any(String.class));
-//	}
-//	
+	}
+	
 	public void testOutgoingPaymentProcessing() throws DuplicateKeyException {
 		balance.reset();
 		balance.setBalanceAmount("2265");
