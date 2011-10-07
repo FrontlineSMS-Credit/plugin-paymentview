@@ -89,11 +89,11 @@ public class PaymentViewThinletTabController extends
 		ui.add(mainPane, logsTab.getTab());
 		
 		//For Tests Only
-//		if(BuildProperties.getInstance().isSnapshot()) {
-//			cdtController = new PvDebugTabController(ui);
-//			cdtController.setMessageDao(ui.getFrontlineController().getMessageDao());
-//			ui.add(mainPane, cdtController.getTab());
-//		}
+		if(BuildProperties.getInstance().isSnapshot()) {
+			cdtController = new PvDebugTabController(ui);
+			cdtController.setMessageDao(ui.getFrontlineController().getMessageDao());
+			ui.add(mainPane, cdtController.getTab());
+		}
 	}
 	
 	public void updateStatusBar(String message){

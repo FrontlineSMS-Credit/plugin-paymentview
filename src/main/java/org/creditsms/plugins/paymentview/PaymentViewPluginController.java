@@ -127,14 +127,14 @@ public class PaymentViewPluginController extends BasePluginController
 		}
 		
 		// If not a production build, and database is empty, add test data
-//		if(BuildProperties.getInstance().isSnapshot() && clientDao.getClientCount()==0) {
-//			try {
-//				DemoData.createDemoData(applicationContext);
-//			} catch (DuplicateKeyException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
+		if(BuildProperties.getInstance().isSnapshot() && clientDao.getClientCount()==0) {
+			try {
+				DemoData.createDemoData(applicationContext);
+			} catch (DuplicateKeyException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
