@@ -56,4 +56,9 @@ public class ClientSelector extends BaseClientSelector {
 	public void setSelectionMethod(String selection) {
 		clientTableHandler.setSelectionMethod(selection);
 	}
+	
+	public void filterClients(String clientFilter){
+		clientTableHandler.setClientFilter(clientFilter);
+		clientTableHandler.refresh();
+	}
 }
