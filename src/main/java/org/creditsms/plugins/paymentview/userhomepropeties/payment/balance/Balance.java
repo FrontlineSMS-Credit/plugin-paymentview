@@ -19,7 +19,7 @@ public class Balance {
 	
 	private PaymentService paymentService;
 
-	Balance(){}
+	public Balance(){}
 
 	public String getConfirmationCode() {
 		return confirmationCode;

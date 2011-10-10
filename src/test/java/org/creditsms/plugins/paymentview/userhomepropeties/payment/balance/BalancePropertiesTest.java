@@ -1,6 +1,7 @@
 package org.creditsms.plugins.paymentview.userhomepropeties.payment.balance;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -8,6 +9,8 @@ import java.util.Date;
 
 import net.frontlinesms.junit.BaseTestCase;
 import net.frontlinesms.payment.PaymentService;
+
+import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 
 public class BalancePropertiesTest extends BaseTestCase {
 
@@ -23,7 +26,10 @@ public class BalancePropertiesTest extends BaseTestCase {
 		datetime = new Date();
 		
 		paymentService = mock(PaymentService.class);
-
+		
+		PaymentServiceSettings paymentServiceSettings = mock(PaymentServiceSettings.class);
+		when(paymentService.getSettings()).thenReturn(paymentServiceSettings);
+ 
 		balance.setBalanceAmount(new BigDecimal("200.00"));
 		balance.setConfirmationCode("CCVSBB566");
 		balance.setDateTime(datetime);

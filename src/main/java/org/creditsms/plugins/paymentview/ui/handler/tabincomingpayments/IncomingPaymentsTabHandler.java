@@ -295,7 +295,9 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			String tempPhoneNo = incomingPayment.getPhoneNumber();
 			incomingPayment.setAccount(getAccount(client));
 			incomingPayment.setPhoneNumber(client.getPhoneNumber());
-
+			Target tgt = targetDao.getActiveTargetByAccount(getAccount(incomingPayment.getPhoneNumber()).getAccountNumber());
+			incomingPayment.setTarget(tgt);
+			
 			incomingPaymentDao.updateIncomingPayment(incomingPayment);
 			
 			refresh();

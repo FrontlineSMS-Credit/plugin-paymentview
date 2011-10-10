@@ -64,10 +64,10 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	public void testComputeAnalyticsIntervalDatesAndSavings(){
 		this.targetAnalytics.computeAnalyticsIntervalDatesAndSavings(targetId);
 		assertEquals(endOfIntervalDate, this.targetAnalytics.getEndMonthInterval());
-		assertEquals(new BigDecimal("516.67"), this.targetAnalytics.getMonthlyTarget());
+		assertEquals(new BigDecimal("516.6667"), this.targetAnalytics.getMonthlyTarget());
 		assertEquals(18, this.targetAnalytics.getInstalments());
-		assertEquals(new BigDecimal("300.06"), this.targetAnalytics.getMonthlyAmountDue());
-		assertEquals(new BigDecimal("216.61"), this.targetAnalytics.getMonthlyAmountSaved());
+		assertEquals(new BigDecimal("300.00"), this.targetAnalytics.getMonthlyAmountDue());
+		assertEquals(new BigDecimal("9000.00"), this.targetAnalytics.getMonthlyAmountSaved());
 	}
 	
 	public void testGetAmountSaved(){
