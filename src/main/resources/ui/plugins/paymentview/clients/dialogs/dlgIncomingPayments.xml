@@ -8,6 +8,7 @@
 			<label text="Incoming Payments" font="20 Bold" weightx="1"/>
 			<table name="tbl_clients" weightx="1" weighty="1" colspan="2" selection="multiple">
 				<header>
+				    <column text="Confimation Code" width="200" icon="/icons/description.png" />
 					<column text="Name" width="200" icon="/icons/user.png" />
 					<column text="Phone" width="150" icon="/icons/phone.png" />
 					<column text="Amount" width="100" icon="/icons/money.png" />

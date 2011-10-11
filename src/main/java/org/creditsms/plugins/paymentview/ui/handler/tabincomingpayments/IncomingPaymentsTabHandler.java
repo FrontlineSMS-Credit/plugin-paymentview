@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.FrontlineSMS;
+import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
@@ -443,11 +444,11 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	public void notify(final FrontlineEventNotification notification) {
 		new FrontlineUiUpateJob() {
 			public void run() {
-				if (!(notification instanceof EntitySavedNotification)) {
+				if (!(notification instanceof DatabaseEntityNotification)) {
 					return;
 				}
 		
-				Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();				
+				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();				
 				if (entity instanceof IncomingPayment){
 					if (notification instanceof EntitySavedNotification){
 						IncomingPayment incomingPayment = (IncomingPayment) entity;
@@ -458,8 +459,9 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 							IncomingPaymentsTabHandler.this.replyToThirdParty((IncomingPayment) entity);
 						}
 					}
-				}
 				IncomingPaymentsTabHandler.this.refresh();
+				}
+				
 			}
 		}.execute();
 	}
