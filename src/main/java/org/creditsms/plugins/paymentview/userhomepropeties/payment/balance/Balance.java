@@ -88,8 +88,8 @@ public class Balance {
 			_paymentService = paymentService;
 		}
 		public String getMessage() {
-			return String.format("%s New Balance is: %s", Balance.this.getConfirmationCode(), 
-					Balance.this.getBalanceAmount().toString());
+			return String.format("%s New Balance is: %s (%s)", Balance.this.getConfirmationCode(), 
+					Balance.this.getBalanceAmount().toString(),Balance.this.getPaymentService().getSettings().getPsSmsModemSerial());
 		}
 		
 		public PaymentService getPaymentService() {

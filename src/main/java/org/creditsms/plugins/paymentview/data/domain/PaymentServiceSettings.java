@@ -3,9 +3,6 @@
  */
 package org.creditsms.plugins.paymentview.data.domain;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,10 +29,6 @@ public class PaymentServiceSettings {
 	/** The properties for a {@link PaymentService} */
 	private String psPin;
 	private String psSmsModemSerial;
-	private BigDecimal psBalance;
-	private String psBalanceConfirmationCode;
-	private String psBalanceUpdateMethod;
-	private Date psBalanceUpdateDatetime;
 //	protected Logger pvLog = Logger.getLogger(this.getClass());
 	
 //> CONSTRUCTORS
@@ -68,44 +61,12 @@ public class PaymentServiceSettings {
 		return psSmsModemSerial;
 	}
 
-	public BigDecimal getPsBalance() {
-		return psBalance;
-	}
-
-	public String getPsBalanceConfirmationCode() {
-		return psBalanceConfirmationCode;
-	}
-
 	public void setPsPin(String psPin) {
 		this.psPin = psPin;
 	}
 
-	public String getPsBalanceUpdateMethod() {
-		return psBalanceUpdateMethod;
-	}
-
-	public Date getPsBalanceUpdateDatetime() {
-		return psBalanceUpdateDatetime;
-	}
-	
 	public void setPsSmsModemSerial(String psSmsModemSerial) {
 		this.psSmsModemSerial = psSmsModemSerial;
-	}
-
-	public void setPsBalance(BigDecimal psBalance) {
-		this.psBalance = psBalance;
-	}
-
-	public void setPsBalanceConfirmationCode(String psBalanceConfirmationCode) {
-		this.psBalanceConfirmationCode = psBalanceConfirmationCode;
-	}
-
-	public void setPsBalanceUpdateMethod(String psBalanceUpdateMethod) {
-		this.psBalanceUpdateMethod = psBalanceUpdateMethod;
-	}
-
-	public void setPsBalanceUpdateDatetime(Date psBalanceUpdateDatetime) {
-		this.psBalanceUpdateDatetime = psBalanceUpdateDatetime;
 	}
 
 	public void setServiceClassName(String serviceClassName) {

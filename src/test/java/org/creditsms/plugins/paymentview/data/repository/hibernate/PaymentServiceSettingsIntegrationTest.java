@@ -1,6 +1,4 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
-import java.math.BigDecimal;
-
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.junit.HibernateTestCase;
 import net.frontlinesms.payment.safaricom.MpesaPersonalService;
@@ -39,13 +37,10 @@ public class PaymentServiceSettingsIntegrationTest extends HibernateTestCase{
 		MpesaPersonalService service = new MpesaPersonalService();
 		PaymentServiceSettings psSettings = new PaymentServiceSettings(service);
 		psSettings.setPsPin("1111");
-		psSettings.setPsBalance(new BigDecimal(0));
 		hibernatePaymentServiceSettingsDao.savePaymentServiceSettings(psSettings);
 		
-		psSettings.setPsBalance(new BigDecimal(10));
 		hibernatePaymentServiceSettingsDao.updatePaymentServiceSettings(psSettings);
 		assertEquals(1, hibernatePaymentServiceSettingsDao.getPaymentServiceAccounts().size());
-		assertEquals(10, hibernatePaymentServiceSettingsDao.getPaymentServiceAccounts().iterator().next().getPsBalance().intValue());
 	}
 	
 	public void testDeletingOutgoingPayment() throws DuplicateKeyException{

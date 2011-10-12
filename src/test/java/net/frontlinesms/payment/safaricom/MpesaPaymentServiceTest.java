@@ -17,7 +17,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 import net.frontlinesms.FrontlineSMS;
@@ -294,7 +293,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		// when
 		mpesaPaymentService.makePayment(CLIENT_1, getOutgoingPayment(CLIENT_1));
 		
-		WaitingJob.waitForEvent(1000);
+		WaitingJob.waitForEvent(2000);
 		
 		// then
 		InOrder inOrder = inOrder(cService);
@@ -492,6 +491,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		FrontlineMessage m = mock(FrontlineMessage.class);
 		when(m.getSenderMsisdn()).thenReturn(from);
 		when(m.getTextContent()).thenReturn(text);
+		when(m.getEndpointId()).thenReturn("093SH5S655");
 		return new EntitySavedNotification<FrontlineMessage>(m);
 	}
 	

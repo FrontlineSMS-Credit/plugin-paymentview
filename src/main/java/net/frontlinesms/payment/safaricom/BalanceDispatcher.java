@@ -1,6 +1,7 @@
 package net.frontlinesms.payment.safaricom;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -24,11 +25,20 @@ public class BalanceDispatcher {
 	}
 	
 	public void notify(FrontlineMessage message) {
+		MpesaPaymentService ps;
 		if (!ignoredBalanceMessageList.contains(message)){
-			MpesaPaymentService ps = queue.poll();
-			if (ps != null) {
-				ps.finaliseBalanceProcessing(message);
-				addToIgnoredBalanceMessageList(message);
+			if (!queue.isEmpty()) {
+				if (message.getEndpointId()!=null){
+					for(Iterator<MpesaPaymentService> psIterator = queue.iterator(); psIterator.hasNext(); ) {
+						ps = psIterator.next();
+						if (message.getEndpointId().equals(ps.getSettings().getPsSmsModemSerial())){
+							ps.finaliseBalanceProcessing(message);
+							addToIgnoredBalanceMessageList(message);
+							queue.remove(ps);
+							break;
+						}
+					}
+				}
 			}
 		}
 	}

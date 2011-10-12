@@ -187,12 +187,16 @@ public class MpesaPersonalService extends MpesaPaymentService {
 
 	@Override
 	protected void processMessage(final FrontlineMessage message) {
-		if (isValidOutgoingPaymentConfirmation(message)) {
-			processOutgoingPayment(message);
-		} else if (isFailedMpesaPayment(message)) {
-			logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.ERROR,"Payment Message: Failed message",message.getTextContent()));
-		} else {
-			super.processMessage(message);
+		if (message.getEndpointId() != null){
+			if (message.getEndpointId().equals(this.getSettings().getPsSmsModemSerial())){
+				if (isValidOutgoingPaymentConfirmation(message)) {
+					processOutgoingPayment(message);
+				} else if (isFailedMpesaPayment(message)) {
+					logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.ERROR,"Payment Message: Failed message",message.getTextContent()));
+				} else {
+					super.processMessage(message);
+				}
+			}
 		}
 	}
 

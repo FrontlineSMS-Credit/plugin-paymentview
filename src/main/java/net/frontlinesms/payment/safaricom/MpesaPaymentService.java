@@ -340,7 +340,6 @@ public abstract class MpesaPaymentService extends AbstractPaymentService   {
 	}
 	
 	protected void processBalance(final FrontlineMessage message){
-//		BalanceDispatcher.getInstance().notify(message);
 		balanceDispatcher.notify(message);
 	}
 	
@@ -348,8 +347,12 @@ public abstract class MpesaPaymentService extends AbstractPaymentService   {
 		queueResponseJob(new PaymentJob() {
 			public void run() {
 				performBalanceEnquiryFraudCheck(message);
+				if (message.getEndpointId() == null){
+					message.setEndpointId("");
+				}
+				
 				logMessageDao.saveLogMessage(
-						new LogMessage(LogMessage.LogLevel.INFO,"Check Balance Response",message.getTextContent()));
+						new LogMessage(LogMessage.LogLevel.INFO,"Check Balance Response",message.getEndpointId() + ": " + message.getTextContent()));
 			}
 		});
 	}

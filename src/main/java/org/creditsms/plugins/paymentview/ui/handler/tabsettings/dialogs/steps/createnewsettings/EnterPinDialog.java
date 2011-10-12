@@ -1,7 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings;
 
-import java.math.BigDecimal;
-
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.messaging.sms.modem.SmsModem;
 import net.frontlinesms.payment.PaymentService;
@@ -76,10 +74,7 @@ public class EnterPinDialog extends BaseDialog {
 	
 	private void persistPaymentServiceSettings()throws DuplicateKeyException{
 		paymentServiceSettings.setPsPin(paymentService.getPin());
-		//paymentServiceSettings.setPsSmsModemSerial(this.modem.getSerial());
 		paymentServiceSettings.setPsSmsModemSerial(this.modem.getSerial() + "@" + this.modem.getImsiNumber());
-		paymentServiceSettings.setPsBalance(new BigDecimal(0));
-		
 		paymentService.setSettings(paymentServiceSettings);
 		paymentServiceSettingsDao.savePaymentServiceSettings(paymentServiceSettings);
 		//Now, Initialise
