@@ -35,6 +35,8 @@ public class IncomingPayment {
 	private static final String FIELD_ACTIVE = "active";
 	private static final String FIELD_PAYMENT_ID = "paymentId";
 	private static final String FIELD_NOTES = "notes";
+	private static final String FIELD_IS_CHILD = "isChild";
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
@@ -64,6 +66,9 @@ public class IncomingPayment {
 	@Column(name = FIELD_NOTES)
 	private String notes = "";
 	
+	@Column(name = FIELD_IS_CHILD)
+	private boolean isChild = false;
+	
 	@ManyToOne
 	@JoinColumn(name = FIELD_ACCOUNT)
 	private Account account;
@@ -85,7 +90,8 @@ public class IncomingPayment {
 		TARGET(FIELD_TARGET),
 		ACTIVE(FIELD_ACTIVE),
 		PAYMENT_ID(FIELD_PAYMENT_ID),
-		NOTES(FIELD_NOTES);
+		NOTES(FIELD_NOTES),
+		ISCHILD(FIELD_IS_CHILD);
 		
 		/** name of a field */
 		private final String fieldName;
@@ -111,6 +117,7 @@ public class IncomingPayment {
 		this.account = account;
 		this.target = target;
 		this.active = true;
+		this.isChild = false;
 	}
 
 
@@ -146,6 +153,7 @@ public class IncomingPayment {
 	public Long getTimePaid() {
 		return timePaid;
 	}
+
 
 	public void setAccount(Account account) {
 		this.account = account;
@@ -207,6 +215,14 @@ public class IncomingPayment {
 	public void setNotes(String notes) {
 		this.notes = notes;
 	}
+	
+	public boolean isChildPayment() {
+		return isChild;
+	}
+
+	public void setChild(boolean isChild) {
+		this.isChild = isChild;
+	}
 
 	@Override
 	public int hashCode() {
@@ -255,6 +271,8 @@ public class IncomingPayment {
 		} else if (!phoneNumber.equals(other.phoneNumber))
 			return false;
 		if (timePaid != other.timePaid)
+			return false;
+		if (isChild != other.isChild)
 			return false;
 		return true;
 	}

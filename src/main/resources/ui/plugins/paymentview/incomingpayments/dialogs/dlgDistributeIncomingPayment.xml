@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dialog bottom="9" close="removeDialog(this)" 
+	columns="1" gap="10" left="9" icon="/icons/user.png" name="distributeIncomingPaymentDialog"	right="9" text="Distribute Group Payment"
+	top="9" resizable="true" modal="true" closable="true"  width="500" height="300">
+	
+	<panel name="pnlParentFields" columns="1" weightx="1" gap="10">
+		<label text="Group Payment Information:" font="bold"/>
+		<panel columns="3" gap="20">
+			<label name="fldPhoneNumber" />
+			<label name="fldName" />
+			<label name="fldAmount" />
+		</panel>
+	</panel>
+
+	<panel  width="200" height="150" name="pnlChildrenFields" columns="1" weightx="1" gap="10" >
+		<label text="Selected Clients:" font="bold"/>
+		<table  perform="editAmount" name="tbl_children" weightx="1" weighty="1" colspan="2" tooltip="Right-click for options">
+			<header>
+				<column text="Phone" width="200" icon="/icons/user.png" />
+				<column text="Name" width="150" icon="/icons/phone.png" />
+				<column text="Amount" width="100" icon="/icons/money.png"/>
+			</header>
+			<popupmenu name="menu">
+				<menuitem action="editAmount" icon="/icons/edit.png" name="editNeedeTargetServiceItem"
+					text="Edit Client's amount" />
+			</popupmenu>
+		</table>
+	</panel>
+	
+	<panel>
+		<label text="Note: Distributed amounts must be add up to group payment."/>
+	</panel>
+
+	<panel colspan="3" weightx="1">
+		<button icon="/icons/cross.png" text="i18n.action.cancel"
+		action="removeDialog" />
+		<panel weightx="1" />
+		<button action="next" icon="/icons/right.png"
+			name="btNext" text="Next" />
+	</panel>
+</dialog>

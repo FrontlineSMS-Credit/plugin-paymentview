@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dialog closable="true" close="removeDialog" bottom="4" columns="1" gap="8" height="340" icon="/icons/users.png" left="4" modal="true" name="clientSelector" resizable="true" right="4" text="Select Client" top="4" width="300">
+<dialog closable="true" close="removeDialog" bottom="4" columns="1" gap="8" height="340" icon="/icons/users.png" left="4" 
+modal="true" name="clientSelector" resizable="true" right="4" text="Select Client" top="4" width="300" >
     <label name="clientSelector_title"/>
+    <panel>
+    	<textfield name="clientsFilter" tooltip="i18n.tooltip.search.here"
+			weightx="1" perform="filterClients(clientsFilter.text)" />
+		<button icon="/icons/search.png" text="i18n.common.search"
+			action="filterClients(clientsFilter.text)" />
+	</panel>
     <panel width="200" height="150" name="pnlClientTableHolder" weightx="2" weighty="2"/>
     <panel gap="5" halign="center">
 	    <button action="sendSelectedListOfClients" icon="/icons/tick.png" name="clientSelector_okButton" text="i18n.action.done"/>

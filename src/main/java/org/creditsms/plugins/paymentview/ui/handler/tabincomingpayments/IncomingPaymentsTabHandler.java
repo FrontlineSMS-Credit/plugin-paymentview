@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.FrontlineSMS;
+import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
@@ -38,6 +40,7 @@ import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.IncomingPaymentsExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.ClientSelector;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.AutoReplyPaymentsDialogHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.DistributeIncomingPaymentDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.EditIncomingPaymentDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.FormatterMarkerType;
 import org.creditsms.plugins.paymentview.userhomepropeties.incomingpayments.AutoReplyProperties;
@@ -86,6 +89,8 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private TargetDao targetDao;
 	private ThirdPartyResponseDao thirdPartyResponseDao;
 	private ResponseRecipientDao responseRecipientDao;
+	private IncomingPayment parentIncomingPayment;
+	private ClientSelector clientSelector;
 
 	public IncomingPaymentsTabHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController) {
@@ -281,24 +286,31 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 	
 	public void reassignForClient(List<Client> clients){
-		Client client = clients.get(0);//Its a single object list
-		
-		Object selectedItem = ui.getSelectedItem(incomingPaymentsTableComponent);
-		IncomingPayment incomingPayment = ui.getAttachedObject(selectedItem, IncomingPayment.class);
-		String tempPhoneNo = incomingPayment.getPhoneNumber();
-		incomingPayment.setAccount(getAccount(client));
-		incomingPayment.setPhoneNumber(client.getPhoneNumber());
-
-		incomingPaymentDao.updateIncomingPayment(incomingPayment);
-		
-		refresh();
-		logMessageDao.saveLogMessage(
-			new LogMessage(LogMessage.LogLevel.INFO,"Payment Reassigned to different client", 
-					"Incoming Payment ["+incomingPayment.getConfirmationCode()+
-					"] Reassigned from "+ tempPhoneNo  +" to different Client" + 
-					incomingPayment.getPhoneNumber()
-			)
-		);
+		if (clients.size()<=0){
+			ui.alert("Please select a client to reassign.");
+		} else {
+			Client client = clients.get(0);//Its a single object list
+			
+			Object selectedItem = ui.getSelectedItem(incomingPaymentsTableComponent);
+			IncomingPayment incomingPayment = ui.getAttachedObject(selectedItem, IncomingPayment.class);
+			String tempPhoneNo = incomingPayment.getPhoneNumber();
+			incomingPayment.setAccount(getAccount(client));
+			incomingPayment.setPhoneNumber(client.getPhoneNumber());
+			Target tgt = targetDao.getActiveTargetByAccount(getAccount(incomingPayment.getPhoneNumber()).getAccountNumber());
+			incomingPayment.setTarget(tgt);
+			
+			incomingPaymentDao.updateIncomingPayment(incomingPayment);
+			
+			refresh();
+			logMessageDao.saveLogMessage(
+				new LogMessage(LogMessage.LogLevel.INFO,"Payment Reassigned to different client", 
+						"Incoming Payment ["+incomingPayment.getConfirmationCode()+
+						"] Reassigned from "+ tempPhoneNo  +" to different Client" + 
+						incomingPayment.getPhoneNumber()
+				)
+			);
+			clientSelector.removeDialog();
+		}
 	}
 	
 	public void postAuthCodeAction() {
@@ -313,7 +325,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				IncomingPayment attachedObject = ui.getAttachedObject(o, IncomingPayment.class);
 				clients.add(clientDao.getClientByPhoneNumber(attachedObject.getPhoneNumber()));
 			}
-			ClientSelector clientSelector = new ClientSelector(ui, pluginController);
+			clientSelector = new ClientSelector(ui, pluginController);
 			clientSelector.setExclusionList(clients);
 			clientSelector.showClientSelectorDialog(this, "reassignForClient", List.class);
 		}
@@ -322,6 +334,44 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	public void reassignIncomingPayment() {
 		new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog(this, "postAuthCodeAction");
 	}
+
+	/*
+	 * This function shows distribution dialog while selecting client distribution list
+	 */
+	public void distributeIncoming(List<Client> childrenClients){
+		if (childrenClients.size() <= 0){
+			ui.alert("Please select a client.");
+		} else {
+			List<Child> children = new ArrayList<Child>(childrenClients.size());
+			for (Client c:childrenClients){
+			children.add(new Child(c,new BigDecimal("0.00")));
+			}
+			
+			new DistributeIncomingPaymentDialogHandler(ui, pluginController, parentIncomingPayment, children).showDialog();
+			clientSelector.removeDialog();
+		}
+	}
+	
+	/*
+	 * This function shows client list dialog while selecting an incoming payment
+	 */
+	public void disaggregateIncomingPayment(){
+		Object[] selectedItems = ui.getSelectedItems(incomingPaymentsTableComponent);
+		if (selectedItems.length <= 0){
+			ui.alert("Please select a payment to reassign.");
+		}else if (selectedItems.length > 1){
+			ui.alert("You can only select one payment at a time.");
+		}else{
+			clientSelector = new ClientSelector(ui, pluginController);
+			clientSelector.setExclusionList(new ArrayList<Client>(0));
+			clientSelector.setSelectionMethod("multiple");
+			for (Object o : selectedItems) {
+				parentIncomingPayment = ui.getAttachedObject(o, IncomingPayment.class);
+			}
+			clientSelector.showClientSelectorDialog(this, "distributeIncoming", List.class);
+		}
+	}
+
 	
 	// > EXPORTS...
 	public void exportIncomingPayments() {
@@ -394,21 +444,24 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	public void notify(final FrontlineEventNotification notification) {
 		new FrontlineUiUpateJob() {
 			public void run() {
-				if (!(notification instanceof EntitySavedNotification)) {
+				if (!(notification instanceof DatabaseEntityNotification)) {
 					return;
 				}
 		
-				Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();				
+				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();				
 				if (entity instanceof IncomingPayment){
 					if (notification instanceof EntitySavedNotification){
-						if(autoReplyProperties.isAutoReplyOn()){
-							IncomingPaymentsTabHandler.this.replyToPayment((IncomingPayment) entity);
+						IncomingPayment incomingPayment = (IncomingPayment) entity;
+						if (!incomingPayment.isChildPayment()){
+							if(autoReplyProperties.isAutoReplyOn()){
+								IncomingPaymentsTabHandler.this.replyToPayment((IncomingPayment) entity);
+							}
+							IncomingPaymentsTabHandler.this.replyToThirdParty((IncomingPayment) entity);
 						}
-					IncomingPaymentsTabHandler.this.replyToThirdParty((IncomingPayment) entity);
 					}
-				}
-			
 				IncomingPaymentsTabHandler.this.refresh();
+				}
+				
 			}
 		}.execute();
 	}
@@ -509,5 +562,26 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			return message;
 		}
 		return null;
+	}
+	
+	public class Child {
+		private Client client;
+		private BigDecimal amount;
+		
+		Child(Client client,BigDecimal amount){
+			this.client = client;
+			this.amount = amount;
+		}
+		
+		public Client getClient(){
+			return client;
+		}
+		public BigDecimal getAmount(){
+			return amount;
+		}
+		public void setAmount(BigDecimal amount){
+			this.amount = amount;
+		}
+		
 	}
 }

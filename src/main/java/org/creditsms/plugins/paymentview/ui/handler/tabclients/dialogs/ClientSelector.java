@@ -35,7 +35,6 @@ public class ClientSelector extends BaseClientSelector {
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
-		this.removeDialog();
 	}
 	
 	@Override
@@ -56,5 +55,10 @@ public class ClientSelector extends BaseClientSelector {
 	
 	public void setSelectionMethod(String selection) {
 		clientTableHandler.setSelectionMethod(selection);
+	}
+	
+	public void filterClients(String clientFilter){
+		clientTableHandler.setClientFilter(clientFilter);
+		clientTableHandler.refresh();
 	}
 }

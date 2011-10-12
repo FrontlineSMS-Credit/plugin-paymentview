@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dialog bottom="9" close="removeDialog(this)" columns="1" gap="15"
+	left="9" name="childDialog" right="9"
+	top="9" resizable="true"
+	modal="true" closable="true">
+	
+	<label text="Enter the amount."/>
+	<panel name="pnlFields" weightx="1" weighty="1" columns="2" gap="10">
+		<textfield text="" name="txtPopUpAmount" weightx="1" columns="20" perform="persistAmount(txtPopUpAmount.text)"/><button action="persistAmount(txtPopUpAmount.text)" text="Update Amount"/>
+	</panel>
+</dialog>
