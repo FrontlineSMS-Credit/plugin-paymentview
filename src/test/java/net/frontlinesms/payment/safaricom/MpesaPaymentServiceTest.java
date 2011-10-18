@@ -293,7 +293,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		// when
 		mpesaPaymentService.makePayment(CLIENT_1, getOutgoingPayment(CLIENT_1));
 		
-		WaitingJob.waitForEvent(4000);
+		WaitingJob.waitForEvent(3500);
 		
 		// then
 		InOrder inOrder = inOrder(cService);
@@ -303,6 +303,41 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		inOrder.verify(cService).stkRequest(phoneNumberRequest , PHONENUMBER_1);
 		inOrder.verify(cService).stkRequest(amountRequest , "500");
 		inOrder.verify(cService).stkRequest(pinRequiredRequest , "1234");
+	}
+	
+
+	
+	public void testPaymentReversalProcessing(){
+		paymentReversalProcessing(
+				"DXAH67GH9 Confirmed.\n"
+				+"Transaction BC77RI604\n"
+				+"has been reversed. Your\n"
+				+"account balance now\n"
+				+"0Ksh",
+				"DXAH67GH9","BC77RI604");
+	}
+	
+	protected void paymentReversalProcessing(String messageText,
+			final String confirmationCode, final String reversedConfirmationCode) {
+		// then
+		assertTrue(mpesaPaymentService instanceof EventObserver);
+		
+		// when
+		mpesaPaymentService.notify(mockMessageNotification("MPESA", messageText));
+		
+		// then
+		WaitingJob.waitForEvent(1000);
+		
+		verify(incomingPaymentDao).getByConfirmationCode(reversedConfirmationCode);
+		verify(incomingPaymentDao).updateIncomingPayment(new IncomingPayment() {
+			@Override
+			public boolean equals(Object that) {
+				if(!(that instanceof IncomingPayment)) return false;
+				IncomingPayment other = (IncomingPayment) that;
+				return other.getConfirmationCode().equals(reversedConfirmationCode);
+			}
+		});
+		
 	}
 	
 	public void testSendAmountToPaybillAccount() throws PaymentServiceException, SMSLibDeviceException, IOException  {
@@ -334,7 +369,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		// when
 		mpesaPaymentService.sendAmountToPaybillAccount("ZUKU","320320","68949", new BigDecimal(100));
 		
-		WaitingJob.waitForEvent(4000);
+		WaitingJob.waitForEvent(3000);
 		
 		// then
 		InOrder inOrder = inOrder(cService);
@@ -342,39 +377,6 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		inOrder.verify(cService).stkRequest(paybillMenuItemRequest);
 		inOrder.verify(cService).stkRequest(businessNumberRequest, "320320");
 		inOrder.verify(cService).stkRequest(accountRequest, "68949");
-	}
-	
-	public void testPaymentReversalProcessing(){
-		paymentReversalProcessing(
-				"DXAH67GH9 Confirmed.\n"
-				+"Transaction BC77RI604\n"
-				+"has been reversed. Your\n"
-				+"account balance now\n"
-				+"0Ksh",
-				"DXAH67GH9","BC77RI604");
-	}
-	
-	protected void paymentReversalProcessing(String messageText,
-			final String confirmationCode, final String reversedConfirmationCode) {
-		// then
-		assertTrue(mpesaPaymentService instanceof EventObserver);
-		
-		// when
-		mpesaPaymentService.notify(mockMessageNotification("MPESA", messageText));
-		
-		// then
-		WaitingJob.waitForEvent(500);
-		
-		verify(incomingPaymentDao).getByConfirmationCode(reversedConfirmationCode);
-		verify(incomingPaymentDao).updateIncomingPayment(new IncomingPayment() {
-			@Override
-			public boolean equals(Object that) {
-				if(!(that instanceof IncomingPayment)) return false;
-				IncomingPayment other = (IncomingPayment) that;
-				return other.getConfirmationCode().equals(reversedConfirmationCode);
-			}
-		});
-		
 	}
 
 	protected void testIncomingPaymentProcessing(String messageText,
