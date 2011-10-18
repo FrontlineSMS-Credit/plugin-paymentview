@@ -16,6 +16,7 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.smslib.CService;
 import org.smslib.SMSLibDeviceException;
@@ -51,7 +52,20 @@ public abstract class MpesaPaymentService extends AbstractPaymentService   {
 	private static final Pattern REVERSE_REGEX_PATTERN = Pattern.compile(STR_REVERSE_REGEX_PATTERN);
 	
 //> INSTANCE PROPERTIES
-	public void sendAmountToPaybillAccount(final String businessNo, final String accountNo, final BigDecimal amount) {
+	protected void processMessage(final FrontlineMessage message) {
+		//I have overridden this function...
+		if (isValidIncomingPaymentConfirmation(message)) {
+			processIncomingPayment(message);
+		}else if (isValidBalanceMessage(message)){
+			processBalance(message);
+		}else if (isValidReverseMessage(message)){
+			processReversePayment(message);
+		} else {
+			logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.INFO,"Payment Message",message.getTextContent()));
+		}
+	}
+	
+	public void sendAmountToPaybillAccount(final String businessName, final String businessNo, final String accountNo, final BigDecimal amount) {
 		final CService cService = this.cService;
 		queueRequestJob(new PaymentJob() {
 			public void run() {
@@ -120,6 +134,31 @@ public abstract class MpesaPaymentService extends AbstractPaymentService   {
 										"Payment failed for some reason.", ""));
 								throw new RuntimeException(
 										"Payment failed for some reason.");
+							} else {
+								//save outgoingpayment + create dummy client
+								Client client;
+								if (clientDao.getClientByPhoneNumber(businessNo) == null){
+									client = new Client(businessName,"",businessNo);
+									client.setActive(false);
+									clientDao.saveClient(client);
+								} else {
+									client = clientDao.getClientByPhoneNumber(businessNo);
+								}
+								
+							
+								OutgoingPayment outgoingPayment = new OutgoingPayment();
+								outgoingPayment.setClient(client);
+								outgoingPayment.setAmountPaid(amount);
+								outgoingPayment.setTimePaid(Calendar.getInstance().getTime());
+								outgoingPayment.setNotes("");
+								outgoingPayment.setStatus(OutgoingPayment.Status.UNCONFIRMED);
+								outgoingPayment.setPaymentId("");
+								outgoingPayment.setConfirmationCode("");
+								outgoingPayment.setPaymentServiceSettings(MpesaPaymentService.this.getSettings());
+								
+								outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
+								
+								
 							}
 							return null;
 						}
@@ -181,18 +220,7 @@ public abstract class MpesaPaymentService extends AbstractPaymentService   {
 		});
 	}
 
-	protected void processMessage(final FrontlineMessage message) {
-		//I have overridden this function...
-		if (isValidIncomingPaymentConfirmation(message)) {
-			processIncomingPayment(message);
-		}else if (isValidBalanceMessage(message)){
-			processBalance(message);
-		}else if (isValidReverseMessage(message)){
-			processReversePayment(message);
-		} else {
-			logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.INFO,"Payment Message",message.getTextContent()));
-		}
-	}
+
 
 	private void processIncomingPayment(final FrontlineMessage message) {
 		// TODO this method is ridiculously long
@@ -450,7 +478,10 @@ public abstract class MpesaPaymentService extends AbstractPaymentService   {
 	BigDecimal getBalance(final FrontlineMessage message) {
 		try {
 	        final String balance_part = getFirstMatch(message, "balance is Ksh[,|.|\\d]+");
-	        final String amountWithKsh = balance_part.split("balance is ")[1];
+	        String amountWithKsh = balance_part.split("balance is ")[1];
+	        if (amountWithKsh.endsWith(".")){
+	        	amountWithKsh = amountWithKsh.substring(0, amountWithKsh.length()-2);
+	        }
 	        return new BigDecimal(amountWithKsh.substring(3).replaceAll(",", ""));
 		} catch(final ArrayIndexOutOfBoundsException ex) {
 			throw new IllegalArgumentException(ex);
@@ -458,7 +489,13 @@ public abstract class MpesaPaymentService extends AbstractPaymentService   {
 	}	
 	
 	String getPhoneNumber(final FrontlineMessage message) {
-		return "+" + getFirstMatch(message, PHONE_PATTERN);
+		String str;
+		try{
+			 str = "+" + getFirstMatch(message, PHONE_PATTERN);
+		}catch(IllegalStateException ex){
+			str = "";
+		}
+		return str;
 	}
 
 	String getConfirmationCode(final FrontlineMessage message) {

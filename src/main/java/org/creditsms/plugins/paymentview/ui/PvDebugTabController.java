@@ -84,7 +84,8 @@ public class PvDebugTabController extends BaseTabHandler implements
 	
 	public void saveMessage(String message){
 		//ui.alert("The message to be saved is:::"+message);
-		FrontlineMessage msg = FrontlineMessage.createIncomingMessage(System.currentTimeMillis(), "MPESA", FrontlineSMSConstants.EMULATOR_MSISDN, message);
+		FrontlineMessage msg = FrontlineMessage.createIncomingMessage(System.currentTimeMillis(), "MPESA", FrontlineSMSConstants.EMULATOR_MSISDN
+				, message, "254123456789012", "123456789099998");
 		messageDao.saveMessage(msg);
 	}
 	

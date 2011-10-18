@@ -158,6 +158,7 @@ public class OutgoingPayment {
 	}
 
 
+
 	public Account getAccount() {
 		return account;
 	}
@@ -250,14 +251,15 @@ public class OutgoingPayment {
 	public String toString() {
 		return "OutgoingPayment [id=" + id + ", amountPaid=" + amountPaid
 				+ ", status=" + status + ", confirmationCode="
-				+ confirmationCode + ", notes=" + notes + ", phoneNumber="
+				+ confirmationCode + ", notes=" + notes	+ ", phoneNumber=" 
 				+ client.getPhoneNumber() + ", timePaid=" + timePaid + ", account="
 				+ account + ", paymentId=" + paymentId + "]";
 	}
 	
 	public String toStringForLogs() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy 'at' hh:mm a");
-		return "Outgoing payment caracteristics:\nKsh " + this.amountPaid + " sent to " + this.client.getFullName() + " " + this.client.getPhoneNumber() 
+		return "Outgoing payment caracteristics:\nKsh " + this.amountPaid + " sent to " + 
+			 this.client.getFullName() + " " + this.client.getPhoneNumber() 
 		          + " on " + dateFormat.format(this.timePaid); 
 	}
 
