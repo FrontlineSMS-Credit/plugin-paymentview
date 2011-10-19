@@ -512,6 +512,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		
 		if (tgt != null) {
 			targetAnalytics.computeAnalyticsIntervalDatesAndSavings(tgt.getId());
+		}
 			
 			for (FormatterMarkerType fe : formatEnums) {
 				if(message.contains(fe.getMarker())){
@@ -525,7 +526,8 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				    	  message = formed_message ;
 				        break;
 				      case AMOUNT_REMAINING:
-				    	  formed_message = message.replace(fe.getMarker(), tgt.getTotalTargetCost().subtract(targetAnalytics.getAmountSaved(tgt.getId())).toString());
+				    	  formed_message = message.replace(fe.getMarker(), (tgt == null ? "" : 
+				    		  tgt.getTotalTargetCost().subtract(targetAnalytics.getAmountSaved(tgt.getId())).toString()));
 				    	  message = formed_message ;
 				        break;
 				      case DATE_PAID:
@@ -533,19 +535,20 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				    	  message = formed_message ;
 				        break;
 				      case DAYS_REMAINING:
-				    	  formed_message = message.replace(fe.getMarker(), targetAnalytics.getDaysRemaining(tgt.getId()).toString());
+				    	  formed_message = message.replace(fe.getMarker(), (tgt == null ? "" : 
+				    		  targetAnalytics.getDaysRemaining(tgt.getId()).toString()));
 				    	  message = formed_message ;
 				        break;
 				      case MONTHLY_DUE:
-				    	  formed_message = message.replace(fe.getMarker(), targetAnalytics.getMonthlyAmountDue().toString());
+				    	  formed_message = message.replace(fe.getMarker(), (tgt == null ? "" : targetAnalytics.getMonthlyAmountDue().toString()));
 				    	  message = formed_message ;
 				        break;
 				      case END_MONTH_INTERVAL:
-				    	  formed_message = message.replace(fe.getMarker(), PvUtils.formatDate(targetAnalytics.getEndMonthInterval()));
+				    	  formed_message = message.replace(fe.getMarker(), (tgt == null ? "" : PvUtils.formatDate(targetAnalytics.getEndMonthInterval())));
 				    	  message = formed_message ;
 				        break;
 				      case MONTHLY_SAVINGS:
-				    	  formed_message = message.replace(fe.getMarker(), targetAnalytics.getMonthlyAmountSaved().toString());
+				    	  formed_message = message.replace(fe.getMarker(), (tgt == null ? "" : targetAnalytics.getMonthlyAmountSaved().toString()));
 				    	  message = formed_message ;
 				        break;
 				      case RECEPIENT_NAME:
@@ -553,15 +556,13 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				    	  message = formed_message ;
 				        break;
 				      case TARGET_ENDDATE:
-				    	  formed_message = message.replace(fe.getMarker(), PvUtils.formatDate(tgt.getEndDate()));
+				    	  formed_message = message.replace(fe.getMarker(), (tgt == null ? "" : PvUtils.formatDate(tgt.getEndDate())));
 				    	  message = formed_message ;
 				        break;
 				    }
 				}
 			}
 			return message;
-		}
-		return null;
 	}
 	
 	public class Child {
