@@ -289,7 +289,6 @@ public class MpesaPersonalService extends MpesaPaymentService {
 		BigDecimal amountPaid = outgoingPayment.getAmountPaid();
 		BigDecimal transactionFees = new BigDecimal(0);
 		BigDecimal currentBalance = getBalance(message).setScale(2, BigDecimal.ROUND_HALF_DOWN);
-		if (!getPhoneNumber(message).equals("")){
 			if (amountPaid.compareTo(new BigDecimal(100)) <= 0) {
 				transactionFees = new BigDecimal(10);
 			} else if (amountPaid.compareTo(new BigDecimal(35000)) <= 0) {
@@ -297,9 +296,8 @@ public class MpesaPersonalService extends MpesaPaymentService {
 			} else {
 				transactionFees = new BigDecimal(60);
 			}
-		}
 
-		BigDecimal expectedBalance = (tempBalanceAmount
+			BigDecimal expectedBalance = (tempBalanceAmount
 				.subtract(outgoingPayment.getAmountPaid().add(transactionFees))).setScale(2, BigDecimal.ROUND_HALF_DOWN);
 
 		informUserOfFraudIfCommitted(expectedBalance, currentBalance,
