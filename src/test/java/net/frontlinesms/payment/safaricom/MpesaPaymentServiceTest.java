@@ -293,7 +293,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		// when
 		mpesaPaymentService.makePayment(CLIENT_1, getOutgoingPayment(CLIENT_1));
 		
-		WaitingJob.waitForEvent(2000);
+		WaitingJob.waitForEvent(3500);
 		
 		// then
 		InOrder inOrder = inOrder(cService);
@@ -304,6 +304,8 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		inOrder.verify(cService).stkRequest(amountRequest , "500");
 		inOrder.verify(cService).stkRequest(pinRequiredRequest , "1234");
 	}
+	
+
 	
 	public void testPaymentReversalProcessing(){
 		paymentReversalProcessing(
@@ -324,7 +326,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		mpesaPaymentService.notify(mockMessageNotification("MPESA", messageText));
 		
 		// then
-		WaitingJob.waitForEvent(500);
+		WaitingJob.waitForEvent(1000);
 		
 		verify(incomingPaymentDao).getByConfirmationCode(reversedConfirmationCode);
 		verify(incomingPaymentDao).updateIncomingPayment(new IncomingPayment() {
@@ -336,6 +338,45 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 			}
 		});
 		
+	}
+	
+	public void testSendAmountToPaybillAccount() throws PaymentServiceException, SMSLibDeviceException, IOException  {
+		// setup
+		StkRequest paybillMenuItemRequest = mpesaMenu.getRequest("Pay Bill");
+
+		StkValuePrompt businessNumberRequired = mockInputRequirement("Enter business no.");
+		when(cService.stkRequest(paybillMenuItemRequest)).thenReturn(businessNumberRequired);
+		
+		StkRequest businessNumberRequest = businessNumberRequired.getRequest();
+		StkValuePrompt accountRequired = mockInputRequirement("Enter account no.");
+		when(cService.stkRequest(businessNumberRequest, "320320")).thenReturn(accountRequired);
+		
+		StkRequest accountRequest = accountRequired.getRequest();
+		StkValuePrompt amountRequired = mockInputRequirement("Enter amount");
+		when(cService.stkRequest(accountRequest, "68949")).thenReturn(amountRequired);
+		
+		StkRequest amountRequest = accountRequired.getRequest();
+		StkValuePrompt pinRequired = mockInputRequirement("Enter PIN");
+		when(cService.stkRequest(amountRequest, "500")).thenReturn(pinRequired);
+		
+		StkRequest pinRequiredRequest = pinRequired.getRequest();
+		StkConfirmationPrompt pinRequiredResponse = mockConfirmation("Send money to ZUKU Ksh500");
+		when(cService.stkRequest(pinRequiredRequest, "1234")).thenReturn(pinRequiredResponse);
+		
+		// given
+		mpesaPaymentService.setPin("1234");
+		
+		// when
+		mpesaPaymentService.sendAmountToPaybillAccount("ZUKU","320320","68949", new BigDecimal(100));
+		
+		WaitingJob.waitForEvent(3000);
+		
+		// then
+		InOrder inOrder = inOrder(cService);
+		inOrder.verify(cService).stkRequest(StkRequest.GET_ROOT_MENU);
+		inOrder.verify(cService).stkRequest(paybillMenuItemRequest);
+		inOrder.verify(cService).stkRequest(businessNumberRequest, "320320");
+		inOrder.verify(cService).stkRequest(accountRequest, "68949");
 	}
 
 	protected void testIncomingPaymentProcessing(String messageText,
@@ -387,7 +428,7 @@ public abstract class MpesaPaymentServiceTest<E extends MpesaPaymentService> ext
 		payment.setPaymentServiceSettings(mpesaPaymentService.getSettings());
 		
 		// then
-		WaitingJob.waitForEvent();
+		WaitingJob.waitForEvent(1000);
 		verify(outgoingPaymentDao).updateOutgoingPayment(payment);
 	}
 	

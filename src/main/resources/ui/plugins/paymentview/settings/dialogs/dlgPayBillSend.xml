@@ -3,7 +3,9 @@
 	columns="3" gap="15" left="9" name="clientDetailsDialog"
 	right="9" text="Send KES to PayBill account"
 	top="9" resizable="true" modal="true" closable="true">
-
+	
+	<label text="Business Name:" />
+	<textfield name="businessName" colspan="2" columns="25" text="" />
 	<label text="Business Number:" />
 	<textfield name="businessNo" colspan="2" columns="25" text="" />
 	<label text="Account Number:" />
