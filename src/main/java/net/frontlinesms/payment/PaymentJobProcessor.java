@@ -13,7 +13,7 @@ public class PaymentJobProcessor implements Runnable {
 	}
 
 	public PaymentJobProcessor(PaymentService service) {
-		t = new Thread(this, "PaymnentJobProcessor: " + service.toString());
+		t = new Thread(this, "PaymentJobProcessor: " + service.toString());
 	}
 
 	public PaymentJobProcessor() {
