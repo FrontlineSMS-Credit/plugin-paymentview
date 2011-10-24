@@ -7,6 +7,7 @@
 	</panel>
 	<panel gap="5" weightx="1">
 		<button action="export" icon="/icons/export.png" text="Export" />
+		<button action="createAlert" icon="/icons/sms_autoForward.png" text="Create Alert" />
 		<panel weightx="1"/>
 	</panel>
 </panel>

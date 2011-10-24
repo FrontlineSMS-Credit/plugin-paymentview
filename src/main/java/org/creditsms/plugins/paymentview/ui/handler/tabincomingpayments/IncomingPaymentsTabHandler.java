@@ -173,7 +173,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			ui.add(new EditIncomingPaymentDialogHandler(ui,pluginController,ip).getDialog());
 		}
 	}
-
 	
 //>PAGING METHODS
 	protected PagedListDetails getIncomingPaymentsListDetails(int startIndex,
@@ -210,7 +209,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			}
 		}
 
-			
 		if (strStartDate.isEmpty() && strEndDate.isEmpty()) {
 			totalItemCount = this.incomingPaymentDao.getActiveIncomingPayments().size();
 			incomingPayments = this.incomingPaymentDao.getActiveIncomingPayments(startIndex, limit);
