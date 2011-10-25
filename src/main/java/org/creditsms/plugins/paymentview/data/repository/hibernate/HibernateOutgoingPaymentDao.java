@@ -10,6 +10,7 @@ import net.frontlinesms.data.Order;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
@@ -169,4 +170,11 @@ public class HibernateOutgoingPaymentDao extends
 		super.update(outgoingPayment);
 
 	}	
+	
+	public List<OutgoingPayment> getByPaymentServiceSettings( PaymentServiceSettings paymentServiceSettings){
+		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria paymentServiceSettingsCriteria = criteria.createCriteria("paymentServiceSettings");
+		paymentServiceSettingsCriteria.add(Restrictions.eq("id", paymentServiceSettings.getId()));
+		return super.getList(criteria);
+	}
 }

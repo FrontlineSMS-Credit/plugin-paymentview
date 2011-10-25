@@ -1,6 +1,7 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
 import java.util.Collection;
+import java.util.List;
 
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
@@ -23,9 +24,13 @@ import net.frontlinesms.ui.handler.BaseTabHandler;
 
 import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
+import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
+import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.PaybillSendDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.UpdateAuthorizationCodeDialog;
@@ -48,15 +53,20 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	private EventBus eventBus;
 	private LogMessageDao logMessageDao;
 	private PaymentServiceSettingsDao paymentServiceSettingsDao;
+	private OutgoingPaymentDao outgoingPaymentDao;
+	private IncomingPaymentDao incomingPaymentDao;
 //	private PaymentServiceProperties paymentSettingsProp = PaymentServiceProperties.getInstance();
 	
 	protected Logger pvLog = Logger.getLogger(this.getClass());
+
 
 	public SettingsTabHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui);
 		this.pluginController = pluginController;
 		this.logMessageDao = pluginController.getLogMessageDao();
 		this.paymentServiceSettingsDao = pluginController.getPaymentServiceSettingsDao();
+		this.outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
+		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		eventBus = ui.getFrontlineController().getEventBus();
 		eventBus.registerObserver(this);
 		init();
@@ -150,13 +160,20 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 		Object selectedItem = this.ui.getSelectedItem(settingsTableComponent);
 		if (selectedItem != null) {
 			PaymentService __paymentService = ui.getAttachedObject(selectedItem, PaymentService.class);
-			//just before
-			__paymentService.stop();
-			//then notify listeners 
-			eventBus.notifyObservers(new PaymentServiceStoppedNotification(__paymentService));
-			paymentServiceSettingsDao.deletePaymentServiceSettings(__paymentService.getSettings());
-			//TODO -> list of payment service - delete only the selected one
-			pluginController.getPaymentServices().remove(__paymentService);
+			
+			List<OutgoingPayment> outgoingPaymentList = outgoingPaymentDao.getByPaymentServiceSettings(__paymentService.getSettings());
+			List<IncomingPayment> incomingPaymentList = incomingPaymentDao.getByPaymentServiceSettings(__paymentService.getSettings());
+			
+			if (outgoingPaymentList.isEmpty() && incomingPaymentList.isEmpty()){
+				//just before
+				__paymentService.stop();
+				//then notify listeners 
+				eventBus.notifyObservers(new PaymentServiceStoppedNotification(__paymentService));
+				paymentServiceSettingsDao.deletePaymentServiceSettings(__paymentService.getSettings());
+				pluginController.getPaymentServices().remove(__paymentService);
+			} else {
+				ui.alert("You cannot delete this payment account as some payments have been made with it.");
+			}
 		}else{
 			ui.alert("Please select an account to delete.");
 		}

@@ -7,6 +7,8 @@ import java.util.List;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
@@ -206,5 +208,12 @@ public class HibernateIncomingPaymentDao extends
 		criteria.add(Restrictions
 			.eq(IncomingPayment.Field.CONFIRMATION_CODE.getFieldName(), confirmationCode));
 		return super.getUnique(criteria);
+	}
+	
+	public List<IncomingPayment> getByPaymentServiceSettings( PaymentServiceSettings paymentServiceSettings){
+		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria paymentServiceSettingsCriteria = criteria.createCriteria("paymentServiceSettings");
+		paymentServiceSettingsCriteria.add(Restrictions.eq("id", paymentServiceSettings.getId()));
+		return super.getList(criteria);
 	}
 }
