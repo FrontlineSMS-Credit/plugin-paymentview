@@ -23,7 +23,7 @@
 			<column text="Last payment Date" width="120" />
 			
 			<column text="Paid this month" width="100" />
-            <column text="Current Amount Due" width="100" />
+            <column text="Current Amount Due" width="120" />
             <column text="Current Due Date" width="120" />
 			
 			<column text="Days remaining" width="100" />

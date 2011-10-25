@@ -137,7 +137,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private void setUpAutoReplyUI() {
 		ui.setIcon(status_label, autoReplyProperties.isAutoReplyOn() ? ICON_STATUS_TRUE : ICON_STATUS_FALSE);
 		ui.setText(status_label, (autoReplyProperties.isAutoReplyOn() ? DISABLE_AUTOREPLY : ENABLE_AUTOREPLY));
-		ui.setSelected(status_label, autoReplyProperties.isAutoReplyOn());
 	}
 
 	protected String getXMLFile() {

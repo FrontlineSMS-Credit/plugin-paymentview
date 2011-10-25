@@ -19,6 +19,7 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
+import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
@@ -52,10 +53,10 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler{
 		targetAnalytics = new TargetAnalytics();
 		targetAnalytics.setIncomingPaymentDao(pluginController.getIncomingPaymentDao());
 		targetAnalytics.setTargetDao(targetDao);
-		
+
 		initSettingsTableForSorting();
 	}
-	
+
 	private void initSettingsTableForSorting() {
 		Object header = Thinlet.get(this.tableClients, ThinletText.HEADER);
 		for (Object o : ui.getItems(header)) {
@@ -189,7 +190,6 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler{
 	}
 	
 	public void notify(final FrontlineEventNotification notification) {
-		super.notify(notification);
 		new FrontlineUiUpateJob() {
 			public void run() {
 				if (!(notification instanceof DatabaseEntityNotification)) {
@@ -208,6 +208,10 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler{
 					}
 					CreateSettingsTableHandler.this.refresh();
 				}
+				if (entity instanceof Client || entity instanceof Account) {
+					CreateSettingsTableHandler.this.refresh();
+				}
+				
 			}
 		}.execute();
 	}

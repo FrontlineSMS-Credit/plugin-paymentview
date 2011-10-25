@@ -27,10 +27,10 @@ public class PaymentViewCsvUtils extends CsvUtils {
 	public static final String AMOUNT_REMAINING = "${amount_remaining}";
 	public static final String DATE_PAID = "${date_paid}";
 	public static final String DAYS_REMAINING = "${days_remaining}";
-	public static final String MONTHLY_DUE = "${monthly_due}";
-	public static final String END_MONTH_INTERVAL = "${monthly_duedate}";
-	public static final String MONTHLY_SAVINGS = "${monthly_savings}";
-	public static final String RECEPIENT_NAME = "${recepient_name}";
+	public static final String MONTHLY_DUE = "${current_amount_due}";
+	public static final String END_MONTH_INTERVAL = "${current_due_date}";
+	public static final String MONTHLY_SAVINGS = "${amount_paid_this_month}";
+	public static final String RECEPIENT_NAME = "${recipient_name}";
 	public static final String TARGET_ENDDATE = "${target_enddate}";
 	
 	

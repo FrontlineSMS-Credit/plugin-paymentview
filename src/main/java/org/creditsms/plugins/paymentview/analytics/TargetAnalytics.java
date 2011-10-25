@@ -77,10 +77,10 @@ public class TargetAnalytics {
 	    String accountNumber = getAccountNumber(tartgetId);
 	    List<IncomingPayment> incList = incomingPaymentDao.getActiveIncomingPaymentsByAccountNumberOrderByTimepaid(accountNumber);
 	    
-	    if(incList!=null){
+	    if(incList!=null && incList.size()>0){
 	    	return incList.get(0).getAmountPaid();
 	    }else{
-	    	return null;
+	    	return new BigDecimal(0);
 	    }
 	}
 	
@@ -108,7 +108,7 @@ public class TargetAnalytics {
 
 		Date lastPaymentdate = new Date();
 		if(getLastDatePaid(targetId)==null){
-			lastPaymentdate = targetDao.getTargetById(targetId).getStartDate();
+			return Status.INACTIVE;
 		} else {
 			lastPaymentdate = getLastDatePaid(targetId);
 		}
@@ -152,7 +152,7 @@ public class TargetAnalytics {
 	    String accountNumber = getAccountNumber(tartgetId);
 	    List<IncomingPayment> incList = incomingPaymentDao.getActiveIncomingPaymentsByAccountNumberOrderByTimepaid(accountNumber);
 	    
-	    if(incList!=null){
+	    if(incList!=null && incList.size()>0){
 	    	return new Date(incList.get(0).getTimePaid());
 	    }else{
 	    	return null;
@@ -247,6 +247,8 @@ public class TargetAnalytics {
 			setMonthlyTarget(new BigDecimal(totalAmount).divide(new BigDecimal(totalInstalmentsCount), 
 					4, RoundingMode.HALF_DOWN));
 			getRemAmnt(datePoz, amountPaidPoz, endDay, dateEndOfInterval, startDate, targetId,new BigDecimal(amntPaid));
+		} else {
+			setMonthlyAmountDue(new BigDecimal(totalAmount).subtract(new BigDecimal(amntPaid)));
 		}
 	}
 
@@ -284,8 +286,6 @@ public class TargetAnalytics {
 
 		if(endOfIntervalDate.getTime() >= amountPaidEndOfIntervalDate.getTime()){
 			setEndMonthInterval(formatEndDate(endOfIntervalDate));
-			
-
 		} else {
 			setEndMonthInterval(formatEndDate(amountPaidEndOfIntervalDate));
 		}
