@@ -1,43 +1,59 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs;
 
-import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
-
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
-import org.creditsms.plugins.paymentview.userhomepropeties.incomingpayments.AutoReplyProperties;
+
+import org.creditsms.plugins.paymentview.userhomepropeties.analytics.CreateAlertProperties;
+import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
 
 public class CreateAlertHandler implements ThinletUiEventHandler {
 	private static final String XML_CREATE_ALERT = "/ui/plugins/paymentview/analytics/dialogs/dlgCreateAlert.xml";
 
 	private static final String CONFIRM_DIALOG = "confirmDialog";
+	private static final String COMPLETESTGT_CHECKBOX_COMPONENT = "chckCompletesTgt";
+	private static final String MISSEDDEADLINE_CHECKBOX_COMPONENT = "chckMissesDeadline";
+	private static final String TWOWEEKSNOPAY_CHECKBOX_COMPONENT = "chckTwksWithoutPay";
+	private static final String AMONTHWITHNOPAY_CHECKBOX_COMPONENT = "chckAmnthWithoutPay";
+	private static final String MEETSHALFTGT_CHECKBOX_COMPONENT = "chckMeetsHalf";
 	private Object compPanelFields;
 	private Object dialogComponent;
-	private AutoReplyProperties autoReplyProperties = AutoReplyProperties.getInstance();
+	private CreateAlertProperties autoReplyProperties = CreateAlertProperties.getInstance();
 	private UiGeneratorController ui;
 	private static final String STATUS_LABEL_COMPONENT = "status";
 	private static final String ICON_STATUS_TRUE = "/icons/led_green.png";
-	private static final String DISABLE_AUTOREPLY = "ON";
-	private static final String ENABLE_AUTOREPLY = "OFF";
+	private static final String DISABLE_ALERT = "ON";
+	private static final String ENABLE_ALERT = "OFF";
 	private static final String ICON_STATUS_FALSE = "/icons/led_red.png";
 	private Object status_label;
+	private Object chckCompletesTgt;
+	private Object chckMissesDeadline;
+	private Object chckTwksWithoutPay;
+	private Object chckAmnthWithoutPay;
+	private Object chckMeetsHalf;
 	
 	public void tryToggleAutoReply(){
-		if (!autoReplyProperties.isAutoReplyOn()){
-			ui.showConfirmationDialog("toggleAutoReplyOn", this, PaymentPluginConstants.AUTO_REPLY_CONFIRMATION);
+		if (!autoReplyProperties.isAlertOn()){
+			ui.showConfirmationDialog("toggleAlertOn", this, PaymentPluginConstants.ANALYTICS_ALERT);
 		}else{
-			toggleAutoReplyOn();
+			toggleAlertOn();
 		}
 	}
 	
-	public void toggleAutoReplyOn() {
-		autoReplyProperties.toggleAutoReply();
-		setUpAutoReplyUI();
+	public void toggleAlertOn() {
+		autoReplyProperties.toggleAlert();
+		setUpAlertUI();
 		ui.removeDialog(ui.find(CONFIRM_DIALOG));
 	}
 	
-	private void setUpAutoReplyUI() {
-		ui.setIcon(status_label, autoReplyProperties.isAutoReplyOn() ? ICON_STATUS_TRUE : ICON_STATUS_FALSE);
-		ui.setText(status_label, (autoReplyProperties.isAutoReplyOn() ? DISABLE_AUTOREPLY : ENABLE_AUTOREPLY));
+	private void setUpAlertUI() {
+		ui.setIcon(status_label, autoReplyProperties.isAlertOn() ? ICON_STATUS_TRUE : ICON_STATUS_FALSE);
+		ui.setText(status_label, (autoReplyProperties.isAlertOn() ? DISABLE_ALERT : ENABLE_ALERT));
+		
+		ui.setSelected(chckCompletesTgt, autoReplyProperties.getCompletesTgt());
+		ui.setSelected(chckMissesDeadline, autoReplyProperties.getMissesDeadline());
+		ui.setSelected(chckTwksWithoutPay, autoReplyProperties.getTwksWithoutPay());
+		ui.setSelected(chckAmnthWithoutPay, autoReplyProperties.getA_mnthWithoutPay());
+		ui.setSelected(chckMeetsHalf, autoReplyProperties.getMeetsHalfTgt());
 	}
 
 	public CreateAlertHandler(UiGeneratorController ui) {
@@ -64,10 +80,15 @@ public class CreateAlertHandler implements ThinletUiEventHandler {
 	private void init() {
 		dialogComponent = ui.loadComponentFromFile(XML_CREATE_ALERT, this);
 		status_label = ui.find(dialogComponent, STATUS_LABEL_COMPONENT);
+		chckCompletesTgt = ui.find(dialogComponent, COMPLETESTGT_CHECKBOX_COMPONENT);
+		chckMissesDeadline = ui.find(dialogComponent, MISSEDDEADLINE_CHECKBOX_COMPONENT);
+		chckTwksWithoutPay = ui.find(dialogComponent, TWOWEEKSNOPAY_CHECKBOX_COMPONENT);
+		chckAmnthWithoutPay = ui.find(dialogComponent, AMONTHWITHNOPAY_CHECKBOX_COMPONENT);
+		chckMeetsHalf = ui.find(dialogComponent, MEETSHALFTGT_CHECKBOX_COMPONENT);
 	}
 
 	private void refresh() {
-		setUpAutoReplyUI();
+		setUpAlertUI();
 	}
 
 	/** Remove the dialog from view. */
@@ -82,7 +103,21 @@ public class CreateAlertHandler implements ThinletUiEventHandler {
 
 	public void removeField() {
 		// TODO Auto-generated method stub
-
 	}
-
+	
+	public void updateChckCompletesTgt(boolean selected) {
+		autoReplyProperties.setCompletesTgt(selected);
+	}
+	public void updateChckMissesDeadline(boolean selected) {
+		autoReplyProperties.setMissesDeadline(selected);
+	}
+	public void updateChckTwksWithoutPay(boolean selected) {
+		autoReplyProperties.setTwksWithoutPay(selected);
+	}
+	public void updateChckAmnthWithoutPay(boolean selected) {
+		autoReplyProperties.setA_mnthWithoutPay(selected);
+	}
+	public void updateChckMeetsHalf(boolean selected) {
+		autoReplyProperties.setMeetsHalfTgt(selected);
+	}
 }

@@ -5,7 +5,7 @@
 	top="9" resizable="true" modal="true" closable="true" width="500">
 
 	<panel height="30" gap="5">
-		<button name="status" action="tryToggleAutoReply" tooltip="Click to change Auto-Reply status"/>
+		<button name="status" action="tryToggleAutoReply" tooltip="Click to change Alert status"/>
 		<label text="Turn alerts On to receive notifications on the FrontlineSMS Home tab."/>
 	</panel>
 
@@ -13,23 +13,23 @@
 	<separator />
 	<panel columns="1" gap="15">
 		<panel height="30" gap="5">
-			<checkbox name="chckCompletesTgt"/>
+			<checkbox name="chckCompletesTgt" action="updateChckCompletesTgt(chckCompletesTgt.selected)"/>
 			<label text="Client completes savings target."/>
 		</panel>
 		<panel height="30" gap="5">
-			<checkbox name="chckMissesDeadline"/>
+			<checkbox name="chckMissesDeadline" action="updateChckMissesDeadline(chckMissesDeadline.selected)"/>
 			<label text="Client misses deadline and is overdue on a savings target."/>
 		</panel>	
 		<panel height="30" gap="5">
-			<checkbox name="chckTwksWithoutPay"/>
+			<checkbox name="chckTwksWithoutPay" action="updateChckTwksWithoutPay(chckTwksWithoutPay.selected)"/>
 			<label text="Client does not make a payment for 2 weeks."/>
 		</panel>
 		<panel height="30" gap="5">
-			<checkbox name="chckAmnthWithoutPay"/>
+			<checkbox name="chckAmnthWithoutPay" action="updateChckAmnthWithoutPay(chckAmnthWithoutPay.selected)"/>
 			<label text="Client does not make a payment for 1 month."/>
 		</panel>	
 		<panel height="30" gap="5">
-			<checkbox name="chckMeetsHalf"/>
+			<checkbox name="chckMeetsHalf" action="updateChckMeetsHalf(chckMeetsHalf.selected)"/>
 			<label text="Client reaches 50% of the savings target."/>
 		</panel>
 	</panel>
