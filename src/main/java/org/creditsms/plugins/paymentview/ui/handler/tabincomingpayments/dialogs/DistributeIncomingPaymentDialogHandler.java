@@ -1,14 +1,11 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs;
 
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
@@ -38,6 +35,8 @@ public class DistributeIncomingPaymentDialogHandler extends BaseDialog{
 	private List<Child> children;
 	private ClientDao clientDao;
 	private Object tblChildrenComponent;
+	private PaymentViewPluginController pluginController;
+	private BigDecimal totalAmount;
 	
 
 
@@ -45,17 +44,31 @@ public class DistributeIncomingPaymentDialogHandler extends BaseDialog{
 	public DistributeIncomingPaymentDialogHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, 
 			IncomingPayment parentIncomingPayment, List<Client> clientList) {
 		super(ui);
+		this.pluginController = pluginController;
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.clientDao = pluginController.getClientDao();
 		this.parentIncomingPayment = parentIncomingPayment;
 		this.children = new ArrayList<Child>(clientList.size());
 		for (Client c:clientList){
-			children.add(new Child(c,new BigDecimal(0)));
+			children.add(new Child(c,new BigDecimal("0.00")));
 		}
+		this.totalAmount = new BigDecimal("0.00");
 		init();
 		refresh();
 	}
+	
+	public DistributeIncomingPaymentDialogHandler(List<Child> children, UiGeneratorController ui, PaymentViewPluginController pluginController, 
+			IncomingPayment parentIncomingPayment) {
+		super(ui);
+		this.pluginController = pluginController;
+		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
+		this.clientDao = pluginController.getClientDao();
+		this.parentIncomingPayment = parentIncomingPayment;
+		this.children =children;
 
+		init();
+		refresh();
+	}
 
 	public void init() {
 		dialogComponent = ui.loadComponentFromFile(XML_DISTRIBUTE_INCOMING, this);
@@ -68,7 +81,9 @@ public class DistributeIncomingPaymentDialogHandler extends BaseDialog{
 		ui.setText(fieldPhoneNumber, this.parentIncomingPayment.getPhoneNumber());
 		ui.setText(fieldAmount, this.parentIncomingPayment.getAmountPaid().toPlainString());
 		
-		for(Child child: children) {
+		totalAmount = BigDecimal.ZERO;
+		for(Child child: children){
+			totalAmount = totalAmount.add(child.getAmount());
 			ui.add(this.tblChildrenComponent, getRow(child));
 		}
 	}
@@ -77,12 +92,34 @@ public class DistributeIncomingPaymentDialogHandler extends BaseDialog{
 		Object row = ui.createTableRow(child);
 		ui.add(row, ui.createTableCell(child.getClient().getPhoneNumber()));
 		ui.add(row, ui.createTableCell(child.getClient().getFullName()));
-		ui.add(row, ui.createTableCell(child.getAmount().toString()));
+		ui.add(row, ui.createTableCell(child.getAmount().toPlainString()));
 		return row;
+	}
+	
+	public Child getSelectedChild() {
+		Object row =  ui.getSelectedItem(tblChildrenComponent);
+		Child child = ui.getAttachedObject(row, Child.class);
+		return child;
 	}
 
 	public void editAmount(){
-		
+    	Child child = getSelectedChild();
+    	if(child!=null){
+    		EditChildHandler editChildHandler = new EditChildHandler(this.pluginController, child, this);
+			ui.add(editChildHandler.getDialog());
+    	} else {
+    		ui.alert("No selected client");
+    	}
+	}
+	
+	public void refreshSelectedChildrenTable(){
+		List<Child> children = getChildren();
+		ui.removeAll(tblChildrenComponent);
+		totalAmount = BigDecimal.ZERO;
+		for(Child child: children){
+			totalAmount = totalAmount.add(child.getAmount());
+			ui.add(this.tblChildrenComponent, getRow(child));
+		}
 	}
 	
 	@Override
@@ -90,10 +127,22 @@ public class DistributeIncomingPaymentDialogHandler extends BaseDialog{
 	}
 
 	public void next() throws DuplicateKeyException {
-//			parentIncomingPayment.setPaymentId(ui.getText(fieldPaymentId));
-//			parentIncomingPayment.setNotes(ui.getText(fieldNotes));
-//			incomingPaymentDao.updateIncomingPayment(this.parentIncomingPayment);
-//			removeDialog();
+		//validate total
+		if (totalAmount.equals(parentIncomingPayment.getAmountPaid())){
+			new DistributeConfirmationDialogHandler(ui, pluginController, this.parentIncomingPayment, this.children,this).showDialog();
+			this.removeDialog();
+		} else {
+			ui.alert("The selected amounts do not add up to the amount of the group payment.");
+		}
+	}
+	
+	public List<Child> getChildren() {
+		return children;
+	}
+	
+	public void setChildren(
+			List<Child> children) {
+		this.children = children;
 	}
 	
 	@Override
@@ -101,7 +150,7 @@ public class DistributeIncomingPaymentDialogHandler extends BaseDialog{
 		ui.add(this.dialogComponent);
 	}
 	
-	private class Child {
+	public class Child {
 		private Client client;
 		private BigDecimal amount;
 		
@@ -110,12 +159,16 @@ public class DistributeIncomingPaymentDialogHandler extends BaseDialog{
 			this.amount = amount;
 		}
 		
-		Client getClient(){
+		public Client getClient(){
 			return client;
 		}
-		BigDecimal getAmount(){
+		public BigDecimal getAmount(){
 			return amount;
 		}
+		public void setAmount(BigDecimal amount){
+			this.amount = amount;
+		}
+		
 	}
 
 

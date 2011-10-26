@@ -1,29 +1,27 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dialog bottom="9" close="removeDialog(this)" 
-	columns="1" gap="10" left="9" icon="/icons/user.png" name="incomingPaymentDetailsDialog"
-	right="9" text="i18n.plugins.paymentview.dialog.incoming"
-	top="9" resizable="true" modal="true" closable="true">
+	columns="1" gap="10" left="9" icon="/icons/user.png" name="distributeConfirmationDialog"	right="9" text="Distribute Group Payment"
+	top="9" resizable="true" modal="true" closable="true"  width="500" height="250">
+
+
+	<panel  width="200" height="150" name="pnlChildrenFields" columns="1" weightx="1" gap="10" >
+		<label text="You have selected the following individual payments:" font="bold"/>
+		<table  name="tbl_children" weightx="1" weighty="1" colspan="2">
+			<header>
+				<column text="Phone" width="200" icon="/icons/user.png" />
+				<column text="Name" width="150" icon="/icons/phone.png" />
+				<column text="Amount" width="100" icon="/icons/money.png"/>
+			</header>
+		</table>
+	</panel>
 	
-	<panel name="pnlFields" columns="3" weightx="1" gap="10">
-		<label icon="/icons/user.png" text="Name:" />
-		<textfield columns="50" name="fldName" colspan="2" editable="false"/>
-		<label icon="/icons/phone.png" text="i18n.common.phone.number" />
-		<textfield name="fldPhoneNumber" colspan="2" editable="false"/>
-		<label icon="/icons/money.png" text="Amount" />
-		<textfield name="fldAmount" colspan="2" editable="false"/>
-		<label icon="/icons/date.png" text="Date" />
-		<textfield name="fldDate" colspan="2" editable="false"/>
-		<label icon="/icons/description.png" text="i18n.plugins.paymentview.common.paymentid" />
-		<textfield name="fldPaymentId" colspan="2" columns="20" action="assertMaxLength(this,20)"/>
-		<label icon="/icons/description.png" text="i18n.common.notes" />
-		<textarea name="fldNotes" colspan="2" rows="5" columns="20" action="assertMaxLength(this,100)"/>		
+	<panel>
+		<label text="Note: After creating individual payments, this action cannot be undone."/>
 	</panel>
 
 	<panel colspan="3" weightx="1">
-		<button action="saveIncomingPayment" icon="/icons/tick.png"
-			name="btSaveIncoming" text="i18n.action.save" />
+		<button icon="/icons/left.png" action="previous" name="btnPrevious"	text="Previous" />
 		<panel weightx="1" />
-		<button icon="/icons/cross.png" text="i18n.action.cancel"
-			action="removeDialog" />
+		<button action="createInvidualIncomingPayments" icon="/icons/helper_add.png" text="Create New" />
 	</panel>
 </dialog>
