@@ -1,5 +1,8 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs;
 
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +22,7 @@ public class DistributeIncomingPaymentDialogHandler extends BaseDialog{
 	private static final String COMPONENT_TEXT_PARENT_NAME = "fldName";
 	private static final String COMPONENT_TEXT_PARENT_PHONE_NUMBER = "fldPhoneNumber";
 	private static final String COMPONENT_TEXT_PARENT_AMOUNT = "fldAmount";
+	private static final String TBL_CHILDREN = "tbl_children";
 	private static String XML_DISTRIBUTE_INCOMING = "/ui/plugins/paymentview/incomingpayments/dialogs/dlgDistributeIncomingPayment.xml";
 
 //>DAOs
@@ -28,24 +32,26 @@ public class DistributeIncomingPaymentDialogHandler extends BaseDialog{
 	private Object fieldName;
 	private Object fieldPhoneNumber;
 	private Object fieldAmount;
-	private Object fieldDate;
 
 //UI HELPERS	
 	private IncomingPayment parentIncomingPayment;
-	private Object fieldPaymentId;
-	private Object fieldNotes;
-	private List<Client> children;
+	private List<Child> children;
 	private ClientDao clientDao;
+	private Object tblChildrenComponent;
+	
 
 
 	
 	public DistributeIncomingPaymentDialogHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, 
-			IncomingPayment parentIncomingPayment, List<Client> children) {
+			IncomingPayment parentIncomingPayment, List<Client> clientList) {
 		super(ui);
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.clientDao = pluginController.getClientDao();
 		this.parentIncomingPayment = parentIncomingPayment;
-		this.children = children;
+		this.children = new ArrayList<Child>(clientList.size());
+		for (Client c:clientList){
+			children.add(new Child(c,new BigDecimal(0)));
+		}
 		init();
 		refresh();
 	}
@@ -53,26 +59,34 @@ public class DistributeIncomingPaymentDialogHandler extends BaseDialog{
 
 	public void init() {
 		dialogComponent = ui.loadComponentFromFile(XML_DISTRIBUTE_INCOMING, this);
+		tblChildrenComponent = ui.find(dialogComponent, TBL_CHILDREN);
+		
 		fieldName = ui.find(dialogComponent, COMPONENT_TEXT_PARENT_NAME);
 		fieldPhoneNumber = ui.find(dialogComponent, COMPONENT_TEXT_PARENT_PHONE_NUMBER);
 		fieldAmount = ui.find(dialogComponent, COMPONENT_TEXT_PARENT_AMOUNT);
-//		fieldDate = ui.find(dialogComponent, COMPONENT_TEXT_DATE);
-//		fieldPaymentId = ui.find(dialogComponent, COMPONENT_TEXT_PAYMENT_ID);
-//		fieldNotes = ui.find(dialogComponent, COMPONENT_TEXT_NOTES);
-
+		ui.setText(fieldName, clientDao.getClientByPhoneNumber(this.parentIncomingPayment.getPhoneNumber()).getFullName());			
+		ui.setText(fieldPhoneNumber, this.parentIncomingPayment.getPhoneNumber());
+		ui.setText(fieldAmount, this.parentIncomingPayment.getAmountPaid().toPlainString());
+		
+		for(Child child: children) {
+			ui.add(this.tblChildrenComponent, getRow(child));
+		}
+	}
+	
+	protected Object getRow(Child child) {
+		Object row = ui.createTableRow(child);
+		ui.add(row, ui.createTableCell(child.getClient().getPhoneNumber()));
+		ui.add(row, ui.createTableCell(child.getClient().getFullName()));
+		ui.add(row, ui.createTableCell(child.getAmount().toString()));
+		return row;
 	}
 
+	public void editAmount(){
+		
+	}
+	
 	@Override
 	public void refresh() {
-			ui.setText(fieldName, clientDao.getClientByPhoneNumber(this.parentIncomingPayment.getPhoneNumber()).getFullName());			
-			ui.setText(fieldPhoneNumber, this.parentIncomingPayment.getPhoneNumber());
-			ui.setText(fieldPhoneNumber, this.parentIncomingPayment.getPhoneNumber());
-			ui.setText(fieldAmount, this.parentIncomingPayment.getAmountPaid().toPlainString());
-			
-			
-//			ui.setText(fieldDate, InternationalisationUtils.getDatetimeFormat().format(new Date(incomingPayment.getTimePaid())));
-//			ui.setText(fieldPaymentId, this.incomingPayment.getPaymentId());
-//			ui.setText(fieldNotes, this.incomingPayment.getNotes());
 	}
 
 	public void next() throws DuplicateKeyException {
@@ -85,6 +99,23 @@ public class DistributeIncomingPaymentDialogHandler extends BaseDialog{
 	@Override
 	public void showDialog() {
 		ui.add(this.dialogComponent);
+	}
+	
+	private class Child {
+		private Client client;
+		private BigDecimal amount;
+		
+		Child(Client client,BigDecimal amount){
+			this.client = client;
+			this.amount = amount;
+		}
+		
+		Client getClient(){
+			return client;
+		}
+		BigDecimal getAmount(){
+			return amount;
+		}
 	}
 
 

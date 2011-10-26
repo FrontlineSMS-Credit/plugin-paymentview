@@ -330,10 +330,9 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	public void reassignIncomingPayment() {
 		new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog(this, "postAuthCodeAction");
 	}
-	////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/*
-	 * From list of clients to distribution dialog
+	 * This function shows distribution dialog while selecting client distribution list
 	 */
 	public void distributeIncoming(List<Client> childrenClients){
 		if (childrenClients.size() <= 0){
@@ -345,7 +344,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 	
 	/*
-	 * From incoming payment to list of clients
+	 * This function shows client list dialog while selecting an incoming payment
 	 */
 	public void disaggregateIncomingPayment(){
 		Object[] selectedItems = ui.getSelectedItems(incomingPaymentsTableComponent);
