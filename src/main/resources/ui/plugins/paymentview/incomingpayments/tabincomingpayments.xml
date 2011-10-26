@@ -35,6 +35,7 @@
 						text="i18n.plugins.paymentview.action.deleteincoming" />
 					<menuitem action="exportIncomingPayments" icon="/icons/export.png" name="miExportClient" text="Export" />
 					<menuitem icon="/icons/edit.png" action="reassignIncomingPayment" name="miReassignPayment" text="Re-Assign Payment" />
+					<menuitem icon="/icons/edit.png" action="disaggregateIncomingPayment" name="miDisaggregatePayment" text="Disaggregate Payment" />
 				</popupmenu>
 			</table>
 		</panel>
