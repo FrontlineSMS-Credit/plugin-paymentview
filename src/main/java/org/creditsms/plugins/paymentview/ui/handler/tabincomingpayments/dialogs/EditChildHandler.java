@@ -2,7 +2,6 @@ package org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs
 
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.List;
 
@@ -12,7 +11,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
-import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.DistributeIncomingPaymentDialogHandler.Child;
+import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.IncomingPaymentsTabHandler.Child;
 
 public class EditChildHandler implements ThinletUiEventHandler {
 	private static final String XML_EDIT_CHILD = "/ui/plugins/paymentview/incomingpayments/dialogs/dlgEditChild.xml";
@@ -43,7 +42,7 @@ public class EditChildHandler implements ThinletUiEventHandler {
 	
     boolean checkIfBigDecimal(String bdStr) {
         try {
-        	BigDecimal bd = new BigDecimal(bdStr);
+        	new BigDecimal(bdStr);
         } catch (NumberFormatException ex) {
         	ui.alert("Invalid Amount");
             return false;

@@ -22,6 +22,6 @@
 	<panel colspan="3" weightx="1">
 		<button icon="/icons/left.png" action="previous" name="btnPrevious"	text="Previous" />
 		<panel weightx="1" />
-		<button action="createInvidualIncomingPayments" icon="/icons/helper_add.png" text="Create New" />
+		<button action="create" icon="/icons/helper_add.png" text="Create New" />
 	</panel>
 </dialog>

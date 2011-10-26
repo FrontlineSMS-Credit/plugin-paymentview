@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -338,7 +339,12 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		if (childrenClients.size() <= 0){
 			ui.alert("Please select a client.");
 		} else {
-			new DistributeIncomingPaymentDialogHandler(ui, pluginController, parentIncomingPayment, childrenClients).showDialog();
+			List<Child> children = new ArrayList<Child>(childrenClients.size());
+			for (Client c:childrenClients){
+			children.add(new Child(c,new BigDecimal("0.00")));
+			}
+			
+			new DistributeIncomingPaymentDialogHandler(ui, pluginController, parentIncomingPayment, children).showDialog();
 			clientSelector.removeDialog();
 		}
 	}
@@ -552,5 +558,26 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			return message;
 		}
 		return null;
+	}
+	
+	public class Child {
+		private Client client;
+		private BigDecimal amount;
+		
+		Child(Client client,BigDecimal amount){
+			this.client = client;
+			this.amount = amount;
+		}
+		
+		public Client getClient(){
+			return client;
+		}
+		public BigDecimal getAmount(){
+			return amount;
+		}
+		public void setAmount(BigDecimal amount){
+			this.amount = amount;
+		}
+		
 	}
 }

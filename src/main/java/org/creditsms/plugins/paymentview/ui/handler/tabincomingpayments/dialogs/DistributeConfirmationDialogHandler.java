@@ -1,6 +1,5 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs;
 
-import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.List;
 
@@ -15,40 +14,27 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
-import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.IncomingPaymentsTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.DistributeIncomingPaymentDialogHandler.Child;
+import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.IncomingPaymentsTabHandler.Child;
 
 public class DistributeConfirmationDialogHandler extends BaseDialog{
 //> CONSTANTS
-	private static final String COMPONENT_TEXT_PARENT_NAME = "fldName";
-	private static final String COMPONENT_TEXT_PARENT_PHONE_NUMBER = "fldPhoneNumber";
-	private static final String COMPONENT_TEXT_PARENT_AMOUNT = "fldAmount";
 	private static final String TBL_CHILDREN = "tbl_children";
 	private static String XML_DISTRIBUTE_CONFIRMATION = "/ui/plugins/paymentview/incomingpayments/dialogs/dlgDistributeConfirmation.xml";
 	private static String CONFIRM_ACCEPT_DISTRIBUTE_IP = "";
 	
 //>DAOs
 	private IncomingPaymentDao incomingPaymentDao;
+	private AccountDao accountDao;
+	private TargetDao targetDao;
+	private ClientDao clientDao;
 	
-//> UI FIELDS
-	private Object fieldName;
-	private Object fieldPhoneNumber;
-	private Object fieldAmount;
-
 //UI HELPERS	
 	private IncomingPayment parentIncomingPayment;
 	private List<Child> children;
-	private ClientDao clientDao;
 	private Object tblChildrenComponent;
 	private PaymentViewPluginController pluginController;
-	private BigDecimal totalAmount;
-	private AccountDao accountDao;
-	private TargetDao targetDao;
-	private String methodToBeCalled;
 	private Object dialogConfimDistributeIp;
 	
-
-
 	
 	public DistributeConfirmationDialogHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, 
 			IncomingPayment parentIncomingPayment, List<Child> children,DistributeIncomingPaymentDialogHandler distributeIncomingPaymentDialogHandler) {
@@ -124,20 +110,17 @@ public class DistributeConfirmationDialogHandler extends BaseDialog{
 		}
 		this.removeDialog();
 		ui.infoMessage("You have successfully distribute the incoming payment " + parentIncomingPayment.getConfirmationCode());
-
 	}
 	
 	public void previous(){
-		new DistributeIncomingPaymentDialogHandler(children, ui, pluginController, parentIncomingPayment).showDialog();
+		new DistributeIncomingPaymentDialogHandler(ui, pluginController, parentIncomingPayment,children).showDialog();
 		this.removeDialog();
 
 	}
 	
-	
 	@Override
 	public void refresh() {
 	}
-
 	
 	@Override
 	public void showDialog() {

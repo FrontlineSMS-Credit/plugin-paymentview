@@ -1,18 +1,16 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
+import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.IncomingPaymentsTabHandler.Child;
 
 public class DistributeIncomingPaymentDialogHandler extends BaseDialog{
 //> CONSTANTS
@@ -22,8 +20,6 @@ public class DistributeIncomingPaymentDialogHandler extends BaseDialog{
 	private static final String TBL_CHILDREN = "tbl_children";
 	private static String XML_DISTRIBUTE_INCOMING = "/ui/plugins/paymentview/incomingpayments/dialogs/dlgDistributeIncomingPayment.xml";
 
-//>DAOs
-	private IncomingPaymentDao incomingPaymentDao;
 	
 //> UI FIELDS
 	private Object fieldName;
@@ -41,27 +37,26 @@ public class DistributeIncomingPaymentDialogHandler extends BaseDialog{
 
 
 	
-	public DistributeIncomingPaymentDialogHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, 
-			IncomingPayment parentIncomingPayment, List<Client> clientList) {
-		super(ui);
-		this.pluginController = pluginController;
-		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
-		this.clientDao = pluginController.getClientDao();
-		this.parentIncomingPayment = parentIncomingPayment;
-		this.children = new ArrayList<Child>(clientList.size());
-		for (Client c:clientList){
-			children.add(new Child(c,new BigDecimal("0.00")));
-		}
-		this.totalAmount = new BigDecimal("0.00");
-		init();
-		refresh();
-	}
+//	public DistributeIncomingPaymentDialogHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, 
+//			IncomingPayment parentIncomingPayment, List<Client> clientList) {
+//		super(ui);
+//		this.pluginController = pluginController;
+//		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
+//		this.clientDao = pluginController.getClientDao();
+//		this.parentIncomingPayment = parentIncomingPayment;
+//		this.children = new ArrayList<Child>(clientList.size());
+//		for (Client c:clientList){
+//			children.add(new Child(c,new BigDecimal("0.00")));
+//		}
+//		this.totalAmount = new BigDecimal("0.00");
+//		init();
+//		refresh();
+//	}
 	
-	public DistributeIncomingPaymentDialogHandler(List<Child> children, UiGeneratorController ui, PaymentViewPluginController pluginController, 
-			IncomingPayment parentIncomingPayment) {
+	public DistributeIncomingPaymentDialogHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, 
+			IncomingPayment parentIncomingPayment, List<Child> children) {
 		super(ui);
 		this.pluginController = pluginController;
-		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.clientDao = pluginController.getClientDao();
 		this.parentIncomingPayment = parentIncomingPayment;
 		this.children =children;
@@ -150,26 +145,7 @@ public class DistributeIncomingPaymentDialogHandler extends BaseDialog{
 		ui.add(this.dialogComponent);
 	}
 	
-	public class Child {
-		private Client client;
-		private BigDecimal amount;
-		
-		Child(Client client,BigDecimal amount){
-			this.client = client;
-			this.amount = amount;
-		}
-		
-		public Client getClient(){
-			return client;
-		}
-		public BigDecimal getAmount(){
-			return amount;
-		}
-		public void setAmount(BigDecimal amount){
-			this.amount = amount;
-		}
-		
-	}
+
 
 
 }
