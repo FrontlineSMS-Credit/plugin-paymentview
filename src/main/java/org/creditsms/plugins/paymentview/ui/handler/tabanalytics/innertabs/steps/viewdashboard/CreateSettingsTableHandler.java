@@ -83,20 +83,6 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 		return XML_VIEWDASHBOARD_CLIENTS_TABLE;
 	}
 	
-	private void printAllTableInfo() {
-		System.out.println(">TABLES");
-		Object prev = null;
-		for(Object current = ui.findNextItem(ui.getDesktop(), Thinlet.TABLE, prev);
-				current != null;
-				current = ui.findNextItem(ui.getDesktop(), Thinlet.TABLE, prev)) {
-			printDetails(current);	
-		}
-	}
-
-	private void printDetails(Object t) {
-		System.out.println(">>>Found table: " + ui.getName(t) + " : (" + ui.getItems(t).length + " children)");
-	}
-
 	public Target getSelectedTargetInTable() {
 //		Object row = getSelectedTargetRow();
 		Object row = super.getSelectedRows()[0];

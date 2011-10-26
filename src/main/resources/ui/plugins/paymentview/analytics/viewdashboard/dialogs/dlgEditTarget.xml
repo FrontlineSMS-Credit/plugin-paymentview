@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <dialog name="dialog_view_edit_target" text="View/Edit Target" icon="/icons/hits.png" resizable="true" 
- closable="true" close="removeDialog(this)" width="800" height="550">
+ closable="true" close="removeDialog(this)" width="800" height="550" modal="true">
 	<panel weightx="1" weighty="1" top="5" right="5" left="5" gap="10">
 		<panel columns="1" gap="5" name="pnl_clients" weightx="1" weighty="1">
 			<label text="View/Edit Target" font="20 Bold" weightx="1"/>
