@@ -34,7 +34,7 @@ public class ViewEditTargetItemQtyHandler implements ThinletUiEventHandler {
 	
     boolean checkIfInt(String in) {
         try {
-            if(Integer.parseInt(in)==0){
+            if(Integer.parseInt(in)<0){
             	return false;
             }
         } catch (NumberFormatException ex) {
@@ -59,7 +59,7 @@ public class ViewEditTargetItemQtyHandler implements ThinletUiEventHandler {
                 	editTargetHandler.setSelectedTargetServiceItemsLst(lstTargetServiceItems);
                 	editTargetHandler.refreshSelectedTheTargetTable();
         			this.removeDialog();
-        			ui.infoMessage("You have succesfully  changed " + tsi.getServiceItem().getTargetName() + "'s qty.");
+        			ui.infoMessage("You have successfully  changed " + tsi.getServiceItem().getTargetName() + "'s qty.");
             	} 
             }
 		} else {
