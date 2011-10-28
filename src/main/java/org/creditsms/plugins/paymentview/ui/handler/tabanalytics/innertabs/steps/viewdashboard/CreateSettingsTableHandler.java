@@ -83,20 +83,27 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 	}
 	
 	public Target getSelectedTargetInTable() {
-//		Object row = getSelectedTargetRow();
-		Object row = super.getSelectedRows()[0];
-		Target target = ui.getAttachedObject(row, Target.class);
-		return target;
+		try {
+			Object row = super.getSelectedRows()[0];
+			Target target = ui.getAttachedObject(row, Target.class);
+			return target;
+		} catch (ArrayIndexOutOfBoundsException ai){
+			return null;
+		}
 	}
 	
 	public void viewEditTargetAnalytics() {
-    	Target tgt = getSelectedTargetInTable();
-    	if(tgt!=null){
-    		EditTargetHandler editTargetHandler = new EditTargetHandler(pluginController, tgt, this);
-			ui.add(editTargetHandler.getDialog());
-    	} else {
-    		ui.alert("No selected Target");
-    	}
+		if(null==getSelectedTargetInTable()){
+			ui.alert("No selected Target");
+		} else {
+	    	Target tgt = getSelectedTargetInTable();
+	    	if(tgt!=null){
+	    		EditTargetHandler editTargetHandler = new EditTargetHandler(pluginController, tgt, this);
+				ui.add(editTargetHandler.getDialog());
+	    	} else {
+	    		ui.alert("No selected Target");
+	    	}			
+		}
 	}
 	
 	@Override
@@ -212,9 +219,9 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 			return clients;
 		}else{
 			if (clientListForAnalytics.isEmpty()){
+				totalItemCount = this.clientDao.getAllActiveClientsSorted(getClientsSortField(), getClientsSortOrder()).size();
 				List<Client> activeClientsSorted = this.clientDao.getAllActiveClientsSorted
 										(startIndex, limit, getClientsSortField(), getClientsSortOrder());
-				totalItemCount = activeClientsSorted.size();
 				return activeClientsSorted;
 			} else {
 				totalItemCount = clientListForAnalytics.size();

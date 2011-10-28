@@ -7,6 +7,7 @@ import java.util.List;
 import net.frontlinesms.data.DuplicateKeyException;
 
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 
 /**
  * @author Roy
@@ -98,7 +99,16 @@ public interface OutgoingPaymentDao {
 	 * */
 	public List<OutgoingPayment> getByPhoneNumberAndAmountPaid(String phoneNo,
 			BigDecimal amountPaid, OutgoingPayment.Status status);
-
+	/**
+	 * returns OutgoingPayment(s) by amount paid and client inactive (Time paid desc)
+	 * */
+	public List<OutgoingPayment> getByAmountPaidForInactiveClient( BigDecimal amountPaid, OutgoingPayment.Status status);
+	
+	/**
+	 * returns OutgoingPayment(s) by payment service settings
+	 * */
+	public List<OutgoingPayment> getByPaymentServiceSettings( PaymentServiceSettings paymentServiceSettings);
+	
 	/**
 	 * saves an OutgoingPayment payment to the system
 	 * */

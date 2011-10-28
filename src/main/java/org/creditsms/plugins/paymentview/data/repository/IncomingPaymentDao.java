@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 
 /**
  * @author Roy
@@ -132,6 +133,11 @@ public interface IncomingPaymentDao {
 	 * @return
 	 */
 	public List<IncomingPayment> getIncomingPaymentsByDate(Date date);
+	
+	/**
+	 * returns IncomingPayment(s) by payment service settings
+	 * */
+	public List<IncomingPayment> getByPaymentServiceSettings( PaymentServiceSettings paymentServiceSettings);
 
 	/**
 	 * saves an IncomingPayment payment to the system

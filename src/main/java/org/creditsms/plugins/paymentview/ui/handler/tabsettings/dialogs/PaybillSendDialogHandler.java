@@ -11,6 +11,7 @@ import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
 
 public class PaybillSendDialogHandler extends BaseDialog {
 	private static final String AMOUNT_TO_TRANSFER = "amountToTransfer";
+	private static final String BUSINESS_NAME = "businessName";
 	private static final String BUSINESS_NO = "businessNo";
 	private static final String ACCOUNT_NO = "accountNo";
 	private static final String XML_CONFIGURE_ACCOUNT = "/ui/plugins/paymentview/settings/dialogs/dlgPayBillSend.xml";
@@ -18,6 +19,7 @@ public class PaybillSendDialogHandler extends BaseDialog {
 	private Object tfAmountToTransfer;
 	private Object tfAccountNo;
 	private Object tfBusinessNo;
+	private Object tfBusinessName;
 
 	public PaybillSendDialogHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, MpesaPaymentService paymentService) {
 		super(ui);
@@ -31,6 +33,7 @@ public class PaybillSendDialogHandler extends BaseDialog {
 		tfAmountToTransfer = ui.find(dialogComponent, AMOUNT_TO_TRANSFER);
 		tfAccountNo = ui.find(dialogComponent, ACCOUNT_NO);
 		tfBusinessNo = ui.find(dialogComponent, BUSINESS_NO);
+		tfBusinessName = ui.find(dialogComponent, BUSINESS_NAME);
 	}
 	
 	public void sendPayment() {
@@ -38,6 +41,7 @@ public class PaybillSendDialogHandler extends BaseDialog {
 	}
 	
 	public void sendPaymentToPaymentService() {
+		String businessName = ui.getText(tfBusinessName);
  		String businessNo = ui.getText(tfBusinessNo);
  		String accountNo = ui.getText(tfAccountNo);
  		BigDecimal amountToTransfer = BigDecimal.ZERO;
@@ -47,7 +51,7 @@ public class PaybillSendDialogHandler extends BaseDialog {
  			ui.alert("Please enter a valid amount");
  			return;
  		}
-		paymentService.sendAmountToPaybillAccount(businessNo, accountNo, amountToTransfer);
+		paymentService.sendAmountToPaybillAccount(businessName, businessNo, accountNo, amountToTransfer);
 		removeDialog();
 	}
 	

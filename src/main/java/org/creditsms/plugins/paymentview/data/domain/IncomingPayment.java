@@ -36,6 +36,7 @@ public class IncomingPayment {
 	private static final String FIELD_PAYMENT_ID = "paymentId";
 	private static final String FIELD_NOTES = "notes";
 	private static final String FIELD_IS_CHILD = "isChild";
+	private static final String FIELD_PAYMENT_SERVICE_SETTINGS = "paymentServiceSettings";
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -77,7 +78,8 @@ public class IncomingPayment {
 	@JoinColumn(name = FIELD_TARGET, nullable = true) //nullable if payment for generic account
 	private Target target;
 	
-	@OneToOne
+	@ManyToOne
+	@JoinColumn(name = FIELD_PAYMENT_SERVICE_SETTINGS)
 	private PaymentServiceSettings paymentServiceSettings;
 	
 	public enum Field implements EntityField<IncomingPayment> {
@@ -91,7 +93,8 @@ public class IncomingPayment {
 		ACTIVE(FIELD_ACTIVE),
 		PAYMENT_ID(FIELD_PAYMENT_ID),
 		NOTES(FIELD_NOTES),
-		ISCHILD(FIELD_IS_CHILD);
+		ISCHILD(FIELD_IS_CHILD),
+		PAYMENT_SERVICE_SETTINGS(FIELD_PAYMENT_SERVICE_SETTINGS);
 		
 		/** name of a field */
 		private final String fieldName;

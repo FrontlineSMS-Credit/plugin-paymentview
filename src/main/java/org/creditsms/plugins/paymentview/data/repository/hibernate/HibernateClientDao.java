@@ -51,6 +51,14 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements
 		return getAllActiveClients().size();
 	}
 
+	public List<Client> getAllActiveClientsSorted(
+			Field sortBy, Order order) {
+		DetachedCriteria criteria = super.getSortCriterion(sortBy, order);
+		criteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
+				Boolean.TRUE));
+		return super.getList(criteria);
+	}
+	
 	public List<Client> getAllActiveClientsSorted(int startIndex, int limit,
 			Field sortBy, Order order) {
 		DetachedCriteria criteria = super.getSortCriterion(sortBy, order);

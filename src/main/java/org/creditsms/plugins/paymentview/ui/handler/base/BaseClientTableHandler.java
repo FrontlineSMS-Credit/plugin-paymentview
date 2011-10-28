@@ -81,7 +81,11 @@ public abstract class BaseClientTableHandler implements PagedComponentItemProvid
 	}
 
 	protected PagedListDetails getClientListDetails(int startIndex, int limit) {
-		return new PagedListDetails(totalItemCount, toThinletComponents(getClients(clientFilter, startIndex, limit)));
+		List<Client> clients = new ArrayList<Client>();
+		clients = getClients(clientFilter, startIndex, limit);
+		Object[] listItems = toThinletComponents(clients);
+		return new PagedListDetails(totalItemCount, listItems);
+
 	}
 
 	protected List<Client> getClients(String clientFilter, int startIndex, int limit) {
@@ -90,9 +94,9 @@ public abstract class BaseClientTableHandler implements PagedComponentItemProvid
 			return this.clientDao.getClientsByFilter(clientFilter, startIndex, limit);
 		}else{
 			if (clientListForAnalytics.isEmpty()){
+				totalItemCount = this.clientDao.getAllActiveClients().size();
 				List<Client> activeClientsSorted = this.clientDao.getAllActiveClientsSorted
 										(startIndex, limit, getClientsSortField(), getClientsSortOrder());
-				totalItemCount = activeClientsSorted.size();
 				return activeClientsSorted;
 			} else {
 				totalItemCount = clientListForAnalytics.size();

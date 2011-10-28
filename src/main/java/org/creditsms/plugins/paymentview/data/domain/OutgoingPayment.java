@@ -36,6 +36,7 @@ public class OutgoingPayment {
 	public static final String FIELD_CONFIRMATION_CODE = "confirmationCode";
 	public static final String FIELD_NOTES = "notes";
 	public static final String FIELD_PAYMENT_ID = "paymentId";
+	public static final String FIELD_PAYMENT_SERVICE_SETTINGS = "paymentServiceSettings";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,6 +71,7 @@ public class OutgoingPayment {
 	private Long timeConfirmed;
 	
 	@ManyToOne
+	@JoinColumn(name = FIELD_PAYMENT_SERVICE_SETTINGS)
 	private PaymentServiceSettings paymentServiceSettings;
 
 	public enum Field implements EntityField<OutgoingPayment> {
@@ -79,7 +81,8 @@ public class OutgoingPayment {
 		TIME_PAID(FIELD_TIME_PAID),
 		TIME_CONFIRMED(FIELD_TIME_CONFIRMED),
 		NOTES(FIELD_NOTES),
-		PAYMENT_ID(FIELD_PAYMENT_ID);
+		PAYMENT_ID(FIELD_PAYMENT_ID),
+		PAYMENT_SERVICE_SETTINGS(FIELD_PAYMENT_SERVICE_SETTINGS);
 		
 		/** name of a field */
 		private final String fieldName;
@@ -156,6 +159,7 @@ public class OutgoingPayment {
 		this.status = status;
 		this.paymentId = paymentId;
 	}
+
 
 
 	public Account getAccount() {
@@ -250,14 +254,15 @@ public class OutgoingPayment {
 	public String toString() {
 		return "OutgoingPayment [id=" + id + ", amountPaid=" + amountPaid
 				+ ", status=" + status + ", confirmationCode="
-				+ confirmationCode + ", notes=" + notes + ", phoneNumber="
+				+ confirmationCode + ", notes=" + notes	+ ", phoneNumber=" 
 				+ client.getPhoneNumber() + ", timePaid=" + timePaid + ", account="
 				+ account + ", paymentId=" + paymentId + "]";
 	}
 	
 	public String toStringForLogs() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy 'at' hh:mm a");
-		return "Outgoing payment caracteristics:\nKsh " + this.amountPaid + " sent to " + this.client.getFullName() + " " + this.client.getPhoneNumber() 
+		return "Outgoing payment caracteristics:\nKsh " + this.amountPaid + " sent to " + 
+			 this.client.getFullName() + " " + this.client.getPhoneNumber() 
 		          + " on " + dateFormat.format(this.timePaid); 
 	}
 

@@ -46,16 +46,18 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	private static final Pattern MPESA_PAYMENT_FAILURE_PATTERN = Pattern
 			.compile(STR_MPESA_PAYMENT_FAILURE_PATTERN);
 
-	private static final String STR_PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = "[A-Z0-9]+ Confirmed. Ksh[,|.|\\d]+ sent to ([A-Za-z ]+) \\+254[\\d]{9} "
-			+ "on (([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) at ([1]?\\d:[0-5]\\d) ([A|P]M) "
-			+ "New M-PESA balance is Ksh([,|.|\\d]+)";
-
+	private static final String STR_PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = "[A-Z0-9]+ Confirmed. Ksh[,|.|\\d]+ "
+		+ "sent to ([A-Za-z ]+) (\\+254[\\d]{9}|[\\d|-])+ "
+		+ "on (([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) at ([1]?\\d:[0-5]\\d) ([A|P]M)(\\n| )"
+		+ "New M-PESA balance is Ksh([,|.|\\d]+)";
+	
 	private static final Pattern PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN = Pattern
 			.compile(STR_PERSONAL_OUTGOING_PAYMENT_REGEX_PATTERN);
 	private static final String STR_BALANCE_REGEX_PATTERN = "[A-Z0-9]+ Confirmed.\n"
 			+ "Your M-PESA balance was Ksh([,|.|\\d]+)\n"
 			+ "on (([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[0-2])) at (([1]?\\d:[0-5]\\d) ([A|P]M))";
 
+	
 	private static final Pattern BALANCE_REGEX_PATTERN = Pattern
 			.compile(STR_BALANCE_REGEX_PATTERN);
 	
@@ -195,9 +197,11 @@ public class MpesaPersonalService extends MpesaPaymentService {
 					processOutgoingPayment(message);
 				} else if (isFailedMpesaPayment(message)) {
 					logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.ERROR,"Payment Message: Failed message",message.getTextContent()));
+				} else if (isValidOutgoingPaymentConfirmation(message)) {
+					processOutgoingPayment(message);
 				} else {
 					super.processMessage(message);
-				}
+				} 
 			}
 		}
 	}
@@ -213,11 +217,22 @@ public class MpesaPersonalService extends MpesaPaymentService {
 				try {
 					// Retrieve the corresponding outgoing payment with status
 					// UNCONFIRMED
-					List<OutgoingPayment> outgoingPayments = outgoingPaymentDao
+					List<OutgoingPayment> outgoingPayments;
+					if (getPhoneNumber(message).equals("")){
+						//Paybill
+						 outgoingPayments = outgoingPaymentDao
+							.getByAmountPaidForInactiveClient(
+									new BigDecimal(getAmount(message).toString()),
+									OutgoingPayment.Status.UNCONFIRMED);
+						 
+					} else {
+						 outgoingPayments = outgoingPaymentDao
 							.getByPhoneNumberAndAmountPaid(
 									getPhoneNumber(message), new BigDecimal(
 											getAmount(message).toString()),
 									OutgoingPayment.Status.UNCONFIRMED);
+					}
+					
 
 					if (!outgoingPayments.isEmpty()) {
 						final OutgoingPayment outgoingPayment = outgoingPayments
@@ -274,17 +289,18 @@ public class MpesaPersonalService extends MpesaPaymentService {
 		// c == p - a - f
 		// It might be wise that
 		BigDecimal amountPaid = outgoingPayment.getAmountPaid();
-		BigDecimal transactionFees;
-		BigDecimal currentBalance = getBalance(message);
-		if (amountPaid.compareTo(new BigDecimal(100)) <= 0) {
-			transactionFees = new BigDecimal(10);
-		} else if (amountPaid.compareTo(new BigDecimal(35000)) <= 0) {
-			transactionFees = new BigDecimal(30);
-		} else {
-			transactionFees = new BigDecimal(60);
-		}
-		BigDecimal expectedBalance = (tempBalanceAmount
-				.subtract(outgoingPayment.getAmountPaid().add(transactionFees)));
+		BigDecimal transactionFees = new BigDecimal(0);
+		BigDecimal currentBalance = getBalance(message).setScale(2, BigDecimal.ROUND_HALF_DOWN);
+			if (amountPaid.compareTo(new BigDecimal(100)) <= 0) {
+				transactionFees = new BigDecimal(10);
+			} else if (amountPaid.compareTo(new BigDecimal(35000)) <= 0) {
+				transactionFees = new BigDecimal(30);
+			} else {
+				transactionFees = new BigDecimal(60);
+			}
+
+			BigDecimal expectedBalance = (tempBalanceAmount
+				.subtract(outgoingPayment.getAmountPaid().add(transactionFees))).setScale(2, BigDecimal.ROUND_HALF_DOWN);
 
 		informUserOfFraudIfCommitted(expectedBalance, currentBalance,
 				message.getTextContent());

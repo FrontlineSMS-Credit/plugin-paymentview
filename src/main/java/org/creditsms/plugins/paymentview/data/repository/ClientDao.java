@@ -25,6 +25,8 @@ public interface ClientDao {
 	 * **/
 	public List<Client> getAllActiveClientsSorted(int startIndex, int limit, Field sortBy, Order order);
 	
+	
+	public List<Client> getAllActiveClientsSorted(Field sortBy, Order order);
 	/**
 	 * Returns all clients from a particular start index with a maximum number
 	 * of returned clients set.
