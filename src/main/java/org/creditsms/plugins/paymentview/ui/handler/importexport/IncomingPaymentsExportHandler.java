@@ -17,6 +17,7 @@ import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 
 public class IncomingPaymentsExportHandler extends ExportDialogHandler<IncomingPayment> {
 
+	private static final String COMPONENT_CB_CONFIRMATION_CODE = "cbConfirmationCode";
 	private static final String COMPONENT_CB_NAME = "cbPaymentBy";
 	private static final String COMPONENT_CB_AMOUNT_PAID = "cbAmountPaid";
 	/** i18n Text Key: "Active" */
@@ -95,7 +96,9 @@ public class IncomingPaymentsExportHandler extends ExportDialogHandler<IncomingP
 
 	protected CsvRowFormat getRowFormatForIncomingPayment() {
 		CsvRowFormat rowFormat = new CsvRowFormat();
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_PAYMENT_BY,
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_INCOMING_CONFIRMATION_CODE,
+				COMPONENT_CB_CONFIRMATION_CODE);
+		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_NAME,
 				COMPONENT_CB_NAME);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_PHONE_NUMBER,
 				COMPONENT_CB_PHONE_NUMBER);

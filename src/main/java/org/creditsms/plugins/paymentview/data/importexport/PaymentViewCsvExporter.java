@@ -5,7 +5,7 @@ import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COM
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_FIRST_NAME;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_NOTES;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_OTHER_NAME;
-import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_PAYMENT_BY;
+import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_NAME;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_PAYMENT_ID;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_PHONE;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_STATUS;
@@ -58,7 +58,8 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 			List<CustomField> usedCustomFields = customFieldDao
 					.getAllActiveUsedCustomFields();
 			List<String> items = new ArrayList<String>(usedCustomFields.size());
-
+			
+			items.add(PaymentViewCsvUtils.MARKER_INCOMING_CONFIRMATION_CODE);
 			items.add(PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME);
 			items.add(InternationalisationUtils
 					.getI18nString(COMMON_FIRST_NAME));
@@ -133,8 +134,10 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 			out = new Utf8FileWriter(exportFile);
 			CsvUtils
 					.writeLine(out, incomingPaymentFormat,
-							PaymentViewCsvUtils.MARKER_PAYMENT_BY,
-							InternationalisationUtils.getI18nString(COMMON_PAYMENT_BY),
+							PaymentViewCsvUtils.MARKER_INCOMING_CONFIRMATION_CODE,
+							InternationalisationUtils.getI18nString(COMMON_CONFIRMATION_CODE),
+							PaymentViewCsvUtils.MARKER_NAME,
+							InternationalisationUtils.getI18nString(COMMON_NAME),
 							PaymentViewCsvUtils.MARKER_PHONE_NUMBER,
 							InternationalisationUtils
 									.getI18nString(COMMON_PHONE),
@@ -152,7 +155,9 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 									.getI18nString(COMMON_NOTES));
 			for (IncomingPayment incomingPayment : incomingPayments) {
 				CsvUtils.writeLine(out, incomingPaymentFormat,
-						PaymentViewCsvUtils.MARKER_PAYMENT_BY,
+						PaymentViewCsvUtils.MARKER_INCOMING_CONFIRMATION_CODE,
+						incomingPayment.getConfirmationCode(),
+						PaymentViewCsvUtils.MARKER_NAME,
 						incomingPayment.getPaymentBy(),
 						PaymentViewCsvUtils.MARKER_PHONE_NUMBER,
 						PvUtils.formatPhoneForExcel(incomingPayment.getPhoneNumber()),
