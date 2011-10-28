@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel  bottom="5" columns="1" gap="5" left="5" right="5" top="5" weightx="1" weighty="1">
+	<panel weightx="1">
+		<label font="11 Bold" text="The import file extension has to be of type CSV (*.csv)"/>
+	</panel>
+	<panel name="pnInfo" columns="3" gap="5" weightx="1" weighty="1">
+		<checkbox action="columnCheckboxChanged" icon="/icons/user.png"	name="cbName" selected="true" text="i18n.plugins.paymentview.common.name" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/description.png"	name="cbProducts" selected="true" text="i18n.plugins.paymentview.common.products" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/date.png"	name="cbStartDate" selected="true" text="i18n.plugins.paymentview.common.startdate" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/date.png"	name="cbEndDate" selected="true" text="i18n.plugins.paymentview.common.enddate" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/money.png" name="cbSavingsTarget" selected="true" text="i18n.plugins.paymentview.common.targetsavings" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/money.png" name="cbAmountSaved" selected="true" text="i18n.plugins.paymentview.common.amountpaid" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/description.png" name="cbPercentageSaved" selected="true" text="i18n.plugins.paymentview.common.percentagesaved" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/date.png" name="cbLastPaymentDate" selected="true" text="i18n.plugins.paymentview.common.lastpaymentdate" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/money.png" name="cbLastPayment" selected="true" text="i18n.plugins.paymentview.common.lastpayment" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/money.png" name="cbPaidThisMonth" selected="true" text="i18n.plugins.paymentview.common.paidthismonth" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/money.png" name="cbAmountDue" selected="true" text="i18n.plugins.paymentview.common.amountdue" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/date.png" name="cbCurrentDueDate" selected="true" text="i18n.plugins.paymentview.common.currentduedate" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/description.png" name="cbDaysRemaining" selected="true" text="i18n.plugins.paymentview.common.daysremaining" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/description.png" name="cbStatus" selected="true" text="i18n.plugins.paymentview.common.status" />
+	</panel>
+</panel>

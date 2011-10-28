@@ -22,17 +22,32 @@ public class PaymentViewCsvUtils extends CsvUtils {
 	public static final String MARKER_NOTES = "${notes}";
 	public static final String MARKER_NAME = "${payment_by}";
 	public static final String MARKER_CLIENT_NAME = "${client_name}";
-
 	public static final String CLIENT_NAME = "${client_name}";
 	public static final String AMOUNT_PAID = "${amount_paid}";
-	public static final String AMOUNT_REMAINING = "${amount_remaining}";
 	public static final String DATE_PAID = "${date_paid}";
+	public static final String AMOUNT_REMAINING = "${amount_remaining}";
 	public static final String DAYS_REMAINING = "${days_remaining}";
-	public static final String MONTHLY_DUE = "${current_amount_due}";
-	public static final String END_MONTH_INTERVAL = "${current_due_date}";
 	public static final String MONTHLY_SAVINGS = "${amount_paid_this_month}";
+	public static final String MONTHLY_DUE = "${monthly_amount_due}";
+	public static final String END_MONTH_INTERVAL = "${current_due_date}";
+
+	public static final String TARGET_CLIENT_NAME = "${client_name}";
+	public static final String TARGET_AMOUNT = "${tgt_amount}";
+	public static final String TARGET_AMOUNT_PAID = "${amount_paid}";
+	public static final String TARGET_LAST_AMOUNT_PAID = "${last_amount_paid}";
+	public static final String TARGET_AMOUNT_REMAINING = "${amount_remaining}";
+	public static final String TARGET_DATE_PAID = "${date_paid}";
+	public static final String TARGET_DAYS_REMAINING = "${days_remaining}";
+	public static final String TARGET_MONTHLY_DUE = "${monthly_amount_due}";
+	public static final String TARGET_END_MONTH_INTERVAL = "${current_due_date}";
+	public static final String TARGET_PERCENTAGE = "${percentage_paid}";
+	public static final String TARGET_MONTHLY_SAVINGS = "${amount_paid_this_month}";
 	public static final String RECEPIENT_NAME = "${recipient_name}";
+	public static final String TARGET_STARTDATE = "${target_startdate}";
 	public static final String TARGET_ENDDATE = "${target_enddate}";
-	
+	public static final String TARGET_STATUS = "${target_status}";
+	public static final String TARGET_CURRENT_AMOUNT_DUE = "${target_amountdue}";
+	public static final String TARGET_CURRENT_DUE_DATE = "${target_duedate}";	
+	public static final String TARGET_PRODUCTS = "${target_products}";
 	
 }
