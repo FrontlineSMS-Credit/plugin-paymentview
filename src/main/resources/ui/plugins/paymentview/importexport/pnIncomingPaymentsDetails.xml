@@ -4,6 +4,8 @@
 		<label font="11 Bold" text="The import file extension has to be of type CSV (*.csv)"/>
 	</panel>
 	<panel name="pnInfo" columns="3" gap="5" weightx="1" weighty="1">
+		<checkbox action="columnCheckboxChanged" icon="/icons/description.png" name="cbConfirmationCode" selected="true" 
+			text="i18n.plugins.paymentview.common.confirmationCode" />
 		<checkbox action="columnCheckboxChanged" icon="/icons/user.png"	name="cbPaymentBy" selected="true" text="i18n.plugins.paymentview.common.name" />
 		<checkbox action="columnCheckboxChanged" icon="/icons/user.png" name="cbPhoneNumber" selected="true" text="i18n.common.phone.number" />
 		<checkbox action="columnCheckboxChanged" icon="/icons/money.png" name="cbAmountPaid" selected="true" text="i18n.plugins.paymentview.common.amountpaid" />

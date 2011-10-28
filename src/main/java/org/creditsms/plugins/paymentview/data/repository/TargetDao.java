@@ -21,6 +21,11 @@ public interface TargetDao {
 	public List<Target> getAllTargets();
 
 	/**
+	 * return all the Target in the system
+	 * **/
+	public List<Target> getAllActiveTargets();
+	
+	/**
 	 * Returns all Target from a particular start index with a maximum number of
 	 * returned Target set.
 	 * 

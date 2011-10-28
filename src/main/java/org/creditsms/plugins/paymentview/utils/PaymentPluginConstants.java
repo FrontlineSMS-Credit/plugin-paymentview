@@ -3,7 +3,7 @@ package org.creditsms.plugins.paymentview.utils;
 
 public final class PaymentPluginConstants {
 	public static final String ACCOUNTS_DELIMITER = ",";
-	public static final String COMMON_PAYMENT_BY = "plugins.paymentview.common.paymentby";
+	public static final String COMMON_NAME = "plugins.paymentview.common.name";
 	public static final String COMMON_ACCOUNT = "plugins.paymentview.common.account";
 	public static final String COMMON_ACCOUNTS = "plugins.paymentview.common.accounts";
 	public static final String COMMON_AMOUNT_PAID = "plugins.paymentview.common.amountpaid";
@@ -16,4 +16,5 @@ public final class PaymentPluginConstants {
 	public static final String COMMON_TIME_PAID = "plugins.paymentview.common.timepaid";
 	public static final String COMMON_STATUS = "plugins.paymentview.common.status";
 	public static final String AUTO_REPLY_CONFIRMATION = "plugins.paymentview.auto.reply.confirmation";
+	public static final String ANALYTICS_ALERT = "plugins.paymentview.analytics.alert";
 }

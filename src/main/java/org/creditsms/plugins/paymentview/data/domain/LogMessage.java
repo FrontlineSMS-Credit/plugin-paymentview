@@ -37,7 +37,7 @@ public class LogMessage {
 	private long id;
 
 	@Column(name = FIELD_LOG_TIMESTAMP)
-	private Long logTimestamp; // TODO rename as 'timestamp' - we know it is related to the log
+	private Long timestamp; // TODO rename as 'timestamp' - we know it is related to the log
 
 	@Column(name = FIELD_LOG_LEVEL)
 	private LogLevel logLevel; // TODO rename as 'level' - we know it is related to the log
@@ -71,14 +71,14 @@ public class LogMessage {
 	}
 
 	public LogMessage(LogLevel logLevel, String logTitle, String logContent) {
-		this.logTimestamp = Calendar.getInstance().getTimeInMillis();
+		this.timestamp = Calendar.getInstance().getTimeInMillis();
 		this.logLevel = logLevel;
 		this.logTitle = logTitle;
 		this.logContent = logContent;
 	}
 	
 	public LogMessage(Long logTimestamp, LogLevel logLevel, String logTitle, String logContent) {
-		this.logTimestamp = logTimestamp;
+		this.timestamp = logTimestamp;
 		this.logLevel = logLevel;
 		this.logTitle = logTitle;
 		this.logContent = logContent;
@@ -118,11 +118,11 @@ public class LogMessage {
 	}
 
 	public Long getTimestamp() {
-		return logTimestamp;
+		return timestamp;
 	}
 
 	public void setTimestamp(Long timestamp) {
-		this.logTimestamp = timestamp;
+		this.timestamp = timestamp;
 	}
 	
 	public LogLevel getLogLevel() { // TODO rename as 'getLevel' - we know it is related to the log
@@ -158,7 +158,7 @@ public class LogMessage {
 		if (getClass() != obj.getClass())
 			return false;
 		LogMessage other = (LogMessage) obj;
-		if (logTimestamp != other.logTimestamp) {
+		if (timestamp != other.timestamp) {
 			return false;
 		}
 		if (!logTitle.equals(other.logTitle)) {
@@ -177,7 +177,7 @@ public class LogMessage {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((logTimestamp == null) ? 0 : logTimestamp.hashCode());
+				+ ((timestamp == null) ? 0 : timestamp.hashCode());
 		return result;
 	}
 
@@ -185,7 +185,7 @@ public class LogMessage {
 
 	@Override
 	public String toString() {
-		return "Log [id=" + id + ", timestamp =" + logTimestamp + ", logTitle ="
+		return "Log [id=" + id + ", timestamp =" + timestamp + ", logTitle ="
 				+ logTitle + ", logContent =" + logContent;
 	}
 

@@ -10,7 +10,7 @@ import net.frontlinesms.data.domain.FrontlineMessage;
 
 public class BalanceDispatcher {
 	private Queue<MpesaPaymentService> queue = new LinkedList<MpesaPaymentService>();
-	private List<FrontlineMessage> ignoredBalanceMessageList = new ArrayList<FrontlineMessage>();;
+	private List<FrontlineMessage> ignoredBalanceMessageList = new ArrayList<FrontlineMessage>();
 	
 	private static BalanceDispatcher INSTANCE = new BalanceDispatcher();
 	public static BalanceDispatcher getInstance() {return INSTANCE;}

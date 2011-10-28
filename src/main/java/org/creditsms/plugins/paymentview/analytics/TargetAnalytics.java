@@ -52,6 +52,13 @@ public class TargetAnalytics {
 		return calculatePercentageToGo(totalTargetCost, calculateAmount(incomingPayments));
 	}
 	
+	public BigDecimal getPreviousPercentageToGo(long tartgetId){
+	    BigDecimal totalTargetCost = targetDao.getTargetById(tartgetId).getTotalTargetCost();
+	    List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(tartgetId);
+	    BigDecimal lastAmountPaid  = getLastAmountPaid(tartgetId);
+		return calculatePercentageToGo(totalTargetCost, calculateAmount(incomingPayments).subtract(lastAmountPaid));
+	}
+	
 	BigDecimal calculateAmount(List<IncomingPayment> payments) {
 		BigDecimal amountPaid = BigDecimal.ZERO;
 		for(IncomingPayment payment : payments) {
@@ -131,19 +138,17 @@ public class TargetAnalytics {
 	
 	private Long getDateDiffDays(long startTime, long endTime){
 	    long diff = endTime - startTime;
+	    if (diff < 0){
+	    	return (long) 0;
+	    }
 		long targetDays = diff / (1000 * 60 * 60 * 24);
-		
 		return targetDays +1;
 	}
 	
 	public Long getDaysRemaining(long tartgetId){
 		long endTime = targetDao.getTargetById(tartgetId).getEndDate().getTime();
 		
-	    if(getDateDiffDays(new Date().getTime(), endTime)<0){
-	    	return (long) 0;
-		} else {
-			return getDateDiffDays(new Date().getTime(), endTime);
-		}
+		return getDateDiffDays(new Date().getTime(), endTime);
 	}
 	
 	public Date getLastDatePaid(long tartgetId){

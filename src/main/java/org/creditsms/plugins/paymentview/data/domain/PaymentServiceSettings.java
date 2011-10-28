@@ -8,28 +8,63 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
+import net.frontlinesms.data.EntityField;
 import net.frontlinesms.messaging.sms.internet.SmsInternetService;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.safaricom.AbstractPaymentService;
+
+import org.hibernate.annotations.IndexColumn;
 
 /**
  * Class encapsulating settings of a {@link PaymentService}.
  * @author Kim
  */
 @Entity
+@Table(name = PaymentServiceSettings.TABLE_NAME)
 public class PaymentServiceSettings {
-//> INSTANCE PROPERTIES
-	/** Unique id for this entity.  This is for hibernate usage. */
-	@SuppressWarnings("unused")
-	@Id @GeneratedValue(strategy=GenerationType.IDENTITY) @Column(unique=true,nullable=false,updatable=false)
+	public static final String TABLE_NAME = "PaymentServiceSettings";
+
+	private static final String FIELD_ID = "id";
+	private static final String FIELD_SERVICE_CLASS = "serviceClassName";
+	private static final String FIELD_PS_PIN = "psPin";
+	private static final String FIELD_PS_SMS_MODEM_SERIAL = "psSmsModemSerial";
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@IndexColumn(name = FIELD_ID)
+	@Column(name = FIELD_ID, nullable = false, unique = true)
 	private long id;
-	/** The name of the class of the {@link PaymentService} these settings apply to. */
+
+	
+	@Column(name = FIELD_SERVICE_CLASS)
 	private String serviceClassName;
-	/** The properties for a {@link PaymentService} */
+
+	@Column(name = FIELD_PS_PIN)
 	private String psPin;
+
+	@Column(name = FIELD_PS_SMS_MODEM_SERIAL)
 	private String psSmsModemSerial;
-//	protected Logger pvLog = Logger.getLogger(this.getClass());
+	
+	public enum Field implements EntityField<Client> {
+		ID(FIELD_ID),
+		SERVICE_CLASS(FIELD_SERVICE_CLASS),
+		PS_PIN(FIELD_PS_PIN),
+		PS_SMS_MODEM_SERIAL(FIELD_PS_SMS_MODEM_SERIAL);
+		
+		/** name of a field */
+		private final String fieldName;
+		/**
+		 * Creates a new {@link Field}
+		 * @param fieldName name of the field
+		 */
+		Field(String fieldName) { this.fieldName = fieldName; }
+		/** @see EntityField#getFieldName() */
+		public String getFieldName() { return this.fieldName; }
+	}
+
+	
 	
 //> CONSTRUCTORS
 	/** Empty constructor for hibernate */

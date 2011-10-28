@@ -10,6 +10,7 @@ import net.frontlinesms.data.Order;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
@@ -31,7 +32,7 @@ public class HibernateOutgoingPaymentDao extends
 	
 	public List<OutgoingPayment> getAllOutgoingPayments(int startIndex,
 			int limit) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		return super.getList(criteria, startIndex, limit);
 	}
 	
@@ -79,7 +80,7 @@ public class HibernateOutgoingPaymentDao extends
 	}
 	
 	public List<OutgoingPayment> getOutgoingPaymentsByDateRange(Date startDate,	Date endDate,int startIndex,int limit) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.between("timePaid", startDate.getTime(), endDate.getTime()));
 //		DetachedCriteria clientCriteria = criteria.createCriteria("client");
 //		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
@@ -87,7 +88,7 @@ public class HibernateOutgoingPaymentDao extends
 	}
 	
 	public List<OutgoingPayment> getOutgoingPaymentsByDateRange(Date startDate,	Date endDate) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.between("timePaid", startDate.getTime(), endDate.getTime()));
 //		DetachedCriteria clientCriteria = criteria.createCriteria("client");
 //		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
@@ -95,7 +96,7 @@ public class HibernateOutgoingPaymentDao extends
 	}
 	
 	public List<OutgoingPayment> getOutgoingPaymentsByStartDate(Date startDate, int startingIndex, int limit) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.ge("timePaid", startDate.getTime()));
 //		DetachedCriteria clientCriteria = criteria.createCriteria("client");
 //		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
@@ -103,7 +104,7 @@ public class HibernateOutgoingPaymentDao extends
 	}
 	
 	public List<OutgoingPayment> getOutgoingPaymentsByStartDate(Date startDate) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.ge("timePaid", startDate.getTime()));
 //		DetachedCriteria clientCriteria = criteria.createCriteria("client");
 //		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
@@ -111,7 +112,7 @@ public class HibernateOutgoingPaymentDao extends
 	}
 	
 	public List<OutgoingPayment> getOutgoingPaymentsByEndDate(Date endDate, int startingIndex, int limit) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.le("timePaid", endDate.getTime()));
 //		DetachedCriteria clientCriteria = criteria.createCriteria("client");
 //		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
@@ -119,7 +120,7 @@ public class HibernateOutgoingPaymentDao extends
 	}
 	
 	public List<OutgoingPayment> getOutgoingPaymentsByEndDate(Date endDate) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.le("timePaid", endDate.getTime()));
 //		DetachedCriteria clientCriteria = criteria.createCriteria("client");
 //		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
@@ -127,7 +128,7 @@ public class HibernateOutgoingPaymentDao extends
 	}
 
 	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(String phoneNo) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		DetachedCriteria clientCriteria = criteria.createCriteria("client");
 		clientCriteria.add(Restrictions.eq("phoneNumber", phoneNo));
 //		clientCriteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
@@ -169,4 +170,11 @@ public class HibernateOutgoingPaymentDao extends
 		super.update(outgoingPayment);
 
 	}	
+	
+	public List<OutgoingPayment> getByPaymentServiceSettings( PaymentServiceSettings paymentServiceSettings){
+		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria paymentServiceSettingsCriteria = criteria.createCriteria("paymentServiceSettings");
+		paymentServiceSettingsCriteria.add(Restrictions.eq("id", paymentServiceSettings.getId()));
+		return super.getList(criteria);
+	}
 }

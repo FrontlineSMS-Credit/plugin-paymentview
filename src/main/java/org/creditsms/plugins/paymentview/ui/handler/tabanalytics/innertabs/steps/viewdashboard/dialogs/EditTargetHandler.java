@@ -3,6 +3,7 @@ package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.step
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -59,6 +60,7 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 	private ServiceItemDao serviceItemDao;
 	private IncomingPaymentDao incomingPaymentDao;
 	private List<TargetServiceItem> selectedTargetServiceItemsLst;
+	private List<TargetServiceItem> deletedTargetServiceItemsLst;
 	private BigDecimal totalAmountPaid = BigDecimal.ZERO;
 	private BigDecimal totalAmount = BigDecimal.ZERO;
 	private ServiceItem selectedServiceItem;
@@ -70,6 +72,7 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 
 	private final CreateSettingsTableHandler createsettingstblhndler;
 	private PaymentViewPluginController pluginController;
+	
 	public EditTargetHandler(PaymentViewPluginController pluginController, Target tgt, CreateSettingsTableHandler createsettingstblhndler) {
 		this.ui = pluginController.getUiGeneratorController();
 		this.tgt = tgt;
@@ -107,8 +110,8 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 		ui.setText(txtEndDate,  dateFormat.format(this.tgt.getEndDate()));
 		ui.setText(lblTotalTargetCost,  this.tgt.getTotalTargetCost().toString());
 		addChoices();
-		List<TargetServiceItem> tsiLst = getTargetServiceItemDao().getAllTargetServiceItemByTarget(this.tgt.getId());
-		for (TargetServiceItem tsi: tsiLst) {
+		this.selectedTargetServiceItemsLst = getTargetServiceItemDao().getAllTargetServiceItemByTarget(this.tgt.getId());
+		for (TargetServiceItem tsi: selectedTargetServiceItemsLst) {
 			ui.add(this.tblServiceItemsComponent, getRow(tsi));
 		}
 		List<IncomingPayment> ipLst = getIncomingPaymentDao().getActiveIncomingPaymentsByTarget(this.tgt.getId());
@@ -118,7 +121,7 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 		}
  		ui.setText(lblTotalTargetAmountPaid, this.totalAmountPaid.toString());
  		
-		setSelectedTargetServiceItemsLst(tsiLst);
+ 		this.deletedTargetServiceItemsLst = new ArrayList<TargetServiceItem>();
 	}
 
 	private void addChoices() {
@@ -188,7 +191,10 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 	public Target getTgt() {
 		return tgt;
 	}
-	
+	/* 
+	 * This function will just update the selectedTargetServiceItemList.
+	 * The update in the DB will be done while clicking on Update Target
+	 */
     public void editQty(){
     	TargetServiceItem tgtServiceItem = getSelectedTgtServiceItemInTable();
     	if(tgtServiceItem!=null){
@@ -198,6 +204,16 @@ public class EditTargetHandler implements ThinletUiEventHandler {
     		ui.alert("No selected Service Items");
     	}
     }
+    
+    public void deleteServiceItem(){
+    	TargetServiceItem tgtServiceItem = getSelectedTgtServiceItemInTable();
+    	if(tgtServiceItem!=null){
+    		selectedTargetServiceItemsLst.remove(tgtServiceItem);
+    		deletedTargetServiceItemsLst.add(tgtServiceItem);
+    	}
+    	refreshSelectedTheTargetTable();
+    }
+    
 	public void refreshSelectedTheTargetTable(){
 		List<TargetServiceItem> lstServiceItem = getSelectedTargetServiceItemsLst();
 		ui.removeAll(tblServiceItemsComponent);
@@ -227,24 +243,36 @@ public class EditTargetHandler implements ThinletUiEventHandler {
     public void updateTargetAnyway() throws DuplicateKeyException{ 
     	ui.remove(dialogConfimUpdateTarget);
 		List<TargetServiceItem> lstServiceItem = getSelectedTargetServiceItemsLst();
+		
 		totalAmount = BigDecimal.ZERO;
 		for(TargetServiceItem tsi: lstServiceItem){
 			totalAmount = totalAmount.add(tsi.getAmount().multiply(new BigDecimal(tsi.getServiceItemQty())));
 		}
-		removeDialog();
-		Target tgt = getTgt();
-		tgt.setEndDate(getEndDate());
-		tgt.setTotalTargetCost(totalAmount);
-		targetDao.updateTarget(tgt);
-		for(TargetServiceItem tsi: lstServiceItem){
-			if (tsi.getTarget()!=null) {
-				targetServiceItemDao.updateTargetServiceItem(tsi);
-			} else {
-				tsi.setTarget(tgt);
-				targetServiceItemDao.saveTargetServiceItem(tsi);
+		
+		if (totalAmount.compareTo(new BigDecimal(0))==1) {
+			removeDialog();
+			Target tgt = getTgt();
+			tgt.setEndDate(getEndDate());
+			tgt.setTotalTargetCost(totalAmount);
+			targetDao.updateTarget(tgt); 
+			
+			for (TargetServiceItem deletedTsi : deletedTargetServiceItemsLst){
+				if (deletedTsi.getTarget()!=null) {
+					targetServiceItemDao.deleteTargetServiceItem(deletedTsi);
+				} 
 			}
+			for(TargetServiceItem tsi: lstServiceItem){
+				if (tsi.getTarget()!=null) {
+					targetServiceItemDao.updateTargetServiceItem(tsi);
+				} else {
+					tsi.setTarget(tgt);
+					targetServiceItemDao.saveTargetServiceItem(tsi);
+				}
+			}
+			createsettingstblhndler.refreshSettingsHandler();
+		} else {
+			ui.alert("Please set up at least one target service item.");
 		}
-		createsettingstblhndler.refreshSettingsHandler();
     }
     
     public void updateTarget() {

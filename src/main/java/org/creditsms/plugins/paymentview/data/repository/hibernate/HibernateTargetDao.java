@@ -41,6 +41,13 @@ public class HibernateTargetDao extends BaseHibernateDao<Target> implements
 		accountCriteria.add(Restrictions.eq("accountNumber", string));
 		return super.getList(criteria);
 	}
+	//getAllActiveTargets
+	
+	public List<Target> getAllActiveTargets() {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.isNull("completedDate"));
+		return super.getList(criteria);
+	}
 	
 	public Target getActiveTargetByAccount(String string) {
 		DetachedCriteria criteria = super.getCriterion();

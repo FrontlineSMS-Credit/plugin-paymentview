@@ -4,12 +4,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import net.frontlinesms.data.Order;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 public class HibernateIncomingPaymentDao extends
@@ -28,23 +29,22 @@ public class HibernateIncomingPaymentDao extends
 	}
 	
 	public List<IncomingPayment> getActiveIncomingPayments() {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.eq("active", true));
 		return super.getList(criteria);
 	}
 	
 	public List<IncomingPayment> getActiveIncomingPayments(int startingIndex, int limit) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.eq("active", true));
 		return super.getList(criteria, startingIndex, limit);
 	}
 
 	public List<IncomingPayment> getActiveIncomingPaymentByClientId(long clientId) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.eq("active", true));
 		DetachedCriteria accountCriteria = criteria.createCriteria(IncomingPayment.Field.ACCOUNT.getFieldName());
-		DetachedCriteria clientCriteria = accountCriteria
-				.createCriteria("client");
+		DetachedCriteria clientCriteria = accountCriteria.createCriteria("client");
 		clientCriteria.add(Restrictions.eq("id", clientId));
 		return super.getList(criteria);
 	}
@@ -63,7 +63,7 @@ public class HibernateIncomingPaymentDao extends
 	}
 
 	public List<IncomingPayment> getActiveIncomingPaymentsByTarget(long targetId) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
 		DetachedCriteria accountCriteria = criteria.createCriteria("target");
 		criteria.add(Restrictions.eq("active", true));
 		accountCriteria.add(Restrictions.eq("id", targetId));
@@ -73,12 +73,11 @@ public class HibernateIncomingPaymentDao extends
 	public List<IncomingPayment> getActiveIncomingPaymentsByTargetAndDates(long targetId, Date startDate,
 			Date endDate) {
 		
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
 		DetachedCriteria accountCriteria = criteria.createCriteria("target");
 		criteria.add(Restrictions.eq("active", true));
 		criteria.add(Restrictions.between("timePaid", startDate.getTime(), endDate.getTime()));
 		accountCriteria.add(Restrictions.eq("id", targetId));
-		
 		return super.getList(criteria);
 	}
 	
@@ -93,12 +92,10 @@ public class HibernateIncomingPaymentDao extends
 
 	public List<IncomingPayment> getActiveIncomingPaymentsByAccountNumberOrderByTimepaid(
 			String accountNumber) {
-		
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.eq("active", true));
 		DetachedCriteria accountCriteria = criteria.createCriteria("account");
 		accountCriteria.add(Restrictions.eq("accountNumber", accountNumber));
-		criteria.addOrder(Order.desc("timePaid"));
 		return super.getList(criteria);    
 	}
 	
@@ -148,51 +145,45 @@ public class HibernateIncomingPaymentDao extends
 
 	public List<IncomingPayment> getIncomingPaymentsByDateRange(Date startDate,
 			Date endDate, int startingIndex, int limit) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.eq("active", true));
 		criteria.add(Restrictions.between("timePaid", startDate.getTime(), endDate.getTime()));
-
 		return super.getList(criteria, startingIndex, limit);
 	}
 	
 	public List<IncomingPayment> getIncomingPaymentsByDateRange(Date startDate,
 			Date endDate) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.eq("active", true));
 		criteria.add(Restrictions.between("timePaid", startDate.getTime(), endDate.getTime()));
-
 		return super.getList(criteria);
 	}
 	
 	public List<IncomingPayment> getIncomingPaymentsByStartDate(Date startDate, int startingIndex, int limit) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.eq("active", true));
 		criteria.add(Restrictions.ge("timePaid", startDate.getTime()));
-
 		return super.getList(criteria, startingIndex, limit);
 	}
 	
 	public List<IncomingPayment> getIncomingPaymentsByStartDate(Date startDate) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.eq("active", true));
 		criteria.add(Restrictions.ge("timePaid", startDate.getTime()));
-
 		return super.getList(criteria);
 	}
 	
 	public List<IncomingPayment> getIncomingPaymentsByEndDate(Date endDate, int startingIndex, int limit) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.eq("active", true));
 		criteria.add(Restrictions.le("timePaid", endDate.getTime()));
-
 		return super.getList(criteria, startingIndex, limit);
 	}
 	
 	public List<IncomingPayment> getIncomingPaymentsByEndDate(Date endDate) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.eq("active", true));
 		criteria.add(Restrictions.le("timePaid", endDate.getTime()));
-
 		return super.getList(criteria);
 	}
 	
@@ -206,5 +197,12 @@ public class HibernateIncomingPaymentDao extends
 		criteria.add(Restrictions
 			.eq(IncomingPayment.Field.CONFIRMATION_CODE.getFieldName(), confirmationCode));
 		return super.getUnique(criteria);
+	}
+	
+	public List<IncomingPayment> getByPaymentServiceSettings( PaymentServiceSettings paymentServiceSettings){
+		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria paymentServiceSettingsCriteria = criteria.createCriteria("paymentServiceSettings");
+		paymentServiceSettingsCriteria.add(Restrictions.eq("id", paymentServiceSettings.getId()));
+		return super.getList(criteria);
 	}
 }
