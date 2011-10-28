@@ -166,6 +166,7 @@ public abstract class AbstractPaymentService implements PaymentService, EventObs
 	public void stop() {
 		eventBus.unregisterObserver(this);
 		requestJobProcessor.stop();
+		responseJobProcessor.stop();
 	}
 
 	public String getPin() {

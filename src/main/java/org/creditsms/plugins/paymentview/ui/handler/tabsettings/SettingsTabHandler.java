@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabsettings;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import net.frontlinesms.payment.safaricom.AbstractPaymentService.BalanceFraudNot
 import net.frontlinesms.payment.safaricom.AbstractPaymentService.PaymentStatusEventNotification;
 import net.frontlinesms.payment.safaricom.AbstractPaymentService.Status;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
+import net.frontlinesms.plugins.PluginController;
 import net.frontlinesms.ui.UiDestroyEvent;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
@@ -182,34 +184,56 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 	public void notify(final FrontlineEventNotification notification) {
 		new FrontlineUiUpateJob() {
 			public void run() {
-				if(notification instanceof SmsModemStatusNotification &&
-						((SmsModemStatusNotification) notification).getStatus() == SmsModemStatus.CONNECTED) {
-					final SmsModem connectedModem = ((SmsModemStatusNotification) notification).getService();
-					Collection<PaymentServiceSettings> paymentServiceSettingsList = paymentServiceSettingsDao.getPaymentServiceAccounts();
-					if (!paymentServiceSettingsList.isEmpty()){
-						for (PaymentServiceSettings psSettings : paymentServiceSettingsList){
-							if (psSettings.getPsSmsModemSerial().equals(connectedModem.getSerial()+"@"+connectedModem.getImsiNumber())) {
-								// We've just connected the configured device, so start up the payment service...
-								//...if it's not already running!
-								MpesaPaymentService mpesaPaymentService = (MpesaPaymentService) psSettings.initPaymentService();
-								if(mpesaPaymentService != null) {
-									if(psSettings.getPsPin() != null) {
-										mpesaPaymentService.setPin(psSettings.getPsPin());
-										mpesaPaymentService.setCService(connectedModem.getCService());
-										mpesaPaymentService.setSettings(psSettings);
-										
-										mpesaPaymentService.initDaosAndServices(pluginController);
-										eventBus.notifyObservers(new PaymentServiceStartedNotification(mpesaPaymentService));
-										mpesaPaymentService.updateStatus(Status.PAYMENTSERVICE_ON);
+//				if(notification instanceof SmsModemStatusNotification &&
+//						((SmsModemStatusNotification) notification).getStatus() == SmsModemStatus.CONNECTED) {
+				if(notification instanceof SmsModemStatusNotification) {
+					
+				
+					if (((SmsModemStatusNotification) notification).getStatus() == SmsModemStatus.CONNECTED) {
+
+						final SmsModem connectedModem = ((SmsModemStatusNotification) notification).getService();
+						Collection<PaymentServiceSettings> paymentServiceSettingsList = paymentServiceSettingsDao.getPaymentServiceAccounts();
+						if (!paymentServiceSettingsList.isEmpty()){
+							for (PaymentServiceSettings psSettings : paymentServiceSettingsList){
+								if (psSettings.getPsSmsModemSerial().equals(connectedModem.getSerial()+"@"+connectedModem.getImsiNumber())) {
+									// We've just connected the configured device, so start up the payment service...
+									//...if it's not already running!
+									MpesaPaymentService mpesaPaymentService = (MpesaPaymentService) psSettings.initPaymentService();
+									if(mpesaPaymentService != null) {
+										if(psSettings.getPsPin() != null) {
+											mpesaPaymentService.setPin(psSettings.getPsPin());
+											mpesaPaymentService.setCService(connectedModem.getCService());
+											mpesaPaymentService.setSettings(psSettings);
+											
+											mpesaPaymentService.initDaosAndServices(pluginController);
+											eventBus.notifyObservers(new PaymentServiceStartedNotification(mpesaPaymentService));
+											mpesaPaymentService.updateStatus(Status.PAYMENTSERVICE_ON);
+										}
+									} else {
+										ui.alert("Please setup payment service");
 									}
-								} else {
-									ui.alert("Please setup payment service");
+								}
+							}
+						} else {
+							ui.alert("Please setup a payment service");
+						}
+					} else if (((SmsModemStatusNotification) notification).getStatus() == SmsModemStatus.DISCONNECTED) {
+						final SmsModem disconnectedModem = ((SmsModemStatusNotification) notification).getService();
+						Collection<PaymentService> paymentServiceList = new ArrayList<PaymentService>(pluginController.getPaymentServices());
+						if (!paymentServiceList.isEmpty()){
+							for (PaymentService ps : paymentServiceList){
+								if (ps.getSettings().getPsSmsModemSerial().equals(disconnectedModem.getSerial()+"@"+disconnectedModem.getImsiNumber())){
+									ps.stop();
+									eventBus.notifyObservers(new PaymentServiceStoppedNotification(ps));
+									pluginController.getPaymentServices().remove(ps);
+									SettingsTabHandler.this.refresh();
 								}
 							}
 						}
-					} else {
-						ui.alert("Please setup a payment service");
+
+
 					}
+						
 				} else if (notification instanceof BalanceEventNotification) {
 					ui.alert(((BalanceEventNotification)notification).getMessage());
 					SettingsTabHandler.this.refresh();

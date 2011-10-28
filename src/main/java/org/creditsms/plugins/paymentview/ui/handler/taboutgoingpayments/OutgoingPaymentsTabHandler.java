@@ -59,16 +59,18 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler implements EventO
 					if(((UiDestroyEvent) notification).isFor(ui)) {
 						ui.getFrontlineController().getEventBus().unregisterObserver(OutgoingPaymentsTabHandler.this);
 					}
-				} 
-				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();	
-				if (entity instanceof OutgoingPayment) {
-					if (notification instanceof EntityUpdatedNotification) {
-						OutgoingPayment outgoingPayment = (OutgoingPayment) entity;
-						if (outgoingPayment.getStatus().equals(OutgoingPayment.Status.ERROR)) {
-							ui.newEvent(new HomeTabEvent(HomeTabEvent.Type.RED, "Error occurred in outgoing payment: " + outgoingPayment.getClient().getFullName()));
+				} else if (notification instanceof DatabaseEntityNotification) {
+						Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();	
+						if (entity instanceof OutgoingPayment) {
+							if (notification instanceof EntityUpdatedNotification) {
+								OutgoingPayment outgoingPayment = (OutgoingPayment) entity;
+								if (outgoingPayment.getStatus().equals(OutgoingPayment.Status.ERROR)) {
+									ui.newEvent(new HomeTabEvent(HomeTabEvent.Type.RED, "Error occurred in outgoing payment: " + outgoingPayment.getClient().getFullName()));
+								}
+							}
 						}
 					}
-				}
+				
 			}
 		}.execute();
 	}
