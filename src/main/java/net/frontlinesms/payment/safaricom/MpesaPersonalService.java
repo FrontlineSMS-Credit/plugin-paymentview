@@ -168,6 +168,8 @@ public class MpesaPersonalService extends MpesaPaymentService {
 				} catch (final IOException ex) {
 					logMessageDao.saveLogMessage(LogMessage.error(
 							"IOException in makePayment()", ex.getMessage()));
+					outgoingPayment
+					.setStatus(OutgoingPayment.Status.ERROR);
 					try {
 						outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
 					} catch (DuplicateKeyException e) {

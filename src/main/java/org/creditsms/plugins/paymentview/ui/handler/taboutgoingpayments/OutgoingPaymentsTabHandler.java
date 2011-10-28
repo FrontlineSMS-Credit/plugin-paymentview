@@ -1,15 +1,19 @@
 package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments;
 
+import net.frontlinesms.data.events.DatabaseEntityNotification;
+import net.frontlinesms.data.events.EntityUpdatedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.payment.event.PaymentServiceStartedNotification;
 import net.frontlinesms.payment.event.PaymentServiceStoppedNotification;
+import net.frontlinesms.ui.HomeTabEvent;
 import net.frontlinesms.ui.UiDestroyEvent;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 
 public class OutgoingPaymentsTabHandler extends BaseTabHandler implements EventObserver {
 
@@ -49,11 +53,20 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler implements EventO
 			public void run() {
 				if (notification instanceof PaymentServiceStartedNotification) {
 					OutgoingPaymentsTabHandler.this.refresh();
-				}else if (notification instanceof PaymentServiceStoppedNotification) {
+				} else if (notification instanceof PaymentServiceStoppedNotification) {
 					OutgoingPaymentsTabHandler.this.refresh();
-				}else if (notification instanceof UiDestroyEvent) {
+				} else if (notification instanceof UiDestroyEvent) {
 					if(((UiDestroyEvent) notification).isFor(ui)) {
 						ui.getFrontlineController().getEventBus().unregisterObserver(OutgoingPaymentsTabHandler.this);
+					}
+				} 
+				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();	
+				if (entity instanceof OutgoingPayment) {
+					if (notification instanceof EntityUpdatedNotification) {
+						OutgoingPayment outgoingPayment = (OutgoingPayment) entity;
+						if (outgoingPayment.getStatus().equals(OutgoingPayment.Status.ERROR)) {
+							ui.newEvent(new HomeTabEvent(HomeTabEvent.Type.RED, "Error occurred in outgoing payment: " + outgoingPayment.getClient().getFullName()));
+						}
 					}
 				}
 			}

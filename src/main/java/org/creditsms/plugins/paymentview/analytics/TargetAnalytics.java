@@ -52,6 +52,13 @@ public class TargetAnalytics {
 		return calculatePercentageToGo(totalTargetCost, calculateAmount(incomingPayments));
 	}
 	
+	public BigDecimal getPreviousPercentageToGo(long tartgetId){
+	    BigDecimal totalTargetCost = targetDao.getTargetById(tartgetId).getTotalTargetCost();
+	    List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(tartgetId);
+	    BigDecimal lastAmountPaid  = getLastAmountPaid(tartgetId);
+		return calculatePercentageToGo(totalTargetCost, calculateAmount(incomingPayments).subtract(lastAmountPaid));
+	}
+	
 	BigDecimal calculateAmount(List<IncomingPayment> payments) {
 		BigDecimal amountPaid = BigDecimal.ZERO;
 		for(IncomingPayment payment : payments) {

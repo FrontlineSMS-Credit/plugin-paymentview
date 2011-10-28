@@ -17,7 +17,7 @@ public class CreateAlertHandler implements ThinletUiEventHandler {
 	private static final String MEETSHALFTGT_CHECKBOX_COMPONENT = "chckMeetsHalf";
 	private Object compPanelFields;
 	private Object dialogComponent;
-	private CreateAlertProperties autoReplyProperties = CreateAlertProperties.getInstance();
+	private CreateAlertProperties createAlertProperties = CreateAlertProperties.getInstance();
 	private UiGeneratorController ui;
 	private static final String STATUS_LABEL_COMPONENT = "status";
 	private static final String ICON_STATUS_TRUE = "/icons/led_green.png";
@@ -32,7 +32,7 @@ public class CreateAlertHandler implements ThinletUiEventHandler {
 	private Object chckMeetsHalf;
 	
 	public void tryToggleAutoReply(){
-		if (!autoReplyProperties.isAlertOn()){
+		if (!createAlertProperties.isAlertOn()){
 			ui.showConfirmationDialog("toggleAlertOn", this, PaymentPluginConstants.ANALYTICS_ALERT);
 		}else{
 			toggleAlertOn();
@@ -40,20 +40,20 @@ public class CreateAlertHandler implements ThinletUiEventHandler {
 	}
 	
 	public void toggleAlertOn() {
-		autoReplyProperties.toggleAlert();
+		createAlertProperties.toggleAlert();
 		setUpAlertUI();
 		ui.removeDialog(ui.find(CONFIRM_DIALOG));
 	}
 	
 	private void setUpAlertUI() {
-		ui.setIcon(status_label, autoReplyProperties.isAlertOn() ? ICON_STATUS_TRUE : ICON_STATUS_FALSE);
-		ui.setText(status_label, (autoReplyProperties.isAlertOn() ? DISABLE_ALERT : ENABLE_ALERT));
+		ui.setIcon(status_label, createAlertProperties.isAlertOn() ? ICON_STATUS_TRUE : ICON_STATUS_FALSE);
+		ui.setText(status_label, (createAlertProperties.isAlertOn() ? DISABLE_ALERT : ENABLE_ALERT));
 		
-		ui.setSelected(chckCompletesTgt, autoReplyProperties.getCompletesTgt());
-		ui.setSelected(chckMissesDeadline, autoReplyProperties.getMissesDeadline());
-		ui.setSelected(chckTwksWithoutPay, autoReplyProperties.getTwksWithoutPay());
-		ui.setSelected(chckAmnthWithoutPay, autoReplyProperties.getA_mnthWithoutPay());
-		ui.setSelected(chckMeetsHalf, autoReplyProperties.getMeetsHalfTgt());
+		ui.setSelected(chckCompletesTgt, createAlertProperties.getCompletesTgt());
+		ui.setSelected(chckMissesDeadline, createAlertProperties.getMissesDeadline());
+		ui.setSelected(chckTwksWithoutPay, createAlertProperties.getTwksWithoutPay());
+		ui.setSelected(chckAmnthWithoutPay, createAlertProperties.getA_mnthWithoutPay());
+		ui.setSelected(chckMeetsHalf, createAlertProperties.getMeetsHalfTgt());
 	}
 
 	public CreateAlertHandler(UiGeneratorController ui) {
@@ -106,18 +106,18 @@ public class CreateAlertHandler implements ThinletUiEventHandler {
 	}
 	
 	public void updateChckCompletesTgt(boolean selected) {
-		autoReplyProperties.setCompletesTgt(selected);
+		createAlertProperties.setCompletesTgt(selected);
 	}
 	public void updateChckMissesDeadline(boolean selected) {
-		autoReplyProperties.setMissesDeadline(selected);
+		createAlertProperties.setMissesDeadline(selected);
 	}
 	public void updateChckTwksWithoutPay(boolean selected) {
-		autoReplyProperties.setTwksWithoutPay(selected);
+		createAlertProperties.setTwksWithoutPay(selected);
 	}
 	public void updateChckAmnthWithoutPay(boolean selected) {
-		autoReplyProperties.setA_mnthWithoutPay(selected);
+		createAlertProperties.setA_mnthWithoutPay(selected);
 	}
 	public void updateChckMeetsHalf(boolean selected) {
-		autoReplyProperties.setMeetsHalfTgt(selected);
+		createAlertProperties.setMeetsHalfTgt(selected);
 	}
 }

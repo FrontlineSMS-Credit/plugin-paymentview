@@ -12,6 +12,7 @@ import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
+import net.frontlinesms.ui.HomeTabEvent;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 import net.frontlinesms.ui.handler.BaseTabHandler;
@@ -43,6 +44,7 @@ import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.DistributeIncomingPaymentDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.EditIncomingPaymentDialogHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.FormatterMarkerType;
+import org.creditsms.plugins.paymentview.userhomepropeties.analytics.CreateAlertProperties;
 import org.creditsms.plugins.paymentview.userhomepropeties.incomingpayments.AutoReplyProperties;
 import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
 import org.creditsms.plugins.paymentview.utils.PvUtils;
@@ -61,6 +63,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private static final String CONFIRM_DELETE_INCOMING = "message.confirm.delete.incoming";
 	
 	private AutoReplyProperties autoReplyProperties = AutoReplyProperties.getInstance();
+	private CreateAlertProperties createAlertProperties = CreateAlertProperties.getInstance();
 	
 	private static final String ICON_STATUS_TRUE = "/icons/led_green.png";
 	private static final String STATUS_LABEL_COMPONENT = "status";
@@ -108,6 +111,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		this.accountDao = pluginController.getAccountDao();
 		this.thirdPartyResponseDao = pluginController.getThirdPartyResponseDao();
 		this.responseRecipientDao = pluginController.getResponseRecipientDao();
+		//ui.getPh
 		init();
 	}
 	
@@ -456,10 +460,41 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 							}
 							IncomingPaymentsTabHandler.this.replyToThirdParty((IncomingPayment) entity);
 						}
+						if(isNewPayment(incomingPayment.getAccount().getClient())) {
+							ui.newEvent(new HomeTabEvent(HomeTabEvent.Type.GREEN, "Payment received from new client: " + incomingPayment.getPaymentBy() + " " +incomingPayment.getAmountPaid()));	
+						}	
+						if(incomingPayment.getTarget()!=null){
+							if(analyticsAlertsOn()) {
+								if(createAlertProperties.getCompletesTgt()) {
+									if(targetAnalytics.getPercentageToGo(incomingPayment.getTarget().getId()).intValue()>= 100 
+											&& targetAnalytics.getPreviousPercentageToGo(incomingPayment.getTarget().getId()).intValue()<100){
+										ui.newEvent(new HomeTabEvent(HomeTabEvent.Type.GREEN, "Savings target completed: " + incomingPayment.getAccount().getClient().getFullName()));
+									}
+								}
+								if(createAlertProperties.getMeetsHalfTgt()) {
+									if(targetAnalytics.getPercentageToGo(incomingPayment.getTarget().getId()).intValue()>= 50 
+											&& targetAnalytics.getPreviousPercentageToGo(incomingPayment.getTarget().getId()).intValue()<50){
+										ui.newEvent(new HomeTabEvent(HomeTabEvent.Type.GREEN, "Reached 50% of savings target : " + incomingPayment.getAccount().getClient().getFullName()));
+									}
+								}
+							}		
+						}
 					}
 				IncomingPaymentsTabHandler.this.refresh();
 				}
-				
+			}
+
+			private boolean analyticsAlertsOn() {
+				return createAlertProperties.isAlertOn();
+			}
+
+			private boolean isNewPayment(Client clnt) {
+				List<IncomingPayment> listInPayments =incomingPaymentDao.getActiveIncomingPaymentByClientId(clnt.getId());
+			    if(listInPayments!=null && listInPayments.size()>0){
+			    	return true;
+			    }else{
+			    	return false;
+			    }
 			}
 		}.execute();
 	}
