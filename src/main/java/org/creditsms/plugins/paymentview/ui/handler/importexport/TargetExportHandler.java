@@ -10,6 +10,7 @@ import net.frontlinesms.ui.handler.importexport.ExportDialogHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.importexport.TargetViewCsvExporter;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
@@ -33,7 +34,7 @@ public class TargetExportHandler extends ExportDialogHandler<Target> {
 	private static final String COMPONENT_CB_STATUS = "cbStatus";
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_EXPORTING_SELECTED_CONTACTS = "plugins.paymentview.message.exporting.selected.client";
-	private static final String UI_FILE_OPTIONS_PANEL_INCOMING_PAYMENT = "/ui/plugins/paymentview/importexport/pnTargetExportDetails.xml";
+	private static final String UI_FILE_OPTIONS_PANEL_TARGET = "/ui/plugins/paymentview/importexport/pnTargetExportDetails.xml";
 	
 	private TargetDao tgtDao;
 	private List<Target> targetList;
@@ -87,20 +88,49 @@ public class TargetExportHandler extends ExportDialogHandler<Target> {
 	}
 	
 	private CsvRowFormat getRowFormatForTarget() {
-		// TODO Auto-generated method stub
-		return null;
+		CsvRowFormat rowFormat = new CsvRowFormat();
+		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_CLIENT_NAME,
+				COMPONENT_CB_NAME);
+		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_PRODUCTS,
+				COMPONENT_CB_PRODUCTS);
+		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_STARTDATE,
+				COMPONENT_CB_START_DATE);
+		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_ENDDATE,
+				COMPONENT_CB_END_DATE);
+		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_AMOUNT,
+				COMPONENT_CB_SAVINGS_TARGET);
+		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_AMOUNT_PAID,
+				COMPONENT_CB_AMOUNT_SAVED);
+		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_PERCENTAGE,
+				COMPONENT_CB_PERCENTAGE_SAVED);
+		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_DATE_PAID,
+				COMPONENT_CB_LAST_PAYMENT_DATE);
+		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_LAST_AMOUNT_PAID,
+				COMPONENT_CB_LAST_PAYMENT);
+		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_MONTHLY_SAVINGS,
+				COMPONENT_CB_PAID_THIS_MONTH);
+		addMarker(rowFormat, PaymentViewCsvUtils.MONTHLY_DUE,
+				COMPONENT_CB_CURRENT_AMOUNT_DUE);
+		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_CURRENT_DUE_DATE,
+				COMPONENT_CB_CURRENT_DUE_DATE);
+		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_DAYS_REMAINING,
+				COMPONENT_CB_DAYS_REMAINING);
+		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_STATUS,
+				COMPONENT_CB_STATUS);
+		
+		
+		
+		return rowFormat;
 	}
 
 	@Override
 	protected String getWizardTitleI18nKey() {
-		// TODO Auto-generated method stub
-		return null;
+		return MESSAGE_EXPORTING_SELECTED_CONTACTS;
 	}
 
 	@Override
 	protected String getOptionsFilePath() {
-		// TODO Auto-generated method stub
-		return null;
+		return UI_FILE_OPTIONS_PANEL_TARGET;
 	}
 	
 }

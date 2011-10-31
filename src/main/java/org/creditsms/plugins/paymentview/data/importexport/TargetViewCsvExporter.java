@@ -29,17 +29,25 @@ import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.domain.TargetServiceItem;
+import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
+import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetServiceItemDao;
 
 
 public class TargetViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 	private static TargetServiceItemDao targetServiceItemDao;
+	private static TargetDao targetDao;
+	private static IncomingPaymentDao incomingPaymentDao;
 	private static TargetAnalytics targetAnalytics = new TargetAnalytics();
 	
 	public static void exportTarget(File exportFile,
 			List<Target> targetList,
 			CsvRowFormat targetFormat, PaymentViewPluginController pluginController ) throws IOException {
 		targetServiceItemDao = pluginController.getTargetServiceItemDao();
+		targetDao = pluginController.getTargetDao();
+		incomingPaymentDao = pluginController.getIncomingPaymentDao();
+		targetAnalytics.setTargetDao(targetDao);
+		targetAnalytics.setIncomingPaymentDao(incomingPaymentDao);
 		LOG.trace("ENTER");
 		LOG.debug("Target format [" + targetFormat + "]");
 		LOG.debug("Filename [" + exportFile.getAbsolutePath() + "]");
@@ -50,7 +58,7 @@ public class TargetViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 			out = new Utf8FileWriter(exportFile);
 			CsvUtils
 					.writeLine(out, targetFormat,
-							PaymentViewCsvUtils.MARKER_CLIENT_NAME,
+							PaymentViewCsvUtils.TARGET_CLIENT_NAME,
 							InternationalisationUtils.getI18nString(COMMON_NAME),
 							PaymentViewCsvUtils.TARGET_PRODUCTS,
 							InternationalisationUtils.getI18nString(COMMON_PRODUCTS),
@@ -70,7 +78,7 @@ public class TargetViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 							InternationalisationUtils.getI18nString(COMMON_LAST_PAYMENT_DATE),
 							PaymentViewCsvUtils.TARGET_MONTHLY_SAVINGS,
 							InternationalisationUtils.getI18nString(COMMON_PAID_THIS_MONTH),
-							PaymentViewCsvUtils.TARGET_CURRENT_AMOUNT_DUE,
+							PaymentViewCsvUtils.MONTHLY_DUE,
 							InternationalisationUtils.getI18nString(COMMON_CURRENT_AMOUNT_DUE),
 							PaymentViewCsvUtils.TARGET_CURRENT_DUE_DATE,
 							InternationalisationUtils.getI18nString(COMMON_CURRENT_DUE_DATE),
@@ -83,7 +91,7 @@ public class TargetViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 			for (Target target : targetList) {
 				targetAnalytics.computeAnalyticsIntervalDatesAndSavings(target.getId());
 				CsvUtils.writeLine(out, targetFormat,
-						PaymentViewCsvUtils.MARKER_CLIENT_NAME,
+						PaymentViewCsvUtils.CLIENT_NAME,
 						target.getAccount().getClient().getFullName(),
 						PaymentViewCsvUtils.TARGET_PRODUCTS,
                         getTargetProducts(target.getId()),
@@ -103,7 +111,7 @@ public class TargetViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						InternationalisationUtils.getDatetimeFormat().format(new Date(targetAnalytics.getLastDatePaid(target.getId()).getTime())),
 						PaymentViewCsvUtils.TARGET_MONTHLY_SAVINGS,
 						targetAnalytics.getMonthlyAmountSaved().toString(),
-						PaymentViewCsvUtils.TARGET_CURRENT_AMOUNT_DUE,
+						PaymentViewCsvUtils.MONTHLY_DUE,
 						targetAnalytics.getMonthlyAmountDue().toString(),
 						PaymentViewCsvUtils.TARGET_CURRENT_DUE_DATE,
 						InternationalisationUtils.getDatetimeFormat().format(new Date(targetAnalytics.getEndMonthInterval().getTime())),
@@ -117,7 +125,6 @@ public class TargetViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 				out.close();
 			LOG.trace("EXIT");
 		}
-
 	}
 
 	private static String getTargetProducts(long tgtId) {
@@ -132,6 +139,4 @@ public class TargetViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 		}
 		return neededitems;
 	}
-	
-	
 }
