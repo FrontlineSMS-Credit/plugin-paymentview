@@ -18,7 +18,7 @@ import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
-import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
+import org.creditsms.plugins.paymentview.ui.handler.importexport.TargetExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateAlertHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
 import org.creditsms.plugins.paymentview.userhomepropeties.analytics.CreateAlertProperties;
@@ -126,7 +126,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	}
 
 	public void export() {
-		new ClientExportHandler((UiGeneratorController) ui, pluginController).showWizard();
+		new TargetExportHandler((UiGeneratorController) ui, pluginController).showWizard();
 	}
 
 	public void showDateSelecter(Object textField) {

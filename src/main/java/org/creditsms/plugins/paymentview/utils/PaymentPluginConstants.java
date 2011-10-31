@@ -17,4 +17,17 @@ public final class PaymentPluginConstants {
 	public static final String COMMON_STATUS = "plugins.paymentview.common.status";
 	public static final String AUTO_REPLY_CONFIRMATION = "plugins.paymentview.auto.reply.confirmation";
 	public static final String ANALYTICS_ALERT = "plugins.paymentview.analytics.alert";
+	public static final String COMMON_PRODUCTS = "plugins.paymentview.common.products";
+	public static final String COMMON_START_DATE = "plugins.paymentview.common.startdate";
+	public static final String COMMON_END_DATE = "plugins.paymentview.common.enddate";
+	public static final String COMMON_SAVINGS_TARGET = "plugins.paymentview.common.targetsavings";
+	public static final String COMMON_AMOUNT_SAVED = "plugins.paymentview.common.amountpaid";
+	public static final String COMMON_PERCENTAGE_SAVED = "plugins.paymentview.common.percentagesaved";
+	public static final String COMMON_LAST_PAYMENT_DATE = "plugins.paymentview.common.lastpaymentdate";
+	public static final String COMMON_LAST_PAYMENT = "plugins.paymentview.common.lastpayment";
+	public static final String COMMON_PAID_THIS_MONTH = "plugins.paymentview.common.paidthismonth";
+	public static final String COMMON_CURRENT_AMOUNT_DUE = "plugins.paymentview.common.amountdue";
+	public static final String COMMON_CURRENT_DUE_DATE = "plugins.paymentview.common.currentduedate";
+	public static final String COMMON_DAYS_REMAINING = "plugins.paymentview.common.daysremaining";
+	public static final String COMMON_TARGET_STATUS = "plugins.paymentview.common.targetstatus";
 }
