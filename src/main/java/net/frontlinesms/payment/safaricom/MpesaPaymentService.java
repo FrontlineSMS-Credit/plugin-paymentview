@@ -38,6 +38,7 @@ public abstract class MpesaPaymentService extends AbstractPaymentService   {
 	protected static final String PAID_BY_PATTERN = "([A-Za-z ]+)";
 	protected static final String ACCOUNT_NUMBER_PATTERN = "Account Number [\\d]+";
 	protected static final String RECEIVED_FROM = "received from";
+	protected static final String WRONG_PIN_STR = "wrong PIN";
 	
 	private static final int BALANCE_ENQUIRY_CHARGE = 1;
 	private static final BigDecimal BD_BALANCE_ENQUIRY_CHARGE = new BigDecimal(BALANCE_ENQUIRY_CHARGE);
@@ -60,6 +61,10 @@ public abstract class MpesaPaymentService extends AbstractPaymentService   {
 			processBalance(message);
 		}else if (isValidReverseMessage(message)){
 			processReversePayment(message);
+		} else if (isInvalidPinMessage(message)) {
+			logMessageDao.saveLogMessage(LogMessage.error(
+					"PIN ERROR",
+					"Action failed. You have entered an incorrect mobile money PIN. Please edit PIN and try again"));
 		} else {
 			logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.INFO,"Payment Message",message.getTextContent()));
 		}
@@ -219,8 +224,6 @@ public abstract class MpesaPaymentService extends AbstractPaymentService   {
 			}
 		});
 	}
-
-
 
 	private void processIncomingPayment(final FrontlineMessage message) {
 		// TODO this method is ridiculously long
@@ -464,6 +467,13 @@ public abstract class MpesaPaymentService extends AbstractPaymentService   {
 			return false;
 		}
 		return isMessageTextValid(message.getTextContent());
+	}
+	
+	private boolean isInvalidPinMessage(final FrontlineMessage message) {
+		if (!message.getSenderMsisdn().equals("MPESA")) {
+			return false;
+		}
+		return message.getTextContent().contains(WRONG_PIN_STR);
 	}
 	
 	private boolean isValidReverseMessage(FrontlineMessage message) {

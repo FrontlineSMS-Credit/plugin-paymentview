@@ -451,7 +451,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				}
 		
 				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();				
-				if (entity instanceof IncomingPayment){
+				if (entity instanceof IncomingPayment) {
 					if (notification instanceof EntitySavedNotification){
 						IncomingPayment incomingPayment = (IncomingPayment) entity;
 						if (!incomingPayment.isChildPayment()){
@@ -481,6 +481,14 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 						}
 					}
 				IncomingPaymentsTabHandler.this.refresh();
+				}
+				if (entity instanceof LogMessage) {
+					if (notification instanceof EntitySavedNotification){
+						LogMessage logMsg = (LogMessage) entity;
+						if (logMsg.getLogTitle().equals("PIN ERROR")) {
+							ui.newEvent(new HomeTabEvent(HomeTabEvent.Type.RED, logMsg.getLogContent()));
+						}
+					}
 				}
 			}
 
