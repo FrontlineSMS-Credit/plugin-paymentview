@@ -279,7 +279,7 @@ public class EditTargetHandler implements ThinletUiEventHandler {
     	if (validateEndDate()) {
 			String methodToBeCalled = "updateTargetAnyway";
 			CONFIRM_ACCEPT_SAVE_TARGET = "The changes cannot be reversed, do you want to proceed?";
-			dialogConfimUpdateTarget = ((UiGeneratorController) ui).showConfirmationDialogPlainText(methodToBeCalled, this, CONFIRM_ACCEPT_SAVE_TARGET);
+			dialogConfimUpdateTarget = ((UiGeneratorController) ui).showConfirmationDialog(methodToBeCalled, this, CONFIRM_ACCEPT_SAVE_TARGET);
     	}
     }
 	
@@ -410,7 +410,7 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 						if(startDay!=endDay){
 							setTempStartDate(calStartDate.getTime());
 							setTempEndDate(calEndDate.getTime());
-							dialogConfimParsedEndDate = ((UiGeneratorController) ui).showConfirmationDialogPlainText(methodToBeCalled, this, CONFIRM_ACCEPT_PARSED_DATE);
+							dialogConfimParsedEndDate = ((UiGeneratorController) ui).showConfirmationDialog(methodToBeCalled, this, CONFIRM_ACCEPT_PARSED_DATE);
 							return false;
 						} else {
 							this.endDate = calEndDate.getTime();
@@ -431,7 +431,7 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 				if(startDay!=endDay){
 					setTempStartDate(calStartDate.getTime());
 					setTempEndDate(calEndDate.getTime());
-					dialogConfimParsedEndDate = ((UiGeneratorController) ui).showConfirmationDialogPlainText(methodToBeCalled, this, CONFIRM_ACCEPT_PARSED_DATE);
+					dialogConfimParsedEndDate = ((UiGeneratorController) ui).showConfirmationDialog(methodToBeCalled, this, CONFIRM_ACCEPT_PARSED_DATE);
 					return false;
 				} else {
 					this.endDate = calEndDate.getTime();

@@ -6,6 +6,6 @@
 	
 	<label text="Enter new name for a field"/>
 	<panel name="pnlFields" weightx="1" weighty="1" columns="2" gap="10">
-		<textfield text="" name="fldName" weightx="1" columns="20"/><button action="createField(fldName.text)" text="create"/>
+		<textfield text="" name="fldName" perform="createField(fldName.text)" weightx="1" columns="20"/><button action="createField(fldName.text)" text="Create"/>
 	</panel>
 </dialog>

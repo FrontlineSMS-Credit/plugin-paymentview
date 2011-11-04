@@ -22,7 +22,7 @@ import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObserver {
 	private static final String LST_CUSTOM_FIELDS = "lstCustomFields";
 	private static final String COMPONENT_PNL_FIELDS = "pnlFields";
-
+	private static final String BTN_OK = "okButton";
 	private static final String XML_CUSTOMIZE_CLIENT_DB = "/ui/plugins/paymentview/clients/dialogs/dlgCustomizeClient.xml";
 
 	
@@ -69,7 +69,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 				addField(PaymentViewUtils.getReadableFieldName(field.getName()));
 			}
 		}
-		
+		ui.setVisible(ui.find(dialogComponent, BTN_OK), false);
 		refreshList();
 	}
 
@@ -95,23 +95,20 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 	}
 
 	public void refreshList() {
-		new FrontlineUiUpateJob() {
-			public void run() {
+//		new FrontlineUiUpateJob() {
+//			public void run() {
 				ui.removeAll(listCustomFields);
 				customFieldCounter = mainFieldCounter;
 				for (CustomField cf : customFieldDao.getAllActiveUsedCustomFields()) {
 					addListItem(cf, ++customFieldCounter);
 				}
-				if (customFieldCounter == mainFieldCounter){
-					++customFieldCounter;
-				}
-			}
-		}.execute();
+//			}
+//		}.execute();
 	}
 
 	public void addNewField(final Object fieldCombo) {
-		new FrontlineUiUpateJob() {
-			public void run() {
+//		new FrontlineUiUpateJob() {
+//			public void run() {
 				CustomField cf = (CustomField) ui.getAttachedObject(ui
 						.getSelectedItem(fieldCombo));
 				if (cf != null) {
@@ -119,9 +116,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 					ui.remove(fieldCombo);
 					Object txtField = ui.createTextfield(ui.getName(fieldCombo),
 							cf.getReadableName());
-		
 					cf.setUsed(true);
-		
 					try {
 						customFieldDao.updateCustomField(cf);
 					} catch (DuplicateKeyException e) {
@@ -132,8 +127,8 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 					ui.setColumns(txtField, 50);
 					ui.setEditable(txtField, false);
 				}
-			}
-		}.execute();
+			//}
+		//}.execute();
 	}
 	
 	public void removeField(Object lstCustomFields) throws DuplicateKeyException {
@@ -178,6 +173,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 		
 				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
 				if (entity instanceof CustomField) {
+					ui.setVisible(ui.find(dialogComponent, BTN_OK), true);
 					CustomizeClientDBHandler.this.refresh();
 				}
 			}

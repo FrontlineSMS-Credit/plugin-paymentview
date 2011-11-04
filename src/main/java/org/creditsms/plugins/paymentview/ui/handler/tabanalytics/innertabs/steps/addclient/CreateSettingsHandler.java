@@ -181,7 +181,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 						if(startDay!=endDay){
 							setTempStartDate(calStartDate.getTime());
 							setTempEndDate(calEndDate.getTime());
-							dialogConfimParsedEndDate = ((UiGeneratorController) ui).showConfirmationDialogPlainText(methodToBeCalled, this, CONFIRM_ACCEPT_PARSED_DATE);
+							dialogConfimParsedEndDate = ((UiGeneratorController) ui).showConfirmationDialog(methodToBeCalled, this, CONFIRM_ACCEPT_PARSED_DATE);
 							return false;
 						} else {
 							this.endDate = calEndDate.getTime();
@@ -202,7 +202,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 				if(startDay!=endDay){
 					setTempStartDate(calStartDate.getTime());
 					setTempEndDate(calEndDate.getTime());
-					dialogConfimParsedEndDate = ((UiGeneratorController) ui).showConfirmationDialogPlainText(methodToBeCalled, this, CONFIRM_ACCEPT_PARSED_DATE);
+					dialogConfimParsedEndDate = ((UiGeneratorController) ui).showConfirmationDialog(methodToBeCalled, this, CONFIRM_ACCEPT_PARSED_DATE);
 					return false;
 				} else {
 					this.endDate = calEndDate.getTime();

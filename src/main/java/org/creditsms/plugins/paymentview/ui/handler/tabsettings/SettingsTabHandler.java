@@ -210,12 +210,12 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 											mpesaPaymentService.updateStatus(Status.PAYMENTSERVICE_ON);
 										}
 									} else {
-										ui.alert("Please setup payment service");
+										ui.alert("Please set up payment service");
 									}
 								}
 							}
 						} else {
-							ui.alert("Please setup a payment service");
+							ui.alert("Please set up a payment service");
 						}
 					} else if (((SmsModemStatusNotification) notification).getStatus() == SmsModemStatus.DISCONNECTED) {
 						final SmsModem disconnectedModem = ((SmsModemStatusNotification) notification).getService();

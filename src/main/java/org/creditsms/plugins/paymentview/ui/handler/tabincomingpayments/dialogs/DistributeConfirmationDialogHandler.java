@@ -86,7 +86,7 @@ public class DistributeConfirmationDialogHandler extends BaseDialog{
 
 	public void create(){
 		CONFIRM_ACCEPT_DISTRIBUTE_IP = "Are you sure you want to distribute this group payment?\n After creating a group payment, this action cannot be undone.";
-		dialogConfimDistributeIp = ((UiGeneratorController) ui).showConfirmationDialogPlainText("createInvidualIncomingPayments", this, CONFIRM_ACCEPT_DISTRIBUTE_IP);
+		dialogConfimDistributeIp = ((UiGeneratorController) ui).showConfirmationDialog("createInvidualIncomingPayments", this, CONFIRM_ACCEPT_DISTRIBUTE_IP);
 	}
 	
 	public void createInvidualIncomingPayments(){

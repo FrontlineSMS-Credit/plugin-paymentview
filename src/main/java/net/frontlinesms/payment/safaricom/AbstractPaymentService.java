@@ -67,9 +67,8 @@ public abstract class AbstractPaymentService implements PaymentService, EventObs
 		CHECK_COMPLETE("Check Balance Complete."),
 		CONFIGURE_STARTED("Configuring Modem ..."),
 		CONFIGURE_COMPLETE("Modem Configuration Complete."),
-		
 		PAYMENTSERVICE_OFF("Payment Service Not Setup."),
-		PAYMENTSERVICE_ON("Payment Service is now Setup."),
+		PAYMENTSERVICE_ON("Payment Service is Set Up."),
 		
 		ERROR("Error occurred.");
 		
