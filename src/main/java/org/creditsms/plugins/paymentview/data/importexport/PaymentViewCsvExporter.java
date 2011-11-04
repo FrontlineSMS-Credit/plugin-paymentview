@@ -60,6 +60,8 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 			List<String> items = new ArrayList<String>(usedCustomFields.size());
 			
 			items.add(PaymentViewCsvUtils.MARKER_INCOMING_CONFIRMATION_CODE);
+			items.add(InternationalisationUtils
+					.getI18nString(COMMON_CONFIRMATION_CODE));
 			items.add(PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME);
 			items.add(InternationalisationUtils
 					.getI18nString(COMMON_FIRST_NAME));

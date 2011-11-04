@@ -139,7 +139,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 		Object[] selectedItems = clientTableHandler.getSelectedRows();
 		if (selectedItems.length <= 0){
 			if (clientFilter.isEmpty()){
-				exportClients(clientDao.getAllClients());
+				exportClients(clientDao.getAllActiveClients());
 			} else {
 				exportClients(clientDao.getClientsByFilter(clientFilter));
 			}

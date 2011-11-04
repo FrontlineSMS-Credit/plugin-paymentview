@@ -14,13 +14,15 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
+import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.importexport.ClientCsvImporter;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
-import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
+import org.creditsms.plugins.paymentview.utils.PvUtils;
 
 public class ClientImportHandler extends ImportDialogHandler {
 	private static final String COMPONENT_CB_NAME = "cbName";
@@ -37,6 +39,10 @@ public class ClientImportHandler extends ImportDialogHandler {
 	private ClientCsvImporter importer;
 	private CustomFieldDao customFieldDao;
 	private final PaymentViewPluginController pluginController;
+	private List<String> tableHeaderList;
+	private List<CustomValue> cvLst = new ArrayList<CustomValue>();
+	private List<CustomField> cfLst = new ArrayList<CustomField>();
+	private List<Client> clntLst = new ArrayList<Client>();
 
 	public ClientImportHandler(
 			PaymentViewPluginController pluginController, ClientsTabHandler clientsTabHandler) {
@@ -62,53 +68,94 @@ public class ClientImportHandler extends ImportDialogHandler {
 		super.showWizard();
 	}
 	
-	private void addClientCells(Object row, String[] lineValues) {
-		for (int i = 0; i < columnCount && i < lineValues.length; ++i) {
-			Object cell = this.uiController.createTableCell(lineValues[i]);
+	private void addClientCells(Object row, String[] lineValues, String[] headerValues) {
+		Object cell = null;
+		String cellValue = "";
+		String name = "";
+		String leanName = "";
+		String firstName  = "";
+		String otherName  = "";
+		String phonenumber = "";
+		List<String> strCustomFld = new ArrayList<String>(); 
+		List<String> strCustomVal = new ArrayList<String>(); 
 
-			if (lineValues[i].equals(InternationalisationUtils
-					.getI18nString(PaymentPluginConstants.COMMON_FIRST_NAME))
-					|| lineValues[i]
-							.equals(InternationalisationUtils
-									.getI18nString(PaymentPluginConstants.COMMON_OTHER_NAME))) {
+		int t = 0;
+		for(int y = 0; y<tableHeaderList.size(); y++) {
+			CustomField customField = null;
+			CustomValue customValue = null;
+			for(int r = 0; r<headerValues.length; r++) {
+				if(tableHeaderList.get(y).equals(headerValues[r])) {
+					t = r;
+					cellValue = getCellValue(lineValues, t);
+					cell = this.uiController.createTableCell(cellValue);
+					if (tableHeaderList.get(y).equals("Name") || tableHeaderList.get(y).equals("Phone")) {
+						if (tableHeaderList.get(y).equals("Name")) {
+							name = cellValue;
+							leanName = name.replaceAll("\\s+", " ");
+							firstName  = leanName.split(" ")[0];
+							otherName  = leanName.split(" ")[1];
+						} else {
+							phonenumber = PvUtils.parsePhoneFromExcel(cellValue);
+						}
+						this.uiController.add(row, cell);
+					} else {
+						strCustomFld.add(tableHeaderList.get(y)); 
+						strCustomVal.add(cellValue); 
+						customField = customFieldDao.getCustomFieldsByReadableName(tableHeaderList.get(y)).get(0);
+						customValue = new CustomValue(cellValue, customField, new Client(firstName, otherName, phonenumber));
+						cvLst.add(customValue);
+						cfLst.add(customField);
+						this.uiController.add(row, cell);
+					}
+				}
 			}
-
-			if (lineValues[i].equals("Phone")) {
-				uiController.setWidth(cell, 100);
-			}
-
+	    }
+		
+		Client clnt = new Client(firstName, otherName, phonenumber);
+		clntLst.add(clnt);
+		if(cell!=null){
 			this.uiController.add(row, cell);
 		}
+	}
+	
+	private String getCellValue(String[] lineValues, int t) {
+		String cellValue = "";
+		try {
+			cellValue = lineValues[t];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			cellValue = "";
+		}		
+		return cellValue;
 	}
 
 	@Override
 	protected void appendPreviewHeaderItems(Object header) {
 		int columnCount = 0;
+		tableHeaderList = new ArrayList<String>();
+		if(tableHeaderList!=null){
+			tableHeaderList.clear();
+		}
 		for (Object checkbox : getCheckboxes()) {
 			if (this.uiController.isSelected(checkbox)) {
 				String attributeName = this.uiController.getText(checkbox);
-				if (uiController.getName(checkbox).equals(COMPONENT_CB_NAME)) {
-					//TODO: take care of this hack... Separate names?
-					this.uiController.add(header, this.uiController.createColumn(InternationalisationUtils
-							.getI18nString(PaymentPluginConstants.COMMON_FIRST_NAME), ""));
-					this.uiController.add(header, this.uiController.createColumn(InternationalisationUtils
-							.getI18nString(PaymentPluginConstants.COMMON_OTHER_NAME), ""));
-				}else{
-					this.uiController.add(header, this.uiController.createColumn(attributeName, attributeName));
-				}
-				
+				this.uiController.add(header, this.uiController.createColumn(attributeName, attributeName));
+				tableHeaderList.add(attributeName);	
 				++columnCount;
 			}
 		}
 		this.columnCount = columnCount;
 	}
-
+	
 	@Override
 	protected void doSpecialImport(String dataPath) {
 		CsvRowFormat rowFormat = getRowFormatForClient();
 		try{
+			this.importer.setSelectedClientLst(clntLst);
+			this.importer.setSelectedCustomFieldlst(cfLst);
+			this.importer.setSelectedCustomValueslst(cvLst);
 			this.importer.importClients(this.clientDao, rowFormat, pluginController);
 			this.clientsTabHandler.refresh();
+
 			this.uiController.infoMessage(InternationalisationUtils
 					.getI18nString(I18N_IMPORT_SUCCESSFUL));
 		} catch (DuplicateKeyException e) {
@@ -139,13 +186,20 @@ public class ClientImportHandler extends ImportDialogHandler {
 		for (String[] lineValues : this.importer.getRawValues()) {
 			previewRows.add(getRow(lineValues));
 		}
+		
+		System.out.println(cvLst);
+	    System.out.println(cfLst);
+		System.out.println(clntLst);
+		
+		
 		return previewRows.toArray();
 	}
 
 	protected Object getRow(String[] lineValues) {
 		Object row = this.uiController.createTableRow();
 		this.uiController.add(row, this.uiController.createTableCell(""));
-		addClientCells(row, lineValues);		
+		//this.importer.getRawFirstLine();
+		addClientCells(row, lineValues, this.importer.getRawFirstLine());
 		return row;
 	}
 
@@ -170,6 +224,15 @@ public class ClientImportHandler extends ImportDialogHandler {
 
 	@Override
 	protected void setImporter(String filename) throws CsvParseException {
+		if(cvLst!=null){
+			cvLst.clear();
+		}
+		if(cfLst!=null){
+			cfLst.clear();
+		}
+		if(clntLst!=null){
+			clntLst.clear();
+		}
 		this.importer = new ClientCsvImporter(new File(filename), pluginController);
 	}
 }

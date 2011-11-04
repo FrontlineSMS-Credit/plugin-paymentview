@@ -1,6 +1,7 @@
 package org.creditsms.plugins.paymentview.data.importexport;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.frontlinesms.csv.CsvImportReport;
@@ -10,13 +11,10 @@ import net.frontlinesms.csv.CsvRowFormat;
 import net.frontlinesms.data.DuplicateKeyException;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.csv.PaymentViewCsvUtils;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
-import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
-import org.creditsms.plugins.paymentview.utils.PvUtils;
 import org.hibernate.NonUniqueObjectException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -27,7 +25,11 @@ import org.springframework.dao.DataIntegrityViolationException;
 public class ClientCsvImporter extends CsvImporter {
 	/** The delimiter to use between group names when they are exported. */
 	protected static final String GROUPS_DELIMITER = "\\\\";
-
+	
+	private List<CustomValue> selectedCustomValueslst = new ArrayList<CustomValue>();
+	private List<CustomField> selectedCustomFieldlst = new ArrayList<CustomField>();
+	private List<Client> selectedClientLst = new ArrayList<Client>();
+	
 	// > INSTANCE PROPERTIES
 
 	// > CONSTRUCTORS
@@ -63,61 +65,59 @@ public class ClientCsvImporter extends CsvImporter {
 			CsvRowFormat rowFormat, PaymentViewPluginController pluginController) throws DuplicateKeyException {
 		log.trace("ENTER");
 
-		for (String[] lineValue : this.getRawValues()) {
-			String firstName = rowFormat.getOptionalValue(lineValue, PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME);
-			String otherName = rowFormat.getOptionalValue(lineValue, PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME);
-			String phonenumber = rowFormat.getOptionalValue(lineValue, PaymentViewCsvUtils.MARKER_CLIENT_PHONE);
-			
-			phonenumber = PvUtils.parsePhoneFromExcel(phonenumber);
-			
-			Client c = new Client(firstName, otherName, phonenumber);
+		for (Client client : selectedClientLst) {
 			try{
-				clientDao.saveClient(c);
+				clientDao.saveClient(client);
+				saveSelectedCustomFld(clientDao, client, pluginController);
 			}catch (Exception e){
 				if (e instanceof NonUniqueObjectException ||
 					e instanceof DataIntegrityViolationException ||
 					e instanceof ConstraintViolationException){
-					c = clientDao.getClientByPhoneNumber(phonenumber);
+					Client c = clientDao.getClientByPhoneNumber(client.getPhoneNumber());
 					
 					if (!c.isActive()){
 						pluginController
 						.getUiGeneratorController()
-						.alert("A user with similar phone number: "+phonenumber+" exists, but is inactive, The user's details will be updated.");
+						.alert("A user with similar phone number: "+client.getPhoneNumber()+" exists, but is inactive, The user's details will be updated.");
 						c.setActive(true);
 					}else{
 						pluginController
 						.getUiGeneratorController()
-						.alert("A user with similar phone number: "+phonenumber+" exists, The user's details will be updated.");
+						.alert("A user with similar phone number: "+client.getPhoneNumber()+" exists, The user's details will be updated.");
 					}
-					c.setFirstName(firstName);
-					c.setOtherName(otherName);
-					
+					c.setFirstName(client.getFirstName());
+					c.setOtherName(client.getOtherName());
 					clientDao.updateClient(c);
 				}
 			}
-			
-			//FIXME: Ability to take in custom fields and data.
-			/*
-			 * 1. Get the Optional data since we gave the rowFormatter the markers,
-			 * 2. If the column; CustomField is not in the db, create and mark it unused.
-			 * 3. Else, pick the custom field to use.
-			 * 4. Import the data into these new fields.
-			 */
-			
-			List<CustomField> allCustomFields = pluginController.getCustomFieldDao().getAllActiveUsedCustomFields();
-
-			if (!allCustomFields.isEmpty()) {
-				for (CustomField cf : allCustomFields) {
-					String strValue = rowFormat.getOptionalValue(lineValue, PaymentViewUtils.getMarkerFromString(cf.getReadableName()));
-					CustomValue cv = new CustomValue(strValue, cf, c);
-					pluginController.getCustomValueDao().saveCustomValue(cv);
-				}
-			}
-
 		}
-
 		log.trace("EXIT");
 
 		return new CsvImportReport();
+	}
+	
+	private void saveSelectedCustomFld(ClientDao clientDao, Client client, 
+			PaymentViewPluginController pluginController) throws DuplicateKeyException {
+		
+		for (int y=0; y<selectedCustomFieldlst.size(); y++) {
+			CustomValue cv = selectedCustomValueslst.get(y);
+			if(client.getPhoneNumber().equals(cv.getClient().getPhoneNumber())) {
+				Client c = clientDao.getClientByPhoneNumber(cv.getClient().getPhoneNumber());
+				cv.setClient(c);
+				pluginController.getCustomValueDao().saveCustomValue(cv);	
+			}
+		}
+	}
+	
+	public void setSelectedCustomValueslst(List<CustomValue> selectedCustomValueslst) {
+		this.selectedCustomValueslst = selectedCustomValueslst;
+	}
+
+	public void setSelectedCustomFieldlst(List<CustomField> selectedCustomFieldlst) {
+		this.selectedCustomFieldlst = selectedCustomFieldlst;
+	}
+
+	public void setSelectedClientLst(List<Client> selectedClientLst) {
+		this.selectedClientLst = selectedClientLst;
 	}
 }
