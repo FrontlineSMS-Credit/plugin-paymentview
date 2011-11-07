@@ -175,6 +175,8 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 		try {
 			List<OutgoingPayment> newPaymentsLst = getOutgoingPaymentsLst();
 			if (newPaymentsLst != null){
+				ui.setEnabled(ui.find(newPaymentsTab, BTN_SEND_NEW_PAYMENT), false);
+				
 				for(OutgoingPayment o:newPaymentsLst){
 					outgoingPaymentDao.saveOutgoingPayment(getTheOutgoingPayment(o));
 					try {
@@ -182,7 +184,6 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 					} catch(Exception ex) {
 					}
 				}
-				cancelNewPayments();
 			}
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
