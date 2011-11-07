@@ -69,7 +69,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 				addField(PaymentViewUtils.getReadableFieldName(field.getName()));
 			}
 		}
-		ui.setVisible(ui.find(dialogComponent, BTN_OK), false);
+		//ui.setVisible(ui.find(dialogComponent, BTN_OK), false);
 		refreshList();
 	}
 
@@ -173,7 +173,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 		
 				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
 				if (entity instanceof CustomField) {
-					ui.setVisible(ui.find(dialogComponent, BTN_OK), true);
+					//ui.setVisible(ui.find(dialogComponent, BTN_OK), true);
 					CustomizeClientDBHandler.this.refresh();
 				}
 			}

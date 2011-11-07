@@ -101,9 +101,9 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		long startTime = 0;
 		List<IncomingPayment> lstIncomingPayment = incomingPaymentDao.getActiveIncomingPaymentsByTarget(tgt.getId());
 		if(lstIncomingPayment!=null && lstIncomingPayment.size()>0){
-			startTime = tgt.getStartDate().getTime();
+			startTime = targetAnalytics.getLastDatePaid(tgt.getId()).getTime();
 	    }else{
-	    	startTime = targetAnalytics.getLastDatePaid(tgt.getId()).getTime();
+	    	startTime = tgt.getStartDate().getTime();
 	    }
 		
 	    if(getDateDiffDays(startTime, new Date().getTime())<0){

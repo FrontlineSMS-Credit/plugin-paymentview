@@ -18,6 +18,5 @@
 	<panel weightx="1" gap="5">
 		<panel weightx="1"/>
 		<button icon="/icons/tick.png" action="removeDialog" name="okButton" text="OK" />
-		<button icon="/icons/cross.png" action="removeDialog" name="btClose" text="Close" />
 	</panel>
 </dialog>

@@ -192,7 +192,12 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	@Override
 	protected void processMessage(final FrontlineMessage message) {
 		if (message.getEndpointId() != null){
-			if (message.getEndpointId().equals(this.getSettings().getPsSmsModemSerial())){
+			String tempPsSmsModemSerialStr = this.getSettings().getPsSmsModemSerial();
+			String otherPsSmsModemSerial = tempPsSmsModemSerialStr.split("@")[1]+"@"+tempPsSmsModemSerialStr.split("@")[0];
+			
+			if (message.getEndpointId().equals(this.getSettings().getPsSmsModemSerial()) 
+					|| message.getEndpointId().equals(otherPsSmsModemSerial)) {
+				
 				if (isValidOutgoingPaymentConfirmation(message)) {
 					processOutgoingPayment(message);
 				} else if (isFailedMpesaPayment(message)) {
