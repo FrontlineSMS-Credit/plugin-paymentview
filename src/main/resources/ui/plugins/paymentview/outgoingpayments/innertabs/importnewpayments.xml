@@ -34,7 +34,7 @@
 	</panel>
 	<panel halign="right" gap="5" left="5" right="5" bottom="5"
 		weightx="1">
-		<button icon="/icons/recipient_number.png" action="showSendPaymentAuthDialog"
+		<button icon="/icons/recipient_number.png" action="SelectPaymentService"
 			name="btn_sendPaymentToSelection" text="Send Payment Now" />
 		<button icon="/icons/time.png" name="btn_schedulePaymentToSelection"
 			action="showSchedulePaymentAuthDialog" text="Schedule Payment" />

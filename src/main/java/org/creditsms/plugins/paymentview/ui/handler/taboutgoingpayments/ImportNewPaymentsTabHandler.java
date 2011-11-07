@@ -3,6 +3,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
 import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -18,6 +19,7 @@ import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.OutgoingPaymentsImportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SchedulePaymentAuthDialogHandler;
+import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SelectPaymentServiceDialogHandler;
 
 /**
  * 
@@ -40,7 +42,8 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	private PaymentViewPluginController pluginController;
 	private Object importPaymentsTab;
 	private OutgoingPaymentDao outgoingPaymentDao;
-	private MpesaPaymentService paymentService;
+	private MpesaPaymentService mpesapaymentService;
+	private PaymentService paymentService;
 
 	private List<OutgoingPayment> outgoingPaymentsLst;
 
@@ -113,18 +116,20 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 		ui.add(schedulePaymentAuthDialog);
 	}
 	
-	public void showSendPaymentAuthDialog() {
-		// get the correct payment service in the paymentServices list
+	public void SelectPaymentService() {
 		if (!pluginController.getPaymentServices().isEmpty()){
-			try {					
-				new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog(this, "sendPayment");
-				//ui.remove(newPaymentsTab);
-			} catch (NumberFormatException ex){
-				ui.infoMessage("Please enter an amount");
-			}
-			
+			SelectPaymentServiceDialogHandler selectPaymentService = new SelectPaymentServiceDialogHandler(ui, pluginController, this);
+			selectPaymentService.showDialog();
 		} else {
 			ui.infoMessage("Please set up a mobile payment account in the setting tab.");
+		}
+	}
+	
+	public void showSendPaymentAuthDialog() {
+		try {					
+			new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog(this, "sendPayment");
+		} catch (NumberFormatException ex){
+			ui.infoMessage("Please enter an amount");
 		}
 	}
 
@@ -144,7 +149,7 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 		Client client = new Client(firstName, otherName, phoneNumber);
 		clientDao.saveClient(client);
 		this.client = client;
-		Account account = new Account(paymentService.createAccountNumber(),client,false,true);
+		Account account = new Account(mpesapaymentService.createAccountNumber(),client,false,true);
 		accountDao.saveAccount(account);
  	}
  	
@@ -169,16 +174,15 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	public void sendPayment() throws PaymentServiceException {
 		try {
 			List<OutgoingPayment> newPaymentsLst = getOutgoingPaymentsLst();
-			int itemPaymentServices = 0;
 			if (newPaymentsLst != null){
 				for(OutgoingPayment o:newPaymentsLst){
 					outgoingPaymentDao.saveOutgoingPayment(getTheOutgoingPayment(o));
 					try {
-						paymentService = (MpesaPaymentService) pluginController.getPaymentServices().get(itemPaymentServices); 
 						paymentService.makePayment(client, outgoingPayment);
 					} catch(Exception ex) {
 					}
 				}
+				cancelNewPayments();
 			}
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
@@ -198,6 +202,11 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 		this.outgoingPaymentsLst = outgoingPaymentsLst;
 	}
 
+
+	public void setPaymentService(PaymentService paymentService) {
+		this.paymentService = paymentService;
+	}
+	
 	@Override
 	public void refresh() {
 		// TODO Auto-generated method stub
