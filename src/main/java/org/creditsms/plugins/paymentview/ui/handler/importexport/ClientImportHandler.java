@@ -24,6 +24,8 @@ import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 import org.creditsms.plugins.paymentview.utils.PvUtils;
 
+import thinlet.Thinlet;
+
 public class ClientImportHandler extends ImportDialogHandler {
 	private static final String COMPONENT_CB_NAME = "cbName";
 	private static final String COMPONENT_CB_PHONE = "cbPhone";
@@ -60,14 +62,15 @@ public class ClientImportHandler extends ImportDialogHandler {
 		Object pnInfo = uiController.find(optionsPanel, "pnInfo");
 		if (!allCustomFields.isEmpty()) {
 			for (CustomField cf : allCustomFields) {
-					Object checkbox = uiController.createCheckbox(cf.getCamelCaseName(),
-							cf.getReadableName(), true);
-					uiController.add(pnInfo, checkbox);
+				Object checkbox = uiController.createCheckbox(cf.getCamelCaseName(),
+						cf.getReadableName(), true);
+				uiController.setMethod(checkbox, Thinlet.ATTRIBUTE_ACTION, "columnCheckboxChanged", checkbox, this);
+				uiController.add(pnInfo, checkbox);
 			}
 		}
 		super.showWizard();
 	}
-	
+
 	private void addClientCells(Object row, String[] lineValues, String[] headerValues) {
 		Object cell = null;
 		String cellValue = "";
@@ -161,7 +164,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 		} catch (DuplicateKeyException e) {
 			pluginController.getUiGeneratorController().
 			alert(e.getMessage());
-		}
+		}		
 	}
 
 	protected List<Object> getCheckboxes() {
@@ -198,7 +201,6 @@ public class ClientImportHandler extends ImportDialogHandler {
 	protected Object getRow(String[] lineValues) {
 		Object row = this.uiController.createTableRow();
 		this.uiController.add(row, this.uiController.createTableCell(""));
-		//this.importer.getRawFirstLine();
 		addClientCells(row, lineValues, this.importer.getRawFirstLine());
 		return row;
 	}
@@ -213,7 +215,6 @@ public class ClientImportHandler extends ImportDialogHandler {
 			addMarker(rowFormat, PaymentViewUtils.getMarkerFromString(cf.getReadableName()),
 					cf.getCamelCaseName());
 		}
-		
 		return rowFormat;
 	}
 

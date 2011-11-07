@@ -62,12 +62,9 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 			items.add(PaymentViewCsvUtils.MARKER_INCOMING_CONFIRMATION_CODE);
 			items.add(InternationalisationUtils
 					.getI18nString(COMMON_CONFIRMATION_CODE));
-			items.add(PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME);
+			items.add(PaymentViewCsvUtils.CLIENT_NAME);
 			items.add(InternationalisationUtils
-					.getI18nString(COMMON_FIRST_NAME));
-			items.add(PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME);
-			items.add(InternationalisationUtils
-					.getI18nString(COMMON_OTHER_NAME));
+					.getI18nString(COMMON_NAME));
 			items.add(PaymentViewCsvUtils.MARKER_CLIENT_PHONE);
 			items.add(InternationalisationUtils.getI18nString(COMMON_PHONE));
 
@@ -84,10 +81,8 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 
 				items = new ArrayList<String>();
 
-				items.add(PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME);
-				items.add(client.getFirstName());
-				items.add(PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME);
-				items.add(client.getOtherName());
+				items.add(PaymentViewCsvUtils.CLIENT_NAME);
+				items.add(client.getFullName());
 				items.add(PaymentViewCsvUtils.MARKER_CLIENT_PHONE);
 				items.add(PvUtils.formatPhoneForExcel(client.getPhoneNumber()));
 

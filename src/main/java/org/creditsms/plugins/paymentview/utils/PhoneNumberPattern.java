@@ -17,7 +17,7 @@ public class PhoneNumberPattern {
 		return newPhoneNumberPattern;
 	}
 
-	public void setNewPhoneNumberPattern(String newPhoneNumberPattern) {
+	private void setNewPhoneNumberPattern(String newPhoneNumberPattern) {
 		this.newPhoneNumberPattern = newPhoneNumberPattern;
 	}
 

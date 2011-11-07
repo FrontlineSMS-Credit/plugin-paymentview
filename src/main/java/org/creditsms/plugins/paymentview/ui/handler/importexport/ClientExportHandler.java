@@ -115,9 +115,7 @@ public class ClientExportHandler extends ExportDialogHandler<Client> {
 
 	protected CsvRowFormat getRowFormatForClient() {
 		CsvRowFormat rowFormat = new CsvRowFormat();
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_FIRST_NAME,
-				COMPONENT_CB_NAME);
-		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_OTHER_NAME,
+		addMarker(rowFormat, PaymentViewCsvUtils.CLIENT_NAME,
 				COMPONENT_CB_NAME);
 		addMarker(rowFormat, PaymentViewCsvUtils.MARKER_CLIENT_PHONE,
 				COMPONENT_CB_PHONE);

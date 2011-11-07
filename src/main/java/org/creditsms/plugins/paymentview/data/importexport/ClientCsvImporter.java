@@ -15,6 +15,7 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.utils.PhoneNumberPattern;
 import org.hibernate.NonUniqueObjectException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -29,6 +30,7 @@ public class ClientCsvImporter extends CsvImporter {
 	private List<CustomValue> selectedCustomValueslst = new ArrayList<CustomValue>();
 	private List<CustomField> selectedCustomFieldlst = new ArrayList<CustomField>();
 	private List<Client> selectedClientLst = new ArrayList<Client>();
+	PhoneNumberPattern phonePattern = new PhoneNumberPattern();
 	
 	// > INSTANCE PROPERTIES
 
@@ -64,11 +66,14 @@ public class ClientCsvImporter extends CsvImporter {
 	public CsvImportReport importClients(ClientDao clientDao,
 			CsvRowFormat rowFormat, PaymentViewPluginController pluginController) throws DuplicateKeyException {
 		log.trace("ENTER");
-
+			
 		for (Client client : selectedClientLst) {
 			try{
-				clientDao.saveClient(client);
-				saveSelectedCustomFld(clientDao, client, pluginController);
+				if(phonePattern.formatPhoneNumber(client.getPhoneNumber())) {
+					client.setPhoneNumber(phonePattern.getNewPhoneNumberPattern());
+					clientDao.saveClient(client);
+					saveSelectedCustomFld(clientDao, client, pluginController);
+				}
 			}catch (Exception e){
 				if (e instanceof NonUniqueObjectException ||
 					e instanceof DataIntegrityViolationException ||
@@ -98,15 +103,18 @@ public class ClientCsvImporter extends CsvImporter {
 	
 	private void saveSelectedCustomFld(ClientDao clientDao, Client client, 
 			PaymentViewPluginController pluginController) throws DuplicateKeyException {
-		
+
 		for (int y=0; y<selectedCustomFieldlst.size(); y++) {
 			CustomValue cv = selectedCustomValueslst.get(y);
-			if(client.getPhoneNumber().equals(cv.getClient().getPhoneNumber())) {
-				Client c = clientDao.getClientByPhoneNumber(cv.getClient().getPhoneNumber());
-				cv.setClient(c);
-				pluginController.getCustomValueDao().saveCustomValue(cv);	
+			if(phonePattern.formatPhoneNumber(cv.getClient().getPhoneNumber())) {
+				cv.getClient().setPhoneNumber(phonePattern.getNewPhoneNumberPattern());
+				if(client.getPhoneNumber().equals(cv.getClient().getPhoneNumber())) {
+					Client c = clientDao.getClientByPhoneNumber(cv.getClient().getPhoneNumber());
+					cv.setClient(c);
+					pluginController.getCustomValueDao().saveCustomValue(cv);	
+				}
 			}
-		}
+		}	
 	}
 	
 	public void setSelectedCustomValueslst(List<CustomValue> selectedCustomValueslst) {
