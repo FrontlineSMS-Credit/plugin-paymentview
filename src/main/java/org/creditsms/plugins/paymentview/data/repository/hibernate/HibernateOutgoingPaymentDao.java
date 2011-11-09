@@ -10,6 +10,7 @@ import net.frontlinesms.data.Order;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment.Status;
 import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.hibernate.criterion.DetachedCriteria;
@@ -151,6 +152,15 @@ public class HibernateOutgoingPaymentDao extends
 		return super.getList(criteria);
 	}
 	
+
+	public List<OutgoingPayment> getByAmountPaidAndStatus(
+			BigDecimal amountPaid, Status status) {
+		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
+		criteria.add(Restrictions.eq("amountPaid", amountPaid));
+		criteria.add(Restrictions.eq("status", status));
+		return super.getList(criteria);
+	}
+	
 	public List<OutgoingPayment> getByAmountPaidForInactiveClient( BigDecimal amountPaid, OutgoingPayment.Status status){
 		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.eq("amountPaid", amountPaid));
@@ -177,4 +187,5 @@ public class HibernateOutgoingPaymentDao extends
 		paymentServiceSettingsCriteria.add(Restrictions.eq("id", paymentServiceSettings.getId()));
 		return super.getList(criteria);
 	}
+
 }

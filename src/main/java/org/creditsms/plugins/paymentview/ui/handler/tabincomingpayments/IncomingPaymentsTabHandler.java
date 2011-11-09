@@ -487,6 +487,8 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 						LogMessage logMsg = (LogMessage) entity;
 						if (logMsg.getLogTitle().equals("PIN ERROR")) {
 							ui.newEvent(new HomeTabEvent(HomeTabEvent.Type.RED, logMsg.getLogContent()));
+						} else if (logMsg.getLogTitle().equals("PAYMENT FAILED")) {
+							ui.newEvent(new HomeTabEvent(HomeTabEvent.Type.RED, logMsg.getLogContent()));
 						}
 					}
 				}

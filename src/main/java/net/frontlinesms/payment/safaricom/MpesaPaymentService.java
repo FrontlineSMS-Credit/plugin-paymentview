@@ -31,6 +31,7 @@ import org.smslib.stk.StkValuePrompt;
 public abstract class MpesaPaymentService extends AbstractPaymentService   {
 //> REGEX PATTERN CONSTANTS
 	protected static final String AMOUNT_PATTERN = "Ksh[,|.|\\d]+";
+	protected static final String AMOUNT_PATTERN_WITHOUT_DOT = "Ksh[,\\d]+";
 	protected static final String SENT_TO = " sent to";
 	protected static final String DATETIME_PATTERN = "d/M/yy hh:mm a";
 	protected static final String PHONE_PATTERN = "2547[\\d]{8}";
@@ -482,7 +483,8 @@ public abstract class MpesaPaymentService extends AbstractPaymentService   {
 	
 	BigDecimal getAmount(final FrontlineMessage message) {
 		final String amountWithKsh = getFirstMatch(message, AMOUNT_PATTERN);
-		return new BigDecimal(amountWithKsh.substring(3).replaceAll(",", ""));
+		String amountWithKshMinusZero = getFirstMatch(amountWithKsh, AMOUNT_PATTERN_WITHOUT_DOT);
+		return new BigDecimal(amountWithKshMinusZero.substring(3).replaceAll(",", ""));
 	}
 
 	BigDecimal getBalance(final FrontlineMessage message) {
