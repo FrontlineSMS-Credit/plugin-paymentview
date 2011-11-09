@@ -30,4 +30,8 @@ public final class PaymentPluginConstants {
 	public static final String COMMON_CURRENT_DUE_DATE = "plugins.paymentview.common.currentduedate";
 	public static final String COMMON_DAYS_REMAINING = "plugins.paymentview.common.daysremaining";
 	public static final String COMMON_TARGET_STATUS = "plugins.paymentview.common.targetstatus";
+	public static final String COMMON_LOG_LEVEL = "plugins.paymentview.common.logs.level";
+	public static final String COMMON_LOG_DESCRIPTION = "plugins.paymentview.common.logs.description";
+	public static final String COMMON_LOG_MESSAGE = "plugins.paymentview.common.logs.message";
+	public static final String COMMON_LOG_TIME_DATE = "plugins.paymentview.common.logs.time";
 }

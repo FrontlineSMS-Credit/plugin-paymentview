@@ -35,7 +35,7 @@ public class TargetExportHandler extends ExportDialogHandler<Target> {
 	/** I18n Text Key: TODO document */
 	private static final String MESSAGE_EXPORTING_SELECTED_CONTACTS = "plugins.paymentview.message.exporting.selected.client";
 	private static final String UI_FILE_OPTIONS_PANEL_TARGET = "/ui/plugins/paymentview/importexport/pnTargetExportDetails.xml";
-	
+
 	private TargetDao tgtDao;
 	private List<Target> targetList;
 	private PaymentViewPluginController pluginController;
@@ -117,9 +117,7 @@ public class TargetExportHandler extends ExportDialogHandler<Target> {
 				COMPONENT_CB_DAYS_REMAINING);
 		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_STATUS,
 				COMPONENT_CB_STATUS);
-		
-		
-		
+
 		return rowFormat;
 	}
 

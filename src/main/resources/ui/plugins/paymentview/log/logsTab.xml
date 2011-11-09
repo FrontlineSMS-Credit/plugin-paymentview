@@ -7,18 +7,20 @@
 			weighty="1" gap="5">
 			<table name="tbl_logs" weightx="1" weighty="1" perform="viewLog()">
 				<header>					
-					<column text="Level" width="100"/>
-					<column text="Description" width="400"/>
-					<column text="Message" width="600"/>
-					<column text="Date-Time" width="200"/>
+					<column text="i18n.plugins.paymentview.common.logs.level" width="100"/>
+					<column text="i18n.plugins.paymentview.common.logs.description" width="400"/>
+					<column text="i18n.plugins.paymentview.common.logs.message" width="600"/>
+					<column text="i18n.plugins.paymentview.common.logs.time" width="200"/>
 				</header>
 				<popupmenu name="menu">
 				</popupmenu>
 			</table>
 		</panel>
-		<!--
-			<panel gap="5" bottom="5" name="pnl_buttons" weightx="1">
+		<panel gap="5" weightx="1">
+			<panel weightx="1"/>
+			<panel>
+				<button action="export" halign="right" icon="/icons/export.png" text="Export" />
 			</panel>
-		-->
+		</panel>
 	</panel>
 </tab>

@@ -22,6 +22,13 @@ public class PaymentViewCsvUtils extends CsvUtils {
 	public static final String MARKER_NOTES = "${notes}";
 	public static final String MARKER_NAME = "${payment_by}";
 	public static final String MARKER_CLIENT_NAME = "${client_name}";
+	
+	public static final String MARKER_LEVEL = "${log_level}";
+	public static final String MARKER_DESCRIPTION = "${log_description}";
+	public static final String MARKER_LOG_MESSAGE = "${log_message}";
+	public static final String MARKER_LOG_DATE_TIME = "${log_date_time}";
+	
+	
 	public static final String CLIENT_NAME = "${client_name}";
 	public static final String AMOUNT_PAID = "${amount_paid}";
 	public static final String DATE_PAID = "${date_paid}";

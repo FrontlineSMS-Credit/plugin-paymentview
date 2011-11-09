@@ -22,6 +22,7 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
+import org.creditsms.plugins.paymentview.utils.PhoneNumberPattern;
 import org.creditsms.plugins.paymentview.utils.PvUtils;
 
 import thinlet.Thinlet;
@@ -45,6 +46,8 @@ public class ClientImportHandler extends ImportDialogHandler {
 	private List<CustomValue> cvLst = new ArrayList<CustomValue>();
 	private List<CustomField> cfLst = new ArrayList<CustomField>();
 	private List<Client> clntLst = new ArrayList<Client>();
+	PhoneNumberPattern phonePattern = new PhoneNumberPattern();
+	private boolean hasIncorrectlyFormatedPhoneNo = false;
 
 	public ClientImportHandler(
 			PaymentViewPluginController pluginController, ClientsTabHandler clientsTabHandler) {
@@ -99,6 +102,11 @@ public class ClientImportHandler extends ImportDialogHandler {
 							otherName  = leanName.split(" ")[1];
 						} else {
 							phonenumber = PvUtils.parsePhoneFromExcel(cellValue);
+							if(phonePattern.formatPhoneNumber(phonenumber)) {
+								phonenumber = phonePattern.getNewPhoneNumberPattern();
+							}else{
+								hasIncorrectlyFormatedPhoneNo = true;
+							}
 						}
 						this.uiController.add(row, cell);
 					} else {
@@ -190,11 +198,11 @@ public class ClientImportHandler extends ImportDialogHandler {
 			previewRows.add(getRow(lineValues));
 		}
 		
-		System.out.println(cvLst);
-	    System.out.println(cfLst);
-		System.out.println(clntLst);
-		
-		
+		if(hasIncorrectlyFormatedPhoneNo){
+			this.uiController.alert("There is one or more records with" +
+					" incorrectly formatted phone numbers, " +
+					"please edit the .csv file and import the file again.");
+		}
 		return previewRows.toArray();
 	}
 

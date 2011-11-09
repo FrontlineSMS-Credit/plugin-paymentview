@@ -42,11 +42,11 @@ public class MpesaPersonalService extends MpesaPaymentService {
 		+ "(([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[1-3])) at ([1]?\\d:[0-5]\\d) ([A|P]M)\n"
 		+ "New M-PESA balance is Ksh([,|.|\\d]+).";
 	
-	private static final String STR_PERSONAL_OUTGOING_PAYMENT_SENDING_PAYMENT_TO_SAME_ACCOUNT_REGEX_PATTERN  = 
+	private static final String STR_SENDING_PAYMENT_TO_SAME_ACCOUNT_REGEX_PATTERN  = 
 		"Failed. M-PESA cannot send Ksh([,|.|\\d]+) to 2547[\\d]{8}. " +
 		"For more information call or SMS customer services on \\d{3}";
-	private static final Pattern PERSONAL_OUTGOING_PAYMENT_SENDING_PAYMENT_TO_SAME_ACCOUNT_REGEX_PATTERN = Pattern
-	.compile(STR_PERSONAL_OUTGOING_PAYMENT_SENDING_PAYMENT_TO_SAME_ACCOUNT_REGEX_PATTERN);
+	private static final Pattern SENDING_PAYMENT_TO_SAME_ACCOUNT_REGEX_PATTERN = Pattern
+	.compile(STR_SENDING_PAYMENT_TO_SAME_ACCOUNT_REGEX_PATTERN);
 	//Failed. M-PESA cannot send Ksh67,100.00 to 254704593656. For more information call or SMS customer services on 234.
 	
 	private static final String STR_PERSONAL_OUTGOING_PAYMENT_INSUFFICIENT_FUNDS_REGEX_PATTERN  =
@@ -529,7 +529,7 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	}
 	
 	boolean isSentToSameAccountMessage(FrontlineMessage message) {
-		return PERSONAL_OUTGOING_PAYMENT_SENDING_PAYMENT_TO_SAME_ACCOUNT_REGEX_PATTERN.matcher(message.getTextContent()).matches();
+		return SENDING_PAYMENT_TO_SAME_ACCOUNT_REGEX_PATTERN.matcher(message.getTextContent()).matches();
 	}
 
 	boolean isInsufficientFundsMessage(FrontlineMessage message){

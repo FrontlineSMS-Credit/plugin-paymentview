@@ -106,12 +106,15 @@ public class ClientCsvImporter extends CsvImporter {
 
 		for (int y=0; y<selectedCustomFieldlst.size(); y++) {
 			CustomValue cv = selectedCustomValueslst.get(y);
-			if(phonePattern.formatPhoneNumber(cv.getClient().getPhoneNumber())) {
-				cv.getClient().setPhoneNumber(phonePattern.getNewPhoneNumberPattern());
-				if(client.getPhoneNumber().equals(cv.getClient().getPhoneNumber())) {
-					Client c = clientDao.getClientByPhoneNumber(cv.getClient().getPhoneNumber());
-					cv.setClient(c);
-					pluginController.getCustomValueDao().saveCustomValue(cv);	
+			if(cv.getStrValue().trim().length()==0){
+			} else {
+				if(phonePattern.formatPhoneNumber(cv.getClient().getPhoneNumber())) {
+					cv.getClient().setPhoneNumber(phonePattern.getNewPhoneNumberPattern());
+					if(client.getPhoneNumber().equals(cv.getClient().getPhoneNumber())) {
+						Client c = clientDao.getClientByPhoneNumber(cv.getClient().getPhoneNumber());
+						cv.setClient(c);
+						pluginController.getCustomValueDao().saveCustomValue(cv);	
+					}
 				}
 			}
 		}	

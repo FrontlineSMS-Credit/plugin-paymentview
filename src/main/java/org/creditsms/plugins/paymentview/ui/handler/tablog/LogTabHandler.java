@@ -17,6 +17,7 @@ import net.frontlinesms.ui.handler.PagedListDetails;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
+import org.creditsms.plugins.paymentview.ui.handler.importexport.LogsExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tablog.dialogs.LogViewDialog;
 import org.creditsms.plugins.paymentview.utils.PvUtils;
 
@@ -29,16 +30,15 @@ PagedComponentItemProvider, EventObserver{
 	private Object logsTab;
 	private ComponentPagingHandler logsTablePager;
 	private Object pnlLogsTableComponent;
-	
 	private LogMessageDao logMessageDao;
 	private String logMessagesFilter = "";
-
+    private PaymentViewPluginController pluginController;
 	
 	public LogTabHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(ui);
 		this.logMessageDao = pluginController.getLogMessageDao();
 		ui.getFrontlineController().getEventBus().registerObserver(this);
-		
+		this.pluginController = pluginController;
 		//lastly
 		init();
 	}
@@ -120,6 +120,10 @@ PagedComponentItemProvider, EventObserver{
 			LogMessage logMessage = ui.getAttachedObject(selectedItem, LogMessage.class);
 			new LogViewDialog(ui, logMessage).showDialog();
 		}
+	}
+	
+	public void export() {
+		new LogsExportHandler((UiGeneratorController) ui, pluginController).showWizard();
 	}
 
 	//> INCOMING PAYMENT NOTIFICATION...
