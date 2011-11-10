@@ -33,7 +33,7 @@ public interface IncomingPaymentDao {
 	public IncomingPayment getByConfirmationCode(String confirmationCode);
 
 	/**
-	 * returns all the active incomingPayments in the system
+	 * returns all the active incomingPayments count
 	 * */
 	public int getActiveIncomingPaymentsCount();
 

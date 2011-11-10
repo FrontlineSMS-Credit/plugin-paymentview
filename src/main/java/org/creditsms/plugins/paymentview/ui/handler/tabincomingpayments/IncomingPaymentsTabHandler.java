@@ -214,7 +214,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		}
 
 		if (strStartDate.isEmpty() && strEndDate.isEmpty()) {
-			totalItemCount = this.incomingPaymentDao.getActiveIncomingPayments().size();
+			totalItemCount = this.incomingPaymentDao.getActiveIncomingPaymentsCount();
 			incomingPayments = this.incomingPaymentDao.getActiveIncomingPayments(startIndex, limit);
 		} else {
 			if (strStartDate.isEmpty() && endDate != null){
