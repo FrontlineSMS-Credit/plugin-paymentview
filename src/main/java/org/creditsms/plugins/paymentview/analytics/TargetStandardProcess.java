@@ -13,7 +13,6 @@ import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.domain.TargetServiceItem;
 
 public class TargetStandardProcess extends TargetCreationProcess{
-
 	public  TargetStandardProcess(Client client, Date targetStartDate, Date targetEndDate, List<TargetServiceItem> targetServiceItems, PaymentViewPluginController pluginController, BigDecimal totalTargetAmount){
 		super(client, targetServiceItems, targetStartDate, targetEndDate, pluginController, totalTargetAmount);
 	}
@@ -32,6 +31,7 @@ public class TargetStandardProcess extends TargetCreationProcess{
 			// attach new account to the client
 			// create new target
 			Target temp= new Target(targetStartDate, targetEndDate, this.account, totalTargetAmount);
+			temp.setStatus("inactive");
 			this.setTarget(temp);
 			client.getTargets().add(temp);
 			//this.getClientDao().saveClient(client);

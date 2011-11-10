@@ -32,7 +32,8 @@ public class TargetPayBillProcess  extends TargetCreationProcess{
 			}
 			// create new target
 			this.setTarget(new Target(targetStartDate, targetEndDate, this.account, totalTargetAmount));
-            this.getTargetDao().saveTarget(this.getTarget());
+			this.getTarget().setStatus("inactive");
+			this.getTargetDao().saveTarget(this.getTarget());
             this.getAccount().setActiveAccount(true);
             this.getAccountDao().updateAccount(this.getAccount());
             for (TargetServiceItem tsi: targetServiceItems){

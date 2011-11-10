@@ -214,6 +214,11 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 					Client client = t.getAccount().getClient();
 					if (!clients.contains(client)){clients.add(client);}
 				}
+				List<Target> lstTgts = targetDao.getTargetsByStatus(filter);
+				for (Target t: lstTgts) {
+					Client client = t.getAccount().getClient();
+					if (!clients.contains(client)){clients.add(client);}
+				}
 			}
 			
 			return clients;

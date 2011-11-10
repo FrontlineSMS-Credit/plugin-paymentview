@@ -14,6 +14,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.Target;
@@ -69,6 +70,7 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 	private Date endDate;
 	private Date tempStartDate;
 	private Date tempEndDate;
+	private TargetAnalytics targetAnalytics;
 
 	private final CreateSettingsTableHandler createsettingstblhndler;
 	private PaymentViewPluginController pluginController;
@@ -78,6 +80,7 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 		this.tgt = tgt;
 		this.pluginController = pluginController;
 		this.createsettingstblhndler = createsettingstblhndler;
+		this.targetAnalytics = new TargetAnalytics();
 		this.targetServiceItemDao = pluginController.getTargetServiceItemDao();
 		this.serviceItemDao = pluginController.getServiceItemDao();
 		this.incomingPaymentDao  = pluginController.getIncomingPaymentDao();
@@ -242,6 +245,7 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 	
     public void updateTargetAnyway() throws DuplicateKeyException{ 
     	ui.remove(dialogConfimUpdateTarget);
+    	incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		List<TargetServiceItem> lstServiceItem = getSelectedTargetServiceItemsLst();
 		
 		totalAmount = BigDecimal.ZERO;
@@ -254,6 +258,7 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 			Target tgt = getTgt();
 			tgt.setEndDate(getEndDate());
 			tgt.setTotalTargetCost(totalAmount);
+			tgt.setStatus(targetAnalytics.getStatus(tgt.getId()).toString());
 			targetDao.updateTarget(tgt); 
 			
 			for (TargetServiceItem deletedTsi : deletedTargetServiceItemsLst){

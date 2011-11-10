@@ -80,4 +80,10 @@ public class HibernateTargetDao extends BaseHibernateDao<Target> implements
 	public void updateTarget(Target target) throws DuplicateKeyException {
 		super.update(target);
 	}
+
+	public List<Target> getTargetsByStatus(String status) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq("status", status));
+		return super.getList(criteria);
+	}
 }
