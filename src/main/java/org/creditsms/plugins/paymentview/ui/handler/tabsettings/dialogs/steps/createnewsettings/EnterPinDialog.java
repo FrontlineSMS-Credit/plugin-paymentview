@@ -75,7 +75,7 @@ public class EnterPinDialog extends BaseDialog {
 	private void persistPaymentServiceSettings()throws DuplicateKeyException{
 		paymentServiceSettings.setPsPin(paymentService.getPin());
 		paymentServiceSettings.setPsSmsModemSerial(this.modem.getSerial() + "@" + this.modem.getImsiNumber());
-		paymentService.setSettings(paymentServiceSettings);
+		paymentService.initSettings(paymentServiceSettings);
 		paymentServiceSettingsDao.savePaymentServiceSettings(paymentServiceSettings);
 		//Now, Initialise
 		paymentService.initDaosAndServices(pluginController);

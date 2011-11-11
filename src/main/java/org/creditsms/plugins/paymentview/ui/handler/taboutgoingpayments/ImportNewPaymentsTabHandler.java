@@ -1,11 +1,11 @@
 package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments;
+
 import java.util.Calendar;
 import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
-import net.frontlinesms.payment.safaricom.MpesaPaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
@@ -42,7 +42,6 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	private PaymentViewPluginController pluginController;
 	private Object importPaymentsTab;
 	private OutgoingPaymentDao outgoingPaymentDao;
-	private MpesaPaymentService mpesapaymentService;
 	private PaymentService paymentService;
 
 	private List<OutgoingPayment> outgoingPaymentsLst;
@@ -149,7 +148,7 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 		Client client = new Client(firstName, otherName, phoneNumber);
 		clientDao.saveClient(client);
 		this.client = client;
-		Account account = new Account(mpesapaymentService.createAccountNumber(),client,false,true);
+		Account account = new Account(accountDao.createAccountNumber(), client, false, true);
 		accountDao.saveAccount(account);
  	}
  	

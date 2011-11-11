@@ -14,10 +14,8 @@ import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
 import net.frontlinesms.payment.event.PaymentServiceStartedNotification;
 import net.frontlinesms.payment.event.PaymentServiceStoppedNotification;
-import net.frontlinesms.payment.safaricom.AbstractPaymentService.BalanceFraudNotification;
-import net.frontlinesms.payment.safaricom.AbstractPaymentService.PaymentStatusEventNotification;
-import net.frontlinesms.payment.safaricom.AbstractPaymentService.Status;
-import net.frontlinesms.payment.safaricom.MpesaPaymentService;
+import net.frontlinesms.payment.event.BalanceFraudNotification;
+import net.frontlinesms.payment.event.PaymentStatusEventNotification;
 import net.frontlinesms.plugins.PluginController;
 import net.frontlinesms.ui.UiDestroyEvent;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -39,7 +37,7 @@ import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.UpdateAu
 import org.creditsms.plugins.paymentview.ui.handler.tabsettings.dialogs.steps.createnewsettings.MobilePaymentServiceSettingsInitialisationDialog;
 import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance.BalanceEventNotification;
 
-public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
+public class SettingsTabHandler extends BaseTabHandler implements EventObserver {
 	private static final String COMPONENT_SETTINGS_TABLE = "tbl_accounts";
 	private static final String CONFIRM_CHECK_BALANCE = "message.confirm.checkbalance";
 	private static final String CONFIRM_CHECK_CONFIGURE_MODEM = "message.confirm.configure.modem";
@@ -85,7 +83,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 		return settingsTab;
 	}
 	
-	public Object getRow(MpesaPaymentService paymentService) {
+	public Object getRow(PaymentService paymentService) {
 		Object row = ui.createTableRow(paymentService);
 		ui.add(row, ui.createTableCell(paymentService.toString()));
 		ui.add(row, ui.createTableCell(paymentService.getSettings().getPsSmsModemSerial().replaceAll("@", " : ")));
@@ -98,7 +96,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 		ui.removeAll(settingsTableComponent);
 		if (this.pluginController.getPaymentServices() != null){
 			for (PaymentService paymentService : this.pluginController.getPaymentServices()){
-				ui.add(settingsTableComponent, getRow((MpesaPaymentService)paymentService));
+				ui.add(settingsTableComponent, getRow((PaymentService)paymentService));
 			}
 		}
 	}
@@ -109,7 +107,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 		if (selectedItem != null){
 			PaymentService paymentService = ui.getAttachedObject(selectedItem, PaymentService.class);
 			try {
-				paymentService.configureModem();
+				paymentService.startService();
 				logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.INFO, "Configure Modem Request Performed", ""));
 				ui.alert("The modem is now configured. Please wait for a few seconds while it restarts.");
 			} catch (PaymentServiceException e) {
@@ -147,7 +145,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 		Object selectedItem = this.ui.getSelectedItem(settingsTableComponent);
 		if (selectedItem != null) {
 			PaymentService paymentService = ui.getAttachedObject(selectedItem, PaymentService.class);
-			if (paymentService instanceof MpesaPaymentService){
+			if (paymentService instanceof PaymentService){
 				new PaybillSendDialogHandler(ui, pluginController, (MpesaPaymentService)paymentService).showDialog();
 			}else{
 				ui.alert("This functionality is only open to Safaricom Service.");
@@ -168,7 +166,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 			
 			if (outgoingPaymentList.isEmpty() && incomingPaymentList.isEmpty()){
 				//just before
-				__paymentService.stop();
+				__paymentService.stopService();
 				//then notify listeners 
 				eventBus.notifyObservers(new PaymentServiceStoppedNotification(__paymentService));
 				paymentServiceSettingsDao.deletePaymentServiceSettings(__paymentService.getSettings());
@@ -203,7 +201,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 										if(psSettings.getPsPin() != null) {
 											mpesaPaymentService.setPin(psSettings.getPsPin());
 											mpesaPaymentService.setCService(connectedModem.getCService());
-											mpesaPaymentService.setSettings(psSettings);
+											mpesaPaymentService.initSettings(psSettings);
 											
 											mpesaPaymentService.initDaosAndServices(pluginController);
 											eventBus.notifyObservers(new PaymentServiceStartedNotification(mpesaPaymentService));
@@ -223,7 +221,7 @@ public class SettingsTabHandler extends BaseTabHandler implements EventObserver{
 						if (!paymentServiceList.isEmpty()){
 							for (PaymentService ps : paymentServiceList){
 								if (ps.getSettings().getPsSmsModemSerial().equals(disconnectedModem.getSerial()+"@"+disconnectedModem.getImsiNumber())){
-									ps.stop();
+									ps.stopService();
 									eventBus.notifyObservers(new PaymentServiceStoppedNotification(ps));
 									pluginController.getPaymentServices().remove(ps);
 									SettingsTabHandler.this.refresh();

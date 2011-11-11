@@ -1,7 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs;
 
 import net.frontlinesms.payment.PaymentService;
-import net.frontlinesms.payment.safaricom.MpesaPayBillService;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
@@ -30,10 +29,11 @@ public class SelectPaymentServiceDialogHandler extends BaseDialog{
 	}
 	
 	private void setupPaymentServices() {
-		for (PaymentService pService : pluginController.getPaymentServices()){
-			if (!(pService instanceof MpesaPayBillService)) {
-				ui.add(cmbOpMobilePaymentSystem, ui.createComboboxChoice(pService.toString() + " : " 
-						+ pService.getSettings().getPsSmsModemSerial().substring(0,pService.getSettings().getPsSmsModemSerial().indexOf("@")), pService));
+		for (PaymentService pService : pluginController.getPaymentServices()) {
+			if(pService.isOutgoingPaymentEnabled()) {
+				String serviceDescription = pService.toString() + " : " 
+						+ pService.getSettings().getPsSmsModemSerial().substring(0,pService.getSettings().getPsSmsModemSerial().indexOf("@"));
+				ui.add(cmbOpMobilePaymentSystem, ui.createComboboxChoice(serviceDescription, pService));
 			}
 		}
 	}

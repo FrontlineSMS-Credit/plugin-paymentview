@@ -13,7 +13,6 @@ import javax.persistence.Table;
 import net.frontlinesms.data.EntityField;
 import net.frontlinesms.messaging.sms.internet.SmsInternetService;
 import net.frontlinesms.payment.PaymentService;
-import net.frontlinesms.payment.safaricom.AbstractPaymentService;
 
 import org.hibernate.annotations.IndexColumn;
 
@@ -74,7 +73,7 @@ public class PaymentServiceSettings {
 	 * Create a new instance of service settings for the supplied service.
 	 * @param service
 	 */
-	public PaymentServiceSettings(AbstractPaymentService service) {
+	public PaymentServiceSettings(PaymentService service) {
 		this.serviceClassName = service.getClass().getCanonicalName();
 	}
 	
