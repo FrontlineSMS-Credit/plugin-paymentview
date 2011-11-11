@@ -50,7 +50,10 @@ public class PaymentViewSettingsRootSectionHandler
 	
 	public void configureService(Object lsServices) {}
 	
-	public void showNewServiceWizard() {}
+	public void showNewServiceWizard() {
+		PaymentServiceSettingsHandler serviceSettingsHandler = new PaymentServiceSettingsHandler(this.uiController);
+		serviceSettingsHandler.showNewServiceWizard();
+	}
 
 	public void removeServices() {}
 	
