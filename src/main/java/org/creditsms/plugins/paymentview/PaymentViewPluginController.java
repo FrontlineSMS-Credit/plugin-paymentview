@@ -22,6 +22,7 @@ import net.frontlinesms.payment.event.PaymentServiceStoppedNotification;
 import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
+import net.frontlinesms.plugins.PluginSettingsController;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
@@ -41,6 +42,7 @@ import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.ThirdPartyResponseDao;
+import org.creditsms.plugins.paymentview.settings.PaymentViewSettingsController;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.AuthorizationProperties;
 import org.creditsms.plugins.paymentview.utils.PvUtils;
@@ -56,7 +58,9 @@ import org.springframework.context.ApplicationContext;
  * @author Emmanuel Kala
  * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
  */
-@PluginControllerProperties(name = "Payment View", iconPath = "/icons/creditsms.png", i18nKey = "plugins.paymentview", springConfigLocation = "classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml", hibernateConfigPath = "classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml")
+@PluginControllerProperties(name="Payment View", iconPath="/icons/creditsms.png", i18nKey="plugins.payment.name",
+		springConfigLocation="classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml",
+		hibernateConfigPath="classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml")
 public class PaymentViewPluginController extends BasePluginController
 		implements ThinletUiEventHandler, EventObserver {
 
@@ -240,5 +244,9 @@ public class PaymentViewPluginController extends BasePluginController
 				}
 			}
 		}.execute();
+	}
+	
+	public PluginSettingsController getSettingsController(UiGeneratorController uiController) {
+		return new PaymentViewSettingsController(this, uiController, getIcon(this.getClass()));
 	}
 }
