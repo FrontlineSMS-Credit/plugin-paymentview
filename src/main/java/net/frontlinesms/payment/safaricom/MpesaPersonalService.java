@@ -36,12 +36,6 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	private static final Pattern PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN = Pattern
 			.compile(STR_PERSONAL_INCOMING_PAYMENT_REGEX_PATTERN);
 	
-	private static final String STR_PAYBILL_REGEX_PATTERN = 
-		"([A-Z0-9]+) Confirmed. Ksh([,|.|\\d]+) " 
-		+ "sent to ([A-Za-z ]+) for account ([\\d]+) on " 
-		+ "(([1-2]?[1-9]|[1-2]0|3[0-1])/([1-9]|1[0-2])/(1[1-3])) at ([1]?\\d:[0-5]\\d) ([A|P]M)\n"
-		+ "New M-PESA balance is Ksh([,|.|\\d]+).";
-	
 	private static final String STR_SENDING_PAYMENT_TO_SAME_ACCOUNT_REGEX_PATTERN  = 
 		"Failed. M-PESA cannot send Ksh([,|.|\\d]+) to 2547[\\d]{8}. " +
 		"For more information call or SMS customer services on \\d{3}";
@@ -57,8 +51,6 @@ public class MpesaPersonalService extends MpesaPaymentService {
 	private static final Pattern PERSONAL_OUTGOING_PAYMENT_INSUFFICIENT_FUNDS_REGEX_PATTERN = Pattern
 	.compile(STR_PERSONAL_OUTGOING_PAYMENT_INSUFFICIENT_FUNDS_REGEX_PATTERN);
 	
-	private static final Pattern PAYBILL_REGEX_PATTERN = Pattern.compile(STR_PAYBILL_REGEX_PATTERN);
-
 	private static final String STR_MPESA_PAYMENT_FAILURE_PATTERN = "";
 	private static final String STR_LESS_THAN_MINIMUM_AMOUNT = "Failed. The amount is less than minimum M-PESA money transfer value.";
 	private static final Pattern MPESA_PAYMENT_FAILURE_PATTERN = Pattern
@@ -209,13 +201,8 @@ public class MpesaPersonalService extends MpesaPaymentService {
 
 	@Override
 	protected void processMessage(final FrontlineMessage message) {
-		if (message.getEndpointId() != null){
-			String tempPsSmsModemSerialStr = this.getSettings().getPsSmsModemSerial();
-			String otherPsSmsModemSerial = tempPsSmsModemSerialStr.split("@")[1]+"@"+tempPsSmsModemSerialStr.split("@")[0];
-			
-			if (message.getEndpointId().equals(this.getSettings().getPsSmsModemSerial()) 
-					|| message.getEndpointId().equals(otherPsSmsModemSerial)) {
-				
+		if (message.getEndpointId() != null) {
+			if(this.getSettings().getPsSmsModemSerial().equals(message.getEndpointId())) {
 				if (isValidOutgoingPaymentConfirmation(message)) {
 					processOutgoingPayment(message);
 				} else if (isFailedMpesaPayment(message)) {

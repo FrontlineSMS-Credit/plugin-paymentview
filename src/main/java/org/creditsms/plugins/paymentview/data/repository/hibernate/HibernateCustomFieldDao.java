@@ -7,6 +7,7 @@ import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
@@ -43,58 +44,50 @@ public class HibernateCustomFieldDao extends BaseHibernateDao<CustomField>
 		return super.countAll();
 	}
 
-	public List<CustomField> getCustomFieldsByReadableName(String strName) {
-		DetachedCriteria criteria = super.getCriterion().add(
-				Restrictions.disjunction().add(
-						Restrictions.ilike(
-								CustomField.Field.READABLE_NAME.getFieldName(),
-								strName.trim(), MatchMode.ANYWHERE)));
-		return super.getList(criteria);
+	public List<CustomField> getCustomFieldsByReadableName(String name) {
+		return super.getList(getReadableNameCriteria(name));
 	}
 
-	public List<CustomField> getCustomFieldsByReadableName(String strName,
-			int startIndex, int limit) {
-		DetachedCriteria criteria = super.getCriterion().add(
-				Restrictions.disjunction().add(
-						Restrictions.ilike(
-								CustomField.Field.READABLE_NAME.getFieldName(),
-								strName.trim(), MatchMode.ANYWHERE)));
-		return super.getList(criteria, startIndex, limit);
+	public List<CustomField> getCustomFieldsByReadableName(String name, int startIndex, int limit) {
+		return super.getList(getReadableNameCriteria(name), startIndex, limit);
+	}
+	
+	private DetachedCriteria getReadableNameCriteria(String name) {
+		DetachedCriteria criteria = super.getCriterion();
+		String fieldName = CustomField.Field.READABLE_NAME.getFieldName();
+		Criterion ilike = Restrictions.ilike(fieldName, name.trim(), MatchMode.ANYWHERE);
+		criteria.add(Restrictions.disjunction().add(ilike));
+		return criteria;
 	}
 
 	public List<CustomField> getAllActiveUnusedCustomFields() {
-		DetachedCriteria criteria = super.getCriterion();
-		criteria.add(Restrictions.eq(CustomField.Field.ACTIVE.getFieldName(),
-				Boolean.TRUE));
-		criteria.add(Restrictions.eq(CustomField.Field.USED.getFieldName(),
-				Boolean.FALSE));
-		return super.getList(criteria);
+		return getCustomFields(true, false);
 	}
 
 	public List<CustomField> getAllActiveUsedCustomFields() {
-		DetachedCriteria criteria = super.getCriterion();
-		criteria.add(Restrictions.eq(CustomField.Field.ACTIVE.getFieldName(),
-				Boolean.TRUE));
-		criteria.add(Restrictions.eq(CustomField.Field.USED.getFieldName(),
-				Boolean.TRUE));
-		return super.getList(criteria);
+		return getCustomFields(true, true);
 	}
 
 	public List<CustomField> getAllActiveCustomFields() {
+		return getCustomFields(true, null);
+	}
+	
+	private List<CustomField> getCustomFields(Boolean active, Boolean used) {
 		DetachedCriteria criteria = super.getCriterion();
-		criteria.add(Restrictions.eq(CustomField.Field.ACTIVE.getFieldName(),
-				Boolean.TRUE));
+		if(active != null) {
+			criteria.add(Restrictions.eq(CustomField.Field.ACTIVE.getFieldName(), active));
+		}
+		if(used != null) {
+			criteria.add(Restrictions.eq(CustomField.Field.USED.getFieldName(), used));
+		}
 		return super.getList(criteria);
 	}
 
-	public void saveCustomField(CustomField customField)
-			throws DuplicateKeyException {
+	public void saveCustomField(CustomField customField) throws DuplicateKeyException {
 		super.save(customField);
 	}
 
-	public void updateCustomField(CustomField customField)
-			throws DuplicateKeyException {
+	public void updateCustomField(CustomField customField) throws DuplicateKeyException {
 		super.update(customField);
-
 	}
 }

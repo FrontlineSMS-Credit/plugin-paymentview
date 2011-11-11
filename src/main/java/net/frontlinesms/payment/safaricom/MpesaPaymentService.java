@@ -379,10 +379,6 @@ public abstract class MpesaPaymentService extends AbstractPaymentService   {
 		queueResponseJob(new PaymentJob() {
 			public void run() {
 				performBalanceEnquiryFraudCheck(message);
-				if (message.getEndpointId() == null){
-					message.setEndpointId("");
-				}
-				
 				logMessageDao.saveLogMessage(
 						new LogMessage(LogMessage.LogLevel.INFO,"Check Balance Response",message.getEndpointId() + ": " + message.getTextContent()));
 			}
