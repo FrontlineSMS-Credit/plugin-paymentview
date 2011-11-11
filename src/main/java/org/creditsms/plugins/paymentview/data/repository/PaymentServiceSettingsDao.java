@@ -4,7 +4,7 @@
 package org.creditsms.plugins.paymentview.data.repository;
 
 import net.frontlinesms.data.repository.ConfigurableServiceSettingsDao;
-import net.frontlinesms.payment.PaymentService;
+import net.frontlinesms.payment.service.PaymentService;
 
 /**
  * Data Access Object interface for {@link PaymentServiceSettings}.

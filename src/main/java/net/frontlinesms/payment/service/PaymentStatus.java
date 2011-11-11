@@ -1,4 +1,4 @@
-package net.frontlinesms.payment;
+package net.frontlinesms.payment.service;
 
 public enum PaymentStatus {
 	// TODO i18n all messages here

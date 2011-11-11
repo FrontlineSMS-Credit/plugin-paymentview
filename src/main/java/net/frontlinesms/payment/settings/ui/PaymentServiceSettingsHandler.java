@@ -1,15 +1,15 @@
-package org.creditsms.plugins.paymentview.settings;
+package net.frontlinesms.payment.settings.ui;
 
 import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
 
-import net.frontlinesms.data.repository.ConfigurableServiceSettingsDao;
 import net.frontlinesms.events.FrontlineEventNotification;
-import net.frontlinesms.payment.PaymentService;
+import net.frontlinesms.payment.service.PaymentService;
+import net.frontlinesms.payment.service.PaymentServiceImplementationLoader;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.settings.BaseServiceSettingsHandler;
 
-public class MagicalHandler extends BaseServiceSettingsHandler<PaymentService> {
-	public MagicalHandler(UiGeneratorController controller, PaymentServiceSettingsDao dao) {
+public class PaymentServiceSettingsHandler extends BaseServiceSettingsHandler<PaymentService> {
+	public PaymentServiceSettingsHandler(UiGeneratorController controller, PaymentServiceSettingsDao dao) {
 		super(controller, new PaymentServiceImplementationLoader().getAll(), dao);
 	}
 
@@ -29,6 +29,12 @@ public class MagicalHandler extends BaseServiceSettingsHandler<PaymentService> {
 	@Override
 	public FrontlineEventNotification createSavedNotification(
 			PaymentService service) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getIconMapLocation() {
 		// TODO Auto-generated method stub
 		return null;
 	}

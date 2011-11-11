@@ -1,7 +1,7 @@
 package net.frontlinesms.payment.event;
 
 import net.frontlinesms.events.FrontlineEventNotification;
-import net.frontlinesms.payment.PaymentStatus;
+import net.frontlinesms.payment.service.PaymentStatus;
 
 public class PaymentStatusEventNotification implements FrontlineEventNotification {
 	private final PaymentStatus status;

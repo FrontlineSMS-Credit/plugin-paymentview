@@ -1,8 +1,7 @@
-package org.creditsms.plugins.paymentview.settings;
+package net.frontlinesms.payment.service;
 
 import java.util.Comparator;
 
-import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.resources.ImplementationLoader;
 
 public class PaymentServiceImplementationLoader extends ImplementationLoader<PaymentService> {

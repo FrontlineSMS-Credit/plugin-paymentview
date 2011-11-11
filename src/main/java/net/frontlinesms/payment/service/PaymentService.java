@@ -1,9 +1,9 @@
-package net.frontlinesms.payment;
+package net.frontlinesms.payment.service;
 
 import java.math.BigDecimal;
 
-import net.frontlinesms.data.ConfigurableService;
 import net.frontlinesms.data.domain.PersistableSettings;
+import net.frontlinesms.serviceconfig.ConfigurableService;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;

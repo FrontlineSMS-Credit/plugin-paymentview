@@ -1,4 +1,4 @@
-package net.frontlinesms.payment;
+package net.frontlinesms.payment.service;
 
 import java.util.concurrent.LinkedBlockingQueue;
 public class PaymentJobProcessor implements Runnable {

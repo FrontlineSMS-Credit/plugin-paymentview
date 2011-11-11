@@ -3,8 +3,8 @@ package org.creditsms.plugins.paymentview.data.repository.hibernate;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.PersistableSettings;
 import net.frontlinesms.junit.HibernateTestCase;
-import net.frontlinesms.payment.PaymentService;
-import net.frontlinesms.payment.PaymentServiceException;
+import net.frontlinesms.payment.service.PaymentService;
+import net.frontlinesms.payment.service.PaymentServiceException;
 
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
