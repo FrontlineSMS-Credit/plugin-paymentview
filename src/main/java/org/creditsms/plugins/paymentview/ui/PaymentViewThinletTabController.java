@@ -15,10 +15,8 @@ import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.IncomingPaymentsTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tablog.LogTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.OutgoingPaymentsTabHandler;
-import org.creditsms.plugins.paymentview.ui.handler.tabsettings.SettingsTabHandler;
 
 /**
- * 
  * @author Emmanuel Kala
  * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
  */
@@ -30,7 +28,6 @@ public class PaymentViewThinletTabController extends
 	private static final String TABP_MAIN_PANE = "tabP_mainPane";
 	private static final String XML_PAYMENT_VIEW_TAB = "/ui/plugins/paymentview/paymentViewTab.xml";
 
-	private SettingsTabHandler settingsTab;
 	private OutgoingPaymentsTabHandler outgoingPayTab;
 	private IncomingPaymentsTabHandler incomingPayTab;
 	private ClientsTabHandler clientsTab;
@@ -40,7 +37,6 @@ public class PaymentViewThinletTabController extends
 	private Object paymentViewTab;
 
 	private PvDebugTabController cdtController;
-//	private ExportTabHandler exportTab;
 	private LogTabHandler logsTab;
 	private Object statusBar;
 
@@ -80,10 +76,6 @@ public class PaymentViewThinletTabController extends
 		analyticsTab.refresh();
 		ui.add(mainPane, analyticsTab.getTab());
 
-		settingsTab = new SettingsTabHandler(ui, getPluginController());
-		//settingsTab.refresh();
-		ui.add(mainPane, settingsTab.getTab());
-		
 		logsTab = new LogTabHandler(ui, getPluginController());
 		logsTab.refresh();
 		ui.add(mainPane, logsTab.getTab());
@@ -116,5 +108,4 @@ public class PaymentViewThinletTabController extends
 	public void deinit() {
 		// TODO de-register with EventBus
 	}
-
 }

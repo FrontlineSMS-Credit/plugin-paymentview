@@ -11,7 +11,7 @@
 		<version>1.7.00-beta-7-SNAPSHOT</version>
 		<relativePath>../pom-parent</relativePath>
 	</parent>
-	<version>0.1.5-SNAPSHOT</version>
+	<version>0.2.0-SNAPSHOT</version>
 	
 	<scm>
 		<developerConnection>scm:git:git@github.com:${github.projectOwner}/${github.projectName}.git</developerConnection>

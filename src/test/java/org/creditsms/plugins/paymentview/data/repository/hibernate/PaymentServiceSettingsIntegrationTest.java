@@ -8,6 +8,7 @@ import net.frontlinesms.payment.PaymentServiceException;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
+import org.creditsms.plugins.paymentview.userhomepropeties.payment.balance.Balance;
 import org.springframework.beans.factory.annotation.Autowired;
 /**
  * 
@@ -91,5 +92,16 @@ class StubbedPaymentService implements PaymentService {
 	}
 
 	public void initSettings(PaymentServiceSettings settings) {
+	}
+
+	public Balance getBalance() {
+		return null;
+	}
+
+	public void startService() throws PaymentServiceException {
+	}
+
+	public boolean isOutgoingPaymentEnabled() {
+		return false;
 	}
 }

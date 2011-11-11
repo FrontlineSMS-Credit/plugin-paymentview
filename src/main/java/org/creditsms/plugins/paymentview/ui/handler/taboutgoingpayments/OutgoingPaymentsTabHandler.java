@@ -23,7 +23,6 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler implements EventO
 	private SelectFromClientsTabHandler selectFromClientsTab;
 	private SentPaymentsTabHandler sentPaymentsTab;
 	private PaymentViewPluginController pluginController;
-	private ImportNewPaymentsTabHandler importPaymentsTab;
 
 	public OutgoingPaymentsTabHandler(UiGeneratorController ui, final PaymentViewPluginController pluginController) {
 		super(ui);
@@ -36,7 +35,6 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler implements EventO
 	protected Object initialiseTab() {
 		outgoingPaymentsTab = ui.loadComponentFromFile(XML_OUTGOINGPAYMENTS_TAB, this);
 		sentPaymentsTab = new SentPaymentsTabHandler(ui, outgoingPaymentsTab,pluginController);
-		importPaymentsTab = new ImportNewPaymentsTabHandler(ui, outgoingPaymentsTab,pluginController);
 		selectFromClientsTab = new SelectFromClientsTabHandler(ui, outgoingPaymentsTab, pluginController);
 
 		return outgoingPaymentsTab;
@@ -60,7 +58,7 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler implements EventO
 						ui.getFrontlineController().getEventBus().unregisterObserver(OutgoingPaymentsTabHandler.this);
 					}
 				} else if (notification instanceof DatabaseEntityNotification) {
-						Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();	
+						Object entity = ((DatabaseEntityNotification<?>) notification).getDatabaseEntity();	
 						if (entity instanceof OutgoingPayment) {
 							if (notification instanceof EntityUpdatedNotification) {
 								OutgoingPayment outgoingPayment = (OutgoingPayment) entity;
