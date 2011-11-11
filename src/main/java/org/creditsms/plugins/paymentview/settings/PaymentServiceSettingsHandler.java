@@ -2,6 +2,8 @@ package org.creditsms.plugins.paymentview.settings;
 
 import java.util.Stack;
 
+import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
+
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -34,7 +36,11 @@ public class PaymentServiceSettingsHandler implements ThinletUiEventHandler {
 	}
 	
 //> UI EVENT METHODS
-	public void configureNewService(Object classList) {}
+	@SuppressWarnings("unchecked")
+	public void configureNewService(Object classList) throws Exception {
+		Class<PaymentService> clazz = ui.getAttachedObject(ui.getSelectedItem(classList), Class.class);
+		configureService(clazz.newInstance().getSettings());
+	}
 	
 	public void selectionChanged(Object classList, Object pnButtons) {}
 	
@@ -49,5 +55,9 @@ public class PaymentServiceSettingsHandler implements ThinletUiEventHandler {
 	
 	private Object getCurrent() {
 		return screens.peek();
+	}
+	
+	private void configureService(PaymentServiceSettings settings) {
+		
 	}
 }
