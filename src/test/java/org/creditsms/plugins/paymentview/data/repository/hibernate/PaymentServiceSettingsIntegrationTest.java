@@ -1,6 +1,7 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
 
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.domain.PersistableSettings;
 import net.frontlinesms.junit.HibernateTestCase;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.PaymentServiceException;
@@ -24,23 +25,23 @@ public class PaymentServiceSettingsIntegrationTest extends HibernateTestCase{
 	}
 	
 	private void assertEmptyDatabases(){
-		assertEquals(0, hibernatePaymentServiceSettingsDao.getPaymentServiceAccounts().size());
+		assertEquals(0, hibernatePaymentServiceSettingsDao.getServiceAccounts().size());
 	}
 
 	public void testSavingPaymentServiceSettings() throws DuplicateKeyException{
 		assertEmptyDatabases();
 		PaymentService service = new StubbedPaymentService();
-		PaymentServiceSettings psSettings = new PaymentServiceSettings(service);
+		PersistableSettings psSettings = new PersistableSettings(service);
 		psSettings.setPsPin("1111");
 		hibernatePaymentServiceSettingsDao.savePaymentServiceSettings(psSettings);
 
-		assertEquals(1, hibernatePaymentServiceSettingsDao.getPaymentServiceAccounts().size());
+		assertEquals(1, hibernatePaymentServiceSettingsDao.getServiceAccounts().size());
 	}
 	
 	public void testUpdatingOutgoingPayment() throws DuplicateKeyException{
 		assertEmptyDatabases();
 		PaymentService service = new StubbedPaymentService();
-		PaymentServiceSettings psSettings = new PaymentServiceSettings(service);
+		PersistableSettings psSettings = new PaymentServiceSettings(service);
 		psSettings.setPsPin("1111");
 		hibernatePaymentServiceSettingsDao.savePaymentServiceSettings(psSettings);
 		

@@ -14,6 +14,5 @@
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.ThirdPartyResponse" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.ResponseRecipient" />
     	<mapping class="org.creditsms.plugins.paymentview.data.domain.TargetServiceItem" />
-    	<mapping class="org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings" />
 	</session-factory>
 </hibernate-configuration>

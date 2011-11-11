@@ -2,8 +2,7 @@ package org.creditsms.plugins.paymentview.settings;
 
 import java.util.Stack;
 
-import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
-
+import net.frontlinesms.data.domain.PersistableSettings;
 import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -57,7 +56,7 @@ public class PaymentServiceSettingsHandler implements ThinletUiEventHandler {
 		return screens.peek();
 	}
 	
-	private void configureService(PaymentServiceSettings settings) {
+	private void configureService(PersistableSettings settings) {
 		
 	}
 }

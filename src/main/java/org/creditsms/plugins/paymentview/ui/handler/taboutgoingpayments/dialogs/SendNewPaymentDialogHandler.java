@@ -83,7 +83,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 		for (PaymentService pService : pluginController.getPaymentServices()){
 			if (pService.isOutgoingPaymentEnabled()) {
 				String serviceDescription = pService.toString() + " : " 
-						+ pService.getSettings().getPsSmsModemSerial().substring(0,pService.getSettings().getPsSmsModemSerial().indexOf("@"));
+						+ pService.getSettings().getId();
 				ui.add(cmbOpMobilePaymentSystem, ui.createComboboxChoice(serviceDescription, pService));
 			}
 		}

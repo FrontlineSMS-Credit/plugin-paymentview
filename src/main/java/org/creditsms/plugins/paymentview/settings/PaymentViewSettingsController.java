@@ -1,22 +1,24 @@
 package org.creditsms.plugins.paymentview.settings;
 
-import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
 
 import net.frontlinesms.plugins.PluginSettingsController;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.i18n.InternationalisationUtils;
 import net.frontlinesms.ui.settings.UiSettingsSectionHandler;
 
 public class PaymentViewSettingsController implements PluginSettingsController {
-	private UiGeneratorController ui;
-	private PaymentViewPluginController pluginController;
-	private String icon;
+	private final UiGeneratorController ui;
+	private final PaymentServiceSettingsDao dao;
+	private final String title;
+	private final String icon;
 	
-	public PaymentViewSettingsController(PaymentViewPluginController pluginController,
+	public PaymentViewSettingsController(PaymentServiceSettingsDao dao,
+			String title,
 			UiGeneratorController ui, String icon) {
-		this.pluginController = pluginController;
 		this.ui = ui;
 		this.icon = icon;
+		this.title = title;
+		this.dao = dao;
 	}
 
 	public void addSubSettingsNodes(Object rootSettingsNode) {
@@ -28,16 +30,16 @@ public class PaymentViewSettingsController implements PluginSettingsController {
 	}
 
 	public UiSettingsSectionHandler getRootPanelHandler() {
-		return new PaymentViewSettingsRootSectionHandler(this.ui, this.getTitle(), this.icon);
+		return new PaymentViewSettingsRootSectionHandler(this.ui, dao,
+				this.title, this.icon);
 	}
 
 	public String getTitle() {
-		return this.pluginController.getName(InternationalisationUtils.getCurrentLocale());
+		return title;
 	}
 
 	public Object getRootNode() {
-		PaymentViewSettingsRootSectionHandler rootHandler = new PaymentViewSettingsRootSectionHandler(this.ui, this.getTitle(), this.icon);
-		return rootHandler.getSectionNode();
+		return getRootPanelHandler().getSectionNode();
 	}
 
 }
