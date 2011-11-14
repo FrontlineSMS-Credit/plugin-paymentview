@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
 
-import net.frontlinesms.data.domain.PersistableSettings;
 import net.frontlinesms.plugins.PluginSettingsController;
 import net.frontlinesms.settings.BaseSectionHandler;
 import net.frontlinesms.settings.FrontlineValidationMessage;
@@ -66,29 +65,25 @@ public class PaymentViewSettingsController
 
 	@Override
 	protected void init() {
-		this.panel = uiController.loadComponentFromFile(UI_SECTION_ROOT, this);
+		this.panel = ui.loadComponentFromFile(UI_SECTION_ROOT, this);
 		Object list = find("lsPaymentServices");
-		for(PersistableSettings s : dao.getServiceAccounts()) {
-			String description = s.getServiceClassName() + ": " + s.getId();
-			Object listItem = uiController.createListItem(description, s);
-			uiController.add(list, listItem);
-		}
+		PaymentViewUiUtils.refreshServiceList(ui, dao, list);
 	}
 	
 //> UI EVENT METHODS
 	public void selectionChanged(Object lsServices, Object pnButtons) {}
 	
 	public void configureService(Object lsServices) {
-		new PaymentServiceSettingsHandler(uiController, dao).configureService(lsServices);
+		new PaymentServiceSettingsHandler(ui, dao).configureService(lsServices);
 	}
 	
 	public void showNewServiceWizard() {
-		new PaymentServiceSettingsHandler(uiController, dao).showNewServiceWizard();
+		new PaymentServiceSettingsHandler(ui, dao).showNewServiceWizard();
 	}
 
 	public void removeServices() {}
 	
 	public void showConfirmationDialog(String methodCall) {
-		uiController.showConfirmationDialog(methodCall, this);
+		ui.showConfirmationDialog(methodCall, this);
 	}
 }
