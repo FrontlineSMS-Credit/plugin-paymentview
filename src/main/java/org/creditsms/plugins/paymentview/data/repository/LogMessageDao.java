@@ -33,4 +33,11 @@ public interface LogMessageDao {
 	 * @param logMessage
 	 */
 	public void saveLogMessage(LogMessage logMessage);
+	
+	public void info(String title, String content);
+	public void info(String title, Throwable t);	
+	public void warn(String title, String content);
+	public void warn(String title, Throwable t);
+	public void error(String title, String content);
+	public void error(String title, Throwable t);
 }

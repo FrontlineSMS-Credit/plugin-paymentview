@@ -107,9 +107,9 @@ public class LogMessage {
 			return icon;
 		}
 		
-		public static LogLevel getStatusFromString(String status){
-			for(LogLevel s:LogLevel.values()){
-				if(status.equalsIgnoreCase(s.toString())){
+		public static LogLevel getStatusFromString(String status) {
+			for(LogLevel s:LogLevel.values()) {
+				if(status.equalsIgnoreCase(s.toString())) {
 					return s;
 				}
 			}
@@ -212,5 +212,13 @@ public class LogMessage {
 //> FACTORY METHODS
 	public static LogMessage error(String title, String content) {
 		return new LogMessage(LogLevel.ERROR, title, content);
+	}
+	
+	public static LogMessage warn(String title, String content) {
+		return new LogMessage(LogLevel.WARNING, title, content);
+	}
+	
+	public static LogMessage info(String title, String content) {
+		return new LogMessage(LogLevel.INFO, title, content);
 	}
 }
