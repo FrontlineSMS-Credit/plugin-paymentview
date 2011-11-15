@@ -8,7 +8,6 @@ import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
@@ -21,8 +20,7 @@ import org.creditsms.plugins.paymentview.ui.handler.importexport.LogsExportHandl
 import org.creditsms.plugins.paymentview.ui.handler.tablog.dialogs.LogViewDialog;
 import org.creditsms.plugins.paymentview.utils.PvUtils;
 
-public class LogTabHandler extends BaseTabHandler implements
-PagedComponentItemProvider, EventObserver{
+public class LogTabHandler extends BaseTabHandler implements PagedComponentItemProvider, EventObserver{
 	private static final String COMPONENT_LOGS_TABLE = "tbl_logs";
 	private static final String COMPONENT_PANEL_LOGS_TABLE = "pnl_logs";
 	private static final String XML_LOG_TAB = "/ui/plugins/paymentview/log/logsTab.xml";
@@ -35,9 +33,8 @@ PagedComponentItemProvider, EventObserver{
     private PaymentViewPluginController pluginController;
 	
 	public LogTabHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
-		super(ui);
+		super(ui, true);
 		this.logMessageDao = pluginController.getLogMessageDao();
-		ui.getFrontlineController().getEventBus().registerObserver(this);
 		this.pluginController = pluginController;
 		//lastly
 		init();
@@ -126,19 +123,14 @@ PagedComponentItemProvider, EventObserver{
 		new LogsExportHandler((UiGeneratorController) ui, pluginController).showWizard();
 	}
 
-	//> INCOMING PAYMENT NOTIFICATION...
-	@SuppressWarnings("rawtypes")
+//> INCOMING PAYMENT NOTIFICATION...
 	public void notify(final FrontlineEventNotification notification) {
-		new FrontlineUiUpateJob() {
-			public void run() {
-				if (!(notification instanceof DatabaseEntityNotification)) {
-					return;
-				}
-				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
-				if (entity instanceof LogMessage) {
-					LogTabHandler.this.refresh();
-				}
+		super.notify(notification);
+		if (notification instanceof DatabaseEntityNotification) {
+			Object entity = ((DatabaseEntityNotification<?>) notification).getDatabaseEntity();
+			if (entity instanceof LogMessage) {
+				threadSafeRefresh();
 			}
-		}.execute();
+		}
 	}
 }

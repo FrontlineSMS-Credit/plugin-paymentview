@@ -4,11 +4,13 @@ import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.data.events.DatabaseEntityNotification;
+import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
-import net.frontlinesms.ui.HomeTabEvent;
+import net.frontlinesms.ui.HomeTabEventNotification;
+import net.frontlinesms.ui.UiDestroyEvent;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.events.FrontlineUiUpateJob;
+import net.frontlinesms.ui.events.FrontlineUiUpdateJob;
 import net.frontlinesms.ui.handler.BasePanelHandler;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
@@ -23,7 +25,7 @@ import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateA
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
 import org.creditsms.plugins.paymentview.userhomepropeties.analytics.CreateAlertProperties;
 
-public class CreateSettingsHandler extends BasePanelHandler implements EventObserver  {
+public class CreateSettingsHandler extends BasePanelHandler implements EventObserver {
 	private static final String PNL_CLIENT_TABLE_HOLDER = "pnlClientsTableHolder";
 	private static final String XML_STEP_VIEW_CLIENTS = "/ui/plugins/paymentview/analytics/viewdashboard/stepviewclients.xml";
 	private PaymentViewPluginController pluginController;
@@ -33,11 +35,14 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	private TargetDao targetDao;
 	private IncomingPaymentDao incomingPaymentDao;
 	private CreateAlertProperties createAlertProperties = CreateAlertProperties.getInstance();
+	private final EventBus eventBus;
 
 	public CreateSettingsHandler(UiGeneratorController ui,
 			ViewDashBoardTabHandler viewDashBoardTabHandler,
 			PaymentViewPluginController pluginController) {
 		super(ui);
+		this.eventBus = ui.getFrontlineController().getEventBus();
+		
 		this.pluginController = pluginController;
 		
 		targetAnalytics = new TargetAnalytics();
@@ -46,7 +51,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		targetDao = pluginController.getTargetDao();
 		incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		
-		ui.getFrontlineController().getEventBus().registerObserver(this);
+		eventBus.registerObserver(this);
 		init();
 	}
 
@@ -68,20 +73,20 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 				long endTime = target.getEndDate().getTime();
 				if (createAlertProperties.getMissesDeadline()) {
 					if (new Date().getTime() > endTime) {
-						((UiGeneratorController) ui).newEvent(new HomeTabEvent(HomeTabEvent.Type.RED, 
+						eventBus.notifyObservers(new HomeTabEventNotification(HomeTabEventNotification.Type.RED, 
 								"Missed deadline and is overdue with savings target : " + target.getAccount().getClient().getFullName()));					
 					}
 				}
 				if (new Date().getTime() < endTime) {
 					if (createAlertProperties.getTwksWithoutPay()) {
 						if(getDaysDormant(target)>=14 && getDaysDormant(target)<30 ) {
-							((UiGeneratorController) ui).newEvent(new HomeTabEvent(HomeTabEvent.Type.AMBER, 
+							eventBus.notifyObservers(new HomeTabEventNotification(HomeTabEventNotification.Type.AMBER, 
 									"Have not paid for 2 weeks : " + target.getAccount().getClient().getFullName()));	
 						}
 					}
 					if (createAlertProperties.getA_mnthWithoutPay()) {
 						if(getDaysDormant(target)>=30) {
-							((UiGeneratorController) ui).newEvent(new HomeTabEvent(HomeTabEvent.Type.AMBER, 
+							eventBus.notifyObservers(new HomeTabEventNotification(HomeTabEventNotification.Type.AMBER, 
 									"Have not paid for a month : " + target.getAccount().getClient().getFullName()));	
 						}
 					}					
@@ -134,19 +139,19 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	}
 	
 	public void notify(final FrontlineEventNotification notification) {
-		new FrontlineUiUpateJob() {
-			public void run() {
-				if (!(notification instanceof DatabaseEntityNotification)) {
-					return;
-				} else {
-					if (notification instanceof DatabaseEntityNotification){
-						Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
-						if (entity instanceof IncomingPayment || entity instanceof ServiceItem) {
-							CreateSettingsHandler.this.refresh();
+		if (notification instanceof DatabaseEntityNotification) {
+			if (notification instanceof DatabaseEntityNotification){
+				Object entity = ((DatabaseEntityNotification<?>) notification).getDatabaseEntity();
+				if (entity instanceof IncomingPayment || entity instanceof ServiceItem) {
+					new FrontlineUiUpdateJob() {
+						public void run() {
+							refresh();
 						}
-					}
+					}.execute();
 				}
 			}
-		}.execute();
+		} else if(notification instanceof UiDestroyEvent) {
+			eventBus.unregisterObserver(this);
+		}
 	}
 }

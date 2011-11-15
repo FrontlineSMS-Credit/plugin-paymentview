@@ -38,7 +38,6 @@ public class ClientImportHandler extends ImportDialogHandler {
 	private ClientDao clientDao;
 // > INSTANCE PROPERTIES
 	private final ClientsTabHandler clientsTabHandler;
-	private int columnCount;
 	private ClientCsvImporter importer;
 	private CustomFieldDao customFieldDao;
 	private final PaymentViewPluginController pluginController;
@@ -141,7 +140,6 @@ public class ClientImportHandler extends ImportDialogHandler {
 
 	@Override
 	protected void appendPreviewHeaderItems(Object header) {
-		int columnCount = 0;
 		tableHeaderList = new ArrayList<String>();
 		if(tableHeaderList!=null){
 			tableHeaderList.clear();
@@ -151,10 +149,8 @@ public class ClientImportHandler extends ImportDialogHandler {
 				String attributeName = this.uiController.getText(checkbox);
 				this.uiController.add(header, this.uiController.createColumn(attributeName, attributeName));
 				tableHeaderList.add(attributeName);	
-				++columnCount;
 			}
 		}
-		this.columnCount = columnCount;
 	}
 	
 	@Override

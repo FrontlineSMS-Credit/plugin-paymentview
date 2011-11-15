@@ -22,11 +22,8 @@ import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SelectPaymentServiceDialogHandler;
 
 /**
- * 
  * @author Roy
- *
  */
-
 public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	private static final String XML_IMPORT_NEW_PAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/importnewpayments.xml";
 	private static final String COMPONENT_NEW_PAYMENTS_TABLE = "tbl_new_payments";
@@ -47,7 +44,7 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	private List<OutgoingPayment> outgoingPaymentsLst;
 
 	public ImportNewPaymentsTabHandler(UiGeneratorController ui, Object tabOutgoingPayments, PaymentViewPluginController pluginController) {
-		super(ui);
+		super(ui, false);
 		accountDao = pluginController.getAccountDao();
 		clientDao = pluginController.getClientDao();
 		this.pluginController = pluginController;

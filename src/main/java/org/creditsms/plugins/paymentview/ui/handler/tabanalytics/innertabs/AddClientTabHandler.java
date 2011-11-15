@@ -7,9 +7,7 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.addclient.SelectTargetSavingsHandler;
 
 public class AddClientTabHandler extends BaseTabHandler {
-
 	private static final String TAB_CREATE_DASHBOARD = "tab_createDashboard";
-
 	
 	private Object createDashboardTab;
 	private Object currentPanel;
@@ -17,7 +15,7 @@ public class AddClientTabHandler extends BaseTabHandler {
 	private PaymentViewPluginController pluginController;
 
 	public AddClientTabHandler(UiGeneratorController ui, Object tabAnalytics, final PaymentViewPluginController pluginController) {
-		super(ui);
+		super(ui, false);
 		this.pluginController = pluginController;
 		createDashboardTab = ui.find(tabAnalytics, TAB_CREATE_DASHBOARD);
 		this.init();

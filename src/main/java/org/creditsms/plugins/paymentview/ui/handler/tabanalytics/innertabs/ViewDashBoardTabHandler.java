@@ -16,7 +16,7 @@ public class ViewDashBoardTabHandler extends BaseTabHandler {
 
 	public ViewDashBoardTabHandler(UiGeneratorController ui,
 			Object tabAnalytics, PaymentViewPluginController pluginController) {
-		super(ui);
+		super(ui, false);
 		this.pluginController = pluginController;
 		viewDashboardTab = ui.find(tabAnalytics, TAB_VIEW_DASHBOARD);
 		this.init();

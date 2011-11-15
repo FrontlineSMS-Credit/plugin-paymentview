@@ -12,7 +12,7 @@ import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.Icon;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.events.FrontlineUiUpateJob;
+import net.frontlinesms.ui.events.FrontlineUiUpdateJob;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
 import net.frontlinesms.ui.handler.PagedListDetails;
@@ -265,20 +265,22 @@ public abstract class BaseClientTableHandler implements PagedComponentItemProvid
 	}
 	
 	public void notify(final FrontlineEventNotification notification) {
-		new FrontlineUiUpateJob() {
-			public void run() {
-				if (!(notification instanceof DatabaseEntityNotification)) {
-					return;
-				}
-		
-				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
-				if (entity instanceof Client || entity instanceof Account) {
-					BaseClientTableHandler.this.refresh();
-				}else if (entity instanceof CustomField) {
-					revalidateTable();
-				}
+		if (notification instanceof DatabaseEntityNotification) {
+			Object entity = ((DatabaseEntityNotification<?>) notification).getDatabaseEntity();
+			if (entity instanceof Client || entity instanceof Account) {
+				new FrontlineUiUpdateJob() {
+					public void run() {
+						refresh();
+					}
+				}.execute();
+			}else if (entity instanceof CustomField) {
+				new FrontlineUiUpdateJob() {
+					public void run() {
+				revalidateTable();
+					}
+				}.execute();
 			}
-		}.execute();
+		}
 	}
 	
 	/** @return the field to sort clients in the client list by */

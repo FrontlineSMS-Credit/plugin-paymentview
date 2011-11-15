@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.frontlinesms.data.events.EntitySavedNotification;
-import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
@@ -18,7 +17,7 @@ import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateNewServiceItemHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.EditServiceItemHandler;
 
-public class ConfigureServiceTabHandler extends BaseTabHandler implements PagedComponentItemProvider, EventObserver{
+public class ConfigureServiceTabHandler extends BaseTabHandler implements PagedComponentItemProvider {
 
 	private static final String COMPONENT_SERVICE_ITEM_TABLE = "tbl_serviceItem";
 	private static final String COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE = "pnl_tbl_serviceItem_holder";
@@ -36,13 +35,11 @@ public class ConfigureServiceTabHandler extends BaseTabHandler implements PagedC
 	
 
 	public ConfigureServiceTabHandler(UiGeneratorController ui, Object tabAnalytics, PaymentViewPluginController pluginController) {
-		super(ui);
+		super(ui, true);
 		this.pluginController = pluginController;
 		this.serviceItemDao = pluginController.getServiceItemDao();
 		configureServiceTab = ui.find(tabAnalytics, TAB_CONFIGURE_SERVICE);
 		this.init();
-		
-		ui.getFrontlineController().getEventBus().registerObserver(this);
 	}
 
 	public void createNew() {
@@ -134,13 +131,12 @@ public class ConfigureServiceTabHandler extends BaseTabHandler implements PagedC
 	}
 
 	public void notify(FrontlineEventNotification notification) {
-		if (!(notification instanceof EntitySavedNotification)) {
-			return;
-		}
-
-		Object entity = ((EntitySavedNotification) notification).getDatabaseEntity();
-		if (entity instanceof ServiceItem) {
-			this.refresh();
+		super.notify(notification);
+		if (notification instanceof EntitySavedNotification) {
+			Object entity = ((EntitySavedNotification<?>) notification).getDatabaseEntity();
+			if (entity instanceof ServiceItem) {
+				threadSafeRefresh();
+			}
 		}
 	}
 
