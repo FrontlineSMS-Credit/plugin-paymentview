@@ -19,7 +19,7 @@ import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
-public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObserver {
+public class CustomiseClientDBHandler implements ThinletUiEventHandler, EventObserver {
 	private static final String LST_CUSTOM_FIELDS = "lstCustomFields";
 	private static final String COMPONENT_PNL_FIELDS = "pnlFields";
 	private static final String XML_CUSTOMIZE_CLIENT_DB = "/ui/plugins/paymentview/clients/dialogs/dlgCustomizeClient.xml";
@@ -36,7 +36,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 	private Object listCustomFields;
 	private PaymentViewPluginController pluginController;
 
-	public CustomizeClientDBHandler(PaymentViewPluginController pluginController,
+	public CustomiseClientDBHandler(PaymentViewPluginController pluginController,
 			CustomFieldDao customFieldDao) {
 		this.pluginController = pluginController;
 		this.ui = pluginController.getUiGeneratorController();
@@ -169,7 +169,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 			if (entity instanceof CustomField) {
 				new FrontlineUiUpdateJob() {
 					public void run() {
-						CustomizeClientDBHandler.this.refresh();
+						refresh();
 					}
 				}.execute();
 			}

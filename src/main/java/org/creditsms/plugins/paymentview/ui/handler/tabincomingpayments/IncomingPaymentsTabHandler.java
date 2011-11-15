@@ -453,9 +453,9 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 							IncomingPayment incomingPayment = (IncomingPayment) entity;
 							if (!incomingPayment.isChildPayment()){
 								if(autoReplyProperties.isAutoReplyOn()){
-									IncomingPaymentsTabHandler.this.replyToPayment((IncomingPayment) entity);
+									replyToPayment((IncomingPayment) entity);
 								}
-								IncomingPaymentsTabHandler.this.replyToThirdParty((IncomingPayment) entity);
+								replyToThirdParty((IncomingPayment) entity);
 							}
 							if(incomingPaymentDao.getActiveIncomingPaymentByClientId(incomingPayment.getAccount().getClient().getId()).size() > 0) {
 								eventBus.notifyObservers(new HomeTabEventNotification(HomeTabEventNotification.Type.GREEN, "Payment received from new client: " + incomingPayment.getPaymentBy() + " " +incomingPayment.getAmountPaid()));	

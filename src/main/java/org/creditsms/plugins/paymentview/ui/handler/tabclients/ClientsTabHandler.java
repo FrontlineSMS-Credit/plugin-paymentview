@@ -29,7 +29,7 @@ import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTableHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.ClientImportHandler;
-import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.CustomizeClientDBHandler;
+import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.CustomiseClientDBHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.EditClientHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.IncomingPaymentsDialogHandler;
 
@@ -103,7 +103,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 	}
 	
 	public void customizeClientDB() {
-		ui.add(new CustomizeClientDBHandler(pluginController, customFieldDao).getDialog());
+		ui.add(new CustomiseClientDBHandler(pluginController, customFieldDao).getDialog());
 	}
 
 	public void deleteClient() {

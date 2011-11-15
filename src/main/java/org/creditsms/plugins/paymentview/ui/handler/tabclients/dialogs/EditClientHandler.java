@@ -161,18 +161,18 @@ public class EditClientHandler extends BaseDialog{
 			public void run() {
 				try{
 					if (editMode) {
-						EditClientHandler.this.client.setFirstName(ui.getText(fieldFirstName));
-						EditClientHandler.this.client.setOtherName(ui.getText(fieldOtherName));
+						client.setFirstName(ui.getText(fieldFirstName));
+						client.setOtherName(ui.getText(fieldOtherName));
 						String phone = ui.getText(fieldPhoneNumber);
 						
 						if(phonePattern.formatPhoneNumber(phone)) {
-							EditClientHandler.this.client.setPhoneNumber(phonePattern.getNewPhoneNumberPattern());
+							client.setPhoneNumber(phonePattern.getNewPhoneNumberPattern());
 							//test if phoneNumber already linked to another client
 							Client clientInDb = clientDao.getClientByPhoneNumber(client.getPhoneNumber());
 							if (clientInDb!=null && clientInDb.getId()!=client.getId()){
 								ui.infoMessage("The phone number " + client.getPhoneNumber() + " is already set up for "+ clientInDb.getFullName() + ".");
 							} else {
-								EditClientHandler.this.clientDao.updateClient(EditClientHandler.this.client);
+								clientDao.updateClient(client);
 								
 								Contact fromMsisdn = contactDao.getFromMsisdn(client.getPhoneNumber());
 								if (fromMsisdn != null){
@@ -186,7 +186,7 @@ public class EditClientHandler extends BaseDialog{
 									//Finish save
 								}
 					
-								List<CustomField> allCustomFields = EditClientHandler.this.customFieldDao
+								List<CustomField> allCustomFields = customFieldDao
 										.getAllActiveUsedCustomFields();
 					
 								if (!allCustomFields.isEmpty()) {
@@ -245,19 +245,19 @@ public class EditClientHandler extends BaseDialog{
 									removeDialog();
 									ui.infoMessage("The phone number " + phone + " was previously set up for "+ clientInDb.getFullName() + " and will be reactivated.");
 									clientInDb.setActive(true);
-									EditClientHandler.this.clientDao.updateClient(clientInDb);
+									clientDao.updateClient(clientInDb);
 								}
 								
 							} else {
 								Client client = new Client(fn, on, phone);
-								EditClientHandler.this.clientDao.saveClient(client);
+								clientDao.saveClient(client);
 								
 								//Start Save the Client as a contact to the core project
 								Contact contact = new Contact(client.getFullName(), client.getPhoneNumber(), "", "", "", true);
 								contactDao.saveContact(contact);
 								//Finish save
 					
-								List<CustomField> allUsedCustomFields = EditClientHandler.this.customFieldDao
+								List<CustomField> allUsedCustomFields = customFieldDao
 										.getAllActiveUsedCustomFields();
 					
 								if (!allUsedCustomFields.isEmpty()) {
@@ -275,7 +275,7 @@ public class EditClientHandler extends BaseDialog{
 								}
 								
 								Account account = new Account(createAccountNumber(),client,false,true);
-								EditClientHandler.this.accountDao.saveAccount(account);
+								accountDao.saveAccount(account);
 								removeDialog();
 								clientsTabHandler.refresh();
 							}
