@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.data.events.DatabaseEntityNotification;
-import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
@@ -18,9 +17,9 @@ import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.LogsExportHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tablog.dialogs.LogViewDialog;
-import org.creditsms.plugins.paymentview.utils.PvUtils;
+import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
-public class LogTabHandler extends BaseTabHandler implements PagedComponentItemProvider, EventObserver{
+public class LogTabHandler extends BaseTabHandler implements PagedComponentItemProvider {
 	private static final String COMPONENT_LOGS_TABLE = "tbl_logs";
 	private static final String COMPONENT_PANEL_LOGS_TABLE = "pnl_logs";
 	private static final String XML_LOG_TAB = "/ui/plugins/paymentview/log/logsTab.xml";
@@ -107,7 +106,7 @@ public class LogTabHandler extends BaseTabHandler implements PagedComponentItemP
 		ui.add(row, levelCell);
 		ui.add(row, ui.createTableCell(logMessage.getLogTitle()));
 		ui.add(row, ui.createTableCell(logMessage.getLogContent()));
-		ui.add(row, ui.createTableCell(PvUtils.formatDate(new Date(logMessage.getTimestamp()))));
+		ui.add(row, ui.createTableCell(PaymentViewUtils.formatDate(new Date(logMessage.getTimestamp()))));
 		return row;
 	}
 	

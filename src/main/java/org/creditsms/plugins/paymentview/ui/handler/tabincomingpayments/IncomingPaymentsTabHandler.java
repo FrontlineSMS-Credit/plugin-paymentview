@@ -10,7 +10,6 @@ import java.util.List;
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
-import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.HomeTabEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -47,10 +46,10 @@ import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.dialogs.
 import org.creditsms.plugins.paymentview.userhomepropeties.analytics.CreateAlertProperties;
 import org.creditsms.plugins.paymentview.userhomepropeties.incomingpayments.AutoReplyProperties;
 import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
-import org.creditsms.plugins.paymentview.utils.PvUtils;
+import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
 public class IncomingPaymentsTabHandler extends BaseTabHandler implements
-		PagedComponentItemProvider, EventObserver{
+		PagedComponentItemProvider {
 	private static final String CONFIRM_DIALOG = "confirmDialog";
 	private static final String INVALID_DATE = "Please enter a correct starting date.";
 	private static final String ENABLE_AUTOREPLY = "OFF";
@@ -557,7 +556,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				    	  message = formed_message ;
 				        break;
 				      case DATE_PAID:
-				    	  formed_message = message.replace(fe.getMarker(), PvUtils.formatDate(incomingPayment.getTimePaid()));
+				    	  formed_message = message.replace(fe.getMarker(), PaymentViewUtils.formatDate(incomingPayment.getTimePaid()));
 				    	  message = formed_message ;
 				        break;
 				      case DAYS_REMAINING:
@@ -570,7 +569,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				    	  message = formed_message ;
 				        break;
 				      case END_MONTH_INTERVAL:
-				    	  formed_message = message.replace(fe.getMarker(), (tgt == null ? "" : PvUtils.formatDate(targetAnalytics.getEndMonthInterval())));
+				    	  formed_message = message.replace(fe.getMarker(), (tgt == null ? "" : PaymentViewUtils.formatDate(targetAnalytics.getEndMonthInterval())));
 				    	  message = formed_message ;
 				        break;
 				      case MONTHLY_SAVINGS:
@@ -582,7 +581,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				    	  message = formed_message ;
 				        break;
 				      case TARGET_ENDDATE:
-				    	  formed_message = message.replace(fe.getMarker(), (tgt == null ? "" : PvUtils.formatDate(tgt.getEndDate())));
+				    	  formed_message = message.replace(fe.getMarker(), (tgt == null ? "" : PaymentViewUtils.formatDate(tgt.getEndDate())));
 				    	  message = formed_message ;
 				        break;
 				    }

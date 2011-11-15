@@ -17,8 +17,8 @@ import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
+import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 import org.creditsms.plugins.paymentview.utils.PhoneNumberPattern;
-import org.creditsms.plugins.paymentview.utils.PvUtils;
 
 /**
  * @author Ian Onesmus Mukewa <ian@frontlinesms.com>, Roy
@@ -75,7 +75,7 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 			String notes = rowFormat.getOptionalValue(lineValues,
 					PaymentViewCsvUtils.MARKER_NOTES);
 			
-			phoneNumber = PvUtils.parsePhoneFromExcel(phoneNumber);
+			phoneNumber = PaymentViewUtils.parsePhoneFromExcel(phoneNumber);
 			
 			if(phonePattern.formatPhoneNumber(phoneNumber)) {
 				OutgoingPayment outgoingPayment = new OutgoingPayment();

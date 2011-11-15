@@ -23,7 +23,7 @@ import org.creditsms.plugins.paymentview.data.repository.ServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetServiceItemDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard.CreateSettingsTableHandler;
-import org.creditsms.plugins.paymentview.utils.PvUtils;
+import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
 public class EditTargetHandler implements ThinletUiEventHandler {
 	private static final String XML_EDIT_TARGET = "/ui/plugins/paymentview/analytics/viewdashboard/dialogs/dlgEditTarget.xml";
@@ -427,7 +427,7 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 				calEndDate.add(Calendar.DATE, -1);
 				calEndDate = setEndOfDayFormat(calEndDate);
 
-				CONFIRM_ACCEPT_PARSED_DATE="The selected end date is incorrect. The parsed end date is: "+ PvUtils.formatDate(calEndDate.getTime()) +". Do you want to proceed?";
+				CONFIRM_ACCEPT_PARSED_DATE="The selected end date is incorrect. The parsed end date is: "+ PaymentViewUtils.formatDate(calEndDate.getTime()) +". Do you want to proceed?";
 				if(startDay!=endDay){
 					setTempStartDate(calStartDate.getTime());
 					setTempEndDate(calEndDate.getTime());

@@ -18,7 +18,7 @@ import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
-import org.creditsms.plugins.paymentview.utils.PvUtils;
+import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
 /**
  * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
@@ -65,7 +65,7 @@ public class IncomingPaymentCsvImporter extends CsvImporter {
 					PaymentViewCsvUtils.MARKER_INCOMING_ACCOUNT);
 			Account acc;
 			
-			PvUtils.parsePhoneFromExcel(phoneNumber);
+			PaymentViewUtils.parsePhoneFromExcel(phoneNumber);
 
 			//TODO - no client linked to the account????????????????????
 			acc = new Account(account,false);

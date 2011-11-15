@@ -23,7 +23,6 @@ import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 import org.creditsms.plugins.paymentview.utils.PhoneNumberPattern;
-import org.creditsms.plugins.paymentview.utils.PvUtils;
 
 import thinlet.Thinlet;
 
@@ -100,7 +99,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 							firstName  = leanName.split(" ")[0];
 							otherName  = leanName.split(" ")[1];
 						} else {
-							phonenumber = PvUtils.parsePhoneFromExcel(cellValue);
+							phonenumber = PaymentViewUtils.parsePhoneFromExcel(cellValue);
 							if(phonePattern.formatPhoneNumber(phonenumber)) {
 								phonenumber = phonePattern.getNewPhoneNumberPattern();
 							}else{

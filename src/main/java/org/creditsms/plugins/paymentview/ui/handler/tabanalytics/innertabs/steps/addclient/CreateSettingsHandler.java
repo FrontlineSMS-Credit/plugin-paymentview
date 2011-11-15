@@ -19,7 +19,7 @@ import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.TargetServiceItem;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateNewServiceItemHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
-import org.creditsms.plugins.paymentview.utils.PvUtils;
+import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
 public class CreateSettingsHandler extends BasePanelHandler implements EventObserver{
 	private static final String PNL_FIELDS = "pnlFields";
@@ -198,7 +198,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 				calEndDate.add(Calendar.DATE, -1);
 				calEndDate = setEndOfDayFormat(calEndDate);
 
-				CONFIRM_ACCEPT_PARSED_DATE="The selected end date is incorrect. The parsed end date is: "+ PvUtils.formatDate(calEndDate.getTime()) +". Do you want to proceed?";
+				CONFIRM_ACCEPT_PARSED_DATE="The selected end date is incorrect. The parsed end date is: "+ PaymentViewUtils.formatDate(calEndDate.getTime()) +". Do you want to proceed?";
 				if(startDay!=endDay){
 					setTempStartDate(calStartDate.getTime());
 					setTempEndDate(calEndDate.getTime());

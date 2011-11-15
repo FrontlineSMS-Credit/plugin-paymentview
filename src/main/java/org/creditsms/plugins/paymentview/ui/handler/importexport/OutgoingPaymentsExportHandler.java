@@ -17,7 +17,6 @@ import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 
 /**
  * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
- * 
  */
 public class OutgoingPaymentsExportHandler extends ExportDialogHandler<OutgoingPayment> {
 

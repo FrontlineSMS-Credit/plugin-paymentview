@@ -7,7 +7,7 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
 
 public class SelectTargetSavingsHandler extends BasePanelHandler {
-private static final String CHK_TARGET_SAVINGS_LAYAWAY = "target_savings_layaway";
+	private static final String CHK_TARGET_SAVINGS_LAYAWAY = "target_savings_layaway";
 
 //> CONSTANTS
 	private static final String XML_STEP_SELECT_TARGET_SAVING = "/ui/plugins/paymentview/analytics/addclient/stepselecttargetsavings.xml";

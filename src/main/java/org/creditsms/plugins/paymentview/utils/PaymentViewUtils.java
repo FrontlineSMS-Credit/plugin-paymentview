@@ -1,7 +1,10 @@
 package org.creditsms.plugins.paymentview.utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,6 +14,8 @@ import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.springframework.util.StringUtils;
 
 public class PaymentViewUtils extends FrontlineUtils {
+	private static final SimpleDateFormat SDF = new SimpleDateFormat("d/M/yy hh:mm a");
+	
 	public static String accountsAsString(Collection<Account> accounts,
 			String groupsDelimiter) {
 		String str_accounts = "";
@@ -101,5 +106,27 @@ public class PaymentViewUtils extends FrontlineUtils {
 			return readableName;
 		}
 		return "";
+	}
+
+	public static String formatPhoneForExcel(String phoneNumber) {
+		return "=\"" + phoneNumber + "\"";
+	}
+
+	public static String formatDate(Long timePaid) {
+		return PaymentViewUtils.formatDate(new Date(timePaid));
+	}
+
+	public static Date parseDate(String strDatetime) throws ParseException{
+		return SDF.parse(strDatetime);
+	}
+
+	public static String parsePhoneFromExcel(String phoneNumber) {
+		phoneNumber = phoneNumber.replace("=", "");
+		phoneNumber = phoneNumber.replace("\"", "");
+		return phoneNumber;
+	}
+
+	public static String formatDate(Date datetime){
+		return SDF.format(datetime);
 	}
 }

@@ -32,7 +32,6 @@ import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
-import org.creditsms.plugins.paymentview.utils.PvUtils;
 
 public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 	/**
@@ -82,7 +81,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 				items.add(PaymentViewCsvUtils.CLIENT_NAME);
 				items.add(client.getFullName());
 				items.add(PaymentViewCsvUtils.MARKER_CLIENT_PHONE);
-				items.add(PvUtils.formatPhoneForExcel(client.getPhoneNumber()));
+				items.add(PaymentViewUtils.formatPhoneForExcel(client.getPhoneNumber()));
 
 				if (!usedCustomFields.isEmpty()) {
 					CustomField curr = null;
@@ -155,7 +154,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						PaymentViewCsvUtils.MARKER_NAME,
 						incomingPayment.getPaymentBy(),
 						PaymentViewCsvUtils.MARKER_PHONE_NUMBER,
-						PvUtils.formatPhoneForExcel(incomingPayment.getPhoneNumber()),
+						PaymentViewUtils.formatPhoneForExcel(incomingPayment.getPhoneNumber()),
 						PaymentViewCsvUtils.MARKER_AMOUNT_PAID,
 						incomingPayment.getAmountPaid().toString(),
 						PaymentViewCsvUtils.MARKER_TIME_PAID,
@@ -210,7 +209,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 					PaymentViewCsvUtils.MARKER_CLIENT_NAME,
 					outgoingPayment.getClient().getFullName(),
 					PaymentViewCsvUtils.MARKER_CLIENT_PHONE,
-					PvUtils.formatPhoneForExcel(outgoingPayment.getClient().getPhoneNumber()),
+					PaymentViewUtils.formatPhoneForExcel(outgoingPayment.getClient().getPhoneNumber()),
 					PaymentViewCsvUtils.MARKER_AMOUNT_PAID,
 					outgoingPayment.getAmountPaid().toString(),
 					PaymentViewCsvUtils.MARKER_TIME_PAID,

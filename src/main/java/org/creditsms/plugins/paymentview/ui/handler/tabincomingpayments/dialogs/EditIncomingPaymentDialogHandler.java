@@ -11,7 +11,7 @@ import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
 
-public class EditIncomingPaymentDialogHandler extends BaseDialog{
+public class EditIncomingPaymentDialogHandler extends BaseDialog {
 //> CONSTANTS
 	private static final String COMPONENT_TEXT_NAME = "fldName";
 	private static final String COMPONENT_TEXT_PHONE_NUMBER = "fldPhoneNumber";

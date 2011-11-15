@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.data.events.DatabaseEntityNotification;
-import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
@@ -25,7 +24,7 @@ import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.OutgoingPaymentsExportHandler;
 
-public class SentPaymentsTabHandler extends BaseTabHandler implements PagedComponentItemProvider, EventObserver {
+public class SentPaymentsTabHandler extends BaseTabHandler implements PagedComponentItemProvider {
 	private static final String COMPONENT_SENT_PAYMENTS_TABLE = "tbl_clients";
 	private static final String COMPONENT_PANEL_SENT_PAYMENTS_TABLE = "pnl_clients";
 	private static final String XML_SENTPAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/sentpayments.xml";

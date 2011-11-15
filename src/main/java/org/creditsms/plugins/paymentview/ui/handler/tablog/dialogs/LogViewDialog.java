@@ -6,7 +6,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
-import org.creditsms.plugins.paymentview.utils.PvUtils;
+import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
 public class LogViewDialog extends BaseDialog{
 
@@ -24,7 +24,7 @@ public class LogViewDialog extends BaseDialog{
 	private void init(LogMessage logMessage) {
 		dialogComponent = ui.loadComponentFromFile(XML_LOG_VIEW_DIALOG);
 		ui.setText(ui.find(dialogComponent, FLD_LEVEL), logMessage.getLogLevel().toString());
-		ui.setText(ui.find(dialogComponent, FLD_DATETIME), PvUtils.formatDate(new Date(logMessage.getTimestamp())));
+		ui.setText(ui.find(dialogComponent, FLD_DATETIME), PaymentViewUtils.formatDate(new Date(logMessage.getTimestamp())));
 		ui.setText(ui.find(dialogComponent, FLD_DETAILS), logMessage.getLogTitle());
 		ui.setText(ui.find(dialogComponent, FLD_MESSAGE), logMessage.getLogContent());
 	}

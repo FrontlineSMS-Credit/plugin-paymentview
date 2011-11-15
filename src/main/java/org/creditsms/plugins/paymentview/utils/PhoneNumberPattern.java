@@ -4,11 +4,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 
+ * FIXME this class is a mess of misnomers.
  * @author Roy
- *
  */
-
 public class PhoneNumberPattern {
 	String newPhoneNumberPattern;
 	private static String PHONE_PATTERN = "\\+2547[\\d]{8}";

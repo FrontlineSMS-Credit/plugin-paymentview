@@ -23,11 +23,8 @@ import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.ImportNewPaymentsTabHandler;
 
 /**
- * 
  * @author Roy
- *
  */
-
 public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
 	private static final String PAYMENT_ID = "cbPaymentId";
 	private static final String COMPONENT_CB_AMOUNT_PAID = "cbAmountPaid";
@@ -43,7 +40,7 @@ public class OutgoingPaymentsImportHandler extends ImportDialogHandler {
 	private int columnCount;
 
 
-	// > INSTANCE PROPERTIES
+//> INSTANCE PROPERTIES
 	private OutgoingPaymentCsvImporter importer;
 	private OutgoingPaymentDao outgoingPaymentDao;
 	
