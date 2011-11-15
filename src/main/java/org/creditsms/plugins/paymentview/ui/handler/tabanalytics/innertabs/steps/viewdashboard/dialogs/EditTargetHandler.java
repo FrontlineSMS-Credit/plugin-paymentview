@@ -81,10 +81,12 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 		this.pluginController = pluginController;
 		this.createsettingstblhndler = createsettingstblhndler;
 		this.targetAnalytics = new TargetAnalytics();
-		this.targetServiceItemDao = pluginController.getTargetServiceItemDao();
-		this.serviceItemDao = pluginController.getServiceItemDao();
 		this.incomingPaymentDao  = pluginController.getIncomingPaymentDao();
 		this.targetDao = pluginController.getTargetDao();
+		this.targetAnalytics.setIncomingPaymentDao(this.incomingPaymentDao);
+		this.targetAnalytics.setTargetDao(this.targetDao);
+		this.targetServiceItemDao = pluginController.getTargetServiceItemDao();
+		this.serviceItemDao = pluginController.getServiceItemDao();
 		init();
 		refresh();	
 	}
@@ -258,6 +260,8 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 			Target tgt = getTgt();
 			tgt.setEndDate(getEndDate());
 			tgt.setTotalTargetCost(totalAmount);
+			targetDao.updateTarget(tgt); 
+			tgt = targetDao.getTargetById(tgt.getId());
 			tgt.setStatus(targetAnalytics.getStatus(tgt.getId()).toString());
 			targetDao.updateTarget(tgt); 
 			

@@ -60,7 +60,7 @@ public class ReviewHandler extends BasePanelHandler {
 				TargetCreationProcess targetCreationProcess = new TargetStandardProcess(
 						client, previousCreateSettingsHandler.getStartDate(), 
 						previousCreateSettingsHandler.getEndDate(), 
-						previousCreateSettingsHandler.getTargetLstServiceItems(), pluginController, getTotalAmount());
+						previousCreateSettingsHandler.getTargetLstServiceItems(), pluginController, getTotalAmount(), getStatus());
 				
 				if(targetCreationProcess.canCreateTarget()){
 					targetCreationProcess.createTarget();
@@ -73,7 +73,7 @@ public class ReviewHandler extends BasePanelHandler {
 				TargetCreationProcess targetCreationProcess = new TargetPayBillProcess(
 						client, previousCreateSettingsHandler.getStartDate(), 
 						previousCreateSettingsHandler.getEndDate(), 
-						previousCreateSettingsHandler.getTargetLstServiceItems(), pluginController, getTotalAmount());
+						previousCreateSettingsHandler.getTargetLstServiceItems(), pluginController, getTotalAmount(), getStatus());
 					targetCreationProcess.createTarget();
 					ui.alert("New target created for client "+ client.getFullName()+ ".");
 			}
@@ -138,4 +138,9 @@ public class ReviewHandler extends BasePanelHandler {
 	public List<Client> getSelectedClients() {
 		return selectedClients;
 	}
+	
+	public String getStatus() {
+		return previousCreateSettingsHandler.getStatus();
+	}
+	
 }

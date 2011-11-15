@@ -82,12 +82,13 @@ public class Target {
 	}
 	
 	//NEW CONSTRUCTOR
-	public Target(Date targetStartDate,Date targetEndDate, Account account, BigDecimal totalTargetCost) {
+	public Target(Date targetStartDate,Date targetEndDate, Account account, BigDecimal totalTargetCost, String status) {
 		this.startDate = targetStartDate.getTime();
 		this.endDate = targetEndDate.getTime();
 		this.completedDate = null;
 		this.account = account;
 		this.totalTargetCost = totalTargetCost;
+		this.status = status;
 	}
 
 	public Account getAccount() {

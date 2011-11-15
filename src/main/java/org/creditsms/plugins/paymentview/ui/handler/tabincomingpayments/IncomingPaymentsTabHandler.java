@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.FrontlineSMS;
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
@@ -463,6 +464,16 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 						if(isNewPayment(incomingPayment.getAccount().getClient())) {
 							ui.newEvent(new HomeTabEvent(HomeTabEvent.Type.GREEN, "Payment received from new client: " + incomingPayment.getPaymentBy() + " " +incomingPayment.getAmountPaid()));	
 						}	
+						if(!incomingPayment.getAccount().isGenericAccount()) {
+							Target target = incomingPayment.getTarget();
+							target.setStatus(targetAnalytics.getStatus(target.getId()).toString());
+							try {
+								targetDao.updateTarget(target);
+							} catch (DuplicateKeyException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
 						if(incomingPayment.getTarget()!=null){
 							if(analyticsAlertsOn()) {
 								if(createAlertProperties.getCompletesTgt()) {
@@ -480,7 +491,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 							}		
 						}
 					}
-				IncomingPaymentsTabHandler.this.refresh();
+					IncomingPaymentsTabHandler.this.refresh();
 				}
 				if (entity instanceof LogMessage) {
 					if (notification instanceof EntitySavedNotification){
@@ -497,7 +508,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			private boolean analyticsAlertsOn() {
 				return createAlertProperties.isAlertOn();
 			}
-
 			private boolean isNewPayment(Client clnt) {
 				List<IncomingPayment> listInPayments =incomingPaymentDao.getActiveIncomingPaymentByClientId(clnt.getId());
 			    if(listInPayments!=null && listInPayments.size()>0){

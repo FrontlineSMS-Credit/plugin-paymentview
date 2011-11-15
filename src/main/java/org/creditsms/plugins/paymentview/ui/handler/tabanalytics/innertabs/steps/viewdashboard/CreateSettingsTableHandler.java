@@ -145,8 +145,13 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 		}else{
 			lastDatePaid = ui.createTableCell("No payment done yet");
 		}
-		String targetStatusStr = targetAnalytics.getStatus(target.getId()).toString();
-		Object targetStatus = ui.createTableCell(targetStatusStr);
+		
+		if(!targetAnalytics.getStatus(target.getId()).toString().equals(target.getStatus())) {
+			target.setStatus(targetAnalytics.getStatus(target.getId()).toString());
+			targetDao.saveTarget(target);
+		}
+		Object targetStatus = ui.createTableCell(target.getStatus());
+		
 		Object savingsTarget = ui.createTableCell(target.getTotalTargetCost().toString());
 		Object startDate = ui.createTableCell(dateFormat.format(target.getStartDate()));
 		Object endDate = ui.createTableCell(dateFormat.format(target.getEndDate()));
@@ -184,11 +189,9 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 		ui.add(row, percentageToGo);
 		ui.add(row, lastAmountPaid);
 		ui.add(row, lastDatePaid);
-		
 		ui.add(row, monthlyAmountSaved);
 		ui.add(row, monthlyAmountDue);
 		ui.add(row, endOfMonthlyInterval);
-		
 		ui.add(row, daysRemaining);
 		ui.add(row, targetStatus);
 		
@@ -206,27 +209,35 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 			totalItemCount  = this.clientDao.getClientsByNameFilter(filter).size();
 			List<Client> clients = this.clientDao.getClientsByFilter(filter, startIndex, limit);
 			
-			for (ServiceItem si : this.serviceItemDao.getServiceItemsLikeName(filter)) {
-				List<TargetServiceItem> targetServiceItems = targetServiceItemDao.
-				getAllTargetServiceItemByServiceItemId(si.getId());
-				for(int y = 0 ; y<targetServiceItems.size(); y++){
-					Target t = targetServiceItems.get(y).getTarget();
-					Client client = t.getAccount().getClient();
-					if (!clients.contains(client)){clients.add(client);}
-				}
+			if(this.serviceItemDao.getServiceItemsLikeName(filter).size()==0) {
 				List<Target> lstTgts = targetDao.getTargetsByStatus(filter);
 				for (Target t: lstTgts) {
 					Client client = t.getAccount().getClient();
 					if (!clients.contains(client)){clients.add(client);}
 				}
+			} else {
+				for (ServiceItem si : this.serviceItemDao.getServiceItemsLikeName(filter)) {
+					List<TargetServiceItem> targetServiceItems = targetServiceItemDao.
+					getAllTargetServiceItemByServiceItemId(si.getId());
+					for(int y = 0 ; y<targetServiceItems.size(); y++){
+						Target t = targetServiceItems.get(y).getTarget();
+						Client client = t.getAccount().getClient();
+						if (!clients.contains(client)){clients.add(client);}
+					}
+					List<Target> lstTgts = targetDao.getTargetsByStatus(filter);
+					for (Target t: lstTgts) {
+						Client client = t.getAccount().getClient();
+						if (!clients.contains(client)){clients.add(client);}
+					}
+				}	
 			}
-			
+						
 			return clients;
 		}else{
 			if (clientListForAnalytics.isEmpty()){
 				totalItemCount = this.clientDao.getAllActiveClientsSorted(getClientsSortField(), getClientsSortOrder()).size();
 				List<Client> activeClientsSorted = this.clientDao.getAllActiveClientsSorted
-										(startIndex, limit, getClientsSortField(), getClientsSortOrder());
+										(getClientsSortField(), getClientsSortOrder());
 				return activeClientsSorted;
 			} else {
 				totalItemCount = clientListForAnalytics.size();

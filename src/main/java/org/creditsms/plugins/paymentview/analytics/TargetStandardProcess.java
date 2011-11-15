@@ -13,8 +13,8 @@ import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.domain.TargetServiceItem;
 
 public class TargetStandardProcess extends TargetCreationProcess{
-	public  TargetStandardProcess(Client client, Date targetStartDate, Date targetEndDate, List<TargetServiceItem> targetServiceItems, PaymentViewPluginController pluginController, BigDecimal totalTargetAmount){
-		super(client, targetServiceItems, targetStartDate, targetEndDate, pluginController, totalTargetAmount);
+	public  TargetStandardProcess(Client client, Date targetStartDate, Date targetEndDate, List<TargetServiceItem> targetServiceItems, PaymentViewPluginController pluginController, BigDecimal totalTargetAmount, String status){
+		super(client, targetServiceItems, targetStartDate, targetEndDate, pluginController, totalTargetAmount, status);
 	}
 	
 	@Override
@@ -30,7 +30,7 @@ public class TargetStandardProcess extends TargetCreationProcess{
 			}
 			// attach new account to the client
 			// create new target
-			Target temp= new Target(targetStartDate, targetEndDate, this.account, totalTargetAmount);
+			Target temp= new Target(targetStartDate, targetEndDate, this.account, totalTargetAmount, status);
 			temp.setStatus("inactive");
 			this.setTarget(temp);
 			client.getTargets().add(temp);
@@ -51,7 +51,7 @@ public class TargetStandardProcess extends TargetCreationProcess{
 			//isActiveTarget
 			if(this.getInactiveAccounts().size()!=0){
 				this.setAccount(inactiveNonGenericAccounts.get(0));
-				this.setTarget(new Target(targetStartDate, targetEndDate, this.account, totalTargetAmount));
+				this.setTarget(new Target(targetStartDate, targetEndDate, this.account, totalTargetAmount, status));
 	            this.getTargetDao().saveTarget(this.getTarget());
 	            this.getAccount().setActiveAccount(true);
 	            this.getAccountDao().updateAccount(this.getAccount());
