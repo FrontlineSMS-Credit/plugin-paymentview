@@ -5,9 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.domain.PersistableSettings;
 
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
-import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 
 /**
  * @author Roy
@@ -114,7 +114,7 @@ public interface OutgoingPaymentDao {
 	/**
 	 * returns OutgoingPayment(s) by payment service settings
 	 * */
-	public List<OutgoingPayment> getByPaymentServiceSettings( PaymentServiceSettings paymentServiceSettings);
+	public List<OutgoingPayment> getByPaymentServiceSettings(PersistableSettings paymentServiceSettings);
 	
 	/**
 	 * saves an OutgoingPayment payment to the system

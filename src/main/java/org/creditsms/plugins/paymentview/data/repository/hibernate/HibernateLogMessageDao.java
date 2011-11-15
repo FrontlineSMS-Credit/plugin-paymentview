@@ -33,4 +33,27 @@ public class HibernateLogMessageDao extends BaseHibernateDao<LogMessage> impleme
 		super.saveWithoutDuplicateHandling(logMessage);
 	}
 
+	public void info(String title, String content) {
+		saveLogMessage(LogMessage.info(title, content));
+	}
+	
+	public void info(String title, Throwable t) {
+		saveLogMessage(LogMessage.info(title, t.getMessage()));
+	}
+	
+	public void warn(String title, String content) {
+		saveLogMessage(LogMessage.warn(title, content));
+	}
+	
+	public void warn(String title, Throwable t) {
+		saveLogMessage(LogMessage.warn(title, t.getMessage()));
+	}
+	
+	public void error(String title, String content) {
+		saveLogMessage(LogMessage.error(title, content));
+	}
+	
+	public void error(String title, Throwable t) {
+		saveLogMessage(LogMessage.error(title, t.getMessage()));
+	}
 }

@@ -4,9 +4,8 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 
 import net.frontlinesms.FrontlineUtils;
-import net.frontlinesms.payment.PaymentService;
-import net.frontlinesms.payment.PaymentServiceException;
-import net.frontlinesms.payment.safaricom.MpesaPayBillService;
+import net.frontlinesms.payment.service.PaymentService;
+import net.frontlinesms.payment.service.PaymentServiceException;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.apache.log4j.Logger;
@@ -82,9 +81,10 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 
 	private void setupPaymentServices() {
 		for (PaymentService pService : pluginController.getPaymentServices()){
-			if (!(pService instanceof MpesaPayBillService)) {
-				ui.add(cmbOpMobilePaymentSystem, ui.createComboboxChoice(pService.toString() + " : " 
-						+ pService.getSettings().getPsSmsModemSerial().substring(0,pService.getSettings().getPsSmsModemSerial().indexOf("@")), pService));
+			if (pService.isOutgoingPaymentEnabled()) {
+				String serviceDescription = pService.toString() + " : " 
+						+ pService.getSettings().getId();
+				ui.add(cmbOpMobilePaymentSystem, ui.createComboboxChoice(serviceDescription, pService));
 			}
 		}
 	}

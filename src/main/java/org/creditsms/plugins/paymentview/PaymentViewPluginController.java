@@ -14,17 +14,21 @@ import java.util.List;
 import net.frontlinesms.BuildProperties;
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
-import net.frontlinesms.payment.PaymentService;
 import net.frontlinesms.payment.event.PaymentServiceStartedNotification;
 import net.frontlinesms.payment.event.PaymentServiceStoppedNotification;
+import net.frontlinesms.payment.service.PaymentService;
+import net.frontlinesms.payment.settings.ui.PaymentViewSettingsController;
 import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
+import net.frontlinesms.plugins.PluginSettingsController;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpateJob;
+import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
@@ -56,7 +60,9 @@ import org.springframework.context.ApplicationContext;
  * @author Emmanuel Kala
  * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
  */
-@PluginControllerProperties(name = "Payment View", iconPath = "/icons/creditsms.png", i18nKey = "plugins.paymentview", springConfigLocation = "classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml", hibernateConfigPath = "classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml")
+@PluginControllerProperties(name="Payment View", iconPath="/icons/creditsms.png", i18nKey="plugins.payment.name",
+		springConfigLocation="classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml",
+		hibernateConfigPath="classpath:org/creditsms/plugins/paymentview/paymentview.hibernate.cfg.xml")
 public class PaymentViewPluginController extends BasePluginController
 		implements ThinletUiEventHandler, EventObserver {
 
@@ -88,7 +94,12 @@ public class PaymentViewPluginController extends BasePluginController
 	
 	/** @see net.frontlinesms.plugins.PluginController#deinit() */
 	public void deinit() {
-		this.frontlineController.getEventBus().unregisterObserver(this);
+		if(this.frontlineController != null) {
+			EventBus eventBus = this.frontlineController.getEventBus();
+			if(eventBus != null) {
+				eventBus.unregisterObserver(this);
+			}
+		}
 	}
 	
 //> CONFIG METHODS
@@ -99,6 +110,7 @@ public class PaymentViewPluginController extends BasePluginController
 	public void init(FrontlineSMS frontlineController,
 			ApplicationContext applicationContext)
 			throws PluginInitialisationException {
+		this.frontlineController = frontlineController;
 		frontlineController.getEventBus().registerObserver(this);
 		
 		// Initialize the DAO for the domain objects
@@ -115,7 +127,6 @@ public class PaymentViewPluginController extends BasePluginController
 		thirdPartyResponseDao  = (ThirdPartyResponseDao) applicationContext.getBean("thirdPartyResponseDao");
 		responseRecipientDao  = (ResponseRecipientDao) applicationContext.getBean("responseRecipientDao");
 		targetServiceItemDao  = (TargetServiceItemDao) applicationContext.getBean("targetServiceItemDao");
-		this.frontlineController = frontlineController;
 		
 		targetAnalytics = new TargetAnalytics();
 		targetAnalytics.setIncomingPaymentDao(incomingPaymentDao);
@@ -240,5 +251,12 @@ public class PaymentViewPluginController extends BasePluginController
 				}
 			}
 		}.execute();
+	}
+	
+	public PluginSettingsController getSettingsController(UiGeneratorController uiController) {
+		return new PaymentViewSettingsController(
+				uiController.getFrontlineController().getBean("paymentServiceSettingsDao", PaymentServiceSettingsDao.class),
+				this.getName(InternationalisationUtils.getCurrentLocale()),
+				uiController, getIcon(this.getClass()));
 	}
 }

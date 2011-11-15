@@ -226,7 +226,7 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 					return;
 				} else {
 					if (notification instanceof DatabaseEntityNotification){
-						Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
+						Object entity = ((DatabaseEntityNotification<?>) notification).getDatabaseEntity();
 						if (entity instanceof OutgoingPayment || entity instanceof Client) {
 							SentPaymentsTabHandler.this.refresh();
 						}

@@ -5,10 +5,10 @@ import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.data.Order;
+import net.frontlinesms.data.domain.PersistableSettings;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
-import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
@@ -199,7 +199,7 @@ public class HibernateIncomingPaymentDao extends
 		return super.getUnique(criteria);
 	}
 	
-	public List<IncomingPayment> getByPaymentServiceSettings( PaymentServiceSettings paymentServiceSettings){
+	public List<IncomingPayment> getByPaymentServiceSettings(PersistableSettings paymentServiceSettings){
 		DetachedCriteria criteria = super.getCriterion();
 		DetachedCriteria paymentServiceSettingsCriteria = criteria.createCriteria("paymentServiceSettings");
 		paymentServiceSettingsCriteria.add(Restrictions.eq("id", paymentServiceSettings.getId()));

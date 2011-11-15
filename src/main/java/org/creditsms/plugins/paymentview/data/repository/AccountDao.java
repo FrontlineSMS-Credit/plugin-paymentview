@@ -80,4 +80,6 @@ public interface AccountDao {
 	 * @param account
 	 */
 	public void updateAccount(Account account);
+	
+	public String createAccountNumber();
 }

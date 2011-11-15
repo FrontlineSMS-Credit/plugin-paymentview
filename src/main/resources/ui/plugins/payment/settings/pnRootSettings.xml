@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel name="pnHttpTriggerSettings" gap="10" weightx="2" weighty="2" columns="1">
+	<panel icon="/icons/creditsms.png" text="i18n.plugins.payment.settings.title"
+			columns="1" weightx="1" weighty="1" border="true" gap="7" top="5" left="5" bottom="5"
+			right="5">
+		<list action="selectionChanged(this, pnButtons)" weightx="1" weighty="1" delete="showConfirmationDialog('removeServices')" name="lsPaymentServices" selection="single" perform="configureService(this)"/>
+		<panel name="pnButtons" gap="8" weightx="1">
+			<button name="btNew" weightx="1" text="i18n.action.new" icon="/icons/smsdevice/internet/new.png" action="showNewServiceWizard"/>
+			<button name="btEdit" weightx="1" text="i18n.action.edit" icon="/icons/smsdevice/internet/edit.png" action="configureService(lsPaymentServices)"/>
+			<button name="btDelete" weightx="1" text="i18n.action.delete" icon="/icons/smsdevice/internet/delete.png"  action="showConfirmationDialog('removeServices')"/>
+		</panel>		
+	</panel>
+</panel>

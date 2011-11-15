@@ -93,4 +93,16 @@ public class HibernateAccountDao extends BaseHibernateDao<Account> implements
 	public int getAccountCount() {
 		return super.getAll().size();
 	}
+
+	/**
+	 * @return a generic account number
+	 */
+	public String createAccountNumber() {
+		int accountNumberGenerated = this.getAccountCount()+1;
+		String accountNumberGeneratedStr = String.format("%05d", accountNumberGenerated);
+		while (this.getAccountByAccountNumber(accountNumberGeneratedStr) != null) {
+			accountNumberGeneratedStr = String.format("%05d", ++ accountNumberGenerated);
+		}
+		return accountNumberGeneratedStr;
+	}
 }

@@ -11,10 +11,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import net.frontlinesms.data.EntityField;
+import net.frontlinesms.data.domain.PersistableSettings;
 
 /**
  * @Author Roy
@@ -80,7 +80,7 @@ public class IncomingPayment {
 	
 	@ManyToOne
 	@JoinColumn(name = FIELD_PAYMENT_SERVICE_SETTINGS)
-	private PaymentServiceSettings paymentServiceSettings;
+	private PersistableSettings paymentServiceSettings;
 	
 	public enum Field implements EntityField<IncomingPayment> {
 		AMOUNT_PAID(FIELD_AMOUNT_PAID),
@@ -294,11 +294,11 @@ public class IncomingPayment {
 		          + " on " + dateFormat.format(this.timePaid); 
 	}
 
-	public void setPaymentServiceSettings(PaymentServiceSettings paymentServiceSettings) {
+	public void setPaymentServiceSettings(PersistableSettings paymentServiceSettings) {
 		this.paymentServiceSettings = paymentServiceSettings;
 	}
 
-	public PaymentServiceSettings getPaymentServiceSettings() {
+	public PersistableSettings getPaymentServiceSettings() {
 		return paymentServiceSettings;
 	}
 }

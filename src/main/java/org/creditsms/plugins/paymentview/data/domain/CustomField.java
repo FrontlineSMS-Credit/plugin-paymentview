@@ -1,15 +1,10 @@
 package org.creditsms.plugins.paymentview.data.domain;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 import net.frontlinesms.data.EntityField;
 
@@ -21,29 +16,18 @@ import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
  * */
 
 @Entity
-@Table(name = CustomField.TABLE_NAME)
 public class CustomField {
-	public static final String TABLE_NAME = "CustomField";
 	private static final String FIELD_READABLE_NAME = "readableName";
 	private static final String FIELD_USED = "used";
 	private static final String FIELD_ACTIVE = "active";
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false, unique = true)
 	private long id;
-
 	@Column(nullable = false, unique = true)
 	private String readableName;
-
-	@OneToMany(fetch = FetchType.EAGER)
-	private Set<CustomValue> customValue;
-
-	@Column(name = FIELD_USED)
-	private boolean used = false;
-
-	@Column(name = FIELD_ACTIVE)
-	private boolean active = false;
+	private boolean used;
+	private boolean active;
 
 	public enum Field implements EntityField<CustomField> {
 		READABLE_NAME(FIELD_READABLE_NAME), 
@@ -73,20 +57,12 @@ public class CustomField {
 	public CustomField() {
 	}
 
-	public Set<CustomValue> getCustomValue() {
-		return customValue;
-	}
-
 	public long getId() {
 		return id;
 	}
 
 	public String getReadableName() {
 		return readableName;
-	}
-
-	public void setCustomValue(Set<CustomValue> customValue) {
-		this.customValue = customValue;
 	}
 
 	public void setId(long id) {

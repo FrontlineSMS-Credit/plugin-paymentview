@@ -38,20 +38,20 @@ public class DemoData {
 	}
 		
 	private Client createDummyClient(String name, String phoneNumber) throws DuplicateKeyException {
-			String[] names = name.split(" ");
-			Client c = new Client(names[0], names[1], phoneNumber);
-			getClientDao().saveClient(c);
+		String[] names = name.split(" ");
+		Client c = new Client(names[0], names[1], phoneNumber);
+		getClientDao().saveClient(c);
 			
-			Account account = new Account(createAccountNumber(),c,false,true);
-			getAccountDao().saveAccount(account);
-			return c;
+		Account account = new Account(createAccountNumber(), c, false, true);
+		getAccountDao().saveAccount(account);
+		return c;
 	}
 	
 	public String createAccountNumber(){
 		int accountNumberGenerated = getAccountDao().getAccountCount()+1;
 		String accountNumberGeneratedStr = String.format("%05d", accountNumberGenerated);
 		while (getAccountDao().getAccountByAccountNumber(accountNumberGeneratedStr) != null){
-			accountNumberGeneratedStr = String.format("%05d", ++ accountNumberGenerated);
+			accountNumberGeneratedStr = String.format("%05d", ++accountNumberGenerated);
 		}
 		return accountNumberGeneratedStr;
 	}

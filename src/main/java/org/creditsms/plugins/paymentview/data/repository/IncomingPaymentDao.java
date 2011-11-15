@@ -3,8 +3,9 @@ package org.creditsms.plugins.paymentview.data.repository;
 import java.util.Date;
 import java.util.List;
 
+import net.frontlinesms.data.domain.PersistableSettings;
+
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
-import org.creditsms.plugins.paymentview.data.domain.PaymentServiceSettings;
 
 /**
  * @author Roy
@@ -137,7 +138,7 @@ public interface IncomingPaymentDao {
 	/**
 	 * returns IncomingPayment(s) by payment service settings
 	 * */
-	public List<IncomingPayment> getByPaymentServiceSettings( PaymentServiceSettings paymentServiceSettings);
+	public List<IncomingPayment> getByPaymentServiceSettings(PersistableSettings paymentServiceSettings);
 
 	/**
 	 * saves an IncomingPayment payment to the system

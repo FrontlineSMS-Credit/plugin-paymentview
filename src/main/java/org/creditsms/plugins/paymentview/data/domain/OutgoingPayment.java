@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import net.frontlinesms.data.EntityField;
+import net.frontlinesms.data.domain.PersistableSettings;
 
 import org.hibernate.annotations.IndexColumn;
 
@@ -72,7 +73,7 @@ public class OutgoingPayment {
 	
 	@ManyToOne
 	@JoinColumn(name = FIELD_PAYMENT_SERVICE_SETTINGS)
-	private PaymentServiceSettings paymentServiceSettings;
+	private PersistableSettings paymentServiceSettings;
 
 	public enum Field implements EntityField<OutgoingPayment> {
 		AMOUNT_PAID(FIELD_AMOUNT_PAID),
@@ -242,11 +243,11 @@ public class OutgoingPayment {
 		this.paymentId = paymentId;
 	}
 	
-	public void setPaymentServiceSettings(PaymentServiceSettings paymentServiceSettings) {
+	public void setPaymentServiceSettings(PersistableSettings paymentServiceSettings) {
 		this.paymentServiceSettings = paymentServiceSettings;
 	}
 
-	public PaymentServiceSettings getPaymentServiceSettings() {
+	public PersistableSettings getPaymentServiceSettings() {
 		return paymentServiceSettings;
 	}
 	

@@ -2,9 +2,7 @@ package org.creditsms.plugins.paymentview.data.importexport;
 
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_AMOUNT_PAID;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_CONFIRMATION_CODE;
-import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_FIRST_NAME;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_NOTES;
-import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_OTHER_NAME;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_NAME;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_PAYMENT_ID;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_PHONE;
