@@ -1,4 +1,4 @@
-package net.frontlinesms.payment.service;
+package net.frontlinesms.plugins.payment.service;
 
 import java.math.BigDecimal;
 

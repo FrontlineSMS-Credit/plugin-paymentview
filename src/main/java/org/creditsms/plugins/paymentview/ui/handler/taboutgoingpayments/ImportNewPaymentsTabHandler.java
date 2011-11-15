@@ -4,8 +4,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
-import net.frontlinesms.payment.service.PaymentService;
-import net.frontlinesms.payment.service.PaymentServiceException;
+import net.frontlinesms.plugins.payment.service.PaymentService;
+import net.frontlinesms.plugins.payment.service.PaymentServiceException;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 

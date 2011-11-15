@@ -88,15 +88,14 @@ public class PaymentViewThinletTabController extends
 		}
 	}
 	
-	public void updateStatusBar(String message){
+	public void updateStatusBar(String message) {
 		ui.setText(statusBar, message);
 	}
 
 	/**
 	 * Refreshes the tab display
 	 */
-	public void refresh() {
-	}
+	public void refresh() {}
 
 	/**
 	 * @return the paymentViewTab
@@ -105,7 +104,5 @@ public class PaymentViewThinletTabController extends
 		return paymentViewTab;
 	}
 
-	public void deinit() {
-		// TODO de-register with EventBus
-	}
+	public void deinit() {}
 }

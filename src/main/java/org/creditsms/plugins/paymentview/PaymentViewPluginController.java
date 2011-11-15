@@ -17,20 +17,19 @@ import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
-import net.frontlinesms.payment.event.PaymentServiceStartedNotification;
-import net.frontlinesms.payment.event.PaymentServiceStoppedNotification;
-import net.frontlinesms.payment.service.PaymentService;
-import net.frontlinesms.payment.settings.ui.PaymentViewSettingsController;
 import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.plugins.PluginSettingsController;
+import net.frontlinesms.plugins.payment.event.PaymentServiceStartedNotification;
+import net.frontlinesms.plugins.payment.event.PaymentServiceStoppedNotification;
+import net.frontlinesms.plugins.payment.service.PaymentService;
+import net.frontlinesms.plugins.payment.settings.ui.PaymentViewSettingsController;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpdateJob;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
-import org.apache.log4j.Logger;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
@@ -47,7 +46,6 @@ import org.creditsms.plugins.paymentview.data.repository.TargetServiceItemDao;
 import org.creditsms.plugins.paymentview.data.repository.ThirdPartyResponseDao;
 import org.creditsms.plugins.paymentview.ui.PaymentViewThinletTabController;
 import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.AuthorizationProperties;
-import org.creditsms.plugins.paymentview.utils.PvUtils;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -233,10 +231,6 @@ public class PaymentViewPluginController extends BasePluginController
 
 	public void addPaymentService(PaymentService paymentService) {
 		this.paymentServices.add(paymentService);
-	}
-
-	public Logger getLogger(Class<?> clazz) {
-		return PvUtils.getLogger(clazz);
 	}
 	
 	public void notify(final FrontlineEventNotification notification) {
