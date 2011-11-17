@@ -161,14 +161,20 @@ public class ClientImportHandler extends ImportDialogHandler {
 	protected void doSpecialImport(String dataPath) {
 		CsvRowFormat rowFormat = getRowFormatForClient();
 		try{
-			this.importer.setSelectedClientLst(clntLst);
-			this.importer.setSelectedCustomFieldlst(cfLst);
-			this.importer.setSelectedCustomValueslst(cvLst);
-			this.importer.importClients(this.clientDao, rowFormat, pluginController);
-			this.clientsTabHandler.refresh();
+			if(hasIncorrectlyFormatedPhoneNo) {
+				this.uiController.alert("There is one or more records with" +
+						" incorrectly formatted phone numbers, " +
+						"please edit the .csv file and try to import the file again.");
+			} else {
+				this.importer.setSelectedClientLst(clntLst);
+				this.importer.setSelectedCustomFieldlst(cfLst);
+				this.importer.setSelectedCustomValueslst(cvLst);
+				this.importer.importClients(this.clientDao, rowFormat, pluginController);
+				this.clientsTabHandler.refresh();
 
-			this.uiController.infoMessage(InternationalisationUtils
-					.getI18nString(I18N_IMPORT_SUCCESSFUL));
+				this.uiController.infoMessage(InternationalisationUtils
+						.getI18nString(I18N_IMPORT_SUCCESSFUL));	
+			}
 		} catch (DuplicateKeyException e) {
 			pluginController.getUiGeneratorController().
 			alert(e.getMessage());
