@@ -6,9 +6,11 @@ import java.util.List;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
 /**
@@ -79,5 +81,14 @@ public class HibernateTargetDao extends BaseHibernateDao<Target> implements
 
 	public void updateTarget(Target target) throws DuplicateKeyException {
 		super.update(target);
+	}
+
+	public List<Target> getTargetsByStatus(String status) {
+		DetachedCriteria criteria = super.getCriterion().add(
+				Restrictions
+						.disjunction()
+						.add(Restrictions.ilike("status", status,
+								MatchMode.ANYWHERE)));
+		return super.getList(criteria);
 	}
 }

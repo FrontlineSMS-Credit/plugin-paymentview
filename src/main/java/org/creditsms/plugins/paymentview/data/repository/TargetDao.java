@@ -46,6 +46,14 @@ public interface TargetDao {
 	public List<Target> getTargetsByAccount(String accountNumber);
 
 	/**
+	 * Returns a Targets with the same status as the passed
+	 * 
+	 * @param status
+	 * @return
+	 */
+	public List<Target> getTargetsByStatus(String status);
+	
+	/**
 	 * Returns an active Target with Account id
 	 * 
 	 * @param serviceItemId

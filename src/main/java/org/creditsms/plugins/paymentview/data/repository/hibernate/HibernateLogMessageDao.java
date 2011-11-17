@@ -17,7 +17,8 @@ public class HibernateLogMessageDao extends BaseHibernateDao<LogMessage> impleme
 
 
 	public List<LogMessage> getAllLogMessage() {
-		return this.getHibernateTemplate().loadAll(LogMessage.class);
+		DetachedCriteria criteria = super.getSortCriterion(LogMessage.Field.LOG_TIMESTAMP, Order.DESCENDING);
+		return super.getList(criteria); 
 	}
 
 	public List<LogMessage> getAllLogMessage(int startIndex, int limit) {

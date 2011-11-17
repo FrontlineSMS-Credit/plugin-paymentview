@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.FrontlineSMS;
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
@@ -460,6 +461,16 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 							if(incomingPaymentDao.getActiveIncomingPaymentByClientId(incomingPayment.getAccount().getClient().getId()).size() > 0) {
 								eventBus.notifyObservers(new HomeTabEventNotification(HomeTabEventNotification.Type.GREEN, "Payment received from new client: " + incomingPayment.getPaymentBy() + " " +incomingPayment.getAmountPaid()));	
 							}	
+						if(!incomingPayment.getAccount().isGenericAccount()) {
+							Target target = incomingPayment.getTarget();
+							target.setStatus(targetAnalytics.getStatus(target.getId()).toString());
+							try {
+								targetDao.updateTarget(target);
+							} catch (DuplicateKeyException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
 							if(incomingPayment.getTarget() != null) {
 								if(createAlertProperties.isAlertOn()) {
 									if(createAlertProperties.getCompletesTgt()) {
@@ -477,6 +488,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 								}
 							}
 							refresh();
+					IncomingPaymentsTabHandler.this.refresh();
 						}
 					}.execute();
 				} else threadSafeRefresh();

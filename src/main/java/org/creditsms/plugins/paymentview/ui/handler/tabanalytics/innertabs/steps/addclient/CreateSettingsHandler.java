@@ -357,6 +357,10 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		return totalAmount;
 	}
 	
+	public String getStatus() {
+		return "inactive";
+	}
+	
 	public void setTotalAmount(BigDecimal totalAmount) {
 		this.totalAmount =  totalAmount;
 	}
