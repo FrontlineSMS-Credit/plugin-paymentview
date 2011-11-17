@@ -4,17 +4,17 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
 
-public class ConnectedDevicesTabHandler extends BaseTabHandler{
+public class ConnectedDevicesTabHandler extends BaseTabHandler {
+//> STATIC CONSTANTS
 	private static final String COMPONENT_PANEL_CONNECTEDDEVICES_LIST = "pnl_tbl_connectedDevicesList";
-	// > STATIC CONSTANTS
 	private static final String XML_CONNECTEDDEVICES_TAB = "/ui/plugins/paymentview/connecteddevices/connecteddevices.xml";
-	// > INSTANCE PROPERTIES
 	
+//> INSTANCE PROPERTIES
 	private Object pnlConnectedDevicesList;
 	private ComponentPagingHandler connectedDevicesTablePager;
 	
 	public ConnectedDevicesTabHandler(UiGeneratorController ui) {
-		super(ui);
+		super(ui, false);
 		init();
 	}
 	
@@ -28,7 +28,5 @@ public class ConnectedDevicesTabHandler extends BaseTabHandler{
 
 	@Override
 	public void refresh() {
-		// TODO Auto-generated method stub
-		
 	}
 }

@@ -1,9 +1,9 @@
-package net.frontlinesms.payment.settings.ui;
+package net.frontlinesms.plugins.payment.settings.ui;
 
 import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
 
-import net.frontlinesms.payment.service.PaymentService;
-import net.frontlinesms.payment.service.PaymentServiceImplementationLoader;
+import net.frontlinesms.plugins.payment.service.PaymentService;
+import net.frontlinesms.plugins.payment.service.PaymentServiceImplementationLoader;
 import net.frontlinesms.serviceconfig.ui.BaseServiceSettingsHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 

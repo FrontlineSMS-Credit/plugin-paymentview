@@ -13,7 +13,6 @@ import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.events.FrontlineUiUpateJob;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
@@ -53,11 +52,10 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	private PaymentViewPluginController pluginController;
 
 	public SentPaymentsTabHandler(UiGeneratorController ui, Object tabOutgoingPayments, PaymentViewPluginController pluginController) {
-		super(ui);
+		super(ui, true);
 		this.pluginController = pluginController;
 		outgoingPaymentDao = pluginController.getOutgoingPaymentDao();
 		sentPaymentsTab = ui.find(tabOutgoingPayments, TAB_SENTPAYMENTS);
-		ui.getFrontlineController().getEventBus().registerObserver(this);
 		init();
 	}
 
@@ -220,19 +218,12 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	}
 
 	public void notify(final FrontlineEventNotification notification) {
-		new FrontlineUiUpateJob() {
-			public void run() {
-				if (!(notification instanceof DatabaseEntityNotification)) {
-					return;
-				} else {
-					if (notification instanceof DatabaseEntityNotification){
-						Object entity = ((DatabaseEntityNotification<?>) notification).getDatabaseEntity();
-						if (entity instanceof OutgoingPayment || entity instanceof Client) {
-							SentPaymentsTabHandler.this.refresh();
-						}
-					}
-				}
+		super.notify(notification);
+		if (notification instanceof DatabaseEntityNotification){
+			Object entity = ((DatabaseEntityNotification<?>) notification).getDatabaseEntity();
+			if (entity instanceof OutgoingPayment || entity instanceof Client) {
+				threadSafeRefresh();
 			}
-		}.execute();
+		}
 	}
 }

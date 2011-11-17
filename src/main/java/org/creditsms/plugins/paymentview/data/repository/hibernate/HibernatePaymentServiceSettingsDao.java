@@ -4,7 +4,7 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
 
 import net.frontlinesms.data.repository.hibernate.BaseHibernateConfigurableServiceSettingsDao;
-import net.frontlinesms.payment.service.PaymentService;
+import net.frontlinesms.plugins.payment.service.PaymentService;
 
 import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
 

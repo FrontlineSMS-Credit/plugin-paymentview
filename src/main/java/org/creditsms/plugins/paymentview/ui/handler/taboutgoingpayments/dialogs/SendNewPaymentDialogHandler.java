@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 
 import net.frontlinesms.FrontlineUtils;
-import net.frontlinesms.payment.service.PaymentService;
-import net.frontlinesms.payment.service.PaymentServiceException;
+import net.frontlinesms.plugins.payment.service.PaymentService;
+import net.frontlinesms.plugins.payment.service.PaymentServiceException;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.apache.log4j.Logger;

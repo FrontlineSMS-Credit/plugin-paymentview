@@ -1,4 +1,4 @@
-package net.frontlinesms.payment.event;
+package net.frontlinesms.plugins.payment.event;
 
 import net.frontlinesms.events.FrontlineEventNotification;
 

@@ -13,7 +13,7 @@ import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.events.FrontlineUiUpateJob;
+import net.frontlinesms.ui.events.FrontlineUiUpdateJob;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
@@ -239,29 +239,30 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 	}
 	
 	public void notify(final FrontlineEventNotification notification) {
-		new FrontlineUiUpateJob() {
-			public void run() {
-				if (!(notification instanceof DatabaseEntityNotification)) {
-					return;
-				}
-				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
-				if (entity instanceof Target) {
-					Target target = (Target) entity;
-					if (notification instanceof EntitySavedNotification){
-						Account a = target.getAccount();
-						if ((a != null) & (a.getClient() != null)) {
-							if (a.getClient().isActive()){
-								clients_targets.put(a.getClient(), target);
+		if (notification instanceof DatabaseEntityNotification) {
+			final Object entity = ((DatabaseEntityNotification<?>) notification).getDatabaseEntity();
+			if (entity instanceof Target) {
+				new FrontlineUiUpdateJob() {
+					public void run() {
+						Target target = (Target) entity;
+						if (notification instanceof EntitySavedNotification){
+							Account a = target.getAccount();
+							if ((a != null) & (a.getClient() != null)) {
+								if (a.getClient().isActive()){
+									clients_targets.put(a.getClient(), target);
+								}
 							}
 						}
+						refresh();
 					}
-					CreateSettingsTableHandler.this.refresh();
-				}
-				if (entity instanceof Client || entity instanceof Account) {
-					CreateSettingsTableHandler.this.refresh();
-				}
-				
+				}.execute();
+			} else if (entity instanceof Client || entity instanceof Account) {
+				new FrontlineUiUpdateJob() {
+					public void run() {
+						refresh();
+					}
+				}.execute();
 			}
-		}.execute();
+		}
 	}
 }

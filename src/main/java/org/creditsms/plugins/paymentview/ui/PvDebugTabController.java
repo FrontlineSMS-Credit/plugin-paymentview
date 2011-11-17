@@ -43,7 +43,7 @@ public class PvDebugTabController extends BaseTabHandler implements
 	 *            value for {@linkplain #ui}
 	 */
 	public PvDebugTabController(UiGeneratorController ui) {
-		super(ui);
+		super(ui, false);
 		this.smsServiceManager = ui.getFrontlineController().getSmsServiceManager();
 		init();		
 	}

@@ -11,7 +11,7 @@ import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.events.FrontlineUiUpateJob;
+import net.frontlinesms.ui.events.FrontlineUiUpdateJob;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
@@ -19,10 +19,9 @@ import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
-public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObserver {
+public class CustomiseClientDBHandler implements ThinletUiEventHandler, EventObserver {
 	private static final String LST_CUSTOM_FIELDS = "lstCustomFields";
 	private static final String COMPONENT_PNL_FIELDS = "pnlFields";
-	private static final String BTN_OK = "okButton";
 	private static final String XML_CUSTOMIZE_CLIENT_DB = "/ui/plugins/paymentview/clients/dialogs/dlgCustomizeClient.xml";
 
 	
@@ -37,7 +36,7 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 	private Object listCustomFields;
 	private PaymentViewPluginController pluginController;
 
-	public CustomizeClientDBHandler(PaymentViewPluginController pluginController,
+	public CustomiseClientDBHandler(PaymentViewPluginController pluginController,
 			CustomFieldDao customFieldDao) {
 		this.pluginController = pluginController;
 		this.ui = pluginController.getUiGeneratorController();
@@ -165,18 +164,15 @@ public class CustomizeClientDBHandler implements ThinletUiEventHandler, EventObs
 	}
 
 	public void notify(final FrontlineEventNotification notification) {
-		new FrontlineUiUpateJob() {
-			public void run() {
-				if (!(notification instanceof DatabaseEntityNotification)) {
-					return;
-				}
-		
-				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
-				if (entity instanceof CustomField) {
-					//ui.setVisible(ui.find(dialogComponent, BTN_OK), true);
-					CustomizeClientDBHandler.this.refresh();
-				}
+		if (notification instanceof DatabaseEntityNotification) {
+			Object entity = ((DatabaseEntityNotification<?>) notification).getDatabaseEntity();
+			if (entity instanceof CustomField) {
+				new FrontlineUiUpdateJob() {
+					public void run() {
+						refresh();
+					}
+				}.execute();
 			}
-		}.execute();
+		}
 	}
 }

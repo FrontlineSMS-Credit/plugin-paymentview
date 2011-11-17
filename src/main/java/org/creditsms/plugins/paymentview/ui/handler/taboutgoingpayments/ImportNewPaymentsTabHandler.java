@@ -4,8 +4,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
-import net.frontlinesms.payment.service.PaymentService;
-import net.frontlinesms.payment.service.PaymentServiceException;
+import net.frontlinesms.plugins.payment.service.PaymentService;
+import net.frontlinesms.plugins.payment.service.PaymentServiceException;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 
@@ -22,11 +22,8 @@ import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.
 import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs.SelectPaymentServiceDialogHandler;
 
 /**
- * 
  * @author Roy
- *
  */
-
 public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	private static final String XML_IMPORT_NEW_PAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/innertabs/importnewpayments.xml";
 	private static final String COMPONENT_NEW_PAYMENTS_TABLE = "tbl_new_payments";
@@ -47,7 +44,7 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	private List<OutgoingPayment> outgoingPaymentsLst;
 
 	public ImportNewPaymentsTabHandler(UiGeneratorController ui, Object tabOutgoingPayments, PaymentViewPluginController pluginController) {
-		super(ui);
+		super(ui, false);
 		accountDao = pluginController.getAccountDao();
 		clientDao = pluginController.getClientDao();
 		this.pluginController = pluginController;

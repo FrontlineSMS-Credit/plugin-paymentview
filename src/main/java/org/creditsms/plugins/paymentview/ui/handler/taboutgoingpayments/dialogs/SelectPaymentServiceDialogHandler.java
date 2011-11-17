@@ -1,6 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.dialogs;
 
-import net.frontlinesms.payment.service.PaymentService;
+import net.frontlinesms.plugins.payment.service.PaymentService;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;

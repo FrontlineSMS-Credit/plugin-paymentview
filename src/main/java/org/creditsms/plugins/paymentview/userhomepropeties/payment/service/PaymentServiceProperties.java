@@ -1,5 +1,5 @@
 package org.creditsms.plugins.paymentview.userhomepropeties.payment.service;
-import net.frontlinesms.payment.service.PaymentService;
+import net.frontlinesms.plugins.payment.service.PaymentService;
 import net.frontlinesms.resources.UserHomeFilePropertySet;
 
 public class PaymentServiceProperties extends UserHomeFilePropertySet {

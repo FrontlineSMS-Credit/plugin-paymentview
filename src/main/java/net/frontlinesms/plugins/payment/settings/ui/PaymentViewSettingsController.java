@@ -1,4 +1,4 @@
-package net.frontlinesms.payment.settings.ui;
+package net.frontlinesms.plugins.payment.settings.ui;
 
 import java.util.List;
 

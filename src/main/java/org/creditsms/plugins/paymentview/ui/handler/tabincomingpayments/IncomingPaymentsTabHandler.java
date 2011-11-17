@@ -12,9 +12,9 @@ import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
-import net.frontlinesms.ui.HomeTabEvent;
+import net.frontlinesms.ui.HomeTabEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.events.FrontlineUiUpateJob;
+import net.frontlinesms.ui.events.FrontlineUiUpdateJob;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
 import net.frontlinesms.ui.handler.PagedComponentItemProvider;
@@ -97,13 +97,12 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 
 	public IncomingPaymentsTabHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController) {
-		super(ui);
+		super(ui, true);
 		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
 		this.clientDao = pluginController.getClientDao();
 		this.logMessageDao = pluginController.getLogMessageDao();
 		this.pluginController = pluginController;
 		this.frontlineController = ui.getFrontlineController();
-		this.frontlineController.getEventBus().registerObserver(this);
 		this.targetAnalytics = new TargetAnalytics();
 		this.targetAnalytics.setIncomingPaymentDao(pluginController.getIncomingPaymentDao());
 		this.targetDao = pluginController.getTargetDao();
@@ -444,69 +443,53 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 //> INCOMING PAYMENT NOTIFICATION...
 	@SuppressWarnings("rawtypes")
 	public void notify(final FrontlineEventNotification notification) {
-		new FrontlineUiUpateJob() {
-			public void run() {
-				if (!(notification instanceof DatabaseEntityNotification)) {
-					return;
-				}
-		
-				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();				
-				if (entity instanceof IncomingPayment) {
-					if (notification instanceof EntitySavedNotification){
-						IncomingPayment incomingPayment = (IncomingPayment) entity;
-						if (!incomingPayment.isChildPayment()){
-							if(autoReplyProperties.isAutoReplyOn()){
-								IncomingPaymentsTabHandler.this.replyToPayment((IncomingPayment) entity);
+		super.notify(notification);
+		if (notification instanceof DatabaseEntityNotification) {
+			final Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();				
+			if (entity instanceof IncomingPayment) {
+				if (notification instanceof EntitySavedNotification) {
+					new FrontlineUiUpdateJob() {
+						public void run() {
+							IncomingPayment incomingPayment = (IncomingPayment) entity;
+							if (!incomingPayment.isChildPayment()){
+								if(autoReplyProperties.isAutoReplyOn()){
+									replyToPayment((IncomingPayment) entity);
+								}
+								replyToThirdParty((IncomingPayment) entity);
 							}
-							IncomingPaymentsTabHandler.this.replyToThirdParty((IncomingPayment) entity);
-						}
-						if(isNewPayment(incomingPayment.getAccount().getClient())) {
-							ui.newEvent(new HomeTabEvent(HomeTabEvent.Type.GREEN, "Payment received from new client: " + incomingPayment.getPaymentBy() + " " +incomingPayment.getAmountPaid()));	
-						}	
-						if(incomingPayment.getTarget()!=null){
-							if(analyticsAlertsOn()) {
-								if(createAlertProperties.getCompletesTgt()) {
-									if(targetAnalytics.getPercentageToGo(incomingPayment.getTarget().getId()).intValue()>= 100 
-											&& targetAnalytics.getPreviousPercentageToGo(incomingPayment.getTarget().getId()).intValue()<100){
-										ui.newEvent(new HomeTabEvent(HomeTabEvent.Type.GREEN, "Savings target completed: " + incomingPayment.getAccount().getClient().getFullName()));
+							if(incomingPaymentDao.getActiveIncomingPaymentByClientId(incomingPayment.getAccount().getClient().getId()).size() > 0) {
+								eventBus.notifyObservers(new HomeTabEventNotification(HomeTabEventNotification.Type.GREEN, "Payment received from new client: " + incomingPayment.getPaymentBy() + " " +incomingPayment.getAmountPaid()));	
+							}	
+							if(incomingPayment.getTarget() != null) {
+								if(createAlertProperties.isAlertOn()) {
+									if(createAlertProperties.getCompletesTgt()) {
+										if(targetAnalytics.getPercentageToGo(incomingPayment.getTarget().getId()).intValue()>= 100 
+												&& targetAnalytics.getPreviousPercentageToGo(incomingPayment.getTarget().getId()).intValue()<100){
+											eventBus.notifyObservers(new HomeTabEventNotification(HomeTabEventNotification.Type.GREEN, "Savings target completed: " + incomingPayment.getAccount().getClient().getFullName()));
+										}
+									}
+									if(createAlertProperties.getMeetsHalfTgt()) {
+										if(targetAnalytics.getPercentageToGo(incomingPayment.getTarget().getId()).intValue()>= 50 
+												&& targetAnalytics.getPreviousPercentageToGo(incomingPayment.getTarget().getId()).intValue()<50) {
+											eventBus.notifyObservers(new HomeTabEventNotification(HomeTabEventNotification.Type.GREEN, "Reached 50% of savings target : " + incomingPayment.getAccount().getClient().getFullName()));
+										}
 									}
 								}
-								if(createAlertProperties.getMeetsHalfTgt()) {
-									if(targetAnalytics.getPercentageToGo(incomingPayment.getTarget().getId()).intValue()>= 50 
-											&& targetAnalytics.getPreviousPercentageToGo(incomingPayment.getTarget().getId()).intValue()<50){
-										ui.newEvent(new HomeTabEvent(HomeTabEvent.Type.GREEN, "Reached 50% of savings target : " + incomingPayment.getAccount().getClient().getFullName()));
-									}
-								}
-							}		
+							}
+							refresh();
 						}
-					}
-				IncomingPaymentsTabHandler.this.refresh();
-				}
-				if (entity instanceof LogMessage) {
-					if (notification instanceof EntitySavedNotification){
-						LogMessage logMsg = (LogMessage) entity;
-						if (logMsg.getLogTitle().equals("PIN ERROR")) {
-							ui.newEvent(new HomeTabEvent(HomeTabEvent.Type.RED, logMsg.getLogContent()));
-						} else if (logMsg.getLogTitle().equals("PAYMENT FAILED")) {
-							ui.newEvent(new HomeTabEvent(HomeTabEvent.Type.RED, logMsg.getLogContent()));
-						}
-					}
+					}.execute();
+				} else threadSafeRefresh();
+			} else if (entity instanceof LogMessage 
+					&& notification instanceof EntitySavedNotification){
+				LogMessage logMsg = (LogMessage) entity;
+				if (logMsg.getLogTitle().equals("PIN ERROR")) {
+					eventBus.notifyObservers(new HomeTabEventNotification(HomeTabEventNotification.Type.RED, logMsg.getLogContent()));
+				} else if (logMsg.getLogTitle().equals("PAYMENT FAILED")) {
+					eventBus.notifyObservers(new HomeTabEventNotification(HomeTabEventNotification.Type.RED, logMsg.getLogContent()));
 				}
 			}
-
-			private boolean analyticsAlertsOn() {
-				return createAlertProperties.isAlertOn();
-			}
-
-			private boolean isNewPayment(Client clnt) {
-				List<IncomingPayment> listInPayments =incomingPaymentDao.getActiveIncomingPaymentByClientId(clnt.getId());
-			    if(listInPayments!=null && listInPayments.size()>0){
-			    	return true;
-			    }else{
-			    	return false;
-			    }
-			}
-		}.execute();
+		}
 	}
 
 	protected void replyToPayment(IncomingPayment incomingPayment) {

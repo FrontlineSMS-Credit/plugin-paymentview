@@ -1,4 +1,4 @@
-package net.frontlinesms.payment.service;
+package net.frontlinesms.plugins.payment.service;
 
 @SuppressWarnings("serial")
 public class PaymentServiceException extends Exception {
