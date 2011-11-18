@@ -38,7 +38,7 @@ public class PvDebugTabController extends BaseTabHandler implements
 	/**
 	 * 
 	 * @param paymentViewController
-	 *            value for {@link #controller}
+	 *            value for {@link #ui}
 	 * @param uiController
 	 *            value for {@linkplain #ui}
 	 */

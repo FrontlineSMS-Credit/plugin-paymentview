@@ -2,19 +2,17 @@ package net.frontlinesms.plugins.payment.settings.ui;
 
 import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
 
+import net.frontlinesms.plugins.PluginSettingsController;
 import net.frontlinesms.plugins.payment.service.PaymentService;
 import net.frontlinesms.plugins.payment.service.PaymentServiceImplementationLoader;
 import net.frontlinesms.serviceconfig.ui.BaseServiceSettingsHandler;
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.settings.UiSettingsSectionHandler;
 
-public class PaymentServiceSettingsHandler extends BaseServiceSettingsHandler<PaymentService> {
-	public PaymentServiceSettingsHandler(UiGeneratorController controller, PaymentServiceSettingsDao dao) {
-		super(controller, new PaymentServiceImplementationLoader().getAll(), dao);
-	}
-
-	@Override
-	public void refreshAccounts(Object accountList) {
-		PaymentViewUiUtils.refreshServiceList(controller, (PaymentServiceSettingsDao) settingsDao, accountList);
+public class PaymentServiceSettingsHandler extends BaseServiceSettingsHandler<PaymentService> implements PluginSettingsController {
+	public PaymentServiceSettingsHandler(UiGeneratorController controller, PaymentServiceSettingsDao dao,
+			String title, String icon) {
+		super(controller, dao, new PaymentServiceImplementationLoader().getAll(), title, icon);
 	}
 	
 	@Override
@@ -25,5 +23,19 @@ public class PaymentServiceSettingsHandler extends BaseServiceSettingsHandler<Pa
 	@Override
 	public String getIconMapLocation() {
 		return null;
+	}
+
+	public void addSubSettingsNodes(Object rootSettingsNode) {}
+
+	public UiSettingsSectionHandler getHandlerForSection(String section) {
+		return null;
+	}
+
+	public UiSettingsSectionHandler getRootPanelHandler() {
+		return this;
+	}
+
+	public Object getRootNode() {
+		return getSectionNode();
 	}
 }

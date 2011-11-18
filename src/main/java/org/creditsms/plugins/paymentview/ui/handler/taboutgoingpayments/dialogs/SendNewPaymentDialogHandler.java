@@ -134,14 +134,16 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 		try {
 			outgoingPaymentDao.saveOutgoingPayment(outgoingPayment);
 			try {
-				paymentService.makePayment(client, outgoingPayment);
+				paymentService.makePayment(outgoingPayment);
 			} catch(Exception ex) {
 				logMessageDao.saveLogMessage(
 						new LogMessage(LogMessage.LogLevel.ERROR,"Outgoing Payment: Payment failed.",outgoingPayment.toStringForLogs()));
 				log.warn("Payment failed.", ex);
 				outgoingPayment.setStatus(OutgoingPayment.Status.ERROR);
-				outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
 			}
+			// always update the payment - whether there was an exception
+			// or not, there should still be a change in status 
+			outgoingPaymentDao.updateOutgoingPayment(outgoingPayment);
 			
 			if(outgoingPayment.getStatus() == OutgoingPayment.Status.ERROR) {
 				ui.infoMessage("Error Occured");

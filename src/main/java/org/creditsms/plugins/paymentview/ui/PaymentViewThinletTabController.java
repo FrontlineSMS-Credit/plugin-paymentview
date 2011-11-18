@@ -43,7 +43,7 @@ public class PaymentViewThinletTabController extends
 	/**
 	 * 
 	 * @param paymentViewController
-	 *            value for {@link #controller}
+	 *            value for {@link #ui}
 	 * @param uiController
 	 *            value for {@linkplain #ui}
 	 */

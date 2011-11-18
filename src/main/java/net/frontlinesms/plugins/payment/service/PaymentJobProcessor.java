@@ -6,11 +6,6 @@ public class PaymentJobProcessor implements Runnable {
 	
 	private Thread t;
 	private LinkedBlockingQueue<PaymentJob> q = new LinkedBlockingQueue<PaymentJob>();
-	private static final PaymentJobProcessor pJobProcessor = new PaymentJobProcessor();
-	
-	public static PaymentJobProcessor getPjobprocessor() {
-		return pJobProcessor;
-	}
 
 	public PaymentJobProcessor(PaymentService service) {
 		t = new Thread(this, "PaymentJobProcessor: " + service.toString());

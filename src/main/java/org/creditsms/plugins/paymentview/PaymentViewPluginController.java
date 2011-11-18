@@ -24,7 +24,7 @@ import net.frontlinesms.plugins.PluginSettingsController;
 import net.frontlinesms.plugins.payment.event.PaymentServiceStartedNotification;
 import net.frontlinesms.plugins.payment.event.PaymentServiceStoppedNotification;
 import net.frontlinesms.plugins.payment.service.PaymentService;
-import net.frontlinesms.plugins.payment.settings.ui.PaymentViewSettingsController;
+import net.frontlinesms.plugins.payment.settings.ui.PaymentServiceSettingsHandler;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpdateJob;
@@ -252,9 +252,9 @@ public class PaymentViewPluginController extends BasePluginController
 	}
 	
 	public PluginSettingsController getSettingsController(UiGeneratorController uiController) {
-		return new PaymentViewSettingsController(
+		return new PaymentServiceSettingsHandler(uiController,
 				uiController.getFrontlineController().getBean("paymentServiceSettingsDao", PaymentServiceSettingsDao.class),
 				this.getName(InternationalisationUtils.getCurrentLocale()),
-				uiController, getIcon(this.getClass()));
+				getIcon(this.getClass()));
 	}
 }
