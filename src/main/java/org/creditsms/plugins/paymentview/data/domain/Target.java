@@ -32,7 +32,7 @@ public class Target {
 	public static final String FIELD_TARGET_SERVICE_ITEM = "targetServiceItemId";
 	public static final String FIELD_TOTAL_TARGET_COST = "totalTargetCost";
 	public static final String FIELD_INCOMING_PAYMENT ="incomingPaymentId";
-
+	public static final String FIELD_TARGET_STATUS ="status";
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,6 +44,8 @@ public class Target {
 	private long endDate;
 	@Column(name = FIELD_COMPLETED_DATE, nullable = true)
 	private Long completedDate;
+	@Column(name = FIELD_TARGET_STATUS, nullable = true)
+	private String status;
 	@ManyToOne
 	@JoinColumn(name = FIELD_ACCOUNT)
 	private Account account;
@@ -53,7 +55,7 @@ public class Target {
 	@JoinColumn(name = FIELD_TARGET_SERVICE_ITEM)
 	private Set<TargetServiceItem> targetServiceItem = new HashSet<TargetServiceItem>();
 	@OneToMany
-	@JoinColumn(name = FIELD_INCOMING_PAYMENT)
+	@JoinColumn(name = FIELD_TARGET_STATUS)
 	private Set<IncomingPayment> incomingPayments = new HashSet<IncomingPayment>();
 
 	public enum Field implements EntityField<Target> {
@@ -62,7 +64,7 @@ public class Target {
 		COMPLETED_DATE(FIELD_COMPLETED_DATE),
 		ACCOUNT(FIELD_ACCOUNT),
 		SERVICE_ITEM(FIELD_TARGET_SERVICE_ITEM),
-		INCOMING_PAYMENT(FIELD_INCOMING_PAYMENT);
+		INCOMING_PAYMENT(FIELD_TARGET_STATUS);
 		
 		/** name of a field */
 		private final String fieldName;
@@ -80,12 +82,13 @@ public class Target {
 	}
 	
 	//NEW CONSTRUCTOR
-	public Target(Date targetStartDate,Date targetEndDate, Account account, BigDecimal totalTargetCost) {
+	public Target(Date targetStartDate,Date targetEndDate, Account account, BigDecimal totalTargetCost, String status) {
 		this.startDate = targetStartDate.getTime();
 		this.endDate = targetEndDate.getTime();
 		this.completedDate = null;
 		this.account = account;
 		this.totalTargetCost = totalTargetCost;
+		this.status = status;
 	}
 
 	public Account getAccount() {
@@ -155,6 +158,13 @@ public class Target {
 
 	public void setTargetServiceItem(Set<TargetServiceItem> targetServiceItem) {
 		this.targetServiceItem = targetServiceItem;
+	}
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	@Override

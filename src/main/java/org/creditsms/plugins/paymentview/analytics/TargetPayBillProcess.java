@@ -14,8 +14,8 @@ import org.creditsms.plugins.paymentview.data.domain.TargetServiceItem;
 
 public class TargetPayBillProcess  extends TargetCreationProcess{
 	
-	public  TargetPayBillProcess(Client client, Date targetStartDate, Date targetEndDate, List<TargetServiceItem> targetServiceItems, PaymentViewPluginController pluginController, BigDecimal totalTargetAmount){
-		super(client, targetServiceItems, targetStartDate, targetEndDate, pluginController, totalTargetAmount);
+	public  TargetPayBillProcess(Client client, Date targetStartDate, Date targetEndDate, List<TargetServiceItem> targetServiceItems, PaymentViewPluginController pluginController, BigDecimal totalTargetAmount, String status){
+		super(client, targetServiceItems, targetStartDate, targetEndDate, pluginController, totalTargetAmount, status);
 	}
 	
 	@Override
@@ -31,8 +31,9 @@ public class TargetPayBillProcess  extends TargetCreationProcess{
 				e.printStackTrace();
 			}
 			// create new target
-			this.setTarget(new Target(targetStartDate, targetEndDate, this.account, totalTargetAmount));
-            this.getTargetDao().saveTarget(this.getTarget());
+			this.setTarget(new Target(targetStartDate, targetEndDate, this.account, totalTargetAmount, status));
+			this.getTarget().setStatus("inactive");
+			this.getTargetDao().saveTarget(this.getTarget());
             this.getAccount().setActiveAccount(true);
             this.getAccountDao().updateAccount(this.getAccount());
             for (TargetServiceItem tsi: targetServiceItems){
@@ -41,7 +42,7 @@ public class TargetPayBillProcess  extends TargetCreationProcess{
             }
 		} else{
 			this.setAccount(inactiveNonGenericAccounts.get(0));
-			this.setTarget(new Target(targetStartDate, targetEndDate, this.account, totalTargetAmount));
+			this.setTarget(new Target(targetStartDate, targetEndDate, this.account, totalTargetAmount, status));
             this.getTargetDao().saveTarget(this.getTarget());
             this.getAccount().setActiveAccount(true);
             this.getAccountDao().updateAccount(this.getAccount());
