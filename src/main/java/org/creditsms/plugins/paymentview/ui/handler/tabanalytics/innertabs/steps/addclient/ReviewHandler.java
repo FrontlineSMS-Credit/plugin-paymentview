@@ -96,16 +96,16 @@ public class ReviewHandler extends BasePanelHandler {
 		((UiGeneratorController)ui).getFrontlineController().getEventBus().unregisterObserver(clientTableHandler);
 	}
 	
-	public void selectService() {
-		addClientTabHandler.setCurrentStepPanel(
-				previousCreateSettingsHandler.
-				getPreviousSelectClientsHandler().getSelectTargetSavingsHandler().getPanelComponent()
-		);
-	}
+//	public void selectService() {
+//		addClientTabHandler.setCurrentStepPanel(
+//				previousCreateSettingsHandler.
+//				getPreviousSelectClientsHandler().getSelectTargetSavingsHandler().getPanelComponent()
+//		);
+//	}
 
-	public void targetedSavings() {
-		selectService();
-	}
+//	public void targetedSavings() {
+//		selectService();
+//	}
 
 	public void selectClient() {
 		addClientTabHandler.setCurrentStepPanel(previousCreateSettingsHandler.getPreviousSelectClientsHandler().getPanelComponent());

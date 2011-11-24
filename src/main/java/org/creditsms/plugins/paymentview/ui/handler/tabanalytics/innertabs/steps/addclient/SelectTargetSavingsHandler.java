@@ -33,10 +33,10 @@ public class SelectTargetSavingsHandler extends BasePanelHandler {
 	}
 
 	public void next() {
-		if (selectedRadiosButtons()){
-			addClientTabHandler.setCurrentStepPanel(new SelectClientsHandler(
-					(UiGeneratorController) ui, pluginController, addClientTabHandler, this).getPanelComponent());
-		}
+//		if (selectedRadiosButtons()){
+//			addClientTabHandler.setCurrentStepPanel(new SelectClientsHandler(
+//					(UiGeneratorController) ui, pluginController, addClientTabHandler, this).getPanelComponent());
+//		}
 	}
 
 	private boolean selectedRadiosButtons() {

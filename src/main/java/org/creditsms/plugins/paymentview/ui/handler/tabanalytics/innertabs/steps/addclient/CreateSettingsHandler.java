@@ -237,11 +237,12 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 				return false;
 			}
 			endDate = InternationalisationUtils.getDateFormat().parse(strEndDate);
-			if(validateEndDate(startDate, endDate)){
+			return true;
+			/*if(validateEndDate(startDate, endDate)){
 				return true;
 			}else{
 				return false;
-			}
+			}*/
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}

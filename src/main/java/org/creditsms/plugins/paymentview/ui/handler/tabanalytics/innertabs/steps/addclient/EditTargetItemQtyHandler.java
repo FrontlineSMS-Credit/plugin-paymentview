@@ -42,7 +42,7 @@ public class EditTargetItemQtyHandler implements ThinletUiEventHandler {
 	public void persistQty(String newQty) throws DuplicateKeyException {
 		if(checkIfInt(newQty)){
             if(tsi.getServiceItemQty()==Integer.parseInt(newQty)){
-            	ui.alert(tsi.getServiceItem().getTargetName() + "'s qty has not been changed.");
+            	ui.alert(tsi.getServiceItem().getTargetName() + "'s quantity has not been changed.");
             	this.removeDialog();
             } else {
             	List<TargetServiceItem> lstTargetServiceItems = createSettingsHandler.getTargetLstServiceItems();
@@ -54,7 +54,7 @@ public class EditTargetItemQtyHandler implements ThinletUiEventHandler {
             	createSettingsHandler.setTargetLstServiceItems(lstTargetServiceItems);
             	createSettingsHandler.refreshSelectedTheTargetTable();
     			this.removeDialog();
-    			ui.infoMessage("You have succesfully  changed " + tsi.getServiceItem().getTargetName() + "'s qty.");
+    			ui.infoMessage("You have succesfully  changed " + tsi.getServiceItem().getTargetName() + "'s quantity.");
             }
 		} else {
 			ui.alert("Invalid Quantity");
@@ -80,7 +80,7 @@ public class EditTargetItemQtyHandler implements ThinletUiEventHandler {
 
 	public void init() {
 		dialogComponent = ui.loadComponentFromFile(XML_TARGET_ITEM_EDIT_QTY, this);
-		ui.setText(dialogComponent, "Edit "+tsi.getServiceItem().getTargetName()+"'s needed Qty");
+		ui.setText(dialogComponent, "Edit "+tsi.getServiceItem().getTargetName()+"'s needed Quantity");
 		txtQty = ui.find(dialogComponent, TXT_QTY);
 		ui.setText(txtQty,  Integer.toString(tsi.getServiceItemQty()));
 	}

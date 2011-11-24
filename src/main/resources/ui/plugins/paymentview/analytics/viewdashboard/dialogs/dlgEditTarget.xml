@@ -24,12 +24,12 @@
 			<table  perform="editQty" name="tbl_serviceItems" weightx="1" weighty="1" colspan="2" tooltip="Right-click for options">
 				<header>
 					<column text="Name" width="200"/>
-					<column text="Qty" width="150" />
+					<column text="Quantity" width="150" />
 					<column text="Price Per Item" width="100" />
 				</header>
 				<popupmenu name="menu">
 					<menuitem action="editQty" icon="/icons/edit.png" name="editNeedeTargetServiceItem"
-						text="Edit Item's needed qty" />
+						text="Edit Item's needed quantity" />
 					<menuitem action="deleteServiceItem" icon="/icons/delete.png" name="deleteTargetServiceItem"
 						text="Delete Item" />
 			    </popupmenu>
@@ -39,7 +39,7 @@
 				<panel columns="4" weightx="1">
 					<label colspan="1" text="Select a Service Item" />
 			    	<combobox name="cmbtargets" columns="30" colspan="3" action="evaluate"/>
-			    	<label colspan="1" text="   Specify Qty" />
+			    	<label colspan="1" text="   Specify Quantity" />
 			    	<textfield colspan="1" columns="15" name="qty"  text=""/>
 				</panel>
 				<panel colspan="1" weightx="1" halign="right">

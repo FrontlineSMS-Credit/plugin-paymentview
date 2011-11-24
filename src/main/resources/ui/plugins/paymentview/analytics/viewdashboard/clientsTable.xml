@@ -16,18 +16,17 @@
 			<column text="Product(s)" width="210" />
 			<column text="Start date" width="85" icon="/icons/date.png" />
 			<column text="End date" width="85" icon="/icons/date.png" />
-			<column text="Savings target" width="95" />
-			<column text="Amount saved" width="100" />
-			<column text="Percentage saved"  width="95" />
+			<column text="Target" width="95" />
+			<column text="Amount paid" width="100" />
+			<column text="Amount Remaining" width="100" />
+			<column text="Percentage Paid"  width="95" />
 			<column text="Last payment" width="95" />
 			<column text="Last payment Date" width="120" />
-			
-			<column text="Paid this month" width="100" />
-            <column text="Current Amount Due" width="120" />
-            <column text="Current Due Date" width="120" />
-			
+			<!--  column text="Paid this month" width="100" /-->
 			<column text="Days remaining" width="100" />
 			<column text="Target Status" width="90" />
+		    <!--  column text="Amount Due This Month" width="120" />
+            <column text="Month End" width="120" /-->
 		</header>
 		<popupmenu name="menu">
 			<menuitem action="viewEditTargetAnalytics" icon="/icons/edit.png" name="viewEditTargetAnalytics"

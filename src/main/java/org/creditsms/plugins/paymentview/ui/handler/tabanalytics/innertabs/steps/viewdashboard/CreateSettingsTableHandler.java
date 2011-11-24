@@ -158,6 +158,7 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 		
 		targetAnalytics.computeAnalyticsIntervalDatesAndSavings(target.getId());
 	    Object monthlyAmountSaved = ui.createTableCell(targetAnalytics.getMonthlyAmountSaved().toString());
+	    Object remainingAmount = ui.createTableCell(target.getTotalTargetCost().subtract(targetAnalytics.getAmountSaved(target.getId())).toString());
 	    Object monthlyAmountDue = ui.createTableCell(targetAnalytics.getMonthlyAmountDue().toString());
 	    
 	    Object endOfMonthlyInterval = "";
@@ -186,14 +187,15 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 		ui.add(row, endDate);
 		ui.add(row, savingsTarget);
 		ui.add(row, amountSaved);
+		ui.add(row, remainingAmount);
 		ui.add(row, percentageToGo);
 		ui.add(row, lastAmountPaid);
 		ui.add(row, lastDatePaid);
-		ui.add(row, monthlyAmountSaved);
-		ui.add(row, monthlyAmountDue);
-		ui.add(row, endOfMonthlyInterval);
+		/*ui.add(row, monthlyAmountSaved);*/
 		ui.add(row, daysRemaining);
 		ui.add(row, targetStatus);
+		/*ui.add(row, monthlyAmountDue);
+		ui.add(row, endOfMonthlyInterval);*/
 		
 		trgtRowLst.add(row);
 		
