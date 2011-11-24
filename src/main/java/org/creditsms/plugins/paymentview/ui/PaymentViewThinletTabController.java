@@ -5,6 +5,8 @@
 package org.creditsms.plugins.paymentview.ui;
 
 import net.frontlinesms.BuildProperties;
+import net.frontlinesms.events.EventObserver;
+import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.plugins.BasePluginThinletTabController;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -22,7 +24,7 @@ import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.Outgoing
  */
 public class PaymentViewThinletTabController extends
 		BasePluginThinletTabController<PaymentViewPluginController> implements
-		ThinletUiEventHandler {
+		ThinletUiEventHandler, EventObserver {
 
 	private static final String STATUS_BAR = "statusBar";
 	private static final String TABP_MAIN_PANE = "tabP_mainPane";
@@ -105,4 +107,10 @@ public class PaymentViewThinletTabController extends
 	}
 
 	public void deinit() {}
+
+	
+  	public void notify(final FrontlineEventNotification notification) {
+
+	}
+	
 }

@@ -103,19 +103,16 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	}
 	
 	public Long getDaysDormant(Target tgt){
-		long startTime = 0;
+		Date startTime = null;
 		List<IncomingPayment> lstIncomingPayment = incomingPaymentDao.getActiveIncomingPaymentsByTarget(tgt.getId());
 		if(lstIncomingPayment!=null && lstIncomingPayment.size()>0){
-			startTime = targetAnalytics.getLastDatePaid(tgt.getId()).getTime();
-	    }else{
-	    	startTime = tgt.getStartDate().getTime();
+			startTime = targetAnalytics.getLastDatePaid(tgt.getId());
 	    }
-		
-	    if(getDateDiffDays(startTime, new Date().getTime())<0){
-	    	return (long) 0;
-		} else {
-			return getDateDiffDays(startTime, new Date().getTime());
+		if(startTime == null) {
+			startTime = tgt.getStartDate();
 		}
+		
+		return Math.max(0, getDateDiffDays(startTime.getTime(), System.currentTimeMillis()));
 	}
 	
 	private boolean analyticsAlertsOn() {

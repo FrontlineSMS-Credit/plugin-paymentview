@@ -157,7 +157,7 @@ public class TargetAnalytics {
 	    
 	    if(incList!=null && incList.size()>0){
 	    	return new Date(incList.get(0).getTimePaid());
-	    }else{
+	    } else {
 	    	return null;
 	    }
 	}

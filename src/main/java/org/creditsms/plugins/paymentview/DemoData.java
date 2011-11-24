@@ -257,6 +257,6 @@ public class DemoData {
 //> STATIC METHODS
 	public static void createDemoData(ApplicationContext applicationContext) throws DuplicateKeyException{
 		DemoData d = new DemoData(applicationContext);
-		d.createDummyData();
+		//d.createDummyData();
 	}
 }

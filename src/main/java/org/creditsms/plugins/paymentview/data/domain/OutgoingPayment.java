@@ -6,84 +6,47 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 import net.frontlinesms.data.EntityField;
 import net.frontlinesms.data.domain.PersistableSettings;
 
-import org.hibernate.annotations.IndexColumn;
-
 /**
- * @Author Roy <roy@credit.frontlinesms.com>
+ * @author Roy <roy@credit.frontlinesms.com>
  * @author Ian <ian@credit.frontlinesms.com>
- * */
-
+ */
 @Entity
-@Table(name = OutgoingPayment.TABLE_NAME)
 public class OutgoingPayment {
-	public static final String TABLE_NAME = "Outgoingpayment";
-	public static final String FIELD_ID = "id";
-	public static final String FIELD_TIME_PAID = "timePaid";
-	public static final String FIELD_TIME_CONFIRMED = "timeConfirmed";
-	public static final String FIELD_CLIENT = "client";
-	public static final String FIELD_AMOUNT_PAID = "amountPaid";
-	public static final String FIELD_CONFIRMATION_CODE = "confirmationCode";
-	public static final String FIELD_NOTES = "notes";
-	public static final String FIELD_PAYMENT_ID = "paymentId";
-	public static final String FIELD_PAYMENT_SERVICE_SETTINGS = "paymentServiceSettings";
+	private static final String FIELD_TIME_PAID = "timePaid";
+	private static final String FIELD_CLIENT = "client";
+	private static final String FIELD_SERVICE_SETTINGS = "serviceSettings";
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@IndexColumn(name = FIELD_ID)
-	@Column(name = FIELD_ID, nullable = false, unique = true)
+	@Id @Column(unique=true)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
-
-	@Column(name = FIELD_AMOUNT_PAID, nullable = false, unique = false)
 	private BigDecimal amountPaid;
-
-	@Enumerated(EnumType.ORDINAL)
 	private Status status;
-
-	@Column(name = FIELD_CONFIRMATION_CODE, nullable = true, unique = false)
+	@Column(nullable=true)
 	private String confirmationCode;
-
-	@Column(name = FIELD_NOTES, nullable = true, unique = false)
+	@Column(nullable=true)
 	private String notes;
-
-	@Column(name = FIELD_PAYMENT_ID, nullable = true, unique = false)
+	@Column(nullable=true)
 	private String paymentId;	
-
-	@ManyToOne
-	@JoinColumn(name = FIELD_CLIENT, nullable = false, unique = false)
+	@ManyToOne @JoinColumn(name=FIELD_CLIENT)
 	private Client client;
-	
-	
-	@Column(name = FIELD_TIME_PAID, nullable = false, unique = false)
-	private Long timePaid;
-	
-	@Column(name = FIELD_TIME_CONFIRMED, nullable = true, unique = false)
+	@Column(name=FIELD_TIME_PAID)
+	private long timePaid;
+	@Column(nullable=true)
 	private Long timeConfirmed;
-	
-	@ManyToOne
-	@JoinColumn(name = FIELD_PAYMENT_SERVICE_SETTINGS)
-	private PersistableSettings paymentServiceSettings;
+	@ManyToOne @JoinColumn(name=FIELD_SERVICE_SETTINGS)
+	private PersistableSettings serviceSettings;
 
 	public enum Field implements EntityField<OutgoingPayment> {
-		AMOUNT_PAID(FIELD_AMOUNT_PAID),
-		CONFIRMATION_CODE(FIELD_CONFIRMATION_CODE),
-		CLIENT(FIELD_CLIENT),
-		TIME_PAID(FIELD_TIME_PAID),
-		TIME_CONFIRMED(FIELD_TIME_CONFIRMED),
-		NOTES(FIELD_NOTES),
-		PAYMENT_ID(FIELD_PAYMENT_ID),
-		PAYMENT_SERVICE_SETTINGS(FIELD_PAYMENT_SERVICE_SETTINGS);
+		TIME_PAID(FIELD_TIME_PAID);
 		
 		/** name of a field */
 		private final String fieldName;
@@ -160,8 +123,6 @@ public class OutgoingPayment {
 		this.status = status;
 		this.paymentId = paymentId;
 	}
-
-
 
 	public Account getAccount() {
 		return account;
@@ -244,11 +205,11 @@ public class OutgoingPayment {
 	}
 	
 	public void setPaymentServiceSettings(PersistableSettings paymentServiceSettings) {
-		this.paymentServiceSettings = paymentServiceSettings;
+		this.serviceSettings = paymentServiceSettings;
 	}
 
 	public PersistableSettings getPaymentServiceSettings() {
-		return paymentServiceSettings;
+		return serviceSettings;
 	}
 	
 	@Override
@@ -267,74 +228,82 @@ public class OutgoingPayment {
 		          + " on " + dateFormat.format(this.timePaid); 
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((account == null) ? 0 : account.hashCode());
 		result = prime * result
 				+ ((amountPaid == null) ? 0 : amountPaid.hashCode());
+		result = prime * result + ((client == null) ? 0 : client.hashCode());
 		result = prime
 				* result
 				+ ((confirmationCode == null) ? 0 : confirmationCode.hashCode());
+		result = prime * result + ((notes == null) ? 0 : notes.hashCode());
 		result = prime * result
-				+ ((client.getPhoneNumber() == null) ? 0 : client.getPhoneNumber().hashCode());
+				+ ((paymentId == null) ? 0 : paymentId.hashCode());
+		result = prime * result
+				+ ((serviceSettings == null) ? 0 : serviceSettings.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		result = prime * result
+				+ ((timeConfirmed == null) ? 0 : timeConfirmed.hashCode());
 		result = prime * result + (int) (timePaid ^ (timePaid >>> 32));
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if ((!(obj instanceof OutgoingPayment))||(obj == null)) {
+		if (obj == null)
 			return false;
-		}
+		if (getClass() != obj.getClass())
+			return false;
 		OutgoingPayment other = (OutgoingPayment) obj;
+		if (account == null) {
+			if (other.account != null)
+				return false;
+		} else if (!account.equals(other.account))
+			return false;
 		if (amountPaid == null) {
-			if (other.amountPaid != null) {
+			if (other.amountPaid != null)
 				return false;
-			}
-		} else if (!amountPaid.equals(other.amountPaid)) {
+		} else if (!amountPaid.equals(other.amountPaid))
 			return false;
-		}
-		if (confirmationCode == null) {
-			if (other.confirmationCode != null) {
-				return false;
-			}
-		} else if (!confirmationCode.equals(other.confirmationCode)) {
-			return false;
-		}
-		if (paymentId == null) {
-			if (other.paymentId != null) {
-				return false;
-			}
-		} else if (!paymentId.equals(other.paymentId)) {
-			return false;
-		}
 		if (client == null) {
-			if (other.client != null) {
+			if (other.client != null)
 				return false;
-			}
-		} else if (client.getId()!=(other.client.getId())) {
+		} else if (!client.equals(other.client))
 			return false;
-		}
-		if (status != other.status) {
+		if (confirmationCode == null) {
+			if (other.confirmationCode != null)
+				return false;
+		} else if (!confirmationCode.equals(other.confirmationCode))
 			return false;
-		}
-		
-		if (!timeConfirmed.equals(other.timeConfirmed)) {
+		if (notes == null) {
+			if (other.notes != null)
+				return false;
+		} else if (!notes.equals(other.notes))
 			return false;
-		}
+		if (paymentId == null) {
+			if (other.paymentId != null)
+				return false;
+		} else if (!paymentId.equals(other.paymentId))
+			return false;
+		if (serviceSettings == null) {
+			if (other.serviceSettings != null)
+				return false;
+		} else if (!serviceSettings.equals(other.serviceSettings))
+			return false;
+		if (status != other.status)
+			return false;
+		if (timeConfirmed == null) {
+			if (other.timeConfirmed != null)
+				return false;
+		} else if (!timeConfirmed.equals(other.timeConfirmed))
+			return false;
+		if (timePaid != other.timePaid)
+			return false;
 		return true;
 	}
-	
-	
 }

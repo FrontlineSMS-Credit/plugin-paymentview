@@ -11,90 +11,50 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 import net.frontlinesms.data.EntityField;
 import net.frontlinesms.data.domain.PersistableSettings;
 
 /**
- * @Author Roy
+ * @author Roy
  * @author ian
- * */
-
+ */
 @Entity
-@Table(name = IncomingPayment.TABLE_NAME)
 public class IncomingPayment {
-	public static final String TABLE_NAME = "IncomingPayment";
-	private static final String FIELD_AMOUNT_PAID = "amountPaid";
 	private static final String FIELD_CONFIRMATION_CODE = "confirmationCode";
-	private static final String FIELD_PAYMENT_BY = "paymentBy";
-	private static final String FIELD_PHONE_NUMBER = "phoneNumber";
 	private static final String FIELD_TIME_PAID = "timePaid";
 	private static final String FIELD_ACCOUNT = "account";
 	private static final String FIELD_TARGET ="target";
-	private static final String FIELD_ACTIVE = "active";
-	private static final String FIELD_PAYMENT_ID = "paymentId";
-	private static final String FIELD_NOTES = "notes";
-	private static final String FIELD_IS_CHILD = "isChild";
-	private static final String FIELD_PAYMENT_SERVICE_SETTINGS = "paymentServiceSettings";
-	
-	@Id
+	private static final String FIELD_SERVICE_SETTINGS = "serviceSettings";
+	@Id @Column(unique=true)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", nullable = false, unique = true)
 	private long id;
-	
-	@Column(name = FIELD_AMOUNT_PAID, nullable = false)
 	private BigDecimal amountPaid;
-
-	@Column(name = FIELD_CONFIRMATION_CODE)
+	@Column(name=FIELD_CONFIRMATION_CODE)
 	private String confirmationCode;
-
-	@Column(name = FIELD_PAYMENT_BY, nullable = false)
 	private String paymentBy;
-
-	@Column(name = FIELD_PHONE_NUMBER, nullable = false)
 	private String phoneNumber;
-
-	@Column(name = FIELD_TIME_PAID)
 	private long timePaid;
-	
-	@Column(name = FIELD_ACTIVE)
 	private boolean active = true;
-	
-	@Column(name = FIELD_PAYMENT_ID)
 	private String paymentId = "";
-
-	@Column(name = FIELD_NOTES)
 	private String notes = "";
-	
-	@Column(name = FIELD_IS_CHILD)
-	private boolean isChild = false;
+	private boolean isChild;
 	
 	@ManyToOne
-	@JoinColumn(name = FIELD_ACCOUNT)
 	private Account account;
 	
 	@ManyToOne
-	@JoinColumn(name = FIELD_TARGET, nullable = true) //nullable if payment for generic account
+	@JoinColumn(name=FIELD_TARGET, nullable=true) //nullable if payment for generic account
 	private Target target;
 	
 	@ManyToOne
-	@JoinColumn(name = FIELD_PAYMENT_SERVICE_SETTINGS)
-	private PersistableSettings paymentServiceSettings;
+	@JoinColumn(name=FIELD_SERVICE_SETTINGS)
+	private PersistableSettings serviceSettings;
 	
 	public enum Field implements EntityField<IncomingPayment> {
-		AMOUNT_PAID(FIELD_AMOUNT_PAID),
 		CONFIRMATION_CODE(FIELD_CONFIRMATION_CODE),
-		PAYMENT_BY(FIELD_PAYMENT_BY),
-		PHONE_NUMBER(FIELD_PHONE_NUMBER),
 		TIME_PAID(FIELD_TIME_PAID),
-		ACCOUNT(FIELD_ACCOUNT),
-		TARGET(FIELD_TARGET),
-		ACTIVE(FIELD_ACTIVE),
-		PAYMENT_ID(FIELD_PAYMENT_ID),
-		NOTES(FIELD_NOTES),
-		ISCHILD(FIELD_IS_CHILD),
-		PAYMENT_SERVICE_SETTINGS(FIELD_PAYMENT_SERVICE_SETTINGS);
+		ACCOUNT(FIELD_ACCOUNT);
 		
 		/** name of a field */
 		private final String fieldName;
@@ -294,11 +254,11 @@ public class IncomingPayment {
 		          + " on " + dateFormat.format(this.timePaid); 
 	}
 
-	public void setPaymentServiceSettings(PersistableSettings paymentServiceSettings) {
-		this.paymentServiceSettings = paymentServiceSettings;
+	public void setServiceSettings(PersistableSettings settings) {
+		this.serviceSettings = settings;
 	}
 
-	public PersistableSettings getPaymentServiceSettings() {
-		return paymentServiceSettings;
+	public PersistableSettings getServiceSettings() {
+		return serviceSettings;
 	}
 }
