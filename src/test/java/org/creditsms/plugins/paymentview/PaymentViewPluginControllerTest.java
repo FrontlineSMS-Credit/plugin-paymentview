@@ -5,13 +5,13 @@ import java.math.BigDecimal;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 
 import net.frontlinesms.data.domain.PersistableSettings;
+import net.frontlinesms.data.events.EntityDeletedNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.junit.BaseTestCase;
 import net.frontlinesms.plugins.payment.service.PaymentService;
 import net.frontlinesms.plugins.payment.service.PaymentServiceException;
 import net.frontlinesms.serviceconfig.ConfigurableService;
 import net.frontlinesms.serviceconfig.StructuredProperties;
-
 import static org.mockito.Mockito.*;
 
 public class PaymentViewPluginControllerTest extends BaseTestCase {
@@ -49,14 +49,42 @@ public class PaymentViewPluginControllerTest extends BaseTestCase {
 	private PersistableSettings mockSettings() {
 		return new PersistableSettings(new MockPaymentService());
 	}
+	
+	/**
+	*	TITLE:when deleting a payment service settings, FrontlineSMS SHOULD
+	*	stop the payment service
+	*	GIVEN the service is running
+	*	WHEN settings are deleted
+	*	THEN stop the corresponding payment service
+	*/
+	public void testStopServiceWhenSettingsDeleted() {
+		// given
+		PersistableSettings mockSettings = mockSettings();
+		controller.notify(new EntitySavedNotification<PersistableSettings>(mockSettings));
+		assertEquals(1, controller.getActiveServices().size());
+		PaymentService service = controller.getActiveServices().toArray(new PaymentService[0])[0];
+		assertTrue(service instanceof MockPaymentService);
+		assertTrue(((MockPaymentService) service).wasStarted());
+		
+		//when
+		controller.notify(new EntityDeletedNotification<PersistableSettings>(mockSettings));
+		
+		//then
+		service.stopService();
+		assertTrue(((MockPaymentService) service).wasStoped());
+	}
 }
 
 class MockPaymentService implements PaymentService {
 	private boolean started;
+	private boolean stoped;
 
 	//> Verification methods
 	public boolean wasStarted() {
 		return started;
+	}
+	public boolean wasStoped() {
+		return stoped;
 	}
 	
 //> PaymentService methods
@@ -83,6 +111,7 @@ class MockPaymentService implements PaymentService {
 		started = true;
 	}
 	public void stopService() {
+		stoped  = true;
 	}
 	public boolean isOutgoingPaymentEnabled() {
 		return false;
