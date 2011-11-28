@@ -111,7 +111,7 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 	}
 	
 	public void SelectPaymentService() {
-		if (!pluginController.getPaymentServices().isEmpty()){
+		if (!pluginController.getActiveServices().isEmpty()){
 			SelectPaymentServiceDialogHandler selectPaymentService = new SelectPaymentServiceDialogHandler(ui, pluginController, this);
 			selectPaymentService.showDialog();
 		} else {

@@ -7,13 +7,16 @@
  */
 package org.creditsms.plugins.paymentview;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.frontlinesms.BuildProperties;
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.domain.PersistableSettings;
+import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
@@ -86,8 +89,7 @@ public class PaymentViewPluginController extends BasePluginController
 	private PaymentViewThinletTabController paymentViewThinletTabController;
 	private UiGeneratorController ui;
 	
-	/** Currently we will allow only one payment service to be configured TO MAKE THINGS SIMPLER */
-	private List<PaymentService> paymentServices = new ArrayList<PaymentService>();
+	private Set<PaymentService> activeServices = new HashSet<PaymentService>();
 	private FrontlineSMS frontlineController;
 	
 	/** @see net.frontlinesms.plugins.PluginController#deinit() */
@@ -216,9 +218,8 @@ public class PaymentViewPluginController extends BasePluginController
 		return targetAnalytics;
 	}
 
-	public List<PaymentService> getPaymentServices() {
-		if(this.paymentServices == null) return Collections.emptyList();
-		else return paymentServices;
+	public Collection<PaymentService> getActiveServices() {
+		return Collections.unmodifiableCollection(activeServices);
 	}
 
 	public void updateStatusBar(String message) {
@@ -229,25 +230,40 @@ public class PaymentViewPluginController extends BasePluginController
 		updateStatusBar("");
 	}
 
-	public void addPaymentService(PaymentService paymentService) {
-		this.paymentServices.add(paymentService);
-	}
-	
 	public void notify(final FrontlineEventNotification notification) {
 		if (notification instanceof PaymentServiceStartedNotification) {
 			new FrontlineUiUpdateJob() {
 				public void run() {
-					paymentServices.add(((PaymentServiceStartedNotification) notification)
+					activeServices.add(((PaymentServiceStartedNotification) notification)
 							.getPaymentService());
 				}
 			}.execute();
 		} else if (notification instanceof PaymentServiceStoppedNotification) {
 			new FrontlineUiUpdateJob() {
 				public void run() {
-					paymentServices.remove(((PaymentServiceStoppedNotification) notification)
+					activeServices.remove(((PaymentServiceStoppedNotification) notification)
 							.getPaymentService());
 				}
 			}.execute();
+		} else if (notification instanceof EntitySavedNotification<?>) {
+			Object entity = ((EntitySavedNotification<?>) notification).getDatabaseEntity();
+			if(entity instanceof PersistableSettings) {
+				PersistableSettings settings = (PersistableSettings) entity;
+				if(settings.getServiceTypeSuperclass() == PaymentService.class) {
+					try {
+						PaymentService service = (PaymentService) settings.getServiceClass().newInstance();
+						activeServices.add(service);
+						service.startService();
+					} catch (final Exception ex) {
+						log.warn("Failed to start PaymentService for settings " + settings.getId(), ex);
+						new FrontlineUiUpdateJob() {
+							public void run() {
+								throw new RuntimeException(ex);
+							}
+						}.execute();
+					}
+				}
+			}
 		}
 	}
 	

@@ -29,7 +29,7 @@ public class SelectPaymentServiceDialogHandler extends BaseDialog{
 	}
 	
 	private void setupPaymentServices() {
-		for (PaymentService pService : pluginController.getPaymentServices()) {
+		for (PaymentService pService : pluginController.getActiveServices()) {
 			if(pService.isOutgoingPaymentEnabled()) {
 				String serviceDescription = pService.toString() + " : " 
 						+ pService.getSettings().getId();
