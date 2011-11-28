@@ -280,7 +280,7 @@ public class EditClientHandler extends BaseDialog{
 								clientsTabHandler.refresh();
 							}
 						} else {
-							ui.infoMessage("Invalid phone number. Please set phone number with the following format: +2547XXXXXXXX.");
+							ui.infoMessage("Invalid phone number. Please set phone number with the following format: +2547XXXXXXXX or 07XXXXXXXX");
 						}
 					}
 				} catch (NumberFormatException e) {

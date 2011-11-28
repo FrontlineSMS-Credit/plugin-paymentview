@@ -3,9 +3,9 @@ package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.step
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.ui.handler.base.BaseSelectClientTableHandler;
+import org.creditsms.plugins.paymentview.ui.handler.base.BaseClientTableHandler;
 
-public class SelectClientsTableHandler extends BaseSelectClientTableHandler {
+public class SelectClientsTableHandler extends BaseClientTableHandler {
 	private static final String TBL_CLIENTS = "tbl_clients";
 	private static final String XML_CLIENTS_TABLE = "/ui/plugins/paymentview/analytics/addclient/clientsTable.xml";
 	

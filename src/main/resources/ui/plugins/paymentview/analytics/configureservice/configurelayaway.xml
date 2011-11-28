@@ -2,9 +2,9 @@
 <panel name="pnlServiceItem" bottom="5" columns="1" gap="10"
 	left="5" right="5" top="10" weightx="1" weighty="1">
 	<panel columns="3" gap="5" weightx="1" weighty="1">
-		<label font="20 Bold" text="Configure Layaway" colspan="3"/>
+		<label font="20 Bold" text="Existing Targets" colspan="3"/>
 		
-		<label text="Current Savings target" />
+		<label text="" />
 		<panel weightx="1"/>
 		
 		<panel name="pnl_tbl_serviceItem_holder" weightx="1" weighty="1" colspan="3" columns="1">

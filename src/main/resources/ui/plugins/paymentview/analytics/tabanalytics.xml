@@ -3,6 +3,6 @@
 	<tabbedpane name="tabP_AnalyticsMainPane" placement="left">
 		<tab name="tab_createDashboard" text="Create Target"/>			
 		<tab name="tab_viewDashBoard" text="View Dashboard"/>
-		<tab name="tab_configureService" text="Configure Service"/>
+		<tab name="tab_configureService" text="Configure Targets"/>
 	</tabbedpane>
 </tab>

@@ -39,7 +39,7 @@ public class ClientsTabHandler implements ThinletUiEventHandler {
 //> STATIC CONSTANTS
 	private static final String PNL_CLIENT_TABLE_HOLDER = "pnlClientTableHolder";
 	private static final String XML_CLIENTS_TAB = "/ui/plugins/paymentview/clients/clients.xml";
-	private static final String I18N_CONFIRM_DELETE_CLIENT = "message.confirm.delete.client";
+	private static final String I18N_CONFIRM_DELETE_CLIENT = "plugins.paymentview.confirm.delete.client";
 	
 //> INSTANCE PROPERTIES
 	private final ClientDao clientDao;

@@ -15,6 +15,7 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.utils.PhoneNumberPattern;
 import org.hibernate.NonUniqueObjectException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -64,7 +65,7 @@ public class ClientCsvImporter extends CsvImporter {
 	 * @throws DuplicateKeyException
 	 */
 	public CsvImportReport importClients(ClientDao clientDao,
-			CsvRowFormat rowFormat, PaymentViewPluginController pluginController) throws DuplicateKeyException {
+			CsvRowFormat rowFormat, PaymentViewPluginController pluginController, CustomValueDao customValueDao) throws DuplicateKeyException {
 		log.trace("ENTER");
 			
 		for (Client client : selectedClientLst) {
@@ -72,7 +73,7 @@ public class ClientCsvImporter extends CsvImporter {
 				if(phonePattern.formatPhoneNumber(client.getPhoneNumber())) {
 					client.setPhoneNumber(phonePattern.getNewPhoneNumberPattern());
 					clientDao.saveClient(client);
-					saveSelectedCustomFld(clientDao, client, pluginController);
+					saveSelectedCustomFld(clientDao, client, pluginController, customValueDao);
 				}
 			}catch (Exception e){
 				if (e instanceof NonUniqueObjectException ||
@@ -93,6 +94,7 @@ public class ClientCsvImporter extends CsvImporter {
 					c.setFirstName(client.getFirstName());
 					c.setOtherName(client.getOtherName());
 					clientDao.updateClient(c);
+					saveSelectedCustomFld(clientDao, client, pluginController, customValueDao);
 				}
 			}
 		}
@@ -102,7 +104,7 @@ public class ClientCsvImporter extends CsvImporter {
 	}
 	
 	private void saveSelectedCustomFld(ClientDao clientDao, Client client, 
-			PaymentViewPluginController pluginController) throws DuplicateKeyException {
+			PaymentViewPluginController pluginController, CustomValueDao customValueDao) throws DuplicateKeyException {
 
 		for (int y=0; y<selectedCustomFieldlst.size(); y++) {
 			CustomValue cv = selectedCustomValueslst.get(y);
@@ -113,7 +115,22 @@ public class ClientCsvImporter extends CsvImporter {
 					if(client.getPhoneNumber().equals(cv.getClient().getPhoneNumber())) {
 						Client c = clientDao.getClientByPhoneNumber(cv.getClient().getPhoneNumber());
 						cv.setClient(c);
-						pluginController.getCustomValueDao().saveCustomValue(cv);	
+						boolean cValExist = false;
+						List<CustomValue> lstCustomValue = customValueDao.getCustomValuesByClientId(c.getId());
+						if (lstCustomValue==null){
+							customValueDao.saveCustomValue(cv);
+						} else {
+							for(CustomValue customVal: lstCustomValue) {
+								if(customVal.getCustomField().getId()==cv.getCustomField().getId()){
+									customVal.setStrValue(cv.getStrValue());
+									customValueDao.updateCustomValue(customVal);
+									cValExist=true;
+								} 
+							}
+							if(cValExist==false){
+								customValueDao.saveCustomValue(cv);
+							}
+						}	
 					}
 				}
 			}

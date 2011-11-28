@@ -20,6 +20,7 @@ import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.importexport.ClientCsvImporter;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
+import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 import org.creditsms.plugins.paymentview.utils.PhoneNumberPattern;
@@ -39,6 +40,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 	private final ClientsTabHandler clientsTabHandler;
 	private ClientCsvImporter importer;
 	private CustomFieldDao customFieldDao;
+	private CustomValueDao customValueDao;
 	private final PaymentViewPluginController pluginController;
 	private List<String> tableHeaderList;
 	private List<CustomValue> cvLst = new ArrayList<CustomValue>();
@@ -54,6 +56,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 		this.clientDao = pluginController.getClientDao();
 		this.clientsTabHandler = clientsTabHandler;
 		this.customFieldDao = pluginController.getCustomFieldDao();
+		this.customValueDao = pluginController.getCustomValueDao();
 	}
 
 	@Override
@@ -157,14 +160,14 @@ public class ClientImportHandler extends ImportDialogHandler {
 		CsvRowFormat rowFormat = getRowFormatForClient();
 		try{
 			if(hasIncorrectlyFormatedPhoneNo) {
-				this.uiController.alert("There is one or more records with" +
-						" incorrectly formatted phone numbers, " +
-						"please edit the .csv file and try to import the file again.");
+				this.uiController.alert("There is one or more record(s) with" +
+						" incorrectly formatted phone numbers. " +
+						"Please set phone number with the following format: +2547XXXXXXXX or 07XXXXXXXX");
 			} else {
 				this.importer.setSelectedClientLst(clntLst);
 				this.importer.setSelectedCustomFieldlst(cfLst);
 				this.importer.setSelectedCustomValueslst(cvLst);
-				this.importer.importClients(this.clientDao, rowFormat, pluginController);
+				this.importer.importClients(this.clientDao, rowFormat, pluginController, this.customValueDao);
 				this.clientsTabHandler.refresh();
 
 				this.uiController.infoMessage(InternationalisationUtils
@@ -194,6 +197,15 @@ public class ClientImportHandler extends ImportDialogHandler {
 
 	@Override
 	protected Object[] getPreviewRows() {
+		if(cvLst!=null){
+			cvLst.clear();
+		}
+		if(cfLst!=null){
+			cfLst.clear();
+		}
+		if(clntLst!=null){
+			clntLst.clear();
+		}
 		List<Object> previewRows = new ArrayList<Object>();
 		for (String[] lineValues : this.importer.getRawValues()) {
 			previewRows.add(getRow(lineValues));
@@ -234,15 +246,6 @@ public class ClientImportHandler extends ImportDialogHandler {
 
 	@Override
 	protected void setImporter(String filename) throws CsvParseException {
-		if(cvLst!=null){
-			cvLst.clear();
-		}
-		if(cfLst!=null){
-			cfLst.clear();
-		}
-		if(clntLst!=null){
-			clntLst.clear();
-		}
 		this.importer = new ClientCsvImporter(new File(filename), pluginController);
 	}
 }
