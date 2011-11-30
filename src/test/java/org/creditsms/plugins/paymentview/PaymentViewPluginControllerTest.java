@@ -1,8 +1,10 @@
 package org.creditsms.plugins.paymentview;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.smslib.CSerialDriver;
 
 import net.frontlinesms.data.domain.PersistableSettings;
 import net.frontlinesms.data.events.EntityDeletedNotification;
@@ -17,7 +19,7 @@ import static org.mockito.Mockito.*;
 public class PaymentViewPluginControllerTest extends BaseTestCase {
 	/** {@link PaymentViewPluginController} instance under test */
 	PaymentViewPluginController controller;
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -55,24 +57,43 @@ public class PaymentViewPluginControllerTest extends BaseTestCase {
 	*	stop the payment service
 	*	GIVEN the service is running
 	*	WHEN settings are deleted
-	*	THEN stop the corresponding payment service
+	*	THEN the corresponding payment service is stopped
 	*/
 	public void testStopServiceWhenSettingsDeleted() {
 		// given
 		PersistableSettings mockSettings = mockSettings();
-		controller.notify(new EntitySavedNotification<PersistableSettings>(mockSettings));
-		assertEquals(1, controller.getActiveServices().size());
-		PaymentService service = controller.getActiveServices().toArray(new PaymentService[0])[0];
-		assertTrue(service instanceof MockPaymentService);
-		assertTrue(((MockPaymentService) service).wasStarted());
+		MockPaymentService service = addActiveService(controller, mockSettings);
 		
 		//when
 		controller.notify(new EntityDeletedNotification<PersistableSettings>(mockSettings));
 		
 		//then
-		service.stopService();
-		assertTrue(((MockPaymentService) service).wasStoped());
+		assertEquals(0, controller.getActiveServices().size());
+		assertTrue(service.wasStopped());
 	}
+	
+	private MockPaymentService addActiveService(PaymentViewPluginController controller, PersistableSettings mockSettings) {
+				
+		Object theObject = new PaymentViewPluginController();
+		Class c = PaymentViewPluginController.class;
+
+	    try {
+			Field field = c.getField("activeServices");
+			System.out.println( "Found field: " + field);
+			field.set(theObject, new PaymentService[0]);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		assertEquals(1, controller.getActiveServices().size());
+
+		PaymentService service = controller.getActiveServices().toArray(new PaymentService[0])[0];
+		
+		assertTrue(service instanceof MockPaymentService);
+		assertTrue(((MockPaymentService) service).wasStarted());
+		return(MockPaymentService) service;
+	}
+	 
 }
 
 class MockPaymentService implements PaymentService {
@@ -83,7 +104,7 @@ class MockPaymentService implements PaymentService {
 	public boolean wasStarted() {
 		return started;
 	}
-	public boolean wasStoped() {
+	public boolean wasStopped() {
 		return stoped;
 	}
 	
