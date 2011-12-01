@@ -380,7 +380,7 @@ public abstract class MpesaPaymentService extends AbstractPaymentService   {
 			public void run() {
 				performBalanceEnquiryFraudCheck(message);
 				if (message.getEndpointId() == null){
-					message.setEndpointId("");
+//					message.setEndpointId("");
 				}
 				
 				logMessageDao.saveLogMessage(

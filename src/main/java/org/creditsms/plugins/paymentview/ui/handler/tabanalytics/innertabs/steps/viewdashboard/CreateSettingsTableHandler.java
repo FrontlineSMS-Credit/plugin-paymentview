@@ -151,7 +151,7 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 		Object startDate = ui.createTableCell(dateFormat.format(target.getStartDate()));
 		Object endDate = ui.createTableCell(dateFormat.format(target.getEndDate()));
 		
-		targetAnalytics.computeAnalyticsIntervalDatesAndSavings(target.getId());
+		//targetAnalytics.computeAnalyticsIntervalDatesAndSavings(target.getId());
 	    Object monthlyAmountSaved = ui.createTableCell(targetAnalytics.getMonthlyAmountSaved().toString());
 	    Object monthlyAmountDue = ui.createTableCell(targetAnalytics.getMonthlyAmountDue().toString());
 	    
