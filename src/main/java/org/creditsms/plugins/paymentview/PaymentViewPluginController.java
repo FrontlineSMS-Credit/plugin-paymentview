@@ -9,23 +9,27 @@ package org.creditsms.plugins.paymentview;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.frontlinesms.BuildProperties;
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.PersistableSettings;
+import net.frontlinesms.data.events.DatabaseEntityNotification;
+import net.frontlinesms.data.events.EntityDeletedNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.data.events.EntityUpdatedNotification;
 import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
+import net.frontlinesms.messaging.sms.events.SmsModemStatusNotification;
+import net.frontlinesms.messaging.sms.modem.SmsModem;
+import net.frontlinesms.messaging.sms.modem.SmsModemStatus;
 import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.plugins.PluginSettingsController;
-import net.frontlinesms.plugins.payment.event.PaymentServiceStartedNotification;
-import net.frontlinesms.plugins.payment.event.PaymentServiceStoppedNotification;
 import net.frontlinesms.plugins.payment.service.PaymentService;
 import net.frontlinesms.plugins.payment.settings.ui.PaymentServiceSettingsHandler;
 import net.frontlinesms.ui.ThinletUiEventHandler;
@@ -89,7 +93,7 @@ public class PaymentViewPluginController extends BasePluginController
 	private PaymentViewThinletTabController paymentViewThinletTabController;
 	private UiGeneratorController ui;
 	
-	private Set<PaymentService> activeServices = new HashSet<PaymentService>();
+	private Map<Long, PaymentService> activeServices = new HashMap<Long, PaymentService>();
 	private FrontlineSMS frontlineController;
 	
 	/** @see net.frontlinesms.plugins.PluginController#deinit() */
@@ -219,7 +223,7 @@ public class PaymentViewPluginController extends BasePluginController
 	}
 
 	public Collection<PaymentService> getActiveServices() {
-		return Collections.unmodifiableCollection(activeServices);
+		return Collections.unmodifiableCollection(activeServices.values());
 	}
 
 	public void updateStatusBar(String message) {
@@ -231,36 +235,91 @@ public class PaymentViewPluginController extends BasePluginController
 	}
 
 	public void notify(final FrontlineEventNotification notification) {
-		if (notification instanceof PaymentServiceStartedNotification) {
+//		if (notification instanceof PaymentServiceStartedNotification) {
+//			new FrontlineUiUpdateJob() {
+//				public void run() {
+//					activeServices.add(((PaymentServiceStartedNotification) notification)
+//							.getPaymentService());
+//				}
+//			}.execute();
+//		} else if (notification instanceof PaymentServiceStoppedNotification) {
+//			new FrontlineUiUpdateJob() {
+//				public void run() {
+//					activeServices.remove(((PaymentServiceStoppedNotification) notification)
+//							.getPaymentService());
+//				}
+//			}.execute();
+		/*} else */
+		
+		if(notification instanceof SmsModemStatusNotification) {
 			new FrontlineUiUpdateJob() {
 				public void run() {
-					activeServices.add(((PaymentServiceStartedNotification) notification)
-							.getPaymentService());
+
+
+					if (((SmsModemStatusNotification) notification).getStatus() == SmsModemStatus.CONNECTED) {
+						final SmsModem connectedModem = ((SmsModemStatusNotification) notification).getService();
+//						Collection<PaymentServiceSettings> paymentServiceSettingsList = paymentServiceSettingsDao.getPaymentServiceAccounts();
+//						if (!paymentServiceSettingsList.isEmpty()){
+//							for (PaymentServiceSettings psSettings : paymentServiceSettingsList){
+//								if (psSettings.getPsSmsModemSerial().equals(connectedModem.getSerial()+"@"+connectedModem.getImsiNumber())) {
+//									
+//								}
+//							}
+//						}			
+					}
+					
+					
 				}
 			}.execute();
-		} else if (notification instanceof PaymentServiceStoppedNotification) {
-			new FrontlineUiUpdateJob() {
-				public void run() {
-					activeServices.remove(((PaymentServiceStoppedNotification) notification)
-							.getPaymentService());
-				}
-			}.execute();
-		} else if (notification instanceof EntitySavedNotification<?>) {
-			Object entity = ((EntitySavedNotification<?>) notification).getDatabaseEntity();
+		}
+
+		
+		if(notification instanceof DatabaseEntityNotification<?>) {
+			Object entity = ((DatabaseEntityNotification<?>) notification).getDatabaseEntity();
 			if(entity instanceof PersistableSettings) {
 				PersistableSettings settings = (PersistableSettings) entity;
 				if(settings.getServiceTypeSuperclass() == PaymentService.class) {
-					try {
-						PaymentService service = (PaymentService) settings.getServiceClass().newInstance();
-						activeServices.add(service);
-						service.startService();
-					} catch (final Exception ex) {
-						log.warn("Failed to start PaymentService for settings " + settings.getId(), ex);
-						new FrontlineUiUpdateJob() {
-							public void run() {
-								throw new RuntimeException(ex);
-							}
-						}.execute();
+					if (notification instanceof EntitySavedNotification<?>) {
+						try {
+							PaymentService service = (PaymentService) settings.getServiceClass().newInstance();
+							activeServices.put(settings.getId(), service);
+							service.startService();
+						} catch (final Exception ex) {
+							log.warn("Failed to start PaymentService for settings " + settings.getId(), ex);
+							new FrontlineUiUpdateJob() {
+								public void run() {
+									throw new RuntimeException(ex);
+								}
+							}.execute();
+						}	
+					} else if (notification instanceof EntityDeletedNotification<?>) {
+						try {
+							PaymentService service = activeServices.get(settings.getId());
+							activeServices.remove(settings.getId());
+							service.stopService();
+						} catch (final Exception ex) {
+							log.warn("Failed to stop PaymentService for settings " + settings.getId(), ex);
+							new FrontlineUiUpdateJob() {
+								public void run() {
+									throw new RuntimeException(ex);
+								}
+							}.execute();
+						}	
+					} else if (notification instanceof EntityUpdatedNotification<?>) {
+						try {
+							PaymentService service = activeServices.get(settings.getId());
+							activeServices.remove(settings.getId());
+							service.stopService();
+							activeServices.put(settings.getId(), service);
+							service.startService();
+						} catch (final Exception ex) {
+							log.warn("Failed to restart PaymentService for settings " + settings.getId(), ex);
+							new FrontlineUiUpdateJob() {
+								public void run() {
+									throw new RuntimeException(ex);
+								}
+							}.execute();
+						}	
 					}
 				}
 			}
