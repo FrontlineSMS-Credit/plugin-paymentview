@@ -13,7 +13,7 @@ import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.events.FrontlineUiUpateJob;
+import net.frontlinesms.ui.events.FrontlineUiUpdateJob;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
@@ -50,12 +50,12 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 		this.createSettingsHandler = createSettingsHandler;
 		initDaos();
 	}
-	
+
 	private void initDaos() {
 		serviceItemDao = pluginController.getServiceItemDao();
 		targetDao = pluginController.getTargetDao();
 		targetServiceItemDao = pluginController.getTargetServiceItemDao();
-		
+
 		targetAnalytics = new TargetAnalytics();
 		targetAnalytics.setIncomingPaymentDao(pluginController.getIncomingPaymentDao());
 		targetAnalytics.setTargetDao(targetDao);
@@ -71,7 +71,7 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 			}
 		}
 	}
-	
+
 	@Override
 	protected String getClientsTableName() {
 		return TBL_TARGET_ANALYTICS;
@@ -81,7 +81,7 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 	protected String getClientsPanelFilePath() {
 		return XML_VIEWDASHBOARD_CLIENTS_TABLE;
 	}
-	
+
 	public Target getSelectedTargetInTable() {
 		try {
 			Object row = super.getSelectedRows()[0];
@@ -91,7 +91,7 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 			return null;
 		}
 	}
-	
+
 	public void viewEditTargetAnalytics() {
 		if(null==getSelectedTargetInTable()){
 			ui.alert("No selected Target");
@@ -105,14 +105,14 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 	    	}			
 		}
 	}
-	
+
 	@Override
 	public void updateClientsList() {
 		clients_targets = new HashMap<Client,Target>();
 		this.clientsTablePager.setCurrentPage(0);
 		this.clientsTablePager.refresh();
 	}
-	
+
 	protected Object[] toThinletComponents(List<Client> clients) {
 		List<Object> rows = new ArrayList<Object>();
 
@@ -130,40 +130,46 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 
 	private List<Object> getRows(Target target) {	
 		List<Object> trgtRowLst = new ArrayList<Object>();
-		
+
 		Object name = ui.createTableCell(target.getAccount().
 				getClient().getFullName());
-		
+
 		Object amountSaved = ui.createTableCell(targetAnalytics.getAmountSaved(target.getId()).toString());
 		Object daysRemaining = ui.createTableCell(targetAnalytics.getDaysRemaining(target.getId()).toString());
 		Object lastAmountPaid = ui.createTableCell(targetAnalytics.getLastAmountPaid(target.getId()).toString());
 		Object percentageToGo = ui.createTableCell(targetAnalytics.getPercentageToGo(target.getId()).toString()+" %");
 		Object lastDatePaid = "";
-		
+
 		if(targetAnalytics.getLastDatePaid(target.getId()) != null){
 			lastDatePaid = ui.createTableCell(dateFormat.format(targetAnalytics.getLastDatePaid(target.getId())));
 		}else{
 			lastDatePaid = ui.createTableCell("No payment done yet");
 		}
-		String targetStatusStr = targetAnalytics.getStatus(target.getId()).toString();
-		Object targetStatus = ui.createTableCell(targetStatusStr);
+
+		if(!targetAnalytics.getStatus(target.getId()).toString().equals(target.getStatus())) {
+			target.setStatus(targetAnalytics.getStatus(target.getId()).toString());
+			targetDao.saveTarget(target);
+		}
+		Object targetStatus = ui.createTableCell(target.getStatus());
+
 		Object savingsTarget = ui.createTableCell(target.getTotalTargetCost().toString());
 		Object startDate = ui.createTableCell(dateFormat.format(target.getStartDate()));
 		Object endDate = ui.createTableCell(dateFormat.format(target.getEndDate()));
-		
-		//targetAnalytics.computeAnalyticsIntervalDatesAndSavings(target.getId());
+
+		targetAnalytics.computeAnalyticsIntervalDatesAndSavings(target.getId());
 	    Object monthlyAmountSaved = ui.createTableCell(targetAnalytics.getMonthlyAmountSaved().toString());
+	    Object remainingAmount = ui.createTableCell(target.getTotalTargetCost().subtract(targetAnalytics.getAmountSaved(target.getId())).toString());
 	    Object monthlyAmountDue = ui.createTableCell(targetAnalytics.getMonthlyAmountDue().toString());
-	    
+
 	    Object endOfMonthlyInterval = "";
 		if(targetAnalytics.getEndMonthInterval() != null){
 			endOfMonthlyInterval = ui.createTableCell(dateFormat.format(targetAnalytics.getEndMonthInterval()));
 		}else{
 			endOfMonthlyInterval = ui.createTableCell("Target end date passed");
 		}
-	 			 	
+
 	 	targetAnalytics.clearAnalyticsComputations();
-	
+
 		String neededitems = "";
 		List<TargetServiceItem> lstTSI = targetServiceItemDao.getAllTargetServiceItemByTarget(target.getId());
 		for(TargetServiceItem tsi: lstTSI){
@@ -181,47 +187,59 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 		ui.add(row, endDate);
 		ui.add(row, savingsTarget);
 		ui.add(row, amountSaved);
+		ui.add(row, remainingAmount);
 		ui.add(row, percentageToGo);
 		ui.add(row, lastAmountPaid);
 		ui.add(row, lastDatePaid);
-		
-		ui.add(row, monthlyAmountSaved);
-		ui.add(row, monthlyAmountDue);
-		ui.add(row, endOfMonthlyInterval);
-		
+		/*ui.add(row, monthlyAmountSaved);*/
 		ui.add(row, daysRemaining);
 		ui.add(row, targetStatus);
-		
+		/*ui.add(row, monthlyAmountDue);
+		ui.add(row, endOfMonthlyInterval);*/
+
 		trgtRowLst.add(row);
-		
+
 		return trgtRowLst;
 	}
-	
+
 	public void refreshSettingsHandler() {
 		createSettingsHandler.refresh();
 	}
-	
+
 	protected List<Client> getClients(String filter, int startIndex, int limit) {
 		if (!filter.trim().isEmpty()) {
 			totalItemCount  = this.clientDao.getClientsByNameFilter(filter).size();
 			List<Client> clients = this.clientDao.getClientsByFilter(filter, startIndex, limit);
-			
-			for (ServiceItem si : this.serviceItemDao.getServiceItemsLikeName(filter)) {
-				List<TargetServiceItem> targetServiceItems = targetServiceItemDao.
-				getAllTargetServiceItemByServiceItemId(si.getId());
-				for(int y = 0 ; y<targetServiceItems.size(); y++){
-					Target t = targetServiceItems.get(y).getTarget();
+
+			if(this.serviceItemDao.getServiceItemsLikeName(filter).size()==0) {
+				List<Target> lstTgts = targetDao.getTargetsByStatus(filter);
+				for (Target t: lstTgts) {
 					Client client = t.getAccount().getClient();
 					if (!clients.contains(client)){clients.add(client);}
 				}
+			} else {
+				for (ServiceItem si : this.serviceItemDao.getServiceItemsLikeName(filter)) {
+					List<TargetServiceItem> targetServiceItems = targetServiceItemDao.
+					getAllTargetServiceItemByServiceItemId(si.getId());
+					for(int y = 0 ; y<targetServiceItems.size(); y++){
+						Target t = targetServiceItems.get(y).getTarget();
+						Client client = t.getAccount().getClient();
+						if (!clients.contains(client)){clients.add(client);}
+					}
+					List<Target> lstTgts = targetDao.getTargetsByStatus(filter);
+					for (Target t: lstTgts) {
+						Client client = t.getAccount().getClient();
+						if (!clients.contains(client)){clients.add(client);}
+					}
+				}	
 			}
-			
+
 			return clients;
 		}else{
 			if (clientListForAnalytics.isEmpty()){
 				totalItemCount = this.clientDao.getAllActiveClientsSorted(getClientsSortField(), getClientsSortOrder()).size();
 				List<Client> activeClientsSorted = this.clientDao.getAllActiveClientsSorted
-										(startIndex, limit, getClientsSortField(), getClientsSortOrder());
+										(getClientsSortField(), getClientsSortOrder());
 				return activeClientsSorted;
 			} else {
 				totalItemCount = clientListForAnalytics.size();
@@ -237,31 +255,32 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 			}
 		}
 	}
-	
+
 	public void notify(final FrontlineEventNotification notification) {
-		new FrontlineUiUpateJob() {
-			public void run() {
-				if (!(notification instanceof DatabaseEntityNotification)) {
-					return;
-				}
-				Object entity = ((DatabaseEntityNotification) notification).getDatabaseEntity();
-				if (entity instanceof Target) {
-					Target target = (Target) entity;
-					if (notification instanceof EntitySavedNotification){
-						Account a = target.getAccount();
-						if ((a != null) & (a.getClient() != null)) {
-							if (a.getClient().isActive()){
-								clients_targets.put(a.getClient(), target);
+		if (notification instanceof DatabaseEntityNotification) {
+			final Object entity = ((DatabaseEntityNotification<?>) notification).getDatabaseEntity();
+			if (entity instanceof Target) {
+				new FrontlineUiUpdateJob() {
+					public void run() {
+						Target target = (Target) entity;
+						if (notification instanceof EntitySavedNotification){
+							Account a = target.getAccount();
+							if ((a != null) & (a.getClient() != null)) {
+								if (a.getClient().isActive()){
+									clients_targets.put(a.getClient(), target);
+								}
 							}
 						}
+						refresh();
 					}
-					CreateSettingsTableHandler.this.refresh();
-				}
-				if (entity instanceof Client || entity instanceof Account) {
-					CreateSettingsTableHandler.this.refresh();
-				}
-				
+				}.execute();
+			} else if (entity instanceof Client || entity instanceof Account) {
+				new FrontlineUiUpdateJob() {
+					public void run() {
+						refresh();
+					}
+				}.execute();
 			}
-		}.execute();
+		}
 	}
 }

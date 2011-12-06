@@ -23,6 +23,7 @@ public class TargetExportHandler extends ExportDialogHandler<Target> {
 	private static final String COMPONENT_CB_END_DATE = "cbEndDate";
 	private static final String COMPONENT_CB_SAVINGS_TARGET = "cbSavingsTarget";
 	private static final String COMPONENT_CB_AMOUNT_SAVED = "cbAmountSaved";
+	private static final String COMPONENT_CB_AMOUNT_REMAINING = "cbAmountRemaining";
 	private static final String COMPONENT_CB_PERCENTAGE_SAVED = "cbPercentageSaved";
 	/** i18n Text Key: "Active" */
 	private static final String COMPONENT_CB_LAST_PAYMENT_DATE = "cbLastPaymentDate";
@@ -39,13 +40,13 @@ public class TargetExportHandler extends ExportDialogHandler<Target> {
 	private TargetDao tgtDao;
 	private List<Target> targetList;
 	private PaymentViewPluginController pluginController;
-	
+
 	public TargetExportHandler(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		super(Target.class, ui);
 		this.tgtDao = pluginController.getTargetDao();
 		this.pluginController = pluginController;
 	}
-	
+
 	public TargetExportHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, List<Target> selected) {
 		super(Target.class, ui);
 		this.tgtDao = pluginController.getTargetDao();
@@ -86,7 +87,7 @@ public class TargetExportHandler extends ExportDialogHandler<Target> {
 		this.uiController.infoMessage(InternationalisationUtils
 				.getI18nString(MESSAGE_EXPORT_TASK_SUCCESSFUL));
 	}
-	
+
 	private CsvRowFormat getRowFormatForTarget() {
 		CsvRowFormat rowFormat = new CsvRowFormat();
 		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_CLIENT_NAME,
@@ -101,23 +102,24 @@ public class TargetExportHandler extends ExportDialogHandler<Target> {
 				COMPONENT_CB_SAVINGS_TARGET);
 		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_AMOUNT_PAID,
 				COMPONENT_CB_AMOUNT_SAVED);
+		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_AMOUNT_REMAINING,
+				COMPONENT_CB_AMOUNT_REMAINING);		
 		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_PERCENTAGE,
 				COMPONENT_CB_PERCENTAGE_SAVED);
 		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_DATE_PAID,
 				COMPONENT_CB_LAST_PAYMENT_DATE);
 		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_LAST_AMOUNT_PAID,
 				COMPONENT_CB_LAST_PAYMENT);
-		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_MONTHLY_SAVINGS,
-				COMPONENT_CB_PAID_THIS_MONTH);
-		addMarker(rowFormat, PaymentViewCsvUtils.MONTHLY_DUE,
-				COMPONENT_CB_CURRENT_AMOUNT_DUE);
-		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_CURRENT_DUE_DATE,
-				COMPONENT_CB_CURRENT_DUE_DATE);
+		/*addMarker(rowFormat, PaymentViewCsvUtils.TARGET_MONTHLY_SAVINGS,
+				COMPONENT_CB_PAID_THIS_MONTH);*/
 		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_DAYS_REMAINING,
 				COMPONENT_CB_DAYS_REMAINING);
 		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_STATUS,
 				COMPONENT_CB_STATUS);
-
+		/*addMarker(rowFormat, PaymentViewCsvUtils.MONTHLY_DUE,
+				COMPONENT_CB_CURRENT_AMOUNT_DUE);
+		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_CURRENT_DUE_DATE,
+				COMPONENT_CB_CURRENT_DUE_DATE);*/
 		return rowFormat;
 	}
 
@@ -130,5 +132,5 @@ public class TargetExportHandler extends ExportDialogHandler<Target> {
 	protected String getOptionsFilePath() {
 		return UI_FILE_OPTIONS_PANEL_TARGET;
 	}
-	
+
 }

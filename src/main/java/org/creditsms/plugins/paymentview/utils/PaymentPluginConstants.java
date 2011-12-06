@@ -22,6 +22,7 @@ public final class PaymentPluginConstants {
 	public static final String COMMON_END_DATE = "plugins.paymentview.common.enddate";
 	public static final String COMMON_SAVINGS_TARGET = "plugins.paymentview.common.targetsavings";
 	public static final String COMMON_AMOUNT_SAVED = "plugins.paymentview.common.amountpaid";
+	public static final String COMMON_AMOUNT_REMAINING = "plugins.paymentview.common.amountremaining";
 	public static final String COMMON_PERCENTAGE_SAVED = "plugins.paymentview.common.percentagesaved";
 	public static final String COMMON_LAST_PAYMENT_DATE = "plugins.paymentview.common.lastpaymentdate";
 	public static final String COMMON_LAST_PAYMENT = "plugins.paymentview.common.lastpayment";

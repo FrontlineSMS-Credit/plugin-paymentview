@@ -8,6 +8,7 @@ import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COM
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_LAST_PAYMENT_DATE;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_NAME;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_PAID_THIS_MONTH;
+import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_AMOUNT_REMAINING;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_PERCENTAGE_SAVED;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_PRODUCTS;
 import static org.creditsms.plugins.paymentview.utils.PaymentPluginConstants.COMMON_SAVINGS_TARGET;
@@ -39,7 +40,7 @@ public class TargetViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 	private static TargetDao targetDao;
 	private static IncomingPaymentDao incomingPaymentDao;
 	private static TargetAnalytics targetAnalytics = new TargetAnalytics();
-	
+
 	public static void exportTarget(File exportFile,
 			List<Target> targetList,
 			CsvRowFormat targetFormat, PaymentViewPluginController pluginController ) throws IOException {
@@ -70,6 +71,8 @@ public class TargetViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 							InternationalisationUtils.getI18nString(COMMON_SAVINGS_TARGET),
 							PaymentViewCsvUtils.TARGET_AMOUNT_PAID,
 							InternationalisationUtils.getI18nString(COMMON_AMOUNT_SAVED),
+							PaymentViewCsvUtils.TARGET_AMOUNT_REMAINING,
+							InternationalisationUtils.getI18nString(COMMON_AMOUNT_REMAINING),
 							PaymentViewCsvUtils.TARGET_PERCENTAGE,
 							InternationalisationUtils.getI18nString(COMMON_PERCENTAGE_SAVED),
 							PaymentViewCsvUtils.TARGET_LAST_AMOUNT_PAID,
@@ -78,18 +81,24 @@ public class TargetViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 							InternationalisationUtils.getI18nString(COMMON_LAST_PAYMENT_DATE),
 							PaymentViewCsvUtils.TARGET_MONTHLY_SAVINGS,
 							InternationalisationUtils.getI18nString(COMMON_PAID_THIS_MONTH),
-							PaymentViewCsvUtils.MONTHLY_DUE,
-							InternationalisationUtils.getI18nString(COMMON_CURRENT_AMOUNT_DUE),
-							PaymentViewCsvUtils.TARGET_CURRENT_DUE_DATE,
-							InternationalisationUtils.getI18nString(COMMON_CURRENT_DUE_DATE),
 							PaymentViewCsvUtils.TARGET_DAYS_REMAINING,
 							InternationalisationUtils.getI18nString(COMMON_DAYS_REMAINING),
 							PaymentViewCsvUtils.TARGET_STATUS,
-							InternationalisationUtils.getI18nString(COMMON_TARGET_STATUS));
-			
-			
+							InternationalisationUtils.getI18nString(COMMON_TARGET_STATUS),
+							PaymentViewCsvUtils.MONTHLY_DUE,
+							InternationalisationUtils.getI18nString(COMMON_CURRENT_AMOUNT_DUE),
+							PaymentViewCsvUtils.TARGET_CURRENT_DUE_DATE,
+							InternationalisationUtils.getI18nString(COMMON_CURRENT_DUE_DATE));
+
+
 			for (Target target : targetList) {
 				targetAnalytics.computeAnalyticsIntervalDatesAndSavings(target.getId());
+				String lastDatePaid = "";
+				if(targetAnalytics.getLastDatePaid(target.getId())==null) {
+					lastDatePaid = "No Payment Made Yet";
+				} else {
+					lastDatePaid = InternationalisationUtils.getDatetimeFormat().format(new Date(targetAnalytics.getLastDatePaid(target.getId()).getTime()));
+				}
 				CsvUtils.writeLine(out, targetFormat,
 						PaymentViewCsvUtils.CLIENT_NAME,
 						target.getAccount().getClient().getFullName(),
@@ -103,22 +112,24 @@ public class TargetViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						target.getTotalTargetCost().toString(),
 						PaymentViewCsvUtils.TARGET_AMOUNT_PAID,
 						targetAnalytics.getAmountSaved(target.getId()).toString(),
+						PaymentViewCsvUtils.TARGET_AMOUNT_REMAINING,
+						target.getTotalTargetCost().subtract(targetAnalytics.getAmountSaved(target.getId())).toString(),
 						PaymentViewCsvUtils.TARGET_PERCENTAGE,
 						targetAnalytics.getPercentageToGo(target.getId()).toString(),
 						PaymentViewCsvUtils.TARGET_LAST_AMOUNT_PAID,
 						targetAnalytics.getLastAmountPaid(target.getId()).toString(),
 						PaymentViewCsvUtils.TARGET_DATE_PAID,
-						InternationalisationUtils.getDatetimeFormat().format(new Date(targetAnalytics.getLastDatePaid(target.getId()).getTime())),
+						lastDatePaid,
 						PaymentViewCsvUtils.TARGET_MONTHLY_SAVINGS,
 						targetAnalytics.getMonthlyAmountSaved().toString(),
-						PaymentViewCsvUtils.MONTHLY_DUE,
-						targetAnalytics.getMonthlyAmountDue().toString(),
-						PaymentViewCsvUtils.TARGET_CURRENT_DUE_DATE,
-						InternationalisationUtils.getDatetimeFormat().format(new Date(targetAnalytics.getEndMonthInterval().getTime())),
 						PaymentViewCsvUtils.TARGET_DAYS_REMAINING,
 						targetAnalytics.getDaysRemaining(target.getId()).toString(),
 						PaymentViewCsvUtils.TARGET_STATUS,
-						targetAnalytics.getStatus(target.getId()).toString());
+						targetAnalytics.getStatus(target.getId()).toString(),
+						PaymentViewCsvUtils.MONTHLY_DUE,
+						targetAnalytics.getMonthlyAmountDue().toString(),
+						PaymentViewCsvUtils.TARGET_CURRENT_DUE_DATE,
+						InternationalisationUtils.getDatetimeFormat().format(new Date(targetAnalytics.getEndMonthInterval().getTime())));
 			}
 		} finally {
 			if (out != null)

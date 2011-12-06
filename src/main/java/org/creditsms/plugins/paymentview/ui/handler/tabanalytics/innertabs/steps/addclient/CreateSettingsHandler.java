@@ -19,7 +19,7 @@ import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.TargetServiceItem;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateNewServiceItemHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
-import org.creditsms.plugins.paymentview.utils.PvUtils;
+import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
 public class CreateSettingsHandler extends BasePanelHandler implements EventObserver{
 	private static final String PNL_FIELDS = "pnlFields";
@@ -33,11 +33,11 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	private static final String TBL_SERVICE_ITEMS_LIST = "tbl_serviceItemList";
 	private static final String XML_STEP_CREATE_SETTINGS = "/ui/plugins/paymentview/analytics/addclient/stepcreatesettings.xml";
 	private static String CONFIRM_ACCEPT_PARSED_DATE = "";
-	
+
 	private final AddClientTabHandler addClientTabHandler;
 	private final SelectClientsHandler previousSelectClientsHandler;
 	private final PaymentViewPluginController pluginController;
-	
+
 	private Object cmbtargets;
 	private Object txtQty;
 	private Object pnlFields;
@@ -51,7 +51,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	private Date endDate;
 	private Date tempStartDate;
 	private Date tempEndDate;
-	
+
 	private ServiceItem selectedServiceItem;
 	private List<TargetServiceItem> lstTargetServiceItems = new ArrayList<TargetServiceItem>(); 
 	private BigDecimal totalAmount = BigDecimal.ZERO;
@@ -63,10 +63,10 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		this.addClientTabHandler = addClientTabHandler;
 		this.previousSelectClientsHandler = selectClientsHandler;
 		ui.getFrontlineController().getEventBus().registerObserver(this);
-		
+
 		init();
 	}
-	
+
 	private void init() {
 		this.loadPanel(XML_STEP_CREATE_SETTINGS);
 		cmbtargets = ui.find(this.getPanelComponent(), CMBTARGETS);
@@ -87,24 +87,24 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 			ui.add(cmbtargets, 
 					ui.createComboboxChoice(serviceItem.getTargetName(), serviceItem));
 		}
-		
+
 		ui.add(cmbtargets, ui.createComboboxChoice(ENTER_NEW_TARGET, ENTER_NEW_TARGET));
 	}
 
 	public void evaluate() {
 		Object item = ui.getSelectedItem(cmbtargets);
 		Object attachedObject = ui.getAttachedObject(item);
-		
+
 		if (attachedObject.equals(ENTER_NEW_TARGET)) {
 			ui.add(new CreateNewServiceItemHandler((UiGeneratorController) ui, pluginController)
 					.getDialog());
 		}
 	}
-	
+
 	public void showDateSelecter(Object textField) {
 		((UiGeneratorController) ui).showDateSelecter(textField);
 	}
-	
+
 	private Calendar setStartOfDay(Calendar cal){
 		cal.set(Calendar.HOUR_OF_DAY, 0);  
 		cal.set(Calendar.MINUTE, 0);  
@@ -112,7 +112,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		cal.set(Calendar.MILLISECOND, 0);
 		return cal;
 	}
-	
+
 	private Calendar setEndOfDay(Calendar cal){
 		cal.set(Calendar.HOUR_OF_DAY, 24);  
 		cal.set(Calendar.MINUTE, 0);  
@@ -120,7 +120,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		cal.set(Calendar.MILLISECOND, 0);
 		return cal;
 	}
-	
+
 	private Calendar setEndOfDayFormat(Calendar cal){
 		cal.set(Calendar.HOUR_OF_DAY, 24);  
 		cal.set(Calendar.MINUTE, 0);  
@@ -128,7 +128,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		cal.set(Calendar.MILLISECOND, 0);
 		return cal;
 	}
-	
+
 	boolean validateStartDate(Date startDate){
 		Calendar calStartDate = Calendar.getInstance();
 		calStartDate = setStartOfDay(calStartDate);
@@ -139,17 +139,17 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 			return false;
 		}
 	}
-	
+
 	private int getMonthsDiffFromStart(Calendar calStartDate,
 			Calendar calNowDate) {
 		return (calStartDate.get(Calendar.YEAR) - calNowDate.get(Calendar.YEAR)) * 12 +
 		(calStartDate.get(Calendar.MONTH)- calNowDate.get(Calendar.MONTH)) + 
 		(calStartDate.get(Calendar.DAY_OF_MONTH) >= calNowDate.get(Calendar.DAY_OF_MONTH)? 0: -1); 
 	}
-	
+
 	boolean validateEndDate(Date startDate, Date endDate){
 		String methodToBeCalled = "setParsedEndDate";
-		
+
 		if(startDate.compareTo(endDate)<0){
 			Calendar calStartDate = Calendar.getInstance();
 			calStartDate.setTime(startDate);
@@ -158,10 +158,10 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 			Calendar calEndDate = Calendar.getInstance();
 			calEndDate.setTime(endDate);
 			calEndDate = setEndOfDay(calEndDate);		
-			
+
 			int startDay = calStartDate.get(Calendar.DAY_OF_MONTH);
 			int endDay = calEndDate.get(Calendar.DAY_OF_MONTH);
-			
+
 			if (calStartDate.get(Calendar.YEAR)==calEndDate.get(Calendar.YEAR)) {
 				if(calStartDate.get(Calendar.MONTH)==calEndDate.get(Calendar.MONTH)){
 					ui.alert("Target duration cannot be less than a month.");
@@ -198,7 +198,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 				calEndDate.add(Calendar.DATE, -1);
 				calEndDate = setEndOfDayFormat(calEndDate);
 
-				CONFIRM_ACCEPT_PARSED_DATE="The selected end date is incorrect. The parsed end date is: "+ PvUtils.formatDate(calEndDate.getTime()) +". Do you want to proceed?";
+				CONFIRM_ACCEPT_PARSED_DATE="The selected end date is incorrect. The parsed end date is: "+ PaymentViewUtils.formatDate(calEndDate.getTime()) +". Do you want to proceed?";
 				if(startDay!=endDay){
 					setTempStartDate(calStartDate.getTime());
 					setTempEndDate(calEndDate.getTime());
@@ -215,17 +215,17 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 			return false;
 		}
 	}
-	
+
 	public void setParsedEndDate(){
 		ui.remove(dialogConfimParsedEndDate);
 		this.endDate = getTempEndDate();
 		this.startDate = getTempStartDate();
-		
+
 		readServiceItem();
 		addClientTabHandler.setCurrentStepPanel(new ReviewHandler(
 				(UiGeneratorController) ui, this.pluginController, addClientTabHandler, this).getPanelComponent());
 	}
-	
+
 	public boolean parseDateRange(){
 		try {
 			String strStartDate = ui.getText(txtStartDate);
@@ -237,11 +237,12 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 				return false;
 			}
 			endDate = InternationalisationUtils.getDateFormat().parse(strEndDate);
-			if(validateEndDate(startDate, endDate)){
+			return true;
+			/*if(validateEndDate(startDate, endDate)){
 				return true;
 			}else{
 				return false;
-			}
+			}*/
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}
@@ -279,7 +280,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 			ui.setText(txtTotalAmount, totalAmount.toString());
 		}
 	}
-	
+
 	public boolean checkIfItemExists(ServiceItem sItem) {
 		List<TargetServiceItem> tsiLst = getTargetLstServiceItems();
 		for (TargetServiceItem tsi: tsiLst) {
@@ -289,7 +290,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		}
 		return false;
 	}
-	
+
     boolean checkIfInt(String in) {
         try {
             if(Integer.parseInt(in)==0){
@@ -320,7 +321,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		TargetServiceItem targetServiceItem = ui.getAttachedObject(row, TargetServiceItem.class);
 		return targetServiceItem;
 	}
-	
+
 	public void removeServiseItemFromTarget(){
 		TargetServiceItem tgtServiceItem = getSelectedTgtServiceItemInTable();
 		TargetServiceItem rmvTgtServiceItem = new TargetServiceItem();
@@ -336,7 +337,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		setTargetLstServiceItems(lstSTI);
 		refreshSelectedTheTargetTable();
 	}
-	
+
 	protected Object getRow(TargetServiceItem targeServiceItem) {
 		Object row = ui.createTableRow(targeServiceItem);
 		ui.add(row, ui.createTableCell(targeServiceItem.getServiceItem().getTargetName()));
@@ -344,7 +345,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 		ui.add(row, ui.createTableCell(targeServiceItem.getAmount().toString()));
 		return row;
 	}
-	
+
 	public List<TargetServiceItem> getTargetLstServiceItems() {
 		return lstTargetServiceItems;
 	}
@@ -352,19 +353,23 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	public void setTargetLstServiceItems(List<TargetServiceItem> lstTargetServiceItems) {
 		this.lstTargetServiceItems = lstTargetServiceItems;
 	}
-	
+
 	public BigDecimal getTotalAmount() {
 		return totalAmount;
 	}
-	
+
+	public String getStatus() {
+		return "inactive";
+	}
+
 	public void setTotalAmount(BigDecimal totalAmount) {
 		this.totalAmount =  totalAmount;
 	}
-	
+
 	public Date getStartDate() {
 		return startDate;
 	}
-	
+
 	public Date getEndDate() {
 		return endDate;
 	}
@@ -385,7 +390,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	public ServiceItem getSelectedServiceItem() {
 		return selectedServiceItem;
 	}
-	
+
 //> WIZARD NAVIGATORS
 	public void next() {	
 		//Check Service,start and end date set up
@@ -401,7 +406,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 			ui.infoMessage("Please enter an end date.");
 			return;
 		}
-		
+
 		if(parseDateRange()){
 			readServiceItem();
 			addClientTabHandler.setCurrentStepPanel(new ReviewHandler(
@@ -426,16 +431,16 @@ public class CreateSettingsHandler extends BasePanelHandler implements EventObse
 	public void selectClient() {
 		previous();
 	}
-	
+
 	public void selectService() {
 		addClientTabHandler.setCurrentStepPanel(new SelectTargetSavingsHandler(
 				(UiGeneratorController) ui, this.pluginController, addClientTabHandler).getPanelComponent());
 	}
-	
+
 	public SelectClientsHandler getPreviousSelectClientsHandler() {
 		return previousSelectClientsHandler;
 	}
-	
+
 	public Object getComboFieldsComponent() {
 		return cmbtargets;
 	}

@@ -24,7 +24,7 @@ public class ReviewHandler extends BasePanelHandler {
 	private static final String PNL_CLIENT_TABLE_HOLDER = "pnlClientTableHolder";
 	private static String PAYMENT_PROCESS = "StandardPaymentService";
 	//private static final String PAYMENT_PROCESS = "PayBillPaymentService";
-	
+
 	private AddClientTabHandler addClientTabHandler;
 	private final CreateSettingsHandler previousCreateSettingsHandler;
 	private Object clientTableHolder;
@@ -60,8 +60,8 @@ public class ReviewHandler extends BasePanelHandler {
 				TargetCreationProcess targetCreationProcess = new TargetStandardProcess(
 						client, previousCreateSettingsHandler.getStartDate(), 
 						previousCreateSettingsHandler.getEndDate(), 
-						previousCreateSettingsHandler.getTargetLstServiceItems(), pluginController, getTotalAmount());
-				
+						previousCreateSettingsHandler.getTargetLstServiceItems(), pluginController, getTotalAmount(), getStatus());
+
 				if(targetCreationProcess.canCreateTarget()){
 					targetCreationProcess.createTarget();
 					ui.alert("New target created for client " + client.getFullName()+".");
@@ -73,7 +73,7 @@ public class ReviewHandler extends BasePanelHandler {
 				TargetCreationProcess targetCreationProcess = new TargetPayBillProcess(
 						client, previousCreateSettingsHandler.getStartDate(), 
 						previousCreateSettingsHandler.getEndDate(), 
-						previousCreateSettingsHandler.getTargetLstServiceItems(), pluginController, getTotalAmount());
+						previousCreateSettingsHandler.getTargetLstServiceItems(), pluginController, getTotalAmount(), getStatus());
 					targetCreationProcess.createTarget();
 					ui.alert("New target created for client "+ client.getFullName()+ ".");
 			}
@@ -85,27 +85,27 @@ public class ReviewHandler extends BasePanelHandler {
 	public Object getPanelComponent() {
 		return super.getPanelComponent();
 	}
-	
+
 	public void showDateSelecter(Object textField) {
 		((UiGeneratorController) ui).showDateSelecter(textField);
 	}
-	
+
 //> WIZARD NAVIGATORS
 	public void previous() {
 		addClientTabHandler.setCurrentStepPanel(previousCreateSettingsHandler.getPanelComponent());
 		((UiGeneratorController)ui).getFrontlineController().getEventBus().unregisterObserver(clientTableHandler);
 	}
-	
-	public void selectService() {
-		addClientTabHandler.setCurrentStepPanel(
-				previousCreateSettingsHandler.
-				getPreviousSelectClientsHandler().getSelectTargetSavingsHandler().getPanelComponent()
-		);
-	}
 
-	public void targetedSavings() {
-		selectService();
-	}
+//	public void selectService() {
+//		addClientTabHandler.setCurrentStepPanel(
+//				previousCreateSettingsHandler.
+//				getPreviousSelectClientsHandler().getSelectTargetSavingsHandler().getPanelComponent()
+//		);
+//	}
+
+//	public void targetedSavings() {
+//		selectService();
+//	}
 
 	public void selectClient() {
 		addClientTabHandler.setCurrentStepPanel(previousCreateSettingsHandler.getPreviousSelectClientsHandler().getPanelComponent());
@@ -122,11 +122,11 @@ public class ReviewHandler extends BasePanelHandler {
 	public List<TargetServiceItem> getSelectedServiceItems() {
 		return previousCreateSettingsHandler.getTargetLstServiceItems();
 	}
-	
+
 	public BigDecimal getTotalAmount() {
 		return previousCreateSettingsHandler.getTotalAmount();
 	}
-	
+
 	public Date getStartDate() {
 		return previousCreateSettingsHandler.getStartDate();
 	}
@@ -134,8 +134,13 @@ public class ReviewHandler extends BasePanelHandler {
 	public Date getEndDate() {
 		return previousCreateSettingsHandler.getEndDate();
 	}
-	
+
 	public List<Client> getSelectedClients() {
 		return selectedClients;
 	}
+
+	public String getStatus() {
+		return previousCreateSettingsHandler.getStatus();
+	}
+
 }

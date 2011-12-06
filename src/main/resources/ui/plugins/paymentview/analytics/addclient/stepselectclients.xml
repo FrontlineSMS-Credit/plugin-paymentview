@@ -1,22 +1,16 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <panel name="pnlStepSelectClients" columns="1" bottom="5"
 	columns="1" gap="10" left="5" right="5" top="10" weightx="1" weighty="1">
-	
+
 	<panel columns="1" gap="5" weightx="1" weighty="1" name="pnlClientsTableHolder">
 		<label font="20 Bold" text="Add a Client" weightx="1" />
 		<separator/>
 		<panel weightx="1" bottom="5" gap="5" top="5">
-			<button type="link" text="Select service" action="selectService"/>
-			<label text=" &gt; " />
-			<button type="link" text="Targeted Savings" action="targetedSavings"/>
-			<label text=" &gt; " />
 			<label text="Select Client" />
 		</panel>
-		<label text="2. Select client(s) for this service." />		
+		<label text="1. Select client(s) for this service." />		
 	</panel>
 	<panel gap="5" halign="right" weightx="1">
-		<button icon="/icons/left.png" name="btnPrevious" action="previous" text="Previous" />
-		<panel weightx="1"/>
 		<button icon="/icons/right.png" name="btnNext" action="next" text="Next" />
 	</panel>
 </panel>

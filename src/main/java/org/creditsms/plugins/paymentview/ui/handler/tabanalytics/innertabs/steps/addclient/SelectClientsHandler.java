@@ -16,16 +16,8 @@ public class SelectClientsHandler extends BasePanelHandler {
 	private SelectClientsTableHandler selectClientsTableHandler;
 	private Object pnlClientsTableHolder;
 	private final PaymentViewPluginController pluginController;
-	private SelectTargetSavingsHandler previousSelectTargetSavingsHandler;
 
-	protected SelectClientsHandler(UiGeneratorController ui,
-			PaymentViewPluginController pluginController, AddClientTabHandler addClientTabHandler, 
-			SelectTargetSavingsHandler selectTargetSavingsHandler) {
-		this(ui, pluginController, addClientTabHandler);
-		previousSelectTargetSavingsHandler = selectTargetSavingsHandler;
-	}
-	
-	protected SelectClientsHandler(UiGeneratorController ui,
+	public SelectClientsHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController, AddClientTabHandler addClientTabHandler) {
 		super(ui);
 		this.pluginController = pluginController;
@@ -63,24 +55,7 @@ public class SelectClientsHandler extends BasePanelHandler {
 		}
 	}
 
-	public void previous() {
-		addClientTabHandler.setCurrentStepPanel(previousSelectTargetSavingsHandler.getPanelComponent());
-		((UiGeneratorController)ui).getFrontlineController().getEventBus().unregisterObserver(selectClientsTableHandler);
-	}
-
-	public void selectService() {
-		previous();
-	}
-
-	public void targetedSavings() {
-		previous();
-	}
-	
 	List<Client> getSelectedClients() {
 		return selectClientsTableHandler.getSelectedClients();
-	}
-
-	public SelectTargetSavingsHandler getSelectTargetSavingsHandler() {
-		return previousSelectTargetSavingsHandler;
 	}
 }

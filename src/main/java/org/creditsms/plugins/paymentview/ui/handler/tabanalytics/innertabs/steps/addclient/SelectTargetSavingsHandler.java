@@ -7,7 +7,7 @@ import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddClientTabHandler;
 
 public class SelectTargetSavingsHandler extends BasePanelHandler {
-private static final String CHK_TARGET_SAVINGS_LAYAWAY = "target_savings_layaway";
+	private static final String CHK_TARGET_SAVINGS_LAYAWAY = "target_savings_layaway";
 
 //> CONSTANTS
 	private static final String XML_STEP_SELECT_TARGET_SAVING = "/ui/plugins/paymentview/analytics/addclient/stepselecttargetsavings.xml";
@@ -21,7 +21,7 @@ private static final String CHK_TARGET_SAVINGS_LAYAWAY = "target_savings_layaway
 			PaymentViewPluginController pluginController,
 			final AddClientTabHandler addClientTabHandler) {
 		super(ui);
-		
+
 		this.pluginController = pluginController;
 		this.addClientTabHandler = addClientTabHandler;
 		this.loadPanel(XML_STEP_SELECT_TARGET_SAVING);
@@ -33,10 +33,10 @@ private static final String CHK_TARGET_SAVINGS_LAYAWAY = "target_savings_layaway
 	}
 
 	public void next() {
-		if (selectedRadiosButtons()){
-			addClientTabHandler.setCurrentStepPanel(new SelectClientsHandler(
-					(UiGeneratorController) ui, pluginController, addClientTabHandler, this).getPanelComponent());
-		}
+//		if (selectedRadiosButtons()){
+//			addClientTabHandler.setCurrentStepPanel(new SelectClientsHandler(
+//					(UiGeneratorController) ui, pluginController, addClientTabHandler, this).getPanelComponent());
+//		}
 	}
 
 	private boolean selectedRadiosButtons() {

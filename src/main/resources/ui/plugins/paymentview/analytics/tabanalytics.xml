@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tab name="tab_analytics" text="Analytics" icon="/icons/hits.png">
+<tab name="tab_analytics" text="Targets" icon="/icons/hits.png">
 	<tabbedpane name="tabP_AnalyticsMainPane" placement="left">
-		<tab name="tab_createDashboard" text="Add Client"/>			
+		<tab name="tab_createDashboard" text="Create Target"/>			
 		<tab name="tab_viewDashBoard" text="View Dashboard"/>
 		<tab name="tab_configureService" text="Configure Service"/>
 	</tabbedpane>

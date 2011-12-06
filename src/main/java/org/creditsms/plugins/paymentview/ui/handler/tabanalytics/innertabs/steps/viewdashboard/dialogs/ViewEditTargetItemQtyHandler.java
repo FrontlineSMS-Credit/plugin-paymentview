@@ -21,7 +21,7 @@ public class ViewEditTargetItemQtyHandler implements ThinletUiEventHandler {
 	private UiGeneratorController ui;
 	private TargetServiceItem tsi;
 	private ServiceItemDao serviceItemDao;
-	
+
 	public ViewEditTargetItemQtyHandler(PaymentViewPluginController pluginController,
 			TargetServiceItem tsi, EditTargetHandler editTargetHandler) {
 		this.tsi = tsi;
@@ -31,7 +31,7 @@ public class ViewEditTargetItemQtyHandler implements ThinletUiEventHandler {
 		init();
 		refresh();
 	}
-	
+
     boolean checkIfInt(String in) {
         try {
             if(Integer.parseInt(in)<0){
@@ -46,7 +46,7 @@ public class ViewEditTargetItemQtyHandler implements ThinletUiEventHandler {
 	public void persistQty(String newQty) throws DuplicateKeyException {
 		if(checkIfInt(newQty)){
             if(tsi.getServiceItemQty()==Integer.parseInt(newQty)){
-            	ui.alert(tsi.getServiceItem().getTargetName() + "'s qty has not been changed.");
+            	ui.alert(tsi.getServiceItem().getTargetName() + "'s quantity has not been changed.");
             	this.removeDialog();
             } else {
             	if (canIncreaseQty(tsi, Integer.parseInt(newQty))){
@@ -59,14 +59,14 @@ public class ViewEditTargetItemQtyHandler implements ThinletUiEventHandler {
                 	editTargetHandler.setSelectedTargetServiceItemsLst(lstTargetServiceItems);
                 	editTargetHandler.refreshSelectedTheTargetTable();
         			this.removeDialog();
-        			ui.infoMessage("You have successfully  changed " + tsi.getServiceItem().getTargetName() + "'s qty.");
+        			ui.infoMessage("You have successfully  changed " + tsi.getServiceItem().getTargetName() + "'s quantity.");
             	} 
             }
 		} else {
 			ui.alert("Invalid Quantity");
 		}
 	}
-	
+
 	private boolean canIncreaseQty(TargetServiceItem tsi, int newQty) {
 		ServiceItem si = getServiceItemDao().getServiceItemById(tsi.getServiceItem().getId());
 		if (tsi.getServiceItem().equals(si) && tsi.getAmount().equals(si.getAmount())){
@@ -78,7 +78,7 @@ public class ViewEditTargetItemQtyHandler implements ThinletUiEventHandler {
 			ui.alert(si.getTargetName()+"'s price has changed since it was added to the target." +
 					"Please add as a new Service Item to the target");
 		}
-		
+
 		return false;
 	}
 
@@ -101,7 +101,7 @@ public class ViewEditTargetItemQtyHandler implements ThinletUiEventHandler {
 
 	public void init() {
 		dialogComponent = ui.loadComponentFromFile(XML_TARGET_ITEM_EDIT_QTY, this);
-		ui.setText(dialogComponent, "Edit "+tsi.getServiceItem().getTargetName()+"'s needed Qty");
+		ui.setText(dialogComponent, "Edit "+tsi.getServiceItem().getTargetName()+"'s needed Quantity");
 		txtQty = ui.find(dialogComponent, TXT_QTY);
 		ui.setText(txtQty,  Integer.toString(tsi.getServiceItemQty()));
 	}
@@ -122,5 +122,5 @@ public class ViewEditTargetItemQtyHandler implements ThinletUiEventHandler {
 	public ServiceItemDao getServiceItemDao() {
 		return serviceItemDao;
 	}
-	
+
 }
