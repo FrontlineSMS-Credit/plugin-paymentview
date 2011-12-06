@@ -35,8 +35,9 @@ public abstract class TargetCreationProcess {
 	protected List<Account> inactiveNonGenericAccounts;
 	protected List<Account> totalListNonGenericAccounts;
 	protected BigDecimal totalTargetAmount; 
+	protected String status;
 	
-	public TargetCreationProcess(Client client, List<TargetServiceItem> targetServiceItems, Date targetStartDate, Date targetEndDate, PaymentViewPluginController pluginController, BigDecimal totalTargetAmount) {
+	public TargetCreationProcess(Client client, List<TargetServiceItem> targetServiceItems, Date targetStartDate, Date targetEndDate, PaymentViewPluginController pluginController, BigDecimal totalTargetAmount, String Status) {
 		this.client = client;
 		this.targetServiceItems = targetServiceItems;
 		this.targetStartDate = targetStartDate;
@@ -46,6 +47,7 @@ public abstract class TargetCreationProcess {
 		this.clientDao = pluginController.getClientDao();
 		this.targetServiceItemDao = pluginController.getTargetServiceItemDao();
 		this.totalTargetAmount = totalTargetAmount;
+		this.status = status;
 	}
 	
 	public TargetDao getTargetDao() {
@@ -142,5 +144,7 @@ public abstract class TargetCreationProcess {
 	public BigDecimal getTotalTargetAmount() {
 		return totalTargetAmount;
 	}
-
+	public String getStatus() {
+		return status;
+	}
 }
