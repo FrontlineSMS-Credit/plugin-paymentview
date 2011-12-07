@@ -20,21 +20,17 @@ import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.data.events.EntityDeletedNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.data.events.EntityUpdatedNotification;
-import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
-import net.frontlinesms.messaging.sms.events.SmsModemStatusNotification;
-import net.frontlinesms.messaging.sms.modem.SmsModem;
-import net.frontlinesms.messaging.sms.modem.SmsModemStatus;
 import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.plugins.PluginSettingsController;
 import net.frontlinesms.plugins.payment.service.PaymentService;
+import net.frontlinesms.plugins.payment.service.PaymentServiceException;
 import net.frontlinesms.plugins.payment.settings.ui.PaymentServiceSettingsHandler;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.ui.events.FrontlineUiUpdateJob;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
@@ -58,12 +54,11 @@ import org.springframework.context.ApplicationContext;
 /**
  * This is the base class for the FrontlineSMS:Credit PaymentView plugin. The
  * PaymentView plugin is used to process payments transacted via the connected
- * mobile phone. Processing of the payments includes mining the incoming message
- * for specific information and pushing the same to an online/external database
- * or system such as Mifos - http://www.mifos.org
- * 
+ * mobile phone.
  * @author Emmanuel Kala
  * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
+ * @author Roy Kisaka
+ * @author Alex Anderson
  */
 @PluginControllerProperties(name="Payment View", iconPath="/icons/creditsms.png", i18nKey="plugins.payment.name",
 		springConfigLocation="classpath:org/creditsms/plugins/paymentview/paymentview-spring-hibernate.xml",
@@ -72,8 +67,6 @@ public class PaymentViewPluginController extends BasePluginController
 		implements ThinletUiEventHandler, EventObserver {
 
 //> CONSTANTS
-	/** Filename and path of the XML for the PaymentView tab */
-
 	private AccountDao accountDao;
 	private ClientDao clientDao;
 	private CustomValueDao customValueDao;
@@ -96,21 +89,8 @@ public class PaymentViewPluginController extends BasePluginController
 	private Map<Long, PaymentService> activeServices = new HashMap<Long, PaymentService>();
 	private FrontlineSMS frontlineController;
 	
-	/** @see net.frontlinesms.plugins.PluginController#deinit() */
-	public void deinit() {
-		if(this.frontlineController != null) {
-			EventBus eventBus = this.frontlineController.getEventBus();
-			if(eventBus != null) {
-				eventBus.unregisterObserver(this);
-			}
-		}
-	}
-	
 //> CONFIG METHODS
-	/**
-	 * @see net.frontlinesms.plugins.PluginController#init(FrontlineSMS,
-	 *      ApplicationContext)
-	 */
+	/** @see net.frontlinesms.plugins.PluginController#init(FrontlineSMS, ApplicationContext) */
 	public void init(FrontlineSMS frontlineController,
 			ApplicationContext applicationContext)
 			throws PluginInitialisationException {
@@ -146,10 +126,14 @@ public class PaymentViewPluginController extends BasePluginController
 			try {
 				DemoData.createDemoData(applicationContext);
 			} catch (DuplicateKeyException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	/** @see net.frontlinesms.plugins.PluginController#deinit() */
+	public void deinit() {
+		frontlineController.getEventBus().unregisterObserver(this);
 	}
 
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
@@ -235,45 +219,6 @@ public class PaymentViewPluginController extends BasePluginController
 	}
 
 	public void notify(final FrontlineEventNotification notification) {
-//		if (notification instanceof PaymentServiceStartedNotification) {
-//			new FrontlineUiUpdateJob() {
-//				public void run() {
-//					activeServices.add(((PaymentServiceStartedNotification) notification)
-//							.getPaymentService());
-//				}
-//			}.execute();
-//		} else if (notification instanceof PaymentServiceStoppedNotification) {
-//			new FrontlineUiUpdateJob() {
-//				public void run() {
-//					activeServices.remove(((PaymentServiceStoppedNotification) notification)
-//							.getPaymentService());
-//				}
-//			}.execute();
-		/*} else */
-		
-		if(notification instanceof SmsModemStatusNotification) {
-			new FrontlineUiUpdateJob() {
-				public void run() {
-
-
-					if (((SmsModemStatusNotification) notification).getStatus() == SmsModemStatus.CONNECTED) {
-						final SmsModem connectedModem = ((SmsModemStatusNotification) notification).getService();
-//						Collection<PaymentServiceSettings> paymentServiceSettingsList = paymentServiceSettingsDao.getPaymentServiceAccounts();
-//						if (!paymentServiceSettingsList.isEmpty()){
-//							for (PaymentServiceSettings psSettings : paymentServiceSettingsList){
-//								if (psSettings.getPsSmsModemSerial().equals(connectedModem.getSerial()+"@"+connectedModem.getImsiNumber())) {
-//									
-//								}
-//							}
-//						}			
-					}
-					
-					
-				}
-			}.execute();
-		}
-
-		
 		if(notification instanceof DatabaseEntityNotification<?>) {
 			Object entity = ((DatabaseEntityNotification<?>) notification).getDatabaseEntity();
 			if(entity instanceof PersistableSettings) {
@@ -284,41 +229,20 @@ public class PaymentViewPluginController extends BasePluginController
 							PaymentService service = (PaymentService) settings.getServiceClass().newInstance();
 							activeServices.put(settings.getId(), service);
 							service.startService();
-						} catch (final Exception ex) {
+						} catch (Exception ex) {
 							log.warn("Failed to start PaymentService for settings " + settings.getId(), ex);
-							new FrontlineUiUpdateJob() {
-								public void run() {
-									throw new RuntimeException(ex);
-								}
-							}.execute();
 						}	
 					} else if (notification instanceof EntityDeletedNotification<?>) {
-						try {
-							PaymentService service = activeServices.get(settings.getId());
-							activeServices.remove(settings.getId());
-							service.stopService();
-						} catch (final Exception ex) {
-							log.warn("Failed to stop PaymentService for settings " + settings.getId(), ex);
-							new FrontlineUiUpdateJob() {
-								public void run() {
-									throw new RuntimeException(ex);
-								}
-							}.execute();
-						}	
+						PaymentService service = activeServices.get(settings.getId());
+						activeServices.remove(settings.getId());
+						service.stopService();
 					} else if (notification instanceof EntityUpdatedNotification<?>) {
+						PaymentService service = activeServices.get(settings.getId());
+						service.stopService();
 						try {
-							PaymentService service = activeServices.get(settings.getId());
-							activeServices.remove(settings.getId());
-							service.stopService();
-							activeServices.put(settings.getId(), service);
 							service.startService();
-						} catch (final Exception ex) {
+						} catch (PaymentServiceException ex) {
 							log.warn("Failed to restart PaymentService for settings " + settings.getId(), ex);
-							new FrontlineUiUpdateJob() {
-								public void run() {
-									throw new RuntimeException(ex);
-								}
-							}.execute();
 						}	
 					}
 				}
