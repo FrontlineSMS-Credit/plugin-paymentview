@@ -227,8 +227,10 @@ public class PaymentViewPluginController extends BasePluginController
 					if (notification instanceof EntitySavedNotification<?>) {
 						try {
 							PaymentService service = (PaymentService) settings.getServiceClass().newInstance();
+							service.setSettings(settings);
 							activeServices.put(settings.getId(), service);
 							service.startService();
+							System.out.println("started");
 						} catch (Exception ex) {
 							log.warn("Failed to start PaymentService for settings " + settings.getId(), ex);
 						}	
