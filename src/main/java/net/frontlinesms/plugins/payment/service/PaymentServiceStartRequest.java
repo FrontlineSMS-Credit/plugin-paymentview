@@ -1,15 +1,16 @@
 package net.frontlinesms.plugins.payment.service;
 
+import net.frontlinesms.data.domain.PersistableSettings;
 import net.frontlinesms.events.FrontlineEventNotification;
 
 public class PaymentServiceStartRequest implements FrontlineEventNotification {
-	private final long settingsId;
+	private final PersistableSettings settings;
 	
-	public PaymentServiceStartRequest(long settingsId) {
-		this.settingsId = settingsId;
+	public PaymentServiceStartRequest(PersistableSettings settings) {
+		this.settings = settings;
 	}
 	
-	public long getSettingsId() {
-		return settingsId;
+	public PersistableSettings getSettings() {
+		return settings;
 	}
 }

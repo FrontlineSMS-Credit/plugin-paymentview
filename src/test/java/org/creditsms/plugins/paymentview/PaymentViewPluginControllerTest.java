@@ -105,10 +105,9 @@ public class PaymentViewPluginControllerTest extends BaseTestCase {
 		// given
 		assertEquals(0, controller.getActiveServices().size());
 		PersistableSettings mockSettings = mockSettings();
-		when(settingsDao.getById(1)).thenReturn(mockSettings);
 		
 		// when
-		controller.notify(new PaymentServiceStartRequest(1));
+		controller.notify(new PaymentServiceStartRequest(mockSettings));
 		
 		// then
 		assertEquals(1, controller.getActiveServices().size());

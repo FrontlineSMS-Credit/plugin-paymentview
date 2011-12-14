@@ -244,13 +244,8 @@ public class PaymentViewPluginController extends BasePluginController
 
 	public void notify(final FrontlineEventNotification notification) {
 		if(notification instanceof PaymentServiceStartRequest) {
-			long settingsId = ((PaymentServiceStartRequest) notification).getSettingsId();
-			try {
-				PersistableSettings settings = paymentServiceSettingsDao.getById(settingsId);
-				startService(settings);
-			} catch(Exception ex) {
-				log.warn("Failed to start service for settings with ID " + settingsId, ex);
-			}
+			PersistableSettings settings = ((PaymentServiceStartRequest) notification).getSettings();
+			startService(settings);
 		} else if(notification instanceof DatabaseEntityNotification<?>) {
 			Object entity = ((DatabaseEntityNotification<?>) notification).getDatabaseEntity();
 			if(entity instanceof PersistableSettings) {
