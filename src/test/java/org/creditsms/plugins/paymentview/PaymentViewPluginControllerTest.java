@@ -1,7 +1,5 @@
 package org.creditsms.plugins.paymentview;
 
-import static org.mockito.Mockito.mock;
-
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Map;
@@ -11,9 +9,6 @@ import net.frontlinesms.data.events.EntityDeletedNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.data.events.EntityUpdatedNotification;
 import net.frontlinesms.junit.BaseTestCase;
-import net.frontlinesms.messaging.sms.events.SmsModemStatusNotification;
-import net.frontlinesms.messaging.sms.modem.SmsModem;
-import net.frontlinesms.messaging.sms.modem.SmsModemStatus;
 import net.frontlinesms.plugins.payment.service.PaymentService;
 import net.frontlinesms.plugins.payment.service.PaymentServiceException;
 import net.frontlinesms.serviceconfig.ConfigurableService;
@@ -24,13 +19,11 @@ import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 public class PaymentViewPluginControllerTest extends BaseTestCase {
 	/** {@link PaymentViewPluginController} instance under test */
 	PaymentViewPluginController controller;
-    private SmsModem smsModem;
 	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		this.controller = new PaymentViewPluginController();
-		this.smsModem = mock(SmsModem.class);
 	}
 	
 	/**
@@ -72,12 +65,13 @@ public class PaymentViewPluginControllerTest extends BaseTestCase {
 		PersistableSettings mockSettings = mockSettings();
 		MockPaymentService service = addActiveService(controller, mockSettings);
 		
-		//when
+		// when
 		controller.notify(new EntityUpdatedNotification<PersistableSettings>(mockSettings));
 		
-		//then
+		// then
 		assertEquals(1, controller.getActiveServices().size());
 		assertTrue(service.wasStopped());
+		assertTrue(service.wasStarted());
 	}
 	
 	/**
@@ -92,10 +86,10 @@ public class PaymentViewPluginControllerTest extends BaseTestCase {
 		PersistableSettings mockSettings = mockSettings();
 		MockPaymentService service = addActiveService(controller, mockSettings);
 		
-		//when
+		// when
 		controller.notify(new EntityDeletedNotification<PersistableSettings>(mockSettings));
 		
-		//then
+		// then
 		assertEquals(0, controller.getActiveServices().size());
 		assertTrue(service.wasStopped());
 	}
@@ -108,38 +102,6 @@ public class PaymentViewPluginControllerTest extends BaseTestCase {
 		MockPaymentService service = new MockPaymentService();
 		activeServices.put(settings.getId(), service);
 		return service;
-	}
-
-	/**
-	 * TITLE:when a modem whose settings have been saved to the database is connected
-	 * GIVEN the modem settings exists in the database
-	 * WHEN modem is connected
-	 * THEN the corresponding payment service is started
-	 **/
-	public void testStartingServiceWhenModemConnected() {
-		String serial = "";
-		String Pin = "";
-		String ImsiNumber = "";
-		String serviceClass = "";
-		
-		//given
-		createServiceSettingsForModem(serial, Pin, ImsiNumber, serviceClass);
-
-		//when
-		controller.notify(new SmsModemStatusNotification(smsModem, SmsModemStatus.CONNECTED));
-		
-		//then
-		startPaymetService();
-		assertEquals(1, controller.getActiveServices().size());
-	}
-
-	private void startPaymetService() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void createServiceSettingsForModem(String serial, String Pin, String ImsiNumber, String serviceClass) {
-		// TODO Auto-generated method stub
 	}
 }
 
