@@ -11,19 +11,26 @@ import net.frontlinesms.data.events.EntityUpdatedNotification;
 import net.frontlinesms.junit.BaseTestCase;
 import net.frontlinesms.plugins.payment.service.PaymentService;
 import net.frontlinesms.plugins.payment.service.PaymentServiceException;
+import net.frontlinesms.plugins.payment.service.PaymentServiceStartRequest;
 import net.frontlinesms.serviceconfig.ConfigurableService;
 import net.frontlinesms.serviceconfig.StructuredProperties;
 
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
+
+import static org.mockito.Mockito.*;
 
 public class PaymentViewPluginControllerTest extends BaseTestCase {
 	/** {@link PaymentViewPluginController} instance under test */
 	PaymentViewPluginController controller;
+	PaymentServiceSettingsDao settingsDao;
 	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		this.controller = new PaymentViewPluginController();
+		controller = new PaymentViewPluginController();
+		settingsDao = mock(PaymentServiceSettingsDao.class);
+		inject(controller, "paymentServiceSettingsDao", settingsDao);
 	}
 	
 	/**
@@ -92,6 +99,22 @@ public class PaymentViewPluginControllerTest extends BaseTestCase {
 		// then
 		assertEquals(0, controller.getActiveServices().size());
 		assertTrue(service.wasStopped());
+	}
+	
+	public void testRequestForServiceStartHonoured() {
+		// given
+		assertEquals(0, controller.getActiveServices().size());
+		PersistableSettings mockSettings = mockSettings();
+		when(settingsDao.getById(1)).thenReturn(mockSettings);
+		
+		// when
+		controller.notify(new PaymentServiceStartRequest(1));
+		
+		// then
+		assertEquals(1, controller.getActiveServices().size());
+		PaymentService service = controller.getActiveServices().toArray(new PaymentService[0])[0];
+		assertTrue(service instanceof MockPaymentService);
+		assertTrue(((MockPaymentService) service).wasStarted());
 	}
 
 	@SuppressWarnings("unchecked")
