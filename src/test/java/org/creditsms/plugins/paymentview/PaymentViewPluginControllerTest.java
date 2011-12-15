@@ -82,13 +82,13 @@ public class PaymentViewPluginControllerTest extends BaseTestCase {
 	}
 	
 	/**
-	*	TITLE:when deleting a payment service settings, FrontlineSMS SHOULD
-	*	stop the payment service
-	*	GIVEN the service is running
-	*	WHEN settings are deleted
-	*	THEN the corresponding payment service is stopped
-	*/
-	public void testStopServiceWhenSettingsDeleted() throws Exception {
+	 *	TITLE:when deleting a payment service settings, FrontlineSMS SHOULD
+	 *	stop the payment service
+	 *	GIVEN the service is running
+	 *	WHEN settings are deleted
+	 *	THEN the corresponding payment service is stopped
+	 */
+	public void testStopServiceWhenSettingsDeleted_running() throws Exception {
 		// given
 		PersistableSettings mockSettings = mockSettings();
 		MockPaymentService service = addActiveService(controller, mockSettings);
@@ -99,6 +99,25 @@ public class PaymentViewPluginControllerTest extends BaseTestCase {
 		// then
 		assertEquals(0, controller.getActiveServices().size());
 		assertTrue(service.wasStopped());
+	}
+	
+	/**
+	 *	TITLE:when deleting a payment service settings, FrontlineSMS SHOULD
+	 *	stop the payment service
+	 *	GIVEN the service is NOT running
+	 *	WHEN settings are deleted
+	 *	THEN no attempt is made to stop the service
+	 */
+	public void testStopServiceWhenSettingsDeleted_notRunning() throws Exception {
+		// given
+		PersistableSettings mockSettings = mockSettings();
+		assertEquals(0, controller.getActiveServices().size());
+		
+		// when
+		controller.notify(new EntityDeletedNotification<PersistableSettings>(mockSettings));
+		
+		// then
+		assertEquals(0, controller.getActiveServices().size());
 	}
 	
 	public void testRequestForServiceStartHonoured() {

@@ -254,9 +254,10 @@ public class PaymentViewPluginController extends BasePluginController
 					if (notification instanceof EntitySavedNotification<?>) {
 						startService(settings);
 					} else if (notification instanceof EntityDeletedNotification<?>) {
-						PaymentService service = activeServices.get(settings.getId());
-						activeServices.remove(settings.getId());
-						service.stopService();
+						PaymentService service = activeServices.remove(settings.getId());
+						if(service != null) {
+							service.stopService();
+						}
 					} else if (notification instanceof EntityUpdatedNotification<?>) {
 						PaymentService service = activeServices.get(settings.getId());
 						service.stopService();
