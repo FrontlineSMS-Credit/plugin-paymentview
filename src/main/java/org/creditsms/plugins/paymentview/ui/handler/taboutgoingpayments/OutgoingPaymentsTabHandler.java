@@ -5,6 +5,7 @@ import net.frontlinesms.data.events.EntityUpdatedNotification;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.plugins.payment.event.PaymentServiceStartedNotification;
 import net.frontlinesms.plugins.payment.event.PaymentServiceStoppedNotification;
+import net.frontlinesms.plugins.payment.ui.PaymentPluginTabHandler;
 import net.frontlinesms.ui.HomeTabEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
@@ -12,7 +13,7 @@ import net.frontlinesms.ui.handler.BaseTabHandler;
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 
-public class OutgoingPaymentsTabHandler extends BaseTabHandler {
+public class OutgoingPaymentsTabHandler extends BaseTabHandler implements PaymentPluginTabHandler {
 
 	private static final String XML_OUTGOINGPAYMENTS_TAB = "/ui/plugins/paymentview/outgoingpayments/taboutgoingpayments.xml";
 	private Object outgoingPaymentsTab;

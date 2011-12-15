@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.events.FrontlineEventNotification;
+import net.frontlinesms.plugins.payment.ui.PaymentPluginTabHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BaseTabHandler;
 import net.frontlinesms.ui.handler.ComponentPagingHandler;
@@ -19,7 +20,7 @@ import org.creditsms.plugins.paymentview.ui.handler.importexport.LogsExportHandl
 import org.creditsms.plugins.paymentview.ui.handler.tablog.dialogs.LogViewDialog;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
-public class LogTabHandler extends BaseTabHandler implements PagedComponentItemProvider {
+public class LogTabHandler extends BaseTabHandler implements PaymentPluginTabHandler, PagedComponentItemProvider {
 	private static final String COMPONENT_LOGS_TABLE = "tbl_logs";
 	private static final String COMPONENT_PANEL_LOGS_TABLE = "pnl_logs";
 	private static final String XML_LOG_TAB = "/ui/plugins/paymentview/log/logsTab.xml";

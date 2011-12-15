@@ -16,8 +16,8 @@ import net.frontlinesms.data.domain.Group;
 import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.data.repository.GroupDao;
 import net.frontlinesms.data.repository.GroupMembershipDao;
+import net.frontlinesms.plugins.payment.ui.PaymentPluginTabHandler;
 import net.frontlinesms.ui.Icon;
-import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.UiGeneratorControllerConstants;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
@@ -35,7 +35,7 @@ import org.creditsms.plugins.paymentview.ui.handler.tabclients.dialogs.IncomingP
 
 import thinlet.Thinlet;
 
-public class ClientsTabHandler implements ThinletUiEventHandler {
+public class ClientsTabHandler implements PaymentPluginTabHandler {
 //> STATIC CONSTANTS
 	private static final String PNL_CLIENT_TABLE_HOLDER = "pnlClientTableHolder";
 	private static final String XML_CLIENTS_TAB = "/ui/plugins/paymentview/clients/clients.xml";

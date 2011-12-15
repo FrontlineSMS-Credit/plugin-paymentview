@@ -12,6 +12,7 @@ import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.FrontlineEventNotification;
+import net.frontlinesms.plugins.payment.ui.PaymentPluginTabHandler;
 import net.frontlinesms.ui.HomeTabEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpdateJob;
@@ -50,7 +51,7 @@ import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
 public class IncomingPaymentsTabHandler extends BaseTabHandler implements
-		PagedComponentItemProvider {
+		PaymentPluginTabHandler, PagedComponentItemProvider {
 	private static final String CONFIRM_DIALOG = "confirmDialog";
 	private static final String INVALID_DATE = "Please enter a correct starting date.";
 	private static final String ENABLE_AUTOREPLY = "OFF";
