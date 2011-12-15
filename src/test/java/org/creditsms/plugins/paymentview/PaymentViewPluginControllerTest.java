@@ -1,36 +1,46 @@
 package org.creditsms.plugins.paymentview;
 
-import static org.mockito.Mockito.mock;
-
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
 
 import net.frontlinesms.data.domain.PersistableSettings;
 import net.frontlinesms.data.events.EntityDeletedNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.data.events.EntityUpdatedNotification;
+import net.frontlinesms.events.EventBus;
 import net.frontlinesms.junit.BaseTestCase;
-import net.frontlinesms.messaging.sms.events.SmsModemStatusNotification;
-import net.frontlinesms.messaging.sms.modem.SmsModem;
-import net.frontlinesms.messaging.sms.modem.SmsModemStatus;
 import net.frontlinesms.plugins.payment.service.PaymentService;
 import net.frontlinesms.plugins.payment.service.PaymentServiceException;
+import net.frontlinesms.plugins.payment.service.PaymentServiceStartRequest;
+import net.frontlinesms.plugins.payment.service.ui.PaymentServiceUiActionHandler;
 import net.frontlinesms.serviceconfig.ConfigurableService;
 import net.frontlinesms.serviceconfig.StructuredProperties;
+import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
+import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
+
+import static org.mockito.Mockito.*;
 
 public class PaymentViewPluginControllerTest extends BaseTestCase {
 	/** {@link PaymentViewPluginController} instance under test */
 	PaymentViewPluginController controller;
-    private SmsModem smsModem;
+	EventBus eventBus;
+	PaymentServiceSettingsDao settingsDao;
 	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		this.controller = new PaymentViewPluginController();
-		this.smsModem = mock(SmsModem.class);
+		controller = new PaymentViewPluginController();
+		
+		settingsDao = mock(PaymentServiceSettingsDao.class);
+		inject(controller, "paymentServiceSettingsDao", settingsDao);
+		
+		eventBus = mock(EventBus.class);
+		inject(controller, "eventBus", eventBus);
 	}
 	
 	/**
@@ -59,103 +69,203 @@ public class PaymentViewPluginControllerTest extends BaseTestCase {
 		return new PersistableSettings(new MockPaymentService());
 	}
 	
-	
 	/**
 	 * TITLE:after updating the payment service settings, FrontlineSMS SHOULD
 	 * restart the payment service
 	 * GIVEN the service is running
-	 * rWHEN settings are updated
+	 * WHEN settings are updated
 	 * THEN restart the corresponding payment service
-	*/
-	public void testRestartServiceWhenSettingsUpdate() throws Exception {
+	 */
+	public void testRestartServiceWhenSettingsUpdate_running() throws Exception {
 		// given
 		PersistableSettings mockSettings = mockSettings();
-		MockPaymentService service = addActiveService(controller, mockSettings);
+		MockPaymentService service = addActiveService(mockSettings);
 		
-		//when
+		// when
 		controller.notify(new EntityUpdatedNotification<PersistableSettings>(mockSettings));
 		
-		//then
+		// then
 		assertEquals(1, controller.getActiveServices().size());
+		assertTrue(service.wasStopped());
+		assertTrue(service.wasStarted());
+	}
+	
+	/**
+	 * TITLE:after updating the payment service settings, FrontlineSMS SHOULD
+	 * restart the payment service
+	 * GIVEN the service is NOT running
+	 * WHEN settings are updated
+	 * THEN restart the corresponding payment service
+	 */
+	public void testRestartServiceWhenSettingsUpdate_notRunning() throws Exception {
+		// given
+		PersistableSettings mockSettings = mockSettings();
+		assertEquals(0, controller.getActiveServices().size());
+		
+		// when
+		controller.notify(new EntityUpdatedNotification<PersistableSettings>(mockSettings));
+		
+		// then
+		assertEquals(0, controller.getActiveServices().size());
+	}
+	
+	/**
+	 *	TITLE:when deleting a payment service settings, FrontlineSMS SHOULD
+	 *	stop the payment service
+	 *	GIVEN the service is running
+	 *	WHEN settings are deleted
+	 *	THEN the corresponding payment service is stopped
+	 */
+	public void testStopServiceWhenSettingsDeleted_running() throws Exception {
+		// given
+		PersistableSettings mockSettings = mockSettings();
+		MockPaymentService service = addActiveService(mockSettings);
+		
+		// when
+		controller.notify(new EntityDeletedNotification<PersistableSettings>(mockSettings));
+		
+		// then
+		assertEquals(0, controller.getActiveServices().size());
 		assertTrue(service.wasStopped());
 	}
 	
 	/**
-	*	TITLE:when deleting a payment service settings, FrontlineSMS SHOULD
-	*	stop the payment service
-	*	GIVEN the service is running
-	*	WHEN settings are deleted
-	*	THEN the corresponding payment service is stopped
-	*/
-	public void testStopServiceWhenSettingsDeleted() throws Exception {
+	 *	TITLE:when deleting a payment service settings, FrontlineSMS SHOULD
+	 *	stop the payment service
+	 *	GIVEN the service is NOT running
+	 *	WHEN settings are deleted
+	 *	THEN no attempt is made to stop the service
+	 */
+	public void testStopServiceWhenSettingsDeleted_notRunning() throws Exception {
 		// given
 		PersistableSettings mockSettings = mockSettings();
-		MockPaymentService service = addActiveService(controller, mockSettings);
+		assertEquals(0, controller.getActiveServices().size());
 		
-		//when
+		// when
 		controller.notify(new EntityDeletedNotification<PersistableSettings>(mockSettings));
 		
-		//then
+		// then
 		assertEquals(0, controller.getActiveServices().size());
+	}
+	
+	public void testRequestForServiceStartHonoured() {
+		// given
+		assertEquals(0, controller.getActiveServices().size());
+		PersistableSettings mockSettings = mockSettings();
+		
+		// when
+		controller.notify(new PaymentServiceStartRequest(mockSettings));
+		
+		// then
+		assertEquals(1, controller.getActiveServices().size());
+		assertTrue(getFirstService().wasStarted());
+	}
+	
+	/**
+	 * GIVEN there are payment services running
+	 * WHEN deinit() is called
+	 * THEN running services are stopped
+	 * @throws Exception 
+	 */
+	public void testDeinitStopsServices() throws Exception {
+		// given
+		inject(controller, "serviceMonitors", new HashSet<Object>());
+		addActiveService(mockSettings());
+		MockPaymentService service = getFirstService();
+		
+		// when
+		controller.deinit();
+		
+		// then
 		assertTrue(service.wasStopped());
+	}
+	
+	/**
+	 * GIVEN there are payment services running
+	 * WHEN deinit() is called and one of the services throws a shutdown exception
+	 * THEN running services are all still stopped
+	 * @throws Exception 
+	 */
+	public void testDeinitStopsServicesWithShutdownExceptions() throws Exception {
+		// given
+		inject(controller, "serviceMonitors", new HashSet<Object>());
+		PaymentService exceptionableService = mock(PaymentService.class);
+		doThrow(new RuntimeException("Service shutdown failed!")).when(exceptionableService).stopService();
+		addActiveService(1L, exceptionableService);
+		addActiveService(mockSettings());
+		MockPaymentService service = getFirstService();
+		
+		// when
+		controller.deinit();
+		
+		// then
+		assertTrue(service.wasStopped());
+	}
+	
+	/**
+	 * GIVEN (blank)
+	 * WHEN we request payment service start
+	 * THEN payment service is initialised before starting
+	 */
+	public void testPaymentServiceStart() {
+		// given
+		PersistableSettings s = mockSettings();
+		
+		// when
+		controller.startService(s);
+		
+		// then
+		MockPaymentService service = getFirstService();
+		assertTrue(service.isInitialised());
+		assertTrue(service.isSettingsSet());
+	}
+	
+	private MockPaymentService getFirstService() {
+		PaymentService service = getActiveService(0);
+		assertTrue(service instanceof MockPaymentService);
+		return (MockPaymentService) service;
+	}
+	
+	private PaymentService getActiveService(int index) {
+		return controller.getActiveServices().toArray(new PaymentService[0])[index];
+	}
+
+	private MockPaymentService addActiveService(PersistableSettings settings) throws Exception {
+		MockPaymentService service = new MockPaymentService();
+		return (MockPaymentService) addActiveService(settings.getId(), service);
 	}
 
 	@SuppressWarnings("unchecked")
-	private MockPaymentService addActiveService(PaymentViewPluginController controller, PersistableSettings settings) throws Exception {
+	private PaymentService addActiveService(Long settingsId, PaymentService service) throws Exception {
 		Field field = controller.getClass().getDeclaredField("activeServices");
 		field.setAccessible(true);
 		Map<Long, PaymentService> activeServices = (Map<Long, PaymentService>) field.get(controller);
-		MockPaymentService service = new MockPaymentService();
-		activeServices.put(settings.getId(), service);
+		activeServices.put(settingsId, service);
 		return service;
-	}
-
-	/**
-	 * TITLE:when a modem whose settings have been saved to the database is connected
-	 * GIVEN the modem settings exists in the database
-	 * WHEN modem is connected
-	 * THEN the corresponding payment service is started
-	 **/
-	public void testStartingServiceWhenModemConnected() {
-		String serial = "";
-		String Pin = "";
-		String ImsiNumber = "";
-		String serviceClass = "";
-		
-		//given
-		createServiceSettingsForModem(serial, Pin, ImsiNumber, serviceClass);
-
-		//when
-		controller.notify(new SmsModemStatusNotification(smsModem, SmsModemStatus.CONNECTED));
-		
-		//then
-		startPaymetService();
-		assertEquals(1, controller.getActiveServices().size());
-	}
-
-	private void startPaymetService() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void createServiceSettingsForModem(String serial, String Pin, String ImsiNumber, String serviceClass) {
-		// TODO Auto-generated method stub
 	}
 }
 
 class MockPaymentService implements PaymentService {
-	private boolean started;
-	private boolean stoped;
+	private final ArrayList<String> methodCalls = new ArrayList<String>();
 
-	//> Verification methods
+//> Verification methods
 	public boolean wasStarted() {
-		return started;
+		return methodCalls.contains("startService");
 	}
 	public boolean wasStopped() {
-		return stoped;
+		return methodCalls.contains("stopService");
+	}
+	public boolean isSettingsSet() {
+		return methodCalls.contains("setSettings");
+	}
+	public boolean isInitialised() {
+		return methodCalls.contains("init");
 	}
 	
 //> PaymentService methods
+	public void init(PaymentViewPluginController pluginController) throws PaymentServiceException {
+		methodCalls.add("init");
+	}
 	public StructuredProperties getPropertiesStructure() {
 		return null;
 	}
@@ -163,12 +273,12 @@ class MockPaymentService implements PaymentService {
 		return null;
 	}
 	public void setSettings(PersistableSettings settings) {
+		methodCalls.add("setSettings");
 	}
 	public Class<? extends ConfigurableService> getSuperType() {
 		return PaymentService.class;
 	}
-	public void makePayment(OutgoingPayment payment)
-			throws PaymentServiceException {
+	public void makePayment(OutgoingPayment payment) throws PaymentServiceException {
 	}
 	public void checkBalance() throws PaymentServiceException {
 	}
@@ -176,12 +286,15 @@ class MockPaymentService implements PaymentService {
 		return null;
 	}
 	public void startService() throws PaymentServiceException {
-		started = true;
+		methodCalls.add("startService");
 	}
 	public void stopService() {
-		stoped  = true;
+		methodCalls.add("stopService");
 	}
 	public boolean isOutgoingPaymentEnabled() {
 		return false;
+	}
+	public PaymentServiceUiActionHandler getServiceActionUiHandler(UiGeneratorController ui) {
+		return null;
 	}
 }

@@ -2,8 +2,11 @@ package net.frontlinesms.plugins.payment.service;
 
 import java.math.BigDecimal;
 
+import net.frontlinesms.plugins.payment.service.ui.PaymentServiceUiActionHandler;
 import net.frontlinesms.serviceconfig.ConfigurableService;
+import net.frontlinesms.ui.UiGeneratorController;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 
 public interface PaymentService extends ConfigurableService {
@@ -13,9 +16,14 @@ public interface PaymentService extends ConfigurableService {
 	/** @return the current recorded balance of the service. */
 	BigDecimal getBalanceAmount();
 	
+	void init(PaymentViewPluginController pluginController) throws PaymentServiceException;
+	
 	void startService() throws PaymentServiceException;
 	void stopService();
 	
 	/** @return <code>true</code> if the service can support outgoing payments and they are enabled. */ 
 	boolean isOutgoingPaymentEnabled();
+	
+	/** @return action handler for additional service-specific user-triggered actions, or <code>null</code> if there are no additional actions. */
+	PaymentServiceUiActionHandler getServiceActionUiHandler(UiGeneratorController ui);
 }

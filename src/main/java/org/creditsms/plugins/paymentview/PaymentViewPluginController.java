@@ -10,6 +10,7 @@ package org.creditsms.plugins.paymentview;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import net.frontlinesms.BuildProperties;
@@ -20,14 +21,18 @@ import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.data.events.EntityDeletedNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.data.events.EntityUpdatedNotification;
+import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.plugins.PluginSettingsController;
+import net.frontlinesms.plugins.payment.monitor.PaymentServiceMonitor;
+import net.frontlinesms.plugins.payment.monitor.PaymentServiceMonitorImplementationLoader;
 import net.frontlinesms.plugins.payment.service.PaymentService;
 import net.frontlinesms.plugins.payment.service.PaymentServiceException;
+import net.frontlinesms.plugins.payment.service.PaymentServiceStartRequest;
 import net.frontlinesms.plugins.payment.settings.ui.PaymentServiceSettingsHandler;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -83,19 +88,22 @@ public class PaymentViewPluginController extends BasePluginController
 	
 	private TargetAnalytics targetAnalytics;
 	
+	private EventBus eventBus;
+	
 	private PaymentViewThinletTabController paymentViewThinletTabController;
 	private UiGeneratorController ui;
 	
 	private Map<Long, PaymentService> activeServices = new HashMap<Long, PaymentService>();
-	private FrontlineSMS frontlineController;
+	
+	private HashSet<PaymentServiceMonitor> serviceMonitors;
 	
 //> CONFIG METHODS
 	/** @see net.frontlinesms.plugins.PluginController#init(FrontlineSMS, ApplicationContext) */
 	public void init(FrontlineSMS frontlineController,
 			ApplicationContext applicationContext)
 			throws PluginInitialisationException {
-		this.frontlineController = frontlineController;
-		frontlineController.getEventBus().registerObserver(this);
+		eventBus = frontlineController.getEventBus();
+		eventBus.registerObserver(this);
 		
 		// Initialize the DAO for the domain objects
 		clientDao 			= (ClientDao) applicationContext.getBean("clientDao");
@@ -129,11 +137,37 @@ public class PaymentViewPluginController extends BasePluginController
 				e.printStackTrace();
 			}
 		}
+		
+		serviceMonitors = new HashSet<PaymentServiceMonitor>();
+		for(Class<? extends PaymentServiceMonitor> c : new PaymentServiceMonitorImplementationLoader().getAll()) {
+			PaymentServiceMonitor m = null;
+			try {
+				m = c.newInstance();
+				serviceMonitors.add(m);
+				m.init(frontlineController, applicationContext);
+			} catch(Exception ex) {
+				log.warn("Error loading payment service monitor " + c, ex);
+				try { eventBus.unregisterObserver(m); } catch(Exception _) { /* ignore */ }
+				serviceMonitors.remove(m);
+			}
+		}
 	}
 	
 	/** @see net.frontlinesms.plugins.PluginController#deinit() */
 	public void deinit() {
-		frontlineController.getEventBus().unregisterObserver(this);
+		eventBus.unregisterObserver(this);
+		
+		for(PaymentService s : activeServices.values()) {
+			try {
+				s.stopService();
+			} catch(Throwable t) {
+				log.warn("Problem shutting down payment service: " + s, t);
+			}
+		}
+
+		for(PaymentServiceMonitor m : serviceMonitors) {
+			eventBus.unregisterObserver(m);
+		}
 	}
 
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
@@ -210,6 +244,22 @@ public class PaymentViewPluginController extends BasePluginController
 		return Collections.unmodifiableCollection(activeServices.values());
 	}
 
+	public PaymentService getActiveService(PersistableSettings settings) {
+		return activeServices.get(settings.getId());
+	}
+	
+	public EventBus getEventBus() {
+		return eventBus;
+	}
+	
+	public boolean isActive(PersistableSettings s) {
+		return this.activeServices.containsKey(s.getId());
+	}
+	
+	public PaymentService getPaymentService(PersistableSettings s) {
+		return this.activeServices.get(s.getId());
+	}
+
 	public void updateStatusBar(String message) {
 		paymentViewThinletTabController.updateStatusBar(message);
 	}
@@ -219,27 +269,23 @@ public class PaymentViewPluginController extends BasePluginController
 	}
 
 	public void notify(final FrontlineEventNotification notification) {
-		if(notification instanceof DatabaseEntityNotification<?>) {
+		if(notification instanceof PaymentServiceStartRequest) {
+			PersistableSettings settings = ((PaymentServiceStartRequest) notification).getSettings();
+			startService(settings);
+		} else if(notification instanceof DatabaseEntityNotification<?>) {
 			Object entity = ((DatabaseEntityNotification<?>) notification).getDatabaseEntity();
 			if(entity instanceof PersistableSettings) {
 				PersistableSettings settings = (PersistableSettings) entity;
 				if(settings.getServiceTypeSuperclass() == PaymentService.class) {
 					if (notification instanceof EntitySavedNotification<?>) {
-						try {
-							PaymentService service = (PaymentService) settings.getServiceClass().newInstance();
+						startService(settings);
 							service.setSettings(settings);
-							activeServices.put(settings.getId(), service);
-							service.startService();
 							System.out.println("started");
-						} catch (Exception ex) {
-							log.warn("Failed to start PaymentService for settings " + settings.getId(), ex);
-						}	
 					} else if (notification instanceof EntityDeletedNotification<?>) {
-						PaymentService service = activeServices.get(settings.getId());
-						activeServices.remove(settings.getId());
-						service.stopService();
+						stopService(settings);
 					} else if (notification instanceof EntityUpdatedNotification<?>) {
 						PaymentService service = activeServices.get(settings.getId());
+						if(service == null) return;
 						service.stopService();
 						try {
 							service.startService();
@@ -250,6 +296,25 @@ public class PaymentViewPluginController extends BasePluginController
 				}
 			}
 		}
+	}
+	
+	public synchronized void startService(PersistableSettings settings) {
+		try {
+			PaymentService service = (PaymentService) settings.getServiceClass().newInstance();
+			service.setSettings(settings);
+			service.init(this);
+			service.startService();
+			activeServices.put(settings.getId(), service);
+		} catch (Exception ex) {
+			ex.printStackTrace(); // TODO remove this ;)
+			log.warn("Failed to start PaymentService for settings " + settings.getId(), ex);
+		}
+	}
+	
+	public synchronized void stopService(PersistableSettings settings) {
+		PaymentService service = activeServices.remove(settings.getId());
+		if(service == null) return;
+		service.stopService();
 	}
 	
 	public PluginSettingsController getSettingsController(UiGeneratorController uiController) {

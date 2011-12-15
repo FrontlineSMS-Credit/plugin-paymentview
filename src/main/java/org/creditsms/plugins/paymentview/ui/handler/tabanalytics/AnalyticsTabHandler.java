@@ -1,6 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabanalytics;
 
-import net.frontlinesms.ui.ThinletUiEventHandler;
+import net.frontlinesms.plugins.payment.ui.PaymentPluginTabHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
@@ -8,7 +8,7 @@ import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.AddCl
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ConfigureServiceTabHandler;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.ViewDashBoardTabHandler;
 
-public class AnalyticsTabHandler implements ThinletUiEventHandler {
+public class AnalyticsTabHandler implements PaymentPluginTabHandler {
 	private static final String XML_ANALYTICS_TAB = "/ui/plugins/paymentview/analytics/tabanalytics.xml";
 
 	private Object analyticsTab;

@@ -5,9 +5,8 @@
 package org.creditsms.plugins.paymentview.ui;
 
 import net.frontlinesms.BuildProperties;
-import net.frontlinesms.events.EventObserver;
-import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.plugins.BasePluginThinletTabController;
+import net.frontlinesms.plugins.payment.ui.PaymentPluginTabHandler;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -22,35 +21,18 @@ import org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments.Outgoing
  * @author Emmanuel Kala
  * @author Ian Onesmus Mukewa <ian@credit.frontlinesms.com>
  */
-public class PaymentViewThinletTabController extends
-		BasePluginThinletTabController<PaymentViewPluginController> implements
-		ThinletUiEventHandler, EventObserver {
-
+public class PaymentViewThinletTabController
+		extends BasePluginThinletTabController<PaymentViewPluginController>
+		implements ThinletUiEventHandler {
 	private static final String STATUS_BAR = "statusBar";
 	private static final String TABP_MAIN_PANE = "tabP_mainPane";
 	private static final String XML_PAYMENT_VIEW_TAB = "/ui/plugins/paymentview/paymentViewTab.xml";
-
-	private OutgoingPaymentsTabHandler outgoingPayTab;
-	private IncomingPaymentsTabHandler incomingPayTab;
-	private ClientsTabHandler clientsTab;
-	private AnalyticsTabHandler analyticsTab;
 	
-	private Object mainPane;
 	private Object paymentViewTab;
 
 	private PvDebugTabController cdtController;
-	private LogTabHandler logsTab;
-	private Object statusBar;
 
-	/**
-	 * 
-	 * @param paymentViewController
-	 *            value for {@link #ui}
-	 * @param uiController
-	 *            value for {@linkplain #ui}
-	 */
-	public PaymentViewThinletTabController(
-			PaymentViewPluginController controller, UiGeneratorController ui) {
+	public PaymentViewThinletTabController(PaymentViewPluginController controller, UiGeneratorController ui) {
 		super(controller, ui);
 		this.initTabs();
 		this.refresh();
@@ -59,39 +41,29 @@ public class PaymentViewThinletTabController extends
 	public void initTabs() {	
 		this.paymentViewTab = ui.loadComponentFromFile(XML_PAYMENT_VIEW_TAB, this);
 			
-		statusBar = ui.find(this.paymentViewTab, STATUS_BAR);
-		
-		mainPane = ui.find(this.paymentViewTab, TABP_MAIN_PANE);
-		clientsTab = new ClientsTabHandler(ui, getPluginController());
-		clientsTab.refresh();
-		ui.add(mainPane, clientsTab.getTab());
-
-		incomingPayTab = new IncomingPaymentsTabHandler(ui, getPluginController());
-		incomingPayTab.refresh();
-		ui.add(mainPane, incomingPayTab.getTab());
-
-		outgoingPayTab = new OutgoingPaymentsTabHandler(ui, getPluginController());
-		outgoingPayTab.refresh();
-		ui.add(mainPane, outgoingPayTab.getTab());
-
-		analyticsTab = new AnalyticsTabHandler(ui, getPluginController());
-		analyticsTab.refresh();
-		ui.add(mainPane, analyticsTab.getTab());
-
-		logsTab = new LogTabHandler(ui, getPluginController());
-		logsTab.refresh();
-		ui.add(mainPane, logsTab.getTab());
+		addTab(new ClientsTabHandler(ui, getPluginController()));
+		addTab(new IncomingPaymentsTabHandler(ui, getPluginController()));
+		addTab(new OutgoingPaymentsTabHandler(ui, getPluginController()));
+		addTab(new AnalyticsTabHandler(ui, getPluginController()));
+		addTab(new LogTabHandler(ui, getPluginController()));
+		addTab(new WalletTabHander(ui, getPluginController()));
 		
 		//For Tests Only
 		if(BuildProperties.getInstance().isSnapshot()) {
 			cdtController = new PvDebugTabController(ui);
 			cdtController.setMessageDao(ui.getFrontlineController().getMessageDao());
-			ui.add(mainPane, cdtController.getTab());
+			ui.add(ui.find(this.paymentViewTab, TABP_MAIN_PANE), cdtController.getTab());
 		}
 	}
 	
+	private void addTab(PaymentPluginTabHandler handler) {
+		handler.refresh();
+		Object mainPane = ui.find(this.paymentViewTab, TABP_MAIN_PANE);
+		ui.add(mainPane, handler.getTab());
+	}
+	
 	public void updateStatusBar(String message) {
-		ui.setText(statusBar, message);
+		ui.setText(ui.find(this.paymentViewTab, STATUS_BAR), message);
 	}
 
 	/**
@@ -107,10 +79,4 @@ public class PaymentViewThinletTabController extends
 	}
 
 	public void deinit() {}
-
-	
-  	public void notify(final FrontlineEventNotification notification) {
-
-	}
-	
 }
