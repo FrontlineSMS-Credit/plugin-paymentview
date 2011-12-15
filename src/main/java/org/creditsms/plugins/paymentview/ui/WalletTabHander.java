@@ -42,6 +42,10 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 		ui.add(table, tableHeader);
 		add(table);
 		
+		Object contextMenu = ui.createPopupMenu("pmServiceOptions");
+		ui.setMethod(contextMenu, Thinlet.MENUSHOWN, "populateContextMenu(this)", panel, this);
+		ui.add(table, contextMenu);
+		
 		add(ui.createButton("Refresh", "refresh", tab, this));
 	}
 	
@@ -52,7 +56,7 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 	}
 
 	public void refresh() {
-		Object list = getServiceList();
+		Object list = getServiceTable();
 		ui.removeAll(list);
 		for(PersistableSettings s : settingsDao.getServiceAccounts()) {
 			ui.add(list, createRow(s));
@@ -61,6 +65,33 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 
 	public Object getTab() {
 		return tab;
+	}
+	
+	public void populateContextMenu(Object menu) {
+		ui.removeAll(menu);
+		
+		boolean isActive = pluginController.isActive(getSelectedSettings());
+		ui.add(menu, createMenuItem("Start service", "startSelectedService", !isActive));
+		ui.add(menu, createMenuItem("Stop service", "stopSelectedService", isActive));
+	}
+	
+	public void startSelectedService() {
+		pluginController.startService(getSelectedSettings());
+	}
+	
+	public void stopSelectedService() {
+		pluginController.stopService(getSelectedSettings());
+	}
+	
+	private PersistableSettings getSelectedSettings() {
+		return (PersistableSettings) ui.getAttachedObject(ui.getSelectedItem(getServiceTable()));
+	}
+
+	private Object createMenuItem(String text, String methodCall, boolean enabled) {
+		Object m = ui.createMenuitem("", text);
+		ui.setEnabled(m, enabled);
+		ui.setAction(m, methodCall, panel, this);
+		return m;
 	}
 
 	private Object createRow(PersistableSettings s) {
@@ -77,7 +108,7 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 		return ui.find(panel, componentName);
 	}
 	
-	private Object getServiceList() {
+	private Object getServiceTable() {
 		return find(SERVICE_TABLE);
 	}
 }

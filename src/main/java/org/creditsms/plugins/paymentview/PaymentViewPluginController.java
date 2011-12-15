@@ -258,9 +258,7 @@ public class PaymentViewPluginController extends BasePluginController
 					if (notification instanceof EntitySavedNotification<?>) {
 						startService(settings);
 					} else if (notification instanceof EntityDeletedNotification<?>) {
-						PaymentService service = activeServices.remove(settings.getId());
-						if(service == null) return;
-						service.stopService();
+						stopService(settings);
 					} else if (notification instanceof EntityUpdatedNotification<?>) {
 						PaymentService service = activeServices.get(settings.getId());
 						if(service == null) return;
@@ -276,7 +274,7 @@ public class PaymentViewPluginController extends BasePluginController
 		}
 	}
 	
-	private void startService(PersistableSettings settings) {
+	public void startService(PersistableSettings settings) {
 		try {
 			PaymentService service = (PaymentService) settings.getServiceClass().newInstance();
 			activeServices.put(settings.getId(), service);
@@ -284,6 +282,12 @@ public class PaymentViewPluginController extends BasePluginController
 		} catch (Exception ex) {
 			log.warn("Failed to start PaymentService for settings " + settings.getId(), ex);
 		}
+	}
+	
+	public void stopService(PersistableSettings settings) {
+		PaymentService service = activeServices.remove(settings.getId());
+		if(service == null) return;
+		service.stopService();
 	}
 	
 	public PluginSettingsController getSettingsController(UiGeneratorController uiController) {
