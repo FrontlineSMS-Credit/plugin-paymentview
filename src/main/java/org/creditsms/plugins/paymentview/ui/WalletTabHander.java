@@ -72,10 +72,13 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 	public void populateContextMenu(Object menu) {
 		ui.removeAll(menu);
 		
-		boolean isActive = pluginController.isActive(getSelectedSettings());
-		ui.add(menu, createMenuItem("Start service", "startSelectedService", !isActive));
-		ui.add(menu, createMenuItem("Stop service", "stopSelectedService", isActive));
-		ui.add(menu, createMenuItem("Check balance", "checkSelectedBalance", isActive));
+		PersistableSettings selectedSettings = getSelectedSettings();
+		if(selectedSettings != null) {
+			boolean isActive = pluginController.isActive(selectedSettings);
+			ui.add(menu, createMenuItem("Start service", "startSelectedService", !isActive));
+			ui.add(menu, createMenuItem("Stop service", "stopSelectedService", isActive));
+			ui.add(menu, createMenuItem("Check balance", "checkSelectedBalance", isActive));
+		}
 	}
 	
 	public void startSelectedService() {
