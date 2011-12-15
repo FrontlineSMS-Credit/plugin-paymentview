@@ -233,6 +233,10 @@ public class PaymentViewPluginController extends BasePluginController
 	public Collection<PaymentService> getActiveServices() {
 		return Collections.unmodifiableCollection(activeServices.values());
 	}
+	
+	public boolean isActive(PersistableSettings s) {
+		return this.activeServices.containsKey(s.getId());
+	}
 
 	public void updateStatusBar(String message) {
 		paymentViewThinletTabController.updateStatusBar(message);

@@ -13,25 +13,42 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 	private static final String SERVICE_TABLE = "tbServices";
 	
 	private final UiGeneratorController ui;
-	private PaymentServiceSettingsDao settingsDao;
-	
+	private final PaymentViewPluginController pluginController;
+	private final PaymentServiceSettingsDao settingsDao;
+
 	private Object tab;
+	private Object panel;
 	
 	public WalletTabHander(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		this.ui = ui;
+		this.pluginController = pluginController;
 		this.settingsDao = pluginController.getPaymentServiceSettingsDao();
 		
-		this.tab = Thinlet.create("tab");
+		tab = Thinlet.create("tab");
 		ui.setText(this.tab, "MWallets");
 		
+		panel = ui.createPanel("");
+		ui.setColumns(panel, 1);
+		ui.add(tab, panel);
+		
+		Object tableHeader = ui.createTableHeader();
+
+		ui.add(tableHeader, createTableColumn("Active"));
+		ui.add(tableHeader, createTableColumn("Name"));
+
 		Object table = Thinlet.create(Thinlet.TABLE);
-		Object tableHeader = Thinlet.create("header");
-		Object col1 = Thinlet.create(Thinlet.COLUMN);
-		ui.setText(col1, "Wallet");
-		ui.add(tableHeader, col1);
-		ui.add(table, tableHeader);
+		ui.setWeight(table, 1, 1);
 		ui.setName(table, SERVICE_TABLE);
+		ui.add(table, tableHeader);
 		add(table);
+		
+		add(ui.createButton("Refresh", "refresh", tab, this));
+	}
+	
+	private Object createTableColumn(String name) {
+		Object col = Thinlet.create(Thinlet.COLUMN);
+		ui.setText(col, name);
+		return col;
 	}
 
 	public void refresh() {
@@ -47,15 +64,17 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 	}
 
 	private Object createRow(PersistableSettings s) {
-		return ui.createTableRow(s, s.getClass() + ":" + s.getId());
+		return ui.createTableRow(s,
+				/*active*/	pluginController.isActive(s)? "YES": "NO", // TODO i18n
+				/*name:*/	s.getClass() + ":" + s.getId());
 	}
 
 	private void add(Object component) {
-		ui.add(tab, component);
+		ui.add(panel, component);
 	}
 	
 	private Object find(String componentName) {
-		return ui.find(tab, componentName);
+		return ui.find(panel, componentName);
 	}
 	
 	private Object getServiceList() {
