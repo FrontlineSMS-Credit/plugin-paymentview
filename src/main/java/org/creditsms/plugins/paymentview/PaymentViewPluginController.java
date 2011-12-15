@@ -233,6 +233,10 @@ public class PaymentViewPluginController extends BasePluginController
 	public Collection<PaymentService> getActiveServices() {
 		return Collections.unmodifiableCollection(activeServices.values());
 	}
+
+	public PaymentService getActiveService(PersistableSettings settings) {
+		return activeServices.get(settings.getId());
+	}
 	
 	public boolean isActive(PersistableSettings s) {
 		return this.activeServices.containsKey(s.getId());

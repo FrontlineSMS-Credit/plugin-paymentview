@@ -6,6 +6,8 @@ import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsD
 import thinlet.Thinlet;
 
 import net.frontlinesms.data.domain.PersistableSettings;
+import net.frontlinesms.plugins.payment.service.PaymentService;
+import net.frontlinesms.plugins.payment.service.PaymentServiceException;
 import net.frontlinesms.plugins.payment.ui.PaymentPluginTabHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -73,6 +75,7 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 		boolean isActive = pluginController.isActive(getSelectedSettings());
 		ui.add(menu, createMenuItem("Start service", "startSelectedService", !isActive));
 		ui.add(menu, createMenuItem("Stop service", "stopSelectedService", isActive));
+		ui.add(menu, createMenuItem("Check balance", "checkSelectedBalance", isActive));
 	}
 	
 	public void startSelectedService() {
@@ -81,6 +84,11 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 	
 	public void stopSelectedService() {
 		pluginController.stopService(getSelectedSettings());
+	}
+	
+	public void checkSelectedBalance() throws PaymentServiceException {
+		PaymentService service = pluginController.getActiveService(getSelectedSettings());
+		service.checkBalance();
 	}
 	
 	private PersistableSettings getSelectedSettings() {
