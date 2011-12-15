@@ -249,6 +249,10 @@ public class PaymentViewPluginController extends BasePluginController
 		return activeServices.get(settings.getId());
 	}
 	
+	public EventBus getEventBus() {
+		return eventBus;
+	}
+	
 	public boolean isActive(PersistableSettings s) {
 		return this.activeServices.containsKey(s.getId());
 	}

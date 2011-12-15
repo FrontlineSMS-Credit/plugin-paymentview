@@ -2,7 +2,7 @@ package org.creditsms.plugins.paymentview;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -200,6 +200,24 @@ public class PaymentViewPluginControllerTest extends BaseTestCase {
 		assertTrue(service.wasStopped());
 	}
 	
+	/**
+	 * GIVEN (blank)
+	 * WHEN we request payment service start
+	 * THEN payment service is initialised before starting
+	 */
+	public void testPaymentServiceStart() {
+		// given
+		PersistableSettings s = mockSettings();
+		
+		// when
+		controller.startService(s);
+		
+		// then
+		MockPaymentService service = getFirstService();
+		assertTrue(service.isInitialised());
+		assertTrue(service.isSettingsSet());
+	}
+	
 	private MockPaymentService getFirstService() {
 		PaymentService service = getActiveService(0);
 		assertTrue(service instanceof MockPaymentService);
@@ -227,19 +245,25 @@ public class PaymentViewPluginControllerTest extends BaseTestCase {
 }
 
 class MockPaymentService implements PaymentService {
-	private boolean started;
-	private boolean stopped;
+	private final ArrayList<String> methodCalls = new ArrayList<String>();
 
-	//> Verification methods
+//> Verification methods
 	public boolean wasStarted() {
-		return started;
+		return methodCalls.contains("startService");
 	}
 	public boolean wasStopped() {
-		return stopped;
+		return methodCalls.contains("stopService");
+	}
+	public boolean isSettingsSet() {
+		return methodCalls.contains("setSettings");
+	}
+	public boolean isInitialised() {
+		return methodCalls.contains("init");
 	}
 	
 //> PaymentService methods
 	public void init(PaymentViewPluginController pluginController) throws PaymentServiceException {
+		methodCalls.add("init");
 	}
 	public StructuredProperties getPropertiesStructure() {
 		return null;
@@ -248,12 +272,12 @@ class MockPaymentService implements PaymentService {
 		return null;
 	}
 	public void setSettings(PersistableSettings settings) {
+		methodCalls.add("setSettings");
 	}
 	public Class<? extends ConfigurableService> getSuperType() {
 		return PaymentService.class;
 	}
-	public void makePayment(OutgoingPayment payment)
-			throws PaymentServiceException {
+	public void makePayment(OutgoingPayment payment) throws PaymentServiceException {
 	}
 	public void checkBalance() throws PaymentServiceException {
 	}
@@ -261,10 +285,10 @@ class MockPaymentService implements PaymentService {
 		return null;
 	}
 	public void startService() throws PaymentServiceException {
-		started = true;
+		methodCalls.add("startService");
 	}
 	public void stopService() {
-		stopped = true;
+		methodCalls.add("stopService");
 	}
 	public boolean isOutgoingPaymentEnabled() {
 		return false;
