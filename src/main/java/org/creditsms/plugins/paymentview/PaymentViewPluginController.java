@@ -278,17 +278,20 @@ public class PaymentViewPluginController extends BasePluginController
 		}
 	}
 	
-	public void startService(PersistableSettings settings) {
+	public synchronized void startService(PersistableSettings settings) {
 		try {
 			PaymentService service = (PaymentService) settings.getServiceClass().newInstance();
-			activeServices.put(settings.getId(), service);
+			service.setSettings(settings);
+			service.init(this);
 			service.startService();
+			activeServices.put(settings.getId(), service);
 		} catch (Exception ex) {
+			ex.printStackTrace(); // TODO remove this ;)
 			log.warn("Failed to start PaymentService for settings " + settings.getId(), ex);
 		}
 	}
 	
-	public void stopService(PersistableSettings settings) {
+	public synchronized void stopService(PersistableSettings settings) {
 		PaymentService service = activeServices.remove(settings.getId());
 		if(service == null) return;
 		service.stopService();

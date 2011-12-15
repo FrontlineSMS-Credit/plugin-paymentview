@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import net.frontlinesms.serviceconfig.ConfigurableService;
 
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 
 public interface PaymentService extends ConfigurableService {
@@ -12,6 +13,8 @@ public interface PaymentService extends ConfigurableService {
 	void checkBalance() throws PaymentServiceException;
 	/** @return the current recorded balance of the service. */
 	BigDecimal getBalanceAmount();
+	
+	void init(PaymentViewPluginController pluginController) throws PaymentServiceException;
 	
 	void startService() throws PaymentServiceException;
 	void stopService();

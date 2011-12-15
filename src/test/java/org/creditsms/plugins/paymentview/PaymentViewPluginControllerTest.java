@@ -177,6 +177,8 @@ class MockPaymentService implements PaymentService {
 	}
 	
 //> PaymentService methods
+	public void init(PaymentViewPluginController pluginController) throws PaymentServiceException {
+	}
 	public StructuredProperties getPropertiesStructure() {
 		return null;
 	}
