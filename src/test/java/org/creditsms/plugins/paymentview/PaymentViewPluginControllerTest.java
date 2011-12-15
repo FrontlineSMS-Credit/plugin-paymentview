@@ -59,15 +59,14 @@ public class PaymentViewPluginControllerTest extends BaseTestCase {
 		return new PersistableSettings(new MockPaymentService());
 	}
 	
-	
 	/**
 	 * TITLE:after updating the payment service settings, FrontlineSMS SHOULD
 	 * restart the payment service
 	 * GIVEN the service is running
-	 * rWHEN settings are updated
+	 * WHEN settings are updated
 	 * THEN restart the corresponding payment service
-	*/
-	public void testRestartServiceWhenSettingsUpdate() throws Exception {
+	 */
+	public void testRestartServiceWhenSettingsUpdate_running() throws Exception {
 		// given
 		PersistableSettings mockSettings = mockSettings();
 		MockPaymentService service = addActiveService(controller, mockSettings);
@@ -79,6 +78,25 @@ public class PaymentViewPluginControllerTest extends BaseTestCase {
 		assertEquals(1, controller.getActiveServices().size());
 		assertTrue(service.wasStopped());
 		assertTrue(service.wasStarted());
+	}
+	
+	/**
+	 * TITLE:after updating the payment service settings, FrontlineSMS SHOULD
+	 * restart the payment service
+	 * GIVEN the service is NOT running
+	 * WHEN settings are updated
+	 * THEN restart the corresponding payment service
+	 */
+	public void testRestartServiceWhenSettingsUpdate_notRunning() throws Exception {
+		// given
+		PersistableSettings mockSettings = mockSettings();
+		assertEquals(0, controller.getActiveServices().size());
+		
+		// when
+		controller.notify(new EntityUpdatedNotification<PersistableSettings>(mockSettings));
+		
+		// then
+		assertEquals(0, controller.getActiveServices().size());
 	}
 	
 	/**

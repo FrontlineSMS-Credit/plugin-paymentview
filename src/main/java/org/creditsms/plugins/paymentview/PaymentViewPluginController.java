@@ -255,11 +255,11 @@ public class PaymentViewPluginController extends BasePluginController
 						startService(settings);
 					} else if (notification instanceof EntityDeletedNotification<?>) {
 						PaymentService service = activeServices.remove(settings.getId());
-						if(service != null) {
-							service.stopService();
-						}
+						if(service == null) return;
+						service.stopService();
 					} else if (notification instanceof EntityUpdatedNotification<?>) {
 						PaymentService service = activeServices.get(settings.getId());
+						if(service == null) return;
 						service.stopService();
 						try {
 							service.startService();
