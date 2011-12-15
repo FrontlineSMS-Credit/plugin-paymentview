@@ -8,6 +8,7 @@ import thinlet.Thinlet;
 import net.frontlinesms.data.domain.PersistableSettings;
 import net.frontlinesms.plugins.payment.service.PaymentService;
 import net.frontlinesms.plugins.payment.service.PaymentServiceException;
+import net.frontlinesms.plugins.payment.service.ui.PaymentServiceUiActionHandler;
 import net.frontlinesms.plugins.payment.ui.PaymentPluginTabHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -78,6 +79,19 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 			ui.add(menu, createMenuItem("Start service", "startSelectedService", !isActive));
 			ui.add(menu, createMenuItem("Stop service", "stopSelectedService", isActive));
 			ui.add(menu, createMenuItem("Check balance", "checkSelectedBalance", isActive));
+			
+			if(isActive) {
+				PaymentService service = pluginController.getPaymentService(selectedSettings);
+				if(service != null) {
+					PaymentServiceUiActionHandler h = service.getServiceActionUiHandler(ui);
+					if(h != null && h.hasMenuItems()) {
+						ui.add(menu, Thinlet.create("separator"));
+						for(Object i : h.getMenuItems()) {
+							ui.add(menu, i);
+						}
+					}
+				}
+			}
 		}
 	}
 	

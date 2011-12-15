@@ -94,7 +94,6 @@ public class PaymentViewPluginController extends BasePluginController
 	private UiGeneratorController ui;
 	
 	private Map<Long, PaymentService> activeServices = new HashMap<Long, PaymentService>();
-	private FrontlineSMS frontlineController;
 	
 	private HashSet<PaymentServiceMonitor> serviceMonitors;
 	
@@ -255,6 +254,10 @@ public class PaymentViewPluginController extends BasePluginController
 	
 	public boolean isActive(PersistableSettings s) {
 		return this.activeServices.containsKey(s.getId());
+	}
+	
+	public PaymentService getPaymentService(PersistableSettings s) {
+		return this.activeServices.get(s.getId());
 	}
 
 	public void updateStatusBar(String message) {

@@ -15,8 +15,10 @@ import net.frontlinesms.junit.BaseTestCase;
 import net.frontlinesms.plugins.payment.service.PaymentService;
 import net.frontlinesms.plugins.payment.service.PaymentServiceException;
 import net.frontlinesms.plugins.payment.service.PaymentServiceStartRequest;
+import net.frontlinesms.plugins.payment.service.ui.PaymentServiceUiActionHandler;
 import net.frontlinesms.serviceconfig.ConfigurableService;
 import net.frontlinesms.serviceconfig.StructuredProperties;
+import net.frontlinesms.ui.UiGeneratorController;
 
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
@@ -228,7 +230,6 @@ public class PaymentViewPluginControllerTest extends BaseTestCase {
 		return controller.getActiveServices().toArray(new PaymentService[0])[index];
 	}
 
-	@SuppressWarnings("unchecked")
 	private MockPaymentService addActiveService(PersistableSettings settings) throws Exception {
 		MockPaymentService service = new MockPaymentService();
 		return (MockPaymentService) addActiveService(settings.getId(), service);
@@ -292,5 +293,8 @@ class MockPaymentService implements PaymentService {
 	}
 	public boolean isOutgoingPaymentEnabled() {
 		return false;
+	}
+	public PaymentServiceUiActionHandler getServiceActionUiHandler(UiGeneratorController ui) {
+		return null;
 	}
 }
