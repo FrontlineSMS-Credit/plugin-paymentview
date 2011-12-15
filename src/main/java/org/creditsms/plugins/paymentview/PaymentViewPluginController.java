@@ -21,6 +21,7 @@ import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.data.events.EntityDeletedNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.data.events.EntityUpdatedNotification;
+import net.frontlinesms.events.EventBus;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.plugins.BasePluginController;
@@ -87,6 +88,8 @@ public class PaymentViewPluginController extends BasePluginController
 	
 	private TargetAnalytics targetAnalytics;
 	
+	private EventBus eventBus;
+	
 	private PaymentViewThinletTabController paymentViewThinletTabController;
 	private UiGeneratorController ui;
 	
@@ -100,8 +103,8 @@ public class PaymentViewPluginController extends BasePluginController
 	public void init(FrontlineSMS frontlineController,
 			ApplicationContext applicationContext)
 			throws PluginInitialisationException {
-		this.frontlineController = frontlineController;
-		frontlineController.getEventBus().registerObserver(this);
+		eventBus = frontlineController.getEventBus();
+		eventBus.registerObserver(this);
 		
 		// Initialize the DAO for the domain objects
 		clientDao 			= (ClientDao) applicationContext.getBean("clientDao");
@@ -145,7 +148,7 @@ public class PaymentViewPluginController extends BasePluginController
 				m.init(frontlineController, applicationContext);
 			} catch(Exception ex) {
 				log.warn("Error loading payment service monitor " + c, ex);
-				try { frontlineController.getEventBus().unregisterObserver(m); } catch(Exception _) { /* ignore */ }
+				try { eventBus.unregisterObserver(m); } catch(Exception _) { /* ignore */ }
 				serviceMonitors.remove(m);
 			}
 		}
@@ -153,10 +156,18 @@ public class PaymentViewPluginController extends BasePluginController
 	
 	/** @see net.frontlinesms.plugins.PluginController#deinit() */
 	public void deinit() {
-		frontlineController.getEventBus().unregisterObserver(this);
-		// TODO surely we should shut down payment services here?
+		eventBus.unregisterObserver(this);
+		
+		for(PaymentService s : activeServices.values()) {
+			try {
+				s.stopService();
+			} catch(Throwable t) {
+				log.warn("Problem shutting down payment service: " + s, t);
+			}
+		}
+
 		for(PaymentServiceMonitor m : serviceMonitors) {
-			frontlineController.getEventBus().unregisterObserver(m);
+			eventBus.unregisterObserver(m);
 		}
 	}
 
