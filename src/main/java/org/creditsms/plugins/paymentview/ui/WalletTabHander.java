@@ -13,6 +13,7 @@ import net.frontlinesms.plugins.payment.service.PaymentServiceException;
 import net.frontlinesms.plugins.payment.service.ui.PaymentServiceUiActionHandler;
 import net.frontlinesms.plugins.payment.ui.PaymentPluginTabHandler;
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.events.FrontlineUiUpdateJob;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 public class WalletTabHander implements PaymentPluginTabHandler {
@@ -69,6 +70,14 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 			ui.add(list, createRow(s));
 		}
 	}
+	
+	public void threadSafeRefresh() {
+		new FrontlineUiUpdateJob() {
+			public void run() {
+				refresh();
+			}
+		}.execute();
+	}
 
 	public Object getTab() {
 		return tab;
@@ -100,7 +109,13 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 	}
 	
 	public void startSelectedService() {
-		pluginController.startService(getSelectedSettings());
+		try {
+			pluginController.startService(getSelectedSettings());
+			threadSafeRefresh();
+			ui.infoMessage("Payment service started.");
+		} catch(PaymentServiceException ex) {
+			ui.alert("There was a problem starting this service:", ex.getMessage());
+		}
 	}
 	
 	public void stopSelectedService() {

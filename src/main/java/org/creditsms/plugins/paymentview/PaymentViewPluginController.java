@@ -271,14 +271,14 @@ public class PaymentViewPluginController extends BasePluginController
 	public void notify(final FrontlineEventNotification notification) {
 		if(notification instanceof PaymentServiceStartRequest) {
 			PersistableSettings settings = ((PaymentServiceStartRequest) notification).getSettings();
-			startService(settings);
+			startServiceAndLogExceptions(settings);
 		} else if(notification instanceof DatabaseEntityNotification<?>) {
 			Object entity = ((DatabaseEntityNotification<?>) notification).getDatabaseEntity();
 			if(entity instanceof PersistableSettings) {
 				PersistableSettings settings = (PersistableSettings) entity;
 				if(settings.getServiceTypeSuperclass() == PaymentService.class) {
 					if (notification instanceof EntitySavedNotification<?>) {
-						startService(settings);
+						startServiceAndLogExceptions(settings);
 					} else if (notification instanceof EntityDeletedNotification<?>) {
 						stopService(settings);
 					} else if (notification instanceof EntityUpdatedNotification<?>) {
@@ -296,17 +296,26 @@ public class PaymentViewPluginController extends BasePluginController
 		}
 	}
 	
-	public synchronized void startService(PersistableSettings settings) {
+	private void startServiceAndLogExceptions(PersistableSettings s) {
 		try {
-			PaymentService service = (PaymentService) settings.getServiceClass().newInstance();
-			service.setSettings(settings);
-			service.init(this);
-			service.startService();
-			activeServices.put(settings.getId(), service);
-		} catch (Exception ex) {
-			ex.printStackTrace(); // TODO remove this ;)
-			log.warn("Failed to start PaymentService for settings " + settings.getId(), ex);
+			startService(s);
+		} catch(Throwable t) {
+			log.warn("Problem starting payment service.", t);
+			t.printStackTrace(); // FIXME remove print out
 		}
+	}
+	
+	public synchronized void startService(PersistableSettings settings) throws PaymentServiceException {
+		PaymentService service;
+		try {
+			service = (PaymentService) settings.getServiceClass().newInstance();
+		} catch (Exception ex) {
+			throw new PaymentServiceException("Failed to create payment service with class: " + settings.getServiceClass(), ex);
+		}
+		service.setSettings(settings);
+		service.init(this);
+		service.startService();
+		activeServices.put(settings.getId(), service);
 	}
 	
 	public synchronized void stopService(PersistableSettings settings) {

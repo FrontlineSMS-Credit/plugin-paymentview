@@ -206,8 +206,9 @@ public class PaymentViewPluginControllerTest extends BaseTestCase {
 	 * GIVEN (blank)
 	 * WHEN we request payment service start
 	 * THEN payment service is initialised before starting
+	 * @throws Exception 
 	 */
-	public void testPaymentServiceStart() {
+	public void testPaymentServiceStart() throws Exception {
 		// given
 		PersistableSettings s = mockSettings();
 		
