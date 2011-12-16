@@ -85,18 +85,18 @@ public class PaymentViewPluginController extends BasePluginController
 	private ThirdPartyResponseDao thirdPartyResponseDao;
 	private ResponseRecipientDao responseRecipientDao;
 	private TargetServiceItemDao targetServiceItemDao;
-
+	
 	private TargetAnalytics targetAnalytics;
-
+	
 	private EventBus eventBus;
-
+	
 	private PaymentViewThinletTabController paymentViewThinletTabController;
 	private UiGeneratorController ui;
-
+	
 	private Map<Long, PaymentService> activeServices = new HashMap<Long, PaymentService>();
-
+	
 	private HashSet<PaymentServiceMonitor> serviceMonitors;
-
+	
 //> CONFIG METHODS
 	/** @see net.frontlinesms.plugins.PluginController#init(FrontlineSMS, ApplicationContext) */
 	public void init(FrontlineSMS frontlineController,
@@ -104,7 +104,7 @@ public class PaymentViewPluginController extends BasePluginController
 			throws PluginInitialisationException {
 		eventBus = frontlineController.getEventBus();
 		eventBus.registerObserver(this);
-
+		
 		// Initialize the DAO for the domain objects
 		clientDao 			= (ClientDao) applicationContext.getBean("clientDao");
 		accountDao 			= (AccountDao) applicationContext.getBean("accountDao");
@@ -119,16 +119,16 @@ public class PaymentViewPluginController extends BasePluginController
 		thirdPartyResponseDao  = (ThirdPartyResponseDao) applicationContext.getBean("thirdPartyResponseDao");
 		responseRecipientDao  = (ResponseRecipientDao) applicationContext.getBean("responseRecipientDao");
 		targetServiceItemDao  = (TargetServiceItemDao) applicationContext.getBean("targetServiceItemDao");
-
+		
 		targetAnalytics = new TargetAnalytics();
 		targetAnalytics.setIncomingPaymentDao(incomingPaymentDao);
 		targetAnalytics.setTargetDao(targetDao);
-
+		
 		// Default authorisation code set up to password if none
 		if(!AuthorizationProperties.getInstance().isAuthCodeSet()){
 			AuthorizationProperties.getInstance().setAuthCode("password");
 		}
-
+		
 		// If not a production build, and database is empty, add test data
 		if(BuildProperties.getInstance().isSnapshot() && clientDao.getClientCount()==0) {
 			try {
@@ -137,7 +137,7 @@ public class PaymentViewPluginController extends BasePluginController
 				e.printStackTrace();
 			}
 		}
-
+		
 		serviceMonitors = new HashSet<PaymentServiceMonitor>();
 		for(Class<? extends PaymentServiceMonitor> c : new PaymentServiceMonitorImplementationLoader().getAll()) {
 			PaymentServiceMonitor m = null;
@@ -152,11 +152,11 @@ public class PaymentViewPluginController extends BasePluginController
 			}
 		}
 	}
-
+	
 	/** @see net.frontlinesms.plugins.PluginController#deinit() */
 	public void deinit() {
 		eventBus.unregisterObserver(this);
-
+		
 		for(PaymentService s : activeServices.values()) {
 			try {
 				s.stopService();
@@ -177,7 +177,7 @@ public class PaymentViewPluginController extends BasePluginController
 		this.ui = ui;
 		return paymentViewThinletTabController.getPaymentViewTab();
 	}
-
+	
 //> ACCESSORS
 	public TargetServiceItemDao getTargetServiceItemDao() {
 		return targetServiceItemDao;
@@ -186,27 +186,27 @@ public class PaymentViewPluginController extends BasePluginController
 	public AccountDao getAccountDao() {
 		return accountDao;
 	}
-
+	
 	public IncomingPaymentDao getIncomingPaymentDao() {
 		return this.incomingPaymentDao;
 	}
-
+	
 	public OutgoingPaymentDao getOutgoingPaymentDao() {
 		return outgoingPaymentDao;
 	}
-
+	
 	public PaymentServiceSettingsDao getPaymentServiceSettingsDao() {
 		return paymentServiceSettingsDao;
 	}
-
+	
 	public ClientDao getClientDao() {
 		return clientDao;
 	}
-
+	
 	public CustomFieldDao getCustomFieldDao() {
 		return customFieldDao;
 	}
-
+	
 	public CustomValueDao getCustomValueDao() {
 		return customValueDao;
 	}
@@ -218,11 +218,11 @@ public class PaymentViewPluginController extends BasePluginController
 	public ServiceItemDao getServiceItemDao() {
 		return serviceItemDao;
 	}
-
+	
 	public LogMessageDao getLogMessageDao() {
 		return logMessageDao;
 	}
-
+	
 	public ThirdPartyResponseDao getThirdPartyResponseDao() {
 		return thirdPartyResponseDao;
 	}
@@ -231,7 +231,7 @@ public class PaymentViewPluginController extends BasePluginController
 		return responseRecipientDao;
 	}
 
-
+	
 	public UiGeneratorController getUiGeneratorController() {
 		return ui;
 	}
@@ -247,15 +247,15 @@ public class PaymentViewPluginController extends BasePluginController
 	public PaymentService getActiveService(PersistableSettings settings) {
 		return activeServices.get(settings.getId());
 	}
-
+	
 	public EventBus getEventBus() {
 		return eventBus;
 	}
-
+	
 	public boolean isActive(PersistableSettings s) {
 		return this.activeServices.containsKey(s.getId());
 	}
-
+	
 	public PaymentService getPaymentService(PersistableSettings s) {
 		return this.activeServices.get(s.getId());
 	}
@@ -263,7 +263,7 @@ public class PaymentViewPluginController extends BasePluginController
 	public void updateStatusBar(String message) {
 		paymentViewThinletTabController.updateStatusBar(message);
 	}
-
+	
 	public void clearStatusBar(String message) {
 		updateStatusBar("");
 	}
@@ -295,7 +295,7 @@ public class PaymentViewPluginController extends BasePluginController
 			}
 		}
 	}
-
+	
 	public synchronized void startService(PersistableSettings settings) {
 		try {
 			PaymentService service = (PaymentService) settings.getServiceClass().newInstance();
@@ -308,13 +308,13 @@ public class PaymentViewPluginController extends BasePluginController
 			log.warn("Failed to start PaymentService for settings " + settings.getId(), ex);
 		}
 	}
-
+	
 	public synchronized void stopService(PersistableSettings settings) {
 		PaymentService service = activeServices.remove(settings.getId());
 		if(service == null) return;
 		service.stopService();
 	}
-
+	
 	public PluginSettingsController getSettingsController(UiGeneratorController uiController) {
 		return new PaymentServiceSettingsHandler(uiController,
 				uiController.getFrontlineController().getBean("paymentServiceSettingsDao", PaymentServiceSettingsDao.class),

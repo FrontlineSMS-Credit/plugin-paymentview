@@ -1,5 +1,7 @@
 package org.creditsms.plugins.paymentview.ui;
 
+import java.math.BigDecimal;
+
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
 
@@ -11,6 +13,7 @@ import net.frontlinesms.plugins.payment.service.PaymentServiceException;
 import net.frontlinesms.plugins.payment.service.ui.PaymentServiceUiActionHandler;
 import net.frontlinesms.plugins.payment.ui.PaymentPluginTabHandler;
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 public class WalletTabHander implements PaymentPluginTabHandler {
 	private static final String SERVICE_TABLE = "tbServices";
@@ -121,10 +124,12 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 	}
 
 	private Object createRow(PersistableSettings s) {
+		PaymentService service = pluginController.getPaymentService(s);
+		BigDecimal balance = service!=null? service.getBalanceAmount(): new BigDecimal("0");
 		return ui.createTableRow(s,
-				/*active*/	pluginController.isActive(s)? "YES": "NO", // TODO i18n
-				/*name:*/	s.getClass() + ":" + s.getId(),
-		        /*balance:*/ pluginController.isActive(s)? pluginController.getPaymentService(s).getBalanceAmount().toString():"0.00");
+				/*active:*/  pluginController.isActive(s)? "YES": "NO", // TODO i18n
+				/*name:*/    s.getClass() + ":" + s.getId(),
+				/*balance:*/ InternationalisationUtils.formatCurrency(balance));
 	}
 
 	private void add(Object component) {
