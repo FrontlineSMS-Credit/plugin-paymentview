@@ -110,16 +110,14 @@ public class ClientCsvImporter extends CsvImporter {
 	}
 	
 	private void addToContact(ContactDao contactDao2, Client client) throws NumberFormatException, DuplicateKeyException {
-		Contact fromMsisdn = contactDao.getFromMsisdn(client.getPhoneNumber());
-		if (fromMsisdn != null){
-			fromMsisdn.setName(client.getFullName());
-			fromMsisdn.setPhoneNumber(client.getPhoneNumber());
-			contactDao.updateContact(fromMsisdn);
-		}else{
-			//Start Save the Client as a contact to the core project
-			Contact contact = new Contact(client.getFullName(), client.getPhoneNumber(), "", "", "", true);
+		Contact contact = contactDao.getFromMsisdn(client.getPhoneNumber());
+		if (contact != null) {
+			contact.setName(client.getFullName());
+			contact.setPhoneNumber(client.getPhoneNumber());
+			contactDao.updateContact(contact);
+		} else {
+			contact = new Contact(client.getFullName(), client.getPhoneNumber(), "", "", "", true);
 			contactDao.saveContact(contact);
-			//Finish save
 		}
 	}
 
