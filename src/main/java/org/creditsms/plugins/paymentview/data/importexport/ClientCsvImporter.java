@@ -9,6 +9,8 @@ import net.frontlinesms.csv.CsvImporter;
 import net.frontlinesms.csv.CsvParseException;
 import net.frontlinesms.csv.CsvRowFormat;
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.repository.ContactDao;
+import net.frontlinesms.data.domain.Contact;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
 import org.creditsms.plugins.paymentview.data.domain.Client;
@@ -32,6 +34,7 @@ public class ClientCsvImporter extends CsvImporter {
 	private List<CustomField> selectedCustomFieldlst = new ArrayList<CustomField>();
 	private List<Client> selectedClientLst = new ArrayList<Client>();
 	PhoneNumberPattern phonePattern = new PhoneNumberPattern();
+	private ContactDao contactDao;
 	
 	// > INSTANCE PROPERTIES
 
@@ -67,13 +70,15 @@ public class ClientCsvImporter extends CsvImporter {
 	public CsvImportReport importClients(ClientDao clientDao,
 			CsvRowFormat rowFormat, PaymentViewPluginController pluginController, CustomValueDao customValueDao) throws DuplicateKeyException {
 		log.trace("ENTER");
-			
+		this.contactDao = pluginController.getUiGeneratorController().getFrontlineController().getContactDao();
+		
 		for (Client client : selectedClientLst) {
 			try{
 				if(phonePattern.formatPhoneNumber(client.getPhoneNumber())) {
 					client.setPhoneNumber(phonePattern.getNewPhoneNumberPattern());
 					clientDao.saveClient(client);
 					saveSelectedCustomFld(clientDao, client, pluginController, customValueDao);
+					addToContact(this.contactDao, client);
 				}
 			}catch (Exception e){
 				if (e instanceof NonUniqueObjectException ||
@@ -94,6 +99,7 @@ public class ClientCsvImporter extends CsvImporter {
 					c.setFirstName(client.getFirstName());
 					c.setOtherName(client.getOtherName());
 					clientDao.updateClient(c);
+					addToContact(this.contactDao, client);
 					saveSelectedCustomFld(clientDao, client, pluginController, customValueDao);
 				}
 			}
@@ -103,6 +109,20 @@ public class ClientCsvImporter extends CsvImporter {
 		return new CsvImportReport();
 	}
 	
+	private void addToContact(ContactDao contactDao2, Client client) throws NumberFormatException, DuplicateKeyException {
+		Contact fromMsisdn = contactDao.getFromMsisdn(client.getPhoneNumber());
+		if (fromMsisdn != null){
+			fromMsisdn.setName(client.getFullName());
+			fromMsisdn.setPhoneNumber(client.getPhoneNumber());
+			contactDao.updateContact(fromMsisdn);
+		}else{
+			//Start Save the Client as a contact to the core project
+			Contact contact = new Contact(client.getFullName(), client.getPhoneNumber(), "", "", "", true);
+			contactDao.saveContact(contact);
+			//Finish save
+		}
+	}
+
 	private void saveSelectedCustomFld(ClientDao clientDao, Client client, 
 			PaymentViewPluginController pluginController, CustomValueDao customValueDao) throws DuplicateKeyException {
 
