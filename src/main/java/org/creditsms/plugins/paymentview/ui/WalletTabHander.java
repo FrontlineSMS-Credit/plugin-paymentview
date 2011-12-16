@@ -38,7 +38,8 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 
 		ui.add(tableHeader, createTableColumn("Active"));
 		ui.add(tableHeader, createTableColumn("Name"));
-
+		ui.add(tableHeader, createTableColumn("Balance"));
+		
 		Object table = Thinlet.create(Thinlet.TABLE);
 		ui.setWeight(table, 1, 1);
 		ui.setName(table, SERVICE_TABLE);
@@ -122,7 +123,8 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 	private Object createRow(PersistableSettings s) {
 		return ui.createTableRow(s,
 				/*active*/	pluginController.isActive(s)? "YES": "NO", // TODO i18n
-				/*name:*/	s.getClass() + ":" + s.getId());
+				/*name:*/	s.getClass() + ":" + s.getId(),
+		        /*balance:*/ pluginController.isActive(s)? pluginController.getPaymentService(s).getBalanceAmount().toString():"0.00");
 	}
 
 	private void add(Object component) {
