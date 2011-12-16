@@ -143,8 +143,9 @@ public class PaymentViewPluginController extends BasePluginController
 			PaymentServiceMonitor m = null;
 			try {
 				m = c.newInstance();
-				serviceMonitors.add(m);
 				m.init(frontlineController, applicationContext);
+				serviceMonitors.add(m);
+				eventBus.registerObserver(m);
 			} catch(Exception ex) {
 				log.warn("Error loading payment service monitor " + c, ex);
 				try { eventBus.unregisterObserver(m); } catch(Exception _) { /* ignore */ }
