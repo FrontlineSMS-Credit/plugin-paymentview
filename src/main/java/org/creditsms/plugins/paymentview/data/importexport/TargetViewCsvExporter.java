@@ -83,8 +83,8 @@ public class TargetViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 //							InternationalisationUtils.getI18nString(COMMON_PAID_THIS_MONTH),
 							PaymentViewCsvUtils.TARGET_DAYS_REMAINING,
 							InternationalisationUtils.getI18nString(COMMON_DAYS_REMAINING),
-							PaymentViewCsvUtils.TARGET_STATUS);
-//							InternationalisationUtils.getI18nString(COMMON_TARGET_STATUS),
+							PaymentViewCsvUtils.TARGET_STATUS,
+							InternationalisationUtils.getI18nString(COMMON_TARGET_STATUS));
 //							PaymentViewCsvUtils.MONTHLY_DUE,
 //							InternationalisationUtils.getI18nString(COMMON_CURRENT_AMOUNT_DUE),
 //							PaymentViewCsvUtils.TARGET_CURRENT_DUE_DATE,
