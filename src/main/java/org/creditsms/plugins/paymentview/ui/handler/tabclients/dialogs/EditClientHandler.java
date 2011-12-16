@@ -21,6 +21,7 @@ import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
+import org.creditsms.plugins.paymentview.utils.MoveClientDetailsToContacts;
 import org.creditsms.plugins.paymentview.utils.PhoneNumberPattern;
 
 public class EditClientHandler extends BaseDialog{
@@ -52,6 +53,7 @@ public class EditClientHandler extends BaseDialog{
 
 	private boolean editMode;
 	private ContactDao contactDao;
+	private MoveClientDetailsToContacts moveClientDetailsToContacts = new MoveClientDetailsToContacts();
 	
 	public EditClientHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, ClientsTabHandler clientsTabHandler,
 			boolean newClient) {
@@ -175,14 +177,8 @@ public class EditClientHandler extends BaseDialog{
 								clientDao.updateClient(client);
 								
 								Contact contact = contactDao.getFromMsisdn(client.getPhoneNumber());
-								if (contact != null) {
-									contact.setName(client.getFullName());
-									contact.setPhoneNumber(client.getPhoneNumber());
-									contactDao.updateContact(contact);
-								} else {
-									contact = new Contact(client.getFullName(), client.getPhoneNumber(), "", "", "", true);
-									contactDao.saveContact(contact);
-								}
+
+								moveClientDetailsToContacts.addToContact(contactDao, client);
 					
 								List<CustomField> allCustomFields = customFieldDao
 										.getAllActiveUsedCustomFields();

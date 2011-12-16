@@ -18,6 +18,7 @@ import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
+import org.creditsms.plugins.paymentview.utils.MoveClientDetailsToContacts;
 import org.creditsms.plugins.paymentview.utils.PhoneNumberPattern;
 import org.hibernate.NonUniqueObjectException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -35,6 +36,7 @@ public class ClientCsvImporter extends CsvImporter {
 	private List<Client> selectedClientLst = new ArrayList<Client>();
 	PhoneNumberPattern phonePattern = new PhoneNumberPattern();
 	private ContactDao contactDao;
+	private MoveClientDetailsToContacts moveClientDetailsToContacts = new MoveClientDetailsToContacts();
 	
 	// > INSTANCE PROPERTIES
 
@@ -78,7 +80,7 @@ public class ClientCsvImporter extends CsvImporter {
 					client.setPhoneNumber(phonePattern.getNewPhoneNumberPattern());
 					clientDao.saveClient(client);
 					saveSelectedCustomFld(clientDao, client, pluginController, customValueDao);
-					addToContact(this.contactDao, client);
+					moveClientDetailsToContacts.addToContact(this.contactDao, client);
 				}
 			}catch (Exception e){
 				if (e instanceof NonUniqueObjectException ||
@@ -99,7 +101,7 @@ public class ClientCsvImporter extends CsvImporter {
 					c.setFirstName(client.getFirstName());
 					c.setOtherName(client.getOtherName());
 					clientDao.updateClient(c);
-					addToContact(this.contactDao, client);
+					moveClientDetailsToContacts.addToContact(this.contactDao, client);
 					saveSelectedCustomFld(clientDao, client, pluginController, customValueDao);
 				}
 			}
@@ -107,18 +109,6 @@ public class ClientCsvImporter extends CsvImporter {
 		log.trace("EXIT");
 
 		return new CsvImportReport();
-	}
-	
-	private void addToContact(ContactDao contactDao2, Client client) throws NumberFormatException, DuplicateKeyException {
-		Contact contact = contactDao.getFromMsisdn(client.getPhoneNumber());
-		if (contact != null) {
-			contact.setName(client.getFullName());
-			contact.setPhoneNumber(client.getPhoneNumber());
-			contactDao.updateContact(contact);
-		} else {
-			contact = new Contact(client.getFullName(), client.getPhoneNumber(), "", "", "", true);
-			contactDao.saveContact(contact);
-		}
 	}
 
 	private void saveSelectedCustomFld(ClientDao clientDao, Client client, 
