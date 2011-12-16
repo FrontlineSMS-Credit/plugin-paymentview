@@ -19,7 +19,7 @@
 	            </panel>
 			</panel>
 
-			<table name="tbl_clients" weightx="1" weighty="1" colspan="2" selection="multiple" perform="editIncoming" >
+			<table name="tbl_clients" weightx="1" weighty="1" colspan="2" selection="multiple" action="checkSelection" perform="editIncoming" >
 				<header>
 					<column text="Confirmation Code" width="140"/>
 					<column text="Name" width="200" icon="/icons/user.png" />

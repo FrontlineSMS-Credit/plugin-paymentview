@@ -60,6 +60,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private static final String DISABLE_AUTOREPLY = "ON";
 	private static final String COMPONENT_INCOMING_PAYMENTS_TABLE = "tbl_clients";
 	private static final String COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE = "pnl_clients";
+	private static final String COMPONENT_PANEL_MTNS = "pnl_buttons";
 	private static final String XML_INCOMING_PAYMENTS_TAB = "/ui/plugins/paymentview/incomingpayments/tabincomingpayments.xml";
 	private static final String CONFIRM_DELETE_INCOMING = "message.confirm.delete.incoming";
 	
@@ -69,6 +70,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private static final String ICON_STATUS_TRUE = "/icons/led_green.png";
 	private static final String STATUS_LABEL_COMPONENT = "status";
 	private static final String ICON_STATUS_FALSE = "/icons/led_red.png";
+	private static final String BTN_DELETE_INCOMING_PAYMENT = "miDeleteIncoming";
 	private Object status_label;
 	
 	protected IncomingPaymentDao incomingPaymentDao;
@@ -79,6 +81,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	protected Object incomingPaymentsTableComponent;
 	protected ComponentPagingHandler incomingPaymentsTablePager;
 	private Object pnlIncomingPaymentsTableComponent;
+	private Object pnlBtns;
 	private PaymentViewPluginController pluginController;
 	private Object dialogConfirmation;
 	private Object fldStartDate;
@@ -123,8 +126,10 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		status_label = ui.find(incomingPaymentsTab, STATUS_LABEL_COMPONENT);
 		incomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_INCOMING_PAYMENTS_TABLE);
 		incomingPaymentsTablePager = new ComponentPagingHandler(ui, this, incomingPaymentsTableComponent);
+		pnlBtns = ui.find(incomingPaymentsTab, COMPONENT_PANEL_MTNS);
 		pnlIncomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE);
 		this.ui.add(pnlIncomingPaymentsTableComponent, this.incomingPaymentsTablePager.getPanel());
+		this.ui.setEnabled(ui.find(pnlBtns, BTN_DELETE_INCOMING_PAYMENT), false);
 		return incomingPaymentsTab;
 	}
 	
@@ -258,6 +263,15 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		this.incomingPaymentsTablePager.refresh();
 	}
 	
+	public void checkSelection() {
+		Object[] selectedIncomings = this.ui.getSelectedItems(incomingPaymentsTableComponent);
+		if (selectedIncomings.length == 0){
+			this.ui.setEnabled(ui.find(pnlBtns, BTN_DELETE_INCOMING_PAYMENT), false);
+		} else {
+			this.ui.setEnabled(ui.find(pnlBtns, BTN_DELETE_INCOMING_PAYMENT), true);
+		}	
+	}
+	
 //> INCOMING PAYMENT DELETION
 	public void deleteIncomingPayment() {
 		Object[] selectedIncomings = this.ui.getSelectedItems(incomingPaymentsTableComponent);
@@ -377,6 +391,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	
 	// > EXPORTS...
 	public void exportIncomingPayments() {
+		this.ui.setEnabled(ui.find(pnlBtns, BTN_DELETE_INCOMING_PAYMENT), false);
 		Object[] selectedItems = ui.getSelectedItems(incomingPaymentsTableComponent);
 		if (selectedItems.length <= 0){
 			exportIncomingPayments(getIncomingPaymentsForExport());
