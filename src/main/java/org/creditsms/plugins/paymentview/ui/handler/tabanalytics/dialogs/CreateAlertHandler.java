@@ -31,15 +31,8 @@ public class CreateAlertHandler implements ThinletUiEventHandler {
 	private Object chckAmnthWithoutPay;
 	private Object chckMeetsHalf;
 	
-	public void tryToggleAutoReply(){
-//		if (!createAlertProperties.isAlertOn()){
-//			ui.showConfirmationDialog("toggleAlertOn", this, PaymentPluginConstants.ANALYTICS_ALERT);
-//		}else{
-			toggleAlertOn();
-		//}
-	}
 	
-	public void toggleAlertOn() {
+	public void createTargetAlert() {
 		createAlertProperties.toggleAlert();
 		setUpAlertUI();
 		ui.removeDialog(ui.find(CONFIRM_DIALOG));

@@ -5,7 +5,7 @@
 	top="9" resizable="true" modal="true" closable="true" width="500">
 
 	<panel height="30" gap="5">
-		<button name="status" action="tryToggleAutoReply" tooltip="Click to change Alert status"/>
+		<button name="status" action="createTargetAlert" tooltip="Click to change Alert status"/>
 		<label text="Turn alerts On to receive notifications on the FrontlineSMS Home tab."/>
 	</panel>
 
