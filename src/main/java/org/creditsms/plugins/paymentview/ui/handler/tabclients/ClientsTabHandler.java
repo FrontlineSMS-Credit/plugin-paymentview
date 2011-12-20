@@ -53,6 +53,7 @@ public class ClientsTabHandler implements PaymentPluginTabHandler {
 	private Object incomingPaymentsDialog;
 	private GroupMembershipDao groupMembershipDao;
 	private GroupDao groupDao;
+	private ContactDao contactDao;
 	
 	public ClientsTabHandler(UiGeneratorController ui,
 			final PaymentViewPluginController pluginController) {
@@ -61,6 +62,7 @@ public class ClientsTabHandler implements PaymentPluginTabHandler {
 		this.pluginController = pluginController;
 		this.clientDao = pluginController.getClientDao();
 		this.customFieldDao = pluginController.getCustomFieldDao();
+		this.contactDao = ui.getFrontlineController().getContactDao();
 		init();
 	}
 
@@ -108,14 +110,15 @@ public class ClientsTabHandler implements PaymentPluginTabHandler {
 
 	public void deleteClient() {
 		Object[] selectedClients = clientTableHandler.getSelectedRows();
+		
 		String clientNameList = "";
 		for (Object selectedClient : selectedClients) {
 			Client attachedClient = ui.getAttachedObject(selectedClient, Client.class);
 			attachedClient.setActive(false);
 			clientNameList = clientNameList + " - " + attachedClient.getFullName();
 			clientDao.updateClient(attachedClient);
+			deleteContact(attachedClient);
 		}
-
 		ui.removeDialog(ui
 				.find(UiGeneratorControllerConstants.COMPONENT_CONFIRM_DIALOG));
 		if (selectedClients.length >0){
@@ -124,6 +127,9 @@ public class ClientsTabHandler implements PaymentPluginTabHandler {
 		this.refresh();
 	}
 
+	private void deleteContact(Client client){
+		contactDao.deleteContact(contactDao.getFromMsisdn(client.getPhoneNumber()));
+	}
 	public void editClient() {
 		for (Object selectedClient : clientTableHandler.getSelectedRows()) {
 			Client c = (Client) ui.getAttachedObject(selectedClient);
@@ -172,7 +178,6 @@ public class ClientsTabHandler implements PaymentPluginTabHandler {
 	}
 
 	private void copyClientsToContacts(List<Client> clients) throws NumberFormatException, DuplicateKeyException {
-		ContactDao contactDao = pluginController.getUiGeneratorController().getFrontlineController().getContactDao();
 		for (Client c : clients) {
 			Contact fromMsisdn = contactDao.getFromMsisdn(c.getPhoneNumber());
 			if (fromMsisdn != null){
@@ -195,9 +200,6 @@ public class ClientsTabHandler implements PaymentPluginTabHandler {
 	 * @throws DuplicateKeyException 
 	 */
 	public void addToGroup(Object item) throws DuplicateKeyException {
-		ContactDao contactDao = pluginController.getUiGeneratorController()
-		.getFrontlineController().getContactDao();
-		
 		Object[] selected = null;
 		selected = this.ui.getSelectedItems(clientTableHandler.getClientsTable());
 		// Add to the selected groups...
@@ -226,9 +228,6 @@ public class ClientsTabHandler implements PaymentPluginTabHandler {
 	 * @throws DuplicateKeyException 
 	 */
 	public void removeFromGroup(Object selectedGroup) throws DuplicateKeyException {
-		ContactDao contactDao = pluginController.getUiGeneratorController()
-		.getFrontlineController().getContactDao();
-		
 		Object[] selectedClients = clientTableHandler.getSelectedRows();
 		Group group = this.ui.getGroup(selectedGroup);
 		
@@ -296,9 +295,6 @@ public class ClientsTabHandler implements PaymentPluginTabHandler {
 			if (menuRemove != null) {
 				Client c = this.ui.getAttachedObject(this.ui.getSelectedItem(list), Client.class);
 				this.ui.removeAll(menuRemove);
-				
-				ContactDao contactDao = frontlineController.getContactDao();
-				
 				Contact contact = contactDao.getFromMsisdn(c.getPhoneNumber());
 				if (contact == null){
 					contact = new Contact(c.getFullName(), c.getPhoneNumber(), "", "", "", true);
