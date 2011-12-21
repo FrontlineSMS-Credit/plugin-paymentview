@@ -14,7 +14,6 @@ import net.frontlinesms.plugins.payment.service.ui.PaymentServiceUiActionHandler
 import net.frontlinesms.plugins.payment.ui.PaymentPluginTabHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpdateJob;
-import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 public class WalletTabHander implements PaymentPluginTabHandler {
 	private static final String SERVICE_TABLE = "tbServices";
@@ -144,7 +143,7 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 		return ui.createTableRow(s,
 				/*active:*/  pluginController.isActive(s)? "YES": "NO", // TODO i18n
 				/*name:*/    s.getClass() + ":" + s.getId(),
-				/*balance:*/ InternationalisationUtils.formatCurrency(balance));
+				/*balance:*/ balance.toString()); // TODO would be nice to i18n the decimalisation.
 	}
 
 	private void add(Object component) {
