@@ -290,6 +290,7 @@ public class PaymentViewPluginController extends BasePluginController
 						PaymentService service = activeServices.get(settings.getId());
 						if(service == null) return;
 						service.stopService();
+						service.setSettings(settings);
 						try {
 							service.startService();
 						} catch (PaymentServiceException ex) {
