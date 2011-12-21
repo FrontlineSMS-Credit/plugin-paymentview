@@ -156,19 +156,23 @@ public class PaymentViewPluginController extends BasePluginController
 	
 	/** @see net.frontlinesms.plugins.PluginController#deinit() */
 	public void deinit() {
-		eventBus.unregisterObserver(this);
+		if(eventBus == null) log.error("Event bus appears to be null so cannot deregister plugin controller or service monitors.");
+		else eventBus.unregisterObserver(this);
 		
 		for(PaymentService s : activeServices.values()) {
 			try {
 				s.stopService();
 			} catch(Throwable t) {
-				log.warn("Problem shutting down payment service: " + s, t);
+				log.error("Problem shutting down payment service: " + s, t);
 			}
 		}
 
-		for(PaymentServiceMonitor m : serviceMonitors) {
-			eventBus.unregisterObserver(m);
+		if(eventBus != null) {
+			for(PaymentServiceMonitor m : serviceMonitors) {
+				eventBus.unregisterObserver(m);
+			}
 		}
+		serviceMonitors.clear();
 	}
 
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */
