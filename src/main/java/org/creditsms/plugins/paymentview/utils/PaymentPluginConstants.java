@@ -17,6 +17,7 @@ public final class PaymentPluginConstants {
 	public static final String COMMON_STATUS = "plugins.paymentview.common.status";
 	public static final String AUTO_REPLY_CONFIRMATION = "plugins.paymentview.auto.reply.confirmation";
 	public static final String ANALYTICS_ALERT = "plugins.paymentview.analytics.alert";
+	public static final String CONFIRM_ACCEPT_UPDATE_TARGET = "plugins.paymentview.analytics.edit.confirmation";
 	public static final String COMMON_PRODUCTS = "plugins.paymentview.common.products";
 	public static final String COMMON_START_DATE = "plugins.paymentview.common.startdate";
 	public static final String COMMON_END_DATE = "plugins.paymentview.common.enddate";
