@@ -240,6 +240,8 @@ public class EditClientHandler extends BaseDialog{
 									ui.infoMessage("The phone number " + phone + " was previously set up for "+ clientInDb.getFullName() + " and will be reactivated.");
 									clientInDb.setActive(true);
 									clientDao.updateClient(clientInDb);
+									Contact contact = new Contact(clientInDb.getFullName(), clientInDb.getPhoneNumber(), "", "", "", true);
+									contactDao.saveContact(contact);
 								}
 								
 							} else {
