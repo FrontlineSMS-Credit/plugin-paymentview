@@ -1,4 +1,5 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
+
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -15,11 +16,9 @@ import org.creditsms.plugins.paymentview.data.domain.TargetServiceItem;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * 
  * @author Roy
- *
  */
-public class TargetServiceItemIntergrationTest extends HibernateTestCase{
+public class TargetServiceItemIntergrationTest extends HibernateTestCase {
 	@Autowired    
 	HibernateServiceItemDao hibernateServiceItemDao;
 	@Autowired  

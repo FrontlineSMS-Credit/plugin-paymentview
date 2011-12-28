@@ -1,4 +1,5 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -9,11 +10,9 @@ import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * 
  * @author Roy
- *
  */
-public class ServiceItemIntergrationTest extends HibernateTestCase{
+public class ServiceItemIntergrationTest extends HibernateTestCase {
 	@Autowired    
 	HibernateServiceItemDao hibernateServiceItemDao;
 	

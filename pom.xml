@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>net.frontlinesms.core</groupId>
 		<artifactId>frontlinesms-pom-parent</artifactId>
-		<version>1.7.00-beta-7-SNAPSHOT</version>
+		<version>1.7.0-beta-7-SNAPSHOT</version>
 		<relativePath>../pom-parent</relativePath>
 	</parent>
 	<version>0.2.0-SNAPSHOT</version>
@@ -27,13 +27,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>net.frontlinesms.core</groupId>
-			<artifactId>frontlinesms</artifactId>
+			<artifactId>frontlinesms-core</artifactId>
 		</dependency>
-	    <dependency>
-			<groupId>net.frontlinesms.core</groupId>
-			<artifactId>frontlinesms-test</artifactId>
-			<version>0.01.02-SNAPSHOT</version>
-			<scope>test</scope>
-	    </dependency>
+		
+		<dependency>
+			<groupId>net.frontlinesms.test</groupId>
+			<artifactId>frontlinesms-plugins-test</artifactId>
+		</dependency>
 	</dependencies>
 </project>

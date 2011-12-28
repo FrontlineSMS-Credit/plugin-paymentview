@@ -9,10 +9,9 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.domain.CustomValue;
 import org.springframework.beans.factory.annotation.Autowired;
+
 /**
- * 
  * @author Alex, Roy
- *
  */
 public class ClientIntegrationTest extends HibernateTestCase {
 	@Autowired

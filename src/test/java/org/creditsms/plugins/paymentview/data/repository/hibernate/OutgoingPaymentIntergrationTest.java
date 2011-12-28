@@ -1,4 +1,5 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -11,12 +12,11 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment.Status;
 import org.springframework.beans.factory.annotation.Autowired;
+
 /**
- * 
  * @author Roy
- *
  */
-public class OutgoingPaymentIntergrationTest extends HibernateTestCase{
+public class OutgoingPaymentIntergrationTest extends HibernateTestCase {
 	@Autowired                     
 	HibernateClientDao hibernateClientDao;
 	@Autowired

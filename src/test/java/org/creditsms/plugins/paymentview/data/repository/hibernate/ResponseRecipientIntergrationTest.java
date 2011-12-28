@@ -9,11 +9,9 @@ import org.creditsms.plugins.paymentview.data.domain.ThirdPartyResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * 
  * @author Roy
- *
  */
-public class ResponseRecipientIntergrationTest extends HibernateTestCase{
+public class ResponseRecipientIntergrationTest extends HibernateTestCase {
 	@Autowired    
 	HibernateClientDao hibernateClientDao;
 	@Autowired    

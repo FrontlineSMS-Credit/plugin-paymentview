@@ -9,11 +9,9 @@ import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * 
  * @author Roy
- *
  */
-public class CustomFieldIntergrationTest extends HibernateTestCase{
+public class CustomFieldIntergrationTest extends HibernateTestCase {
 	@Autowired                     
 	HibernateCustomFieldDao hibernateCustomFieldDao;
 	

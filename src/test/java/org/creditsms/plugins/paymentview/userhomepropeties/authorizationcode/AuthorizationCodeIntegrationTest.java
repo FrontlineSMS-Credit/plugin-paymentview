@@ -1,6 +1,6 @@
 package org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode;
-import net.frontlinesms.junit.BaseTestCase;
 
+import net.frontlinesms.junit.BaseTestCase;
 
 public class AuthorizationCodeIntegrationTest extends BaseTestCase {
    private AuthorizationProperties properties;

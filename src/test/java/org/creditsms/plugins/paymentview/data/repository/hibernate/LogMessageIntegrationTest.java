@@ -8,10 +8,9 @@ import net.frontlinesms.junit.HibernateTestCase;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage;
 import org.creditsms.plugins.paymentview.data.domain.LogMessage.LogLevel;
 import org.springframework.beans.factory.annotation.Autowired;
+
 /**
- * 
  * @author Kim
- *
  */
 public class LogMessageIntegrationTest extends HibernateTestCase {
 	@Autowired

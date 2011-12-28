@@ -11,7 +11,7 @@ import net.frontlinesms.data.events.EntityDeletedNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.data.events.EntityUpdatedNotification;
 import net.frontlinesms.events.EventBus;
-import net.frontlinesms.junit.BaseTestCase;
+import net.frontlinesms.plugins.BasePluginControllerTests;
 import net.frontlinesms.plugins.payment.service.PaymentService;
 import net.frontlinesms.plugins.payment.service.PaymentServiceException;
 import net.frontlinesms.plugins.payment.service.PaymentServiceStartRequest;
@@ -25,7 +25,7 @@ import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsD
 
 import static org.mockito.Mockito.*;
 
-public class PaymentViewPluginControllerTest extends BaseTestCase {
+public class PaymentViewPluginControllerTest extends BasePluginControllerTests<PaymentViewPluginController> {
 	/** {@link PaymentViewPluginController} instance under test */
 	PaymentViewPluginController controller;
 	EventBus eventBus;
@@ -41,6 +41,11 @@ public class PaymentViewPluginControllerTest extends BaseTestCase {
 		
 		eventBus = mock(EventBus.class);
 		inject(controller, "eventBus", eventBus);
+	}
+	
+	@Override
+	protected Class<PaymentViewPluginController> getControllerClass() {
+		return PaymentViewPluginController.class;
 	}
 	
 	/**
