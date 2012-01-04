@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
@@ -148,7 +149,12 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 		
 		if(!targetAnalytics.getStatus(target.getId()).toString().equals(target.getStatus())) {
 			target.setStatus(targetAnalytics.getStatus(target.getId()).toString());
-			targetDao.saveTarget(target);
+			try {
+				targetDao.updateTarget(target);
+			} catch (DuplicateKeyException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		Object targetStatus = ui.createTableCell(target.getStatus());
 		
