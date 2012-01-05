@@ -172,7 +172,10 @@ public class PaymentViewPluginController extends BasePluginController
 				eventBus.unregisterObserver(m);
 			}
 		}
-		serviceMonitors.clear();
+		
+		if(serviceMonitors != null) {
+			serviceMonitors.clear();
+		}
 	}
 
 	/** @see net.frontlinesms.plugins.BasePluginController#initThinletTab(UiGeneratorController) */

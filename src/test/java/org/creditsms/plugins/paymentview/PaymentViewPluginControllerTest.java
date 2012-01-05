@@ -298,4 +298,7 @@ class MockPaymentService implements PaymentService {
 	public PaymentServiceUiActionHandler getServiceActionUiHandler(UiGeneratorController ui) {
 		return null;
 	}
+	public boolean isCheckBalanceEnabled() {
+		return false;
+	}
 }

@@ -568,7 +568,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		);
 		
 		if (tgt != null) {
-			targetAnalytics.computeAnalyticsIntervalDatesAndSavings(tgt.getId());
+			//targetAnalytics.computeAnalyticsIntervalDatesAndSavings(tgt.getId());
 		}
 			
 			for (FormatterMarkerType fe : formatEnums) {

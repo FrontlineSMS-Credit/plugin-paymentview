@@ -24,6 +24,9 @@ public interface PaymentService extends ConfigurableService {
 	/** @return <code>true</code> if the service can support outgoing payments and they are enabled. */ 
 	boolean isOutgoingPaymentEnabled();
 	
+	/** @return <code>true</code> if the service can support check balance and they are enabled. */ 
+	boolean isCheckBalanceEnabled();
+	
 	/** @return action handler for additional service-specific user-triggered actions, or <code>null</code> if there are no additional actions. */
 	PaymentServiceUiActionHandler getServiceActionUiHandler(UiGeneratorController ui);
 }
