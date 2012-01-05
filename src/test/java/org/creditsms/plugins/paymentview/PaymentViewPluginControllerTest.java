@@ -26,15 +26,12 @@ import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsD
 import static org.mockito.Mockito.*;
 
 public class PaymentViewPluginControllerTest extends BasePluginControllerTests<PaymentViewPluginController> {
-	/** {@link PaymentViewPluginController} instance under test */
-	PaymentViewPluginController controller;
 	EventBus eventBus;
 	PaymentServiceSettingsDao settingsDao;
 	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		controller = new PaymentViewPluginController();
 		
 		settingsDao = mock(PaymentServiceSettingsDao.class);
 		inject(controller, "paymentServiceSettingsDao", settingsDao);

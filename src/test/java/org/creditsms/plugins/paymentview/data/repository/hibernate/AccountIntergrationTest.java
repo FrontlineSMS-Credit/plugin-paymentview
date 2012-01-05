@@ -1,4 +1,5 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
+
 import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
@@ -9,9 +10,7 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * 
  * @author Roy
- *
  */
 public class AccountIntergrationTest extends HibernateTestCase {
 	@Autowired
