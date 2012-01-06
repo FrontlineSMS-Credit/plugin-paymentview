@@ -2,18 +2,19 @@ package org.creditsms.plugins.paymentview.ui;
 
 import java.math.BigDecimal;
 
-import org.creditsms.plugins.paymentview.PaymentViewPluginController;
-import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
-
-import thinlet.Thinlet;
-
 import net.frontlinesms.data.domain.PersistableSettings;
 import net.frontlinesms.plugins.payment.service.PaymentService;
 import net.frontlinesms.plugins.payment.service.PaymentServiceException;
 import net.frontlinesms.plugins.payment.service.ui.PaymentServiceUiActionHandler;
 import net.frontlinesms.plugins.payment.ui.PaymentPluginTabHandler;
+import net.frontlinesms.serviceconfig.ConfigurableServiceProperties;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpdateJob;
+
+import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.repository.PaymentServiceSettingsDao;
+
+import thinlet.Thinlet;
 
 public class WalletTabHander implements PaymentPluginTabHandler {
 	private static final String SERVICE_TABLE = "tbServices";
@@ -90,11 +91,11 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 			boolean isActive = pluginController.isActive(selectedSettings);
 			ui.add(menu, createMenuItem("Start service", "startSelectedService", !isActive));
 			ui.add(menu, createMenuItem("Stop service", "stopSelectedService", isActive));
-			ui.add(menu, createMenuItem("Check balance", "checkSelectedBalance", isActive));
-			
+						
 			if(isActive) {
 				PaymentService service = pluginController.getPaymentService(selectedSettings);
 				if(service != null) {
+					ui.add(menu, createMenuItem("Check balance", "checkSelectedBalance", service.isCheckBalanceEnabled()));
 					PaymentServiceUiActionHandler h = service.getServiceActionUiHandler(ui);
 					if(h != null && h.hasMenuItems()) {
 						ui.add(menu, Thinlet.create("separator"));
@@ -103,6 +104,8 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 						}
 					}
 				}
+			} else {
+				ui.add(menu, createMenuItem("Check balance", "checkSelectedBalance", false));
 			}
 		}
 	}
@@ -142,7 +145,7 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 		BigDecimal balance = service!=null? service.getBalanceAmount(): new BigDecimal("0");
 		return ui.createTableRow(s,
 				/*active:*/  pluginController.isActive(s)? "YES": "NO", // TODO i18n
-				/*name:*/    s.getClass() + ":" + s.getId(),
+				/*name:*/    getProviderName(s.getServiceClass()) + ":" + s.getId(),
 				/*balance:*/ balance.toString()); // TODO would be nice to i18n the decimalisation.
 	}
 
@@ -156,5 +159,16 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 	
 	private Object getServiceTable() {
 		return find(SERVICE_TABLE);
+	}
+	
+	public static String getProviderName(Class<?> clazz) {
+		String ret = clazz.getCanonicalName(); //Default return value
+		if (clazz.isAnnotationPresent(ConfigurableServiceProperties.class)) {
+			ConfigurableServiceProperties provider = clazz.getAnnotation(ConfigurableServiceProperties.class);
+			if (provider != null && !provider.name().equals("")) {
+				ret = provider.name();
+			}
+		}
+		return ret;
 	}
 }

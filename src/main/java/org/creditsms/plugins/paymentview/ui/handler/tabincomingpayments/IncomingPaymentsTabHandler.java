@@ -129,7 +129,9 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		pnlBtns = ui.find(incomingPaymentsTab, COMPONENT_PANEL_MTNS);
 		pnlIncomingPaymentsTableComponent = ui.find(incomingPaymentsTab, COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE);
 		this.ui.add(pnlIncomingPaymentsTableComponent, this.incomingPaymentsTablePager.getPanel());
-		this.ui.setEnabled(ui.find(pnlBtns, BTN_DELETE_INCOMING_PAYMENT), false);
+		if(ui.find(pnlBtns, BTN_DELETE_INCOMING_PAYMENT)!=null){
+			this.ui.setEnabled(ui.find(pnlBtns, BTN_DELETE_INCOMING_PAYMENT), false);
+		}
 		return incomingPaymentsTab;
 	}
 	
@@ -391,7 +393,9 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	
 	// > EXPORTS...
 	public void exportIncomingPayments() {
-		this.ui.setEnabled(ui.find(pnlBtns, BTN_DELETE_INCOMING_PAYMENT), false);
+		if(ui.find(pnlBtns, BTN_DELETE_INCOMING_PAYMENT)!=null){
+			this.ui.setEnabled(ui.find(pnlBtns, BTN_DELETE_INCOMING_PAYMENT), false);
+		}
 		Object[] selectedItems = ui.getSelectedItems(incomingPaymentsTableComponent);
 		if (selectedItems.length <= 0){
 			exportIncomingPayments(getIncomingPaymentsForExport());
@@ -564,7 +568,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		);
 		
 		if (tgt != null) {
-			targetAnalytics.computeAnalyticsIntervalDatesAndSavings(tgt.getId());
+			//targetAnalytics.computeAnalyticsIntervalDatesAndSavings(tgt.getId());
 		}
 			
 			for (FormatterMarkerType fe : formatEnums) {
