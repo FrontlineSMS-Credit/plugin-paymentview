@@ -109,7 +109,7 @@ public interface OutgoingPaymentDao {
 	/**
 	 * returns OutgoingPayment(s) by amount paid and client inactive (Time paid desc)
 	 * */
-	public List<OutgoingPayment> getByAmountPaidForInactiveClient( BigDecimal amountPaid, OutgoingPayment.Status status);
+	public List<OutgoingPayment> getOutgoingPaymentByAmountPayBillNameAndAccountNo(String payBillName, String accountNum, BigDecimal amountPaid, OutgoingPayment.Status status);
 	
 	/**
 	 * returns OutgoingPayment(s) by payment service settings

@@ -44,6 +44,8 @@ public class OutgoingPayment {
 	private Long timeConfirmed;
 	@ManyToOne @JoinColumn(name=FIELD_SERVICE_SETTINGS)
 	private PersistableSettings serviceSettings;
+	@Column(nullable=true)
+	private boolean isPayBillPayment;
 
 	public enum Field implements EntityField<OutgoingPayment> {
 		TIME_PAID(FIELD_TIME_PAID);
@@ -124,6 +126,13 @@ public class OutgoingPayment {
 		this.paymentId = paymentId;
 	}
 
+	public boolean isPayBillPayment() {
+		return isPayBillPayment;
+	}
+
+	public void setPayBillPayment(boolean isPayBillPayment) {
+		this.isPayBillPayment = isPayBillPayment;
+	}
 	public Account getAccount() {
 		return account;
 	}

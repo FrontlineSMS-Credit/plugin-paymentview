@@ -147,6 +147,7 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 					updateClient(o);
 					o.setStatus(OutgoingPayment.Status.CREATED);
 					o.setConfirmationCode("");
+					o.setPayBillPayment(false);
 					outgoingPaymentDao.saveOutgoingPayment(o);
 					try {
 						paymentService.makePayment(o);

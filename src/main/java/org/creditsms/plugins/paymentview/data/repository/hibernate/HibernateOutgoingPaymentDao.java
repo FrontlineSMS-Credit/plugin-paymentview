@@ -161,12 +161,16 @@ public class HibernateOutgoingPaymentDao extends
 		return super.getList(criteria);
 	}
 	
-	public List<OutgoingPayment> getByAmountPaidForInactiveClient( BigDecimal amountPaid, OutgoingPayment.Status status){
+	public List<OutgoingPayment> getOutgoingPaymentByAmountPayBillNameAndAccountNo(
+			String payBillName, String accountNum, BigDecimal amountPaid, 
+			OutgoingPayment.Status status){
 		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.eq("amountPaid", amountPaid));
 		criteria.add(Restrictions.eq("status", status));
+		criteria.add(Restrictions.eq("isPayBillPayment", Boolean.TRUE));
+		criteria.add(Restrictions.eq("notes", accountNum));
 		DetachedCriteria clientCriteria = criteria.createCriteria("client");
-		clientCriteria.add(Restrictions.eq("active", Boolean.FALSE));
+		clientCriteria.add(Restrictions.eq("firstName", payBillName));
 		return super.getList(criteria);
 	}
 

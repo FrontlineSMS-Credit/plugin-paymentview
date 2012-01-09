@@ -118,6 +118,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 				outgoingPayment.setPaymentId(ui.getText(fieldOpPaymentId));
 				outgoingPayment.setConfirmationCode("");
 				outgoingPayment.setPaymentServiceSettings(paymentService.getSettings());
+				outgoingPayment.setPayBillPayment(false);
 
 				new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog(this, "sendPayment");
 
