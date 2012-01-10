@@ -12,7 +12,7 @@
 		<relativePath>../pom-parent</relativePath>
 	</parent>
 	<version>0.2.0-SNAPSHOT</version>
-	
+
 	<scm>
 		<developerConnection>scm:git:git@github.com:${github.projectOwner}/${github.projectName}.git</developerConnection>
 	</scm>
@@ -23,13 +23,13 @@
 			<url>ftp://dev.frontlinesms.com</url>
 		</repository>		
 	</distributionManagement>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>net.frontlinesms.core</groupId>
 			<artifactId>frontlinesms-core</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.frontlinesms.test</groupId>
 			<artifactId>frontlinesms-test</artifactId>
