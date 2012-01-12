@@ -210,6 +210,8 @@ public class EditClientHandler extends BaseDialog{
 												} catch (DuplicateKeyException e) {
 													throw new RuntimeException(e);
 												}	
+											} else {
+												customValueDao.deleteCustomValue(cv);
 											}
 										}
 									}

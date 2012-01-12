@@ -116,8 +116,9 @@ public class ClientCsvImporter extends CsvImporter {
 
 		for (int y=0; y<selectedCustomFieldlst.size(); y++) {
 			CustomValue cv = selectedCustomValueslst.get(y);
-			if(cv.getStrValue().trim().length()==0){
-			} else {
+//			if(cv.getStrValue().trim().length()==0){
+//				//customValueDao.deleteCustomValue(cv);
+//			} else {
 				if(phonePattern.formatPhoneNumber(cv.getClient().getPhoneNumber())) {
 					cv.getClient().setPhoneNumber(phonePattern.getNewPhoneNumberPattern());
 					if(client.getPhoneNumber().equals(cv.getClient().getPhoneNumber())) {
@@ -130,18 +131,24 @@ public class ClientCsvImporter extends CsvImporter {
 						} else {
 							for(CustomValue customVal: lstCustomValue) {
 								if(customVal.getCustomField().getId()==cv.getCustomField().getId()){
-									customVal.setStrValue(cv.getStrValue());
-									customValueDao.updateCustomValue(customVal);
+									if (cv.getStrValue().trim().length()!=0) {
+										customVal.setStrValue(cv.getStrValue());
+										customValueDao.updateCustomValue(customVal);
+									} else {
+										customValueDao.deleteCustomValue(customVal);
+									}
 									cValExist=true;
 								} 
 							}
 							if(cValExist==false){
-								customValueDao.saveCustomValue(cv);
+								if (cv.getStrValue().trim().length()!=0) {
+									customValueDao.saveCustomValue(cv);
+								}
 							}
 						}	
 					}
 				}
-			}
+			//}
 		}	
 	}
 	

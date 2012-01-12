@@ -101,6 +101,7 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 		List<OutgoingPayment> sentPayments = new ArrayList<OutgoingPayment>();
 		sentPayments = getSentPaymentsForUI(startIndex, limit);
 		Object[] listItems = toThinletComponents(sentPayments);
+		System.out.println("kk0");
 		return new PagedListDetails(totalItemCount, listItems);
 	}
 
@@ -128,8 +129,9 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 		}
 		
 		if (strStartDate.equals("") && strEndDate.equals("")) {
-			totalItemCount = this.outgoingPaymentDao.getOutgoingPaymentsCount();
 			sentPayments = this.outgoingPaymentDao.getAllOutgoingPayments(startIndex, limit);
+			totalItemCount = this.outgoingPaymentDao.getOutgoingPaymentsCount();
+			
 		} else {
 			if (strStartDate.equals("") && endDate != null){
 				totalItemCount = this.outgoingPaymentDao.getOutgoingPaymentsByEndDate(endDate).size();
