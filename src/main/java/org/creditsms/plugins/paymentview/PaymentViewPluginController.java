@@ -291,15 +291,15 @@ public class PaymentViewPluginController extends BasePluginController
 					} else if (notification instanceof EntityDeletedNotification<?>) {
 						stopService(settings);
 					} else if (notification instanceof EntityUpdatedNotification<?>) {
-						PaymentService service = activeServices.get(settings.getId());
-						if(service == null) return;
-						service.stopService();
-						service.setSettings(settings);
-						try {
-							service.startService();
-						} catch (PaymentServiceException ex) {
-							log.warn("Failed to restart PaymentService for settings " + settings.getId(), ex);
-						}	
+//						PaymentService service = activeServices.get(settings.getId());
+//						if(service == null) return;
+//						service.stopService();
+//						service.setSettings(settings);
+//						try {
+//							service.startService();
+//						} catch (PaymentServiceException ex) {
+//							log.warn("Failed to restart PaymentService for settings " + settings.getId(), ex);
+//						}	
 					}
 				}
 			}
