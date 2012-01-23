@@ -291,6 +291,7 @@ public class PaymentViewPluginController extends BasePluginController
 					} else if (notification instanceof EntityDeletedNotification<?>) {
 						stopService(settings);
 					} else if (notification instanceof EntityUpdatedNotification<?>) {
+						// Following commented out due to CREDIT-250
 //						PaymentService service = activeServices.get(settings.getId());
 //						if(service == null) return;
 //						service.stopService();
