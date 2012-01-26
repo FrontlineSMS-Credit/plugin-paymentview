@@ -1,6 +1,5 @@
 package org.creditsms.plugins.paymentview.utils;
 
-
 public final class PaymentPluginConstants {
 	public static final String ACCOUNTS_DELIMITER = ",";
 	public static final String COMMON_NAME = "plugins.paymentview.common.name";
@@ -36,4 +35,5 @@ public final class PaymentPluginConstants {
 	public static final String COMMON_LOG_DESCRIPTION = "plugins.paymentview.common.logs.description";
 	public static final String COMMON_LOG_MESSAGE = "plugins.paymentview.common.logs.message";
 	public static final String COMMON_LOG_TIME_DATE = "plugins.paymentview.common.logs.time";
+	public static final String CONFIRM_ACCEPT_DISTRIBUTE_IP ="plugins.paymentview.payment.distribute.confirmation";
 }

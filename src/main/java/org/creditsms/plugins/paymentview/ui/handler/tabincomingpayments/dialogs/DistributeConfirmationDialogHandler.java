@@ -17,13 +17,13 @@ import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.IncomingPaymentsTabHandler.Child;
+import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
 
 public class DistributeConfirmationDialogHandler extends BaseDialog{
 //> CONSTANTS
 	private static final String TBL_CHILDREN = "tbl_children";
 	private static String XML_DISTRIBUTE_CONFIRMATION = "/ui/plugins/paymentview/incomingpayments/dialogs/dlgDistributeConfirmation.xml";
-	private static String CONFIRM_ACCEPT_DISTRIBUTE_IP = "";
-	
+
 //>DAOs
 	private IncomingPaymentDao incomingPaymentDao;
 	private AccountDao accountDao;
@@ -85,8 +85,8 @@ public class DistributeConfirmationDialogHandler extends BaseDialog{
 	}
 
 	public void create(){
-		CONFIRM_ACCEPT_DISTRIBUTE_IP = "Are you sure you want to distribute this group payment?\n After creating a group payment, this action cannot be undone.";
-		dialogConfimDistributeIp = ((UiGeneratorController) ui).showConfirmationDialog("createInvidualIncomingPayments", this, CONFIRM_ACCEPT_DISTRIBUTE_IP);
+		//CONFIRM_ACCEPT_DISTRIBUTE_IP = "Are you sure you want to distribute this group payment?\n After creating a group payment, this action cannot be undone.";
+		dialogConfimDistributeIp = ((UiGeneratorController) ui).showConfirmationDialog("createInvidualIncomingPayments", this, PaymentPluginConstants.CONFIRM_ACCEPT_DISTRIBUTE_IP);
 	}
 	
 	public void createInvidualIncomingPayments(){

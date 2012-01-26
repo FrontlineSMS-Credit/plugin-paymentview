@@ -2,6 +2,7 @@ package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.step
 
 import static net.frontlinesms.FrontlineSMSConstants.PROPERTY_FIELD;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpdateJob;
+import net.frontlinesms.ui.handler.PagedListDetails;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
@@ -114,6 +116,14 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 		this.clientsTablePager.refresh();
 	}
 	
+//	protected PagedListDetails getClientListDetails(int startIndex, int limit) {
+//		List<Client> clients = new ArrayList<Client>();
+//		clients = getClients(clientFilter, startIndex, limit);
+//		Object[] listItems = toThinletComponents(clients);
+//		return new PagedListDetails(totalItemCount, listItems);
+//
+//	}
+	
 	protected Object[] toThinletComponents(List<Client> clients) {
 		List<Object> rows = new ArrayList<Object>();
 
@@ -137,7 +147,11 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 		
 		Object amountSaved = ui.createTableCell(targetAnalytics.getAmountSaved(target.getId()).toString());
 		Object daysRemaining = ui.createTableCell(targetAnalytics.getDaysRemaining(target.getId()).toString());
-		Object lastAmountPaid = ui.createTableCell(targetAnalytics.getLastAmountPaid(target.getId()).toString());
+		
+		BigDecimal lastAmountPaidVal = BigDecimal.ZERO;
+		lastAmountPaidVal = targetAnalytics.getLastAmountPaid(target.getId());
+		
+		Object lastAmountPaid = ui.createTableCell(lastAmountPaidVal.toString());
 		Object percentageToGo = ui.createTableCell(targetAnalytics.getPercentageToGo(target.getId()).toString()+" %");
 		Object lastDatePaid = "";
 		
@@ -214,8 +228,8 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 	
 	protected List<Client> getClients(String filter, int startIndex, int limit) {
 		if (!filter.trim().isEmpty()) {
-			totalItemCount  = this.clientDao.getClientsByNameFilter(filter).size();
-			List<Client> clients = this.clientDao.getClientsByFilter(filter, startIndex, limit);
+			totalItemCount  = this.clientDao.getAllClientsByNameFilter(filter).size();
+			List<Client> clients = this.clientDao.getAllClientsByFilter(filter, startIndex, limit);
 			
 			if(this.serviceItemDao.getServiceItemsLikeName(filter).size()==0) {
 				List<Target> lstTgts = targetDao.getTargetsByStatus(filter);
@@ -241,12 +255,12 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 			}
 						
 			return clients;
-		}else{
+		} else {
 			if (clientListForAnalytics.isEmpty()){
-				totalItemCount = this.clientDao.getAllActiveClientsSorted(getClientsSortField(), getClientsSortOrder()).size();
-				List<Client> activeClientsSorted = this.clientDao.getAllActiveClientsSorted
+				totalItemCount = this.clientDao.getAllClientsSorted(getClientsSortField(), getClientsSortOrder()).size();
+				List<Client> clientsSorted = this.clientDao.getAllClientsSorted
 										(getClientsSortField(), getClientsSortOrder());
-				return activeClientsSorted;
+				return clientsSorted;
 			} else {
 				totalItemCount = clientListForAnalytics.size();
 				if (clientsTablePager.getMaxItemsPerPage() < clientListForAnalytics.size()){					

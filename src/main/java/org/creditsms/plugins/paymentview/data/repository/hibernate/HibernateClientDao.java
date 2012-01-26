@@ -51,6 +51,12 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements
 		return getAllActiveClients().size();
 	}
 
+	public List<Client> getAllClientsSorted(
+			Field sortBy, Order order) {
+		DetachedCriteria criteria = super.getSortCriterion(sortBy, order);
+		return super.getList(criteria);
+	}
+	
 	public List<Client> getAllActiveClientsSorted(
 			Field sortBy, Order order) {
 		DetachedCriteria criteria = super.getSortCriterion(sortBy, order);
@@ -86,6 +92,44 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements
 						.add(Subqueries.propertyIn("id", subCriteria)));
 		criteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),Boolean.TRUE));
 		return super.getList(criteria);
+	}
+	
+	public List<Client> getAllClientsByNameFilter(String filter) {
+		DetachedCriteria subCriteria = DetachedCriteria.forClass(CustomValue.class);
+		subCriteria.add(Restrictions.ilike("strValue", filter.trim(),MatchMode.ANYWHERE));
+		DetachedCriteria customFieldSubCriteria = subCriteria.createCriteria("customField");
+		customFieldSubCriteria.add(Restrictions.eq(CustomField.Field.USED.getFieldName(),Boolean.TRUE));
+		subCriteria.setProjection(Projections.distinct(Projections.property("client")));
+
+		DetachedCriteria criteria = super.getCriterion().add(
+				Restrictions
+						.disjunction()
+						.add(Restrictions.ilike("firstName", filter.trim(),
+								MatchMode.ANYWHERE))
+						.add(Restrictions.ilike("otherName", filter.trim(),
+								MatchMode.ANYWHERE))
+						.add(Subqueries.propertyIn("id", subCriteria)));
+		return super.getList(criteria);
+	}
+	
+	public List<Client> getAllClientsByFilter(String filter, int startIndex,int limit) {
+		DetachedCriteria subCriteria = DetachedCriteria.forClass(CustomValue.class);
+		subCriteria.add(Restrictions.ilike("strValue", filter.trim(),MatchMode.ANYWHERE));
+		DetachedCriteria customFieldSubCriteria = subCriteria.createCriteria("customField");
+		customFieldSubCriteria.add(Restrictions.eq(CustomField.Field.USED.getFieldName(),Boolean.TRUE));
+		subCriteria.setProjection(Projections.distinct(Projections.property("client")));
+
+		DetachedCriteria criteria = super.getCriterion().add(
+				Restrictions
+						.disjunction()
+						.add(Restrictions.ilike("firstName", filter.trim(),
+								MatchMode.ANYWHERE))
+						.add(Restrictions.ilike("otherName", filter.trim(),
+								MatchMode.ANYWHERE))
+						.add(Restrictions.ilike("phoneNumber", filter.trim(),
+								MatchMode.ANYWHERE))
+						.add(Subqueries.propertyIn("id", subCriteria)));
+		return super.getList(criteria, startIndex, limit);
 	}
 	
 	public List<Client> getClientsByNameFilter(String filter) {

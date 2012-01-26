@@ -80,8 +80,8 @@ public class TargetAnalytics {
 	}
 	
 	public BigDecimal getLastAmountPaid(long tartgetId){
-	    String accountNumber = getAccountNumber(tartgetId);
-	    List<IncomingPayment> incList = incomingPaymentDao.getActiveIncomingPaymentsByAccountNumberOrderByTimepaid(accountNumber);
+	    Target tgt = targetDao.getTargetById(tartgetId);
+	    List<IncomingPayment> incList = incomingPaymentDao.getActiveIncomingPaymentsByTargetAndDates(tartgetId , tgt.getStartDate(), tgt.getEndDate());
 	    
 	    if(incList!=null && incList.size()>0){
 	    	return incList.get(0).getAmountPaid();
@@ -90,8 +90,9 @@ public class TargetAnalytics {
 	    }
 	}
 	
-	private List<IncomingPayment> getIncomingPaymentsByTargetId(long tartgetId){
-	    List <IncomingPayment> incomingPayments = incomingPaymentDao.getActiveIncomingPaymentsByTarget(tartgetId);
+	private List<IncomingPayment> getIncomingPaymentsByTargetId(long targetId){
+		Target target = targetDao.getTargetById(targetId);
+	    List <IncomingPayment> incomingPayments = incomingPaymentDao.getIncomingPaymentsByTargetAndDates(targetId, target.getStartDate(), target.getEndDate());
 		return incomingPayments;
 	}
 	
@@ -103,7 +104,6 @@ public class TargetAnalytics {
 
 	public Status getStatus(long targetId){
 		List <IncomingPayment> incomingPayments = getIncomingPaymentsByTargetId(targetId);
-		
 		BigDecimal amountPaid = calculateAmount(incomingPayments);
 		BigDecimal totalTargetCost = targetDao.getTargetById(targetId).getTotalTargetCost();
 
@@ -151,9 +151,11 @@ public class TargetAnalytics {
 		return getDateDiffDays(new Date().getTime(), endTime);
 	}
 	
-	public Date getLastDatePaid(long tartgetId){
-	    String accountNumber = getAccountNumber(tartgetId);
-	    List<IncomingPayment> incList = incomingPaymentDao.getActiveIncomingPaymentsByAccountNumberOrderByTimepaid(accountNumber);
+	public Date getLastDatePaid(long targetId){
+	  //  String accountNumber = getAccountNumber(targetId);
+	    Target target =targetDao.getTargetById(targetId);
+	    List<IncomingPayment> incList = incomingPaymentDao.getActiveIncomingPaymentsByTargetAndDates(targetId, 
+	    		target.getStartDate(), target.getEndDate());
 	    
 	    if(incList!=null && incList.size()>0){
 	    	return new Date(incList.get(0).getTimePaid());
