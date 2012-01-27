@@ -351,7 +351,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		} else {
 			Client client = clients.get(0);// Its a single object list
 			reasignClient = client;
-			reassignIncomingPayment();			
+			reassignIncomingPayment();
 		}
 	}
 
@@ -379,37 +379,109 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	}
 
 	public void reasignAuthPass() {
-		
+
 		Object selectedItem = ui
-		.getSelectedItem(incomingPaymentsTableComponent);
-		IncomingPayment incomingPayment = ui.getAttachedObject(
-				selectedItem, IncomingPayment.class);
+				.getSelectedItem(incomingPaymentsTableComponent);
+		IncomingPayment incomingPayment = ui.getAttachedObject(selectedItem,
+				IncomingPayment.class);
 		String tempPhoneNo = incomingPayment.getPhoneNumber();
 		incomingPayment.setAccount(getAccount(reasignClient));
 		incomingPayment.setPhoneNumber(reasignClient.getPhoneNumber());
 		Target tgtIn = incomingPayment.getTarget();
+
+		Target tgt = targetDao.getActiveTargetByAccount(getAccount(
+				incomingPayment.getPhoneNumber()).getAccountNumber());
+		incomingPayment.setTarget(tgt);
+
 		if (tgtIn != null) {
-		
+			Account account = accountDao.getAccountById(tgtIn.getAccount()
+					.getAccountId());
+			if (account.getActiveAccount()) {
+				if (tgtIn.getCompletedDate()==null) {
+					/*
+					 * Still an active target
+					 * 
+					 * 1) Reassign the incoming payment to another user 2)
+					 * Update the target status
+					 */
+					incomingPaymentDao.updateIncomingPayment(incomingPayment);
+					if (tgt != null) {
+						updateTargetStatus(tgt);
+					}
+				} else {
+					/*
+					 * Completed target cannot be activated since another target
+					 * has been created for the user
+					 */
+					ui.alert("This incoming payment belongs to a closed target.");
+				}
+			} else {
+				if (tgtIn.getCompletedDate()!=null) {
+					/*
+					 * Completed target but can still be activated since no
+					 * other target has been created for the user
+					 * 
+					 * 1) Reassign the incoming payment to another user 2)
+					 * Activate the target and account 3) Update the target
+					 * status
+					 */
+					incomingPaymentDao.updateIncomingPayment(incomingPayment);
+					account.setActiveAccount(true);
+					accountDao.updateAccount(account);
+					tgtIn.setCompletedDate(null);
+					try {
+						targetDao.updateTarget(tgtIn);
+					} catch (DuplicateKeyException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					if (tgt != null) {
+						updateTargetStatus(tgt);
+					}
+				}
+			}
 		} else {
-			Target tgt = targetDao.getActiveTargetByAccount(getAccount(
-					incomingPayment.getPhoneNumber())
-					.getAccountNumber());
-			incomingPayment.setTarget(tgt);
+			if (tgt != null) {
+				/*
+				 * Reassigned incoming payment is added to an active target.
+				 * 
+				 * 1) Update the target status 2) Check the target status 3) If
+				 * the target is complete deactivate the target and account
+				 */
+				incomingPaymentDao.updateIncomingPayment(incomingPayment);
+				updateTargetStatus(tgt);
+			} else {
+				incomingPaymentDao.updateIncomingPayment(incomingPayment);
+			}
 		}
-		
-		incomingPaymentDao.updateIncomingPayment(incomingPayment);
-		
 		refresh();
-		logMessageDao.saveLogMessage(new LogMessage(
-				LogMessage.LogLevel.INFO,
-				"Payment Reassigned to different client",
-			"Incoming Payment ["
-					+ incomingPayment.getConfirmationCode()
-					+ "] Reassigned from " + tempPhoneNo
-					+ " to different Client"
+		logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.INFO,
+				"Payment Reassigned to different client", "Incoming Payment ["
+						+ incomingPayment.getConfirmationCode()
+						+ "] Reassigned from " + tempPhoneNo
+						+ " to different Client"
 						+ incomingPayment.getPhoneNumber()));
 		reasignClient = null;
 		clientSelector.removeDialog();
+	}
+	
+	private void updateTargetStatus(Target tgt) {
+		Target activatedTgt = targetDao.getTargetById(tgt.getId());
+		if (targetAnalytics.getStatus(activatedTgt.getId())
+				.equals(TargetAnalytics.Status.PAID)) {
+			Account account = accountDao.getAccountById(activatedTgt
+					.getAccount().getAccountId());
+			account.setActiveAccount(false);
+			accountDao.updateAccount(account);
+
+			activatedTgt.setCompletedDate(new Date());
+			try {
+				targetDao.updateTarget(activatedTgt);
+			} catch (DuplicateKeyException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void reassignIncomingPayment() {

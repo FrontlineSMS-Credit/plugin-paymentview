@@ -31,9 +31,9 @@ public class Target {
 	public static final String FIELD_ACCOUNT = "accountId";
 	public static final String FIELD_TARGET_SERVICE_ITEM = "targetServiceItemId";
 	public static final String FIELD_TOTAL_TARGET_COST = "totalTargetCost";
-	public static final String FIELD_INCOMING_PAYMENT ="incomingPaymentId";
-	public static final String FIELD_TARGET_STATUS ="status";
-	
+	public static final String FIELD_INCOMING_PAYMENT = "incomingPaymentId";
+	public static final String FIELD_TARGET_STATUS = "status";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, unique = true)
@@ -59,30 +59,37 @@ public class Target {
 	private Set<IncomingPayment> incomingPayments = new HashSet<IncomingPayment>();
 
 	public enum Field implements EntityField<Target> {
-		START_DATE(FIELD_START_DATE),
-		END_DATE(FIELD_END_DATE),
-		COMPLETED_DATE(FIELD_COMPLETED_DATE),
-		ACCOUNT(FIELD_ACCOUNT),
-		SERVICE_ITEM(FIELD_TARGET_SERVICE_ITEM),
-		INCOMING_PAYMENT(FIELD_TARGET_STATUS);
-		
+		START_DATE(FIELD_START_DATE), END_DATE(FIELD_END_DATE), COMPLETED_DATE(
+				FIELD_COMPLETED_DATE), ACCOUNT(FIELD_ACCOUNT), SERVICE_ITEM(
+				FIELD_TARGET_SERVICE_ITEM), INCOMING_PAYMENT(
+				FIELD_TARGET_STATUS);
+
 		/** name of a field */
 		private final String fieldName;
+
 		/**
 		 * Creates a new {@link Field}
-		 * @param fieldName name of the field
+		 * 
+		 * @param fieldName
+		 *            name of the field
 		 */
-		Field(String fieldName) { this.fieldName = fieldName; }
+		Field(String fieldName) {
+			this.fieldName = fieldName;
+		}
+
 		/** @see EntityField#getFieldName() */
-		public String getFieldName() { return this.fieldName; }
+		public String getFieldName() {
+			return this.fieldName;
+		}
 	}
 
 	/** Empty constructor required for hibernate. */
 	public Target() {
 	}
-	
-	//NEW CONSTRUCTOR
-	public Target(Date targetStartDate,Date targetEndDate, Account account, BigDecimal totalTargetCost, String status) {
+
+	// NEW CONSTRUCTOR
+	public Target(Date targetStartDate, Date targetEndDate, Account account,
+			BigDecimal totalTargetCost, String status) {
 		this.startDate = targetStartDate.getTime();
 		this.endDate = targetEndDate.getTime();
 		this.completedDate = null;
@@ -98,10 +105,9 @@ public class Target {
 	public Date getEndDate() {
 		return new Date(endDate);
 	}
-	
+
 	public Date getCompletedDate() {
-		return completedDate == null ? null :
-				new Date(completedDate);
+		return completedDate == null ? null : new Date(completedDate);
 	}
 
 	public long getId() {
@@ -119,10 +125,10 @@ public class Target {
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate.getTime();
 	}
-	
+
 	public void setCompletedDate(Date completedDate) {
 		if (completedDate != null) {
-			this.completedDate = completedDate.getTime();	
+			this.completedDate = completedDate.getTime();
 		} else {
 			this.completedDate = null;
 		}
@@ -131,7 +137,7 @@ public class Target {
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate.getTime();
 	}
@@ -143,7 +149,7 @@ public class Target {
 	public void setIncomingPayments(Set<IncomingPayment> incomingPayments) {
 		this.incomingPayments = incomingPayments;
 	}
-	
+
 	public BigDecimal getTotalTargetCost() {
 		return totalTargetCost;
 	}
@@ -151,7 +157,7 @@ public class Target {
 	public void setTotalTargetCost(BigDecimal totalTargetCost) {
 		this.totalTargetCost = totalTargetCost;
 	}
-	
+
 	public Set<TargetServiceItem> getTargetServiceItem() {
 		return targetServiceItem;
 	}
@@ -159,6 +165,7 @@ public class Target {
 	public void setTargetServiceItem(Set<TargetServiceItem> targetServiceItem) {
 		this.targetServiceItem = targetServiceItem;
 	}
+
 	public String getStatus() {
 		return status;
 	}
@@ -173,8 +180,10 @@ public class Target {
 		int result = 1;
 		result = prime * result + ((account == null) ? 0 : account.hashCode());
 		result = prime * result + (int) (endDate ^ (endDate >>> 32));
-		/*result = prime * result
-				+ ((serviceItem == null) ? 0 : serviceItem.hashCode());*/
+		/*
+		 * result = prime * result + ((serviceItem == null) ? 0 :
+		 * serviceItem.hashCode());
+		 */
 		result = prime * result + (int) (startDate ^ (startDate >>> 32));
 		return result;
 	}
@@ -195,11 +204,11 @@ public class Target {
 			return false;
 		if (endDate != other.endDate)
 			return false;
-		/*if (serviceItem == null) {
-			if (other.serviceItem != null)
-				return false;
-		} else if (!serviceItem.equals(other.serviceItem))
-			return false;*/
+		/*
+		 * if (serviceItem == null) { if (other.serviceItem != null) return
+		 * false; } else if (!serviceItem.equals(other.serviceItem)) return
+		 * false;
+		 */
 		if (startDate != other.startDate)
 			return false;
 		// WARNING => NULL?????
@@ -211,7 +220,7 @@ public class Target {
 	@Override
 	public String toString() {
 		return "Target [id=" + id + ", startDate=" + startDate + ", endDate="
-				+ endDate + ", serviceItem="
-				+ totalTargetCost + "]";
+				+ endDate + ", completedDate=" + completedDate
+				+ ", serviceItem=" + totalTargetCost + "]";
 	}
 }

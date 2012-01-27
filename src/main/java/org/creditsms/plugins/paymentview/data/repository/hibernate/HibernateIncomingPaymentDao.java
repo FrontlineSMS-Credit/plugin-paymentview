@@ -84,6 +84,7 @@ public class HibernateIncomingPaymentDao extends
 	public List<IncomingPayment> getIncomingPaymentsByTargetAndDates(
 			long targetId, Date startDate, Date endDate) {
 		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
+		criteria.add(Restrictions.eq("active", true));
 		DetachedCriteria accountCriteria = criteria.createCriteria("target");
 		criteria.add(Restrictions.between("timePaid", startDate.getTime(), endDate.getTime()));
 		accountCriteria.add(Restrictions.eq("id", targetId));
