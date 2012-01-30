@@ -4,6 +4,8 @@ import static net.frontlinesms.FrontlineSMSConstants.PROPERTY_FIELD;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +18,6 @@ import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.events.FrontlineUiUpdateJob;
-import net.frontlinesms.ui.handler.PagedListDetails;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
@@ -45,7 +46,8 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 	private ServiceItemDao serviceItemDao;
 	private TargetServiceItemDao targetServiceItemDao;
 	private CreateSettingsHandler createSettingsHandler;
-
+	private NumberFormat formatter = new DecimalFormat("###,###.00");
+	
 	public CreateSettingsTableHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController,
 			CreateSettingsHandler createSettingsHandler) {
@@ -145,13 +147,13 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 		Object name = ui.createTableCell(target.getAccount().
 				getClient().getFullName());
 		
-		Object amountSaved = ui.createTableCell(targetAnalytics.getAmountSaved(target.getId()).toString());
+		Object amountSaved = ui.createTableCell(formatter.format(targetAnalytics.getAmountSaved(target.getId())));
 		Object daysRemaining = ui.createTableCell(targetAnalytics.getDaysRemaining(target.getId()).toString());
 		
 		BigDecimal lastAmountPaidVal = BigDecimal.ZERO;
 		lastAmountPaidVal = targetAnalytics.getLastAmountPaid(target.getId());
 		
-		Object lastAmountPaid = ui.createTableCell(lastAmountPaidVal.toString());
+		Object lastAmountPaid = ui.createTableCell(formatter.format(lastAmountPaidVal));
 		Object percentageToGo = ui.createTableCell(targetAnalytics.getPercentageToGo(target.getId()).toString()+" %");
 		Object lastDatePaid = "";
 		
@@ -177,9 +179,9 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 		Object endDate = ui.createTableCell(dateFormat.format(target.getEndDate()));
 		
 		//targetAnalytics.computeAnalyticsIntervalDatesAndSavings(target.getId());
-	    Object monthlyAmountSaved = ui.createTableCell(targetAnalytics.getMonthlyAmountSaved().toString());
-	    Object remainingAmount = ui.createTableCell(target.getTotalTargetCost().subtract(targetAnalytics.getAmountSaved(target.getId())).toString());
-	    Object monthlyAmountDue = ui.createTableCell(targetAnalytics.getMonthlyAmountDue().toString());
+	    Object monthlyAmountSaved = ui.createTableCell(formatter.format(targetAnalytics.getMonthlyAmountSaved()));
+	    Object remainingAmount = ui.createTableCell(formatter.format(target.getTotalTargetCost().subtract(targetAnalytics.getAmountSaved(target.getId()))));
+	    Object monthlyAmountDue = ui.createTableCell(formatter.format(targetAnalytics.getMonthlyAmountDue()));
 	    
 	    Object endOfMonthlyInterval = "";
 		if(targetAnalytics.getEndMonthInterval() != null){

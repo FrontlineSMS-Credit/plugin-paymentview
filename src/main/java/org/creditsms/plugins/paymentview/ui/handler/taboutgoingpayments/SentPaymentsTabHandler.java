@@ -42,7 +42,7 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	private Object pnlSentPaymentsTableComponent;
 
 	private SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
-	private NumberFormat formatter = new DecimalFormat("#,000.00");
+	private NumberFormat formatter = new DecimalFormat("###,###.00");
 	SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss a");
 	
 	private int totalItemCount;

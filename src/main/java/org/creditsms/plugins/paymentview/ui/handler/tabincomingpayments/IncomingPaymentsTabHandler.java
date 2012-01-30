@@ -1,6 +1,8 @@
 package org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -71,7 +73,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			.getInstance();
 	private CreateAlertProperties createAlertProperties = CreateAlertProperties
 			.getInstance();
-
+	private NumberFormat formatter = new DecimalFormat("###,###.00");
 	private static final String ICON_STATUS_TRUE = "/icons/led_green.png";
 	private static final String STATUS_LABEL_COMPONENT = "status";
 	private static final String ICON_STATUS_FALSE = "/icons/led_red.png";
@@ -192,8 +194,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				ui.createTableCell(clientDao.getClientByPhoneNumber(
 						incomingPayment.getPhoneNumber()).getFullName()));
 		ui.add(row, ui.createTableCell(incomingPayment.getPhoneNumber()));
-		ui.add(row, ui.createTableCell(incomingPayment.getAmountPaid()
-				.toPlainString()));
+		ui.add(row, ui.createTableCell(formatter.format(incomingPayment.getAmountPaid())));
 		ui.add(row, ui.createTableCell(InternationalisationUtils
 				.getDatetimeFormat().format(
 						new Date(incomingPayment.getTimePaid()))));
