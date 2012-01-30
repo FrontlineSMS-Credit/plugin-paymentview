@@ -44,6 +44,7 @@ public class TargetAnalytics {
 
 	private int instalments = 0;
 	private Date endMonthInterval = new Date();
+	PaymentDateSettings paymentDateSettings = new PaymentDateSettings();
 
 	public BigDecimal getPercentageToGo(long tartgetId){
 	    BigDecimal totalTargetCost = targetDao.getTargetById(tartgetId).getTotalTargetCost();
@@ -164,11 +165,6 @@ public class TargetAnalytics {
 	    }
 	}
 
-	private String getAccountNumber(long tartgetId) {
-		return targetDao.getTargetById(tartgetId).
-	    		getAccount().getAccountNumber();
-	}
-	
 	public void setTargetDao(TargetDao targetDao) {
 		this.targetDao = targetDao;
 	}
@@ -185,14 +181,6 @@ public class TargetAnalytics {
 		date = calEndDate.getTime();
 
 		return date;
-	}
-	
-	private Calendar setStartOfDay(Calendar cal){
-		cal.set(Calendar.HOUR_OF_DAY, 0);  
-		cal.set(Calendar.MINUTE, 0);  
-		cal.set(Calendar.SECOND, 0);  
-		cal.set(Calendar.MILLISECOND, 0);
-		return cal;
 	}
 	
 	//Function which retrieves the theoretical installment based on amount paid
@@ -218,7 +206,7 @@ public class TargetAnalytics {
 		
 		Calendar calStartDate = Calendar.getInstance(); 
 		calStartDate.setTime(startDateStr);
-		calStartDate = setStartOfDay(calStartDate);
+		calStartDate = paymentDateSettings.setStartOfDay(calStartDate);
 		Date startDate = calStartDate.getTime();
 
 		Calendar calEndDate = Calendar.getInstance();

@@ -15,6 +15,7 @@ import net.frontlinesms.ui.handler.BasePanelHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.analytics.PaymentDateSettings;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
 import org.creditsms.plugins.paymentview.data.domain.TargetServiceItem;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs.CreateNewServiceItemHandler;
@@ -57,6 +58,8 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 	private List<TargetServiceItem> lstTargetServiceItems = new ArrayList<TargetServiceItem>();
 	private BigDecimal totalAmount = BigDecimal.ZERO;
 
+	PaymentDateSettings paymentDateSettings = new PaymentDateSettings();
+	
 	protected CreateSettingsHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController,
 			AddClientTabHandler addClientTabHandler,
@@ -111,14 +114,6 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 		((UiGeneratorController) ui).showDateSelecter(textField);
 	}
 
-	private Calendar setStartOfDay(Calendar cal) {
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		return cal;
-	}
-
 	private Calendar setEndOfDay(Calendar cal) {
 		cal.set(Calendar.HOUR_OF_DAY, 24);
 		cal.set(Calendar.MINUTE, 0);
@@ -126,18 +121,10 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 		cal.set(Calendar.MILLISECOND, 0);
 		return cal;
 	}
-
-	private Calendar setEndOfDayFormat(Calendar cal) {
-		cal.set(Calendar.HOUR_OF_DAY, 24);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, -1);
-		cal.set(Calendar.MILLISECOND, 0);
-		return cal;
-	}
-
+	
 	boolean validateStartDate(Date startDate) {
 		Calendar calStartDate = Calendar.getInstance();
-		calStartDate = setStartOfDay(calStartDate);
+		calStartDate = paymentDateSettings.setStartOfDay(calStartDate);
 		Date srtDate = calStartDate.getTime();
 		if (srtDate.compareTo(startDate) <= 0) {
 			return true;
@@ -162,7 +149,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 		if (startDate.compareTo(endDate) < 0) {
 			Calendar calStartDate = Calendar.getInstance();
 			calStartDate.setTime(startDate);
-			calStartDate = setStartOfDay(calStartDate);
+			calStartDate = paymentDateSettings.setStartOfDay(calStartDate);
 
 			Calendar calEndDate = Calendar.getInstance();
 			calEndDate.setTime(endDate);
@@ -187,7 +174,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 						calEndDate.setTime(calStartDate.getTime());
 						calEndDate.add(Calendar.MONTH, monthDiff);
 						calEndDate.add(Calendar.DATE, -1);
-						calEndDate = setEndOfDayFormat(calEndDate);
+						calEndDate = paymentDateSettings.setEndOfDayFormat(calEndDate);
 
 						CONFIRM_ACCEPT_PARSED_DATE = "The selected end date is incorrect. The parsed end date is: "
 								+ calEndDate.getTime()
@@ -202,7 +189,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 						} else {
 							Calendar calendDate = Calendar.getInstance();
 							calendDate.setTime(endDate);
-							calendDate = setEndOfDayFormat(calendDate);
+							calendDate = paymentDateSettings.setEndOfDayFormat(calendDate);
 
 							this.endDate = calendDate.getTime();
 							this.startDate = calStartDate.getTime();
@@ -216,7 +203,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 				calEndDate.setTime(calStartDate.getTime());
 				calEndDate.add(Calendar.MONTH, monthDiff);
 				calEndDate.add(Calendar.DATE, -1);
-				calEndDate = setEndOfDayFormat(calEndDate);
+				calEndDate = paymentDateSettings.setEndOfDayFormat(calEndDate);
 
 				CONFIRM_ACCEPT_PARSED_DATE = "The selected end date is incorrect. The parsed end date is: "
 						+ PaymentViewUtils.formatDate(calEndDate.getTime())
@@ -231,7 +218,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 				} else {
 					Calendar calendDate = Calendar.getInstance();
 					calendDate.setTime(endDate);
-					calendDate = setEndOfDayFormat(calendDate);
+					calendDate = paymentDateSettings.setEndOfDayFormat(calendDate);
 
 					this.endDate = calendDate.getTime();
 					this.startDate = calStartDate.getTime();
@@ -270,7 +257,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 					strEndDate);
 			Calendar calendDate = Calendar.getInstance();
 			calendDate.setTime(endDate);
-			calendDate = setEndOfDayFormat(calendDate);
+			calendDate = paymentDateSettings.setEndOfDayFormat(calendDate);
 
 			endDate = calendDate.getTime();
 			return true;

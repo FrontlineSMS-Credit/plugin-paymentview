@@ -24,6 +24,7 @@ import net.frontlinesms.ui.handler.PagedListDetails;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.analytics.PaymentDateSettings;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
@@ -103,6 +104,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private IncomingPayment parentIncomingPayment;
 	private ClientSelector clientSelector;
 	private Client reasignClient = null;
+	PaymentDateSettings paymentDateSettings = new PaymentDateSettings();
 
 	public IncomingPaymentsTabHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController) {
@@ -261,6 +263,18 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			incomingPayments = this.incomingPaymentDao
 					.getActiveIncomingPayments(startIndex, limit);
 		} else {
+			Calendar calStartDate = Calendar.getInstance();
+			Calendar calEndDate = Calendar.getInstance();
+
+			if (startDate != null) {
+				calStartDate.setTime(startDate);
+				startDate = paymentDateSettings.setStartOfDay(calStartDate).getTime();
+			} 
+			if (endDate != null) {
+				calEndDate.setTime(endDate);
+				endDate = paymentDateSettings.setEndOfDayFormat(calEndDate).getTime();
+			}
+			
 			if (strStartDate.isEmpty() && endDate != null) {
 				totalItemCount = this.incomingPaymentDao
 						.getIncomingPaymentsByEndDate(endDate).size();
@@ -638,7 +652,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		cal.set(Calendar.SECOND, 1);
 		return cal;
 	}
-
+	
 	@SuppressWarnings("null")
 	private List<IncomingPayment> getSelectedPayments() {
 		Object[] selectedItems = ui

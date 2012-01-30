@@ -234,7 +234,7 @@ public class OutgoingPayment {
 	
 	public String toStringForLogs() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy 'at' hh:mm a");
-		return "Outgoing payment caracteristics:\nKsh " + this.amountPaid + " sent to " + 
+		return "Outgoing payment characteristics: Ksh " + this.amountPaid + " sent to " + 
 			 this.client.getFullName() + " " + this.client.getPhoneNumber() 
 		          + " on " + dateFormat.format(this.timePaid); 
 	}
