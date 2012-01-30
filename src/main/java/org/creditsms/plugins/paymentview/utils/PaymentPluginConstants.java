@@ -36,4 +36,5 @@ public final class PaymentPluginConstants {
 	public static final String COMMON_LOG_MESSAGE = "plugins.paymentview.common.logs.message";
 	public static final String COMMON_LOG_TIME_DATE = "plugins.paymentview.common.logs.time";
 	public static final String CONFIRM_ACCEPT_DISTRIBUTE_IP ="plugins.paymentview.payment.distribute.confirmation";
+	public static final String CONFIRM_DELETE_INCOMING = "plugins.paymentview.payment.message.confirm.delete.incoming.confirmation";
 }

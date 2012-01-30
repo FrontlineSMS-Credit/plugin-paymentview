@@ -10,7 +10,6 @@ import java.util.List;
 
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.DuplicateKeyException;
-import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.FrontlineEventNotification;
@@ -66,7 +65,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private static final String COMPONENT_PANEL_INCOMING_PAYMENTS_TABLE = "pnl_clients";
 	private static final String COMPONENT_PANEL_MTNS = "pnl_buttons";
 	private static final String XML_INCOMING_PAYMENTS_TAB = "/ui/plugins/paymentview/incomingpayments/tabincomingpayments.xml";
-	private static final String CONFIRM_DELETE_INCOMING = "message.confirm.delete.incoming";
 
 	private AutoReplyProperties autoReplyProperties = AutoReplyProperties
 			.getInstance();
@@ -146,11 +144,13 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			this.ui.setEnabled(ui.find(pnlBtns, BTN_DELETE_INCOMING_PAYMENT),
 					false);
 		}
-		
+
 		Object contextMenu = ui.createPopupMenu("pmPaymentOptions");
-		ui.setMethod(contextMenu, Thinlet.MENUSHOWN, "populateContextMenu(this)", pnlIncomingPaymentsTableComponent, this);
+		ui.setMethod(contextMenu, Thinlet.MENUSHOWN,
+				"populateContextMenu(this)", pnlIncomingPaymentsTableComponent,
+				this);
 		ui.add(incomingPaymentsTableComponent, contextMenu);
-		
+
 		return incomingPaymentsTab;
 	}
 
@@ -406,7 +406,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			Account account = accountDao.getAccountById(tgtIn.getAccount()
 					.getAccountId());
 			if (account.getActiveAccount()) {
-				if (tgtIn.getCompletedDate()==null) {
+				if (tgtIn.getCompletedDate() == null) {
 					/*
 					 * Still an active target
 					 * 
@@ -425,7 +425,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 					ui.alert("This incoming payment belongs to a closed target.");
 				}
 			} else {
-				if (tgtIn.getCompletedDate()!=null) {
+				if (tgtIn.getCompletedDate() != null) {
 					/*
 					 * Completed target but can still be activated since no
 					 * other target has been created for the user
@@ -473,11 +473,11 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		reasignClient = null;
 		clientSelector.removeDialog();
 	}
-	
+
 	private void updateTargetStatus(Target tgt) {
 		Target activatedTgt = targetDao.getTargetById(tgt.getId());
-		if (targetAnalytics.getStatus(activatedTgt.getId())
-				.equals(TargetAnalytics.Status.PAID)) {
+		if (targetAnalytics.getStatus(activatedTgt.getId()).equals(
+				TargetAnalytics.Status.PAID)) {
 			Account account = accountDao.getAccountById(activatedTgt
 					.getAccount().getAccountId());
 			account.setActiveAccount(false);
@@ -497,7 +497,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog(this,
 				"reasignAuthPass");
 	}
-	
+
 	/*
 	 * This function shows distribution dialog while selecting client
 	 * distribution list
@@ -553,24 +553,23 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		}
 		return null;
 	}
-	
 
 	public void authAssignPaymentTotarget() {
 		Object[] selectedItems = ui
-		.getSelectedItems(incomingPaymentsTableComponent);
+				.getSelectedItems(incomingPaymentsTableComponent);
 		if (selectedItems.length <= 0) {
 			ui.alert("Please select a payment to assign to an active target.");
 		} else if (selectedItems.length > 1) {
 			ui.alert("You can only select one payment at a time.");
 		} else {
 			new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog(this,
-			"assignGenericPaymentToTarget");
+					"assignGenericPaymentToTarget");
 		}
 	}
-	
-	public void assignGenericPaymentToTarget() throws DuplicateKeyException{
+
+	public void assignGenericPaymentToTarget() throws DuplicateKeyException {
 		Object[] selectedItems = ui
-		.getSelectedItems(incomingPaymentsTableComponent);
+				.getSelectedItems(incomingPaymentsTableComponent);
 		if (selectedItems.length <= 0) {
 			ui.alert("Please select a payment to assign to an active target.");
 		} else if (selectedItems.length > 1) {
@@ -583,98 +582,126 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				parentIncomingPayment = ui.getAttachedObject(o,
 						IncomingPayment.class);
 			}
-			Account clientsNonGenericAccount = getNonGenericAccount(parentIncomingPayment.getAccount().getClient());
-			if (clientsNonGenericAccount != null){
-				Target tgt = targetDao.getActiveTargetByAccount(clientsNonGenericAccount.getAccountNumber());
-				
+			Account clientsNonGenericAccount = getNonGenericAccount(parentIncomingPayment
+					.getAccount().getClient());
+			if (clientsNonGenericAccount != null) {
+				Target tgt = targetDao
+						.getActiveTargetByAccount(clientsNonGenericAccount
+								.getAccountNumber());
+
 				parentIncomingPayment.setTarget(tgt);
 				parentIncomingPayment.setAccount(tgt.getAccount());
-				
-				if(new Date().getTime()<tgt.getStartDate().getTime()) {
-					parentIncomingPayment.setTimePaid(getTimePaid(tgt.getStartDate()));
+
+				if (new Date().getTime() < tgt.getStartDate().getTime()) {
+					parentIncomingPayment.setTimePaid(getTimePaid(tgt
+							.getStartDate()));
 				} else {
 					parentIncomingPayment.setTimePaid(new Date());
 				}
 				incomingPaymentDao.updateIncomingPayment(parentIncomingPayment);
-				
-				if (targetAnalytics.getStatus(tgt.getId()) == TargetAnalytics.Status.PAID){
-					//Update target.completedDate
+
+				if (targetAnalytics.getStatus(tgt.getId()) == TargetAnalytics.Status.PAID) {
+					// Update target.completedDate
 					final Calendar calendar = Calendar.getInstance();
 					tgt.setCompletedDate(calendar.getTime());
 					targetDao.updateTarget(tgt);
 					// Update account.activeAccount
 					parentIncomingPayment.getAccount().setActiveAccount(false);
-					accountDao.updateAccount(parentIncomingPayment.getAccount());
+					accountDao
+							.updateAccount(parentIncomingPayment.getAccount());
 				} else {
-					tgt.setStatus(targetAnalytics.getStatus(tgt.getId()).toString());
+					tgt.setStatus(targetAnalytics.getStatus(tgt.getId())
+							.toString());
 					targetDao.updateTarget(tgt);
 				}
-				ui.alert("Generic Payment was successfully assigned to "+clientDao.getClientByPhoneNumber(parentIncomingPayment.getPhoneNumber()).getFullName() +"'s active target.");
+				ui.alert("Generic Payment was successfully assigned to "
+						+ clientDao.getClientByPhoneNumber(
+								parentIncomingPayment.getPhoneNumber())
+								.getFullName() + "'s active target.");
 			} else {
-				ui.alert(clientDao.getClientByPhoneNumber(parentIncomingPayment.getPhoneNumber()).getFullName() + " does not have an active target.");
+				ui.alert(clientDao.getClientByPhoneNumber(
+						parentIncomingPayment.getPhoneNumber()).getFullName()
+						+ " does not have an active target.");
 			}
 		}
 	}
-	
+
 	Date getTimePaid(Date startDate) {
 		Calendar calStartDate = Calendar.getInstance();
 		calStartDate.setTime(startDate);
-		
+
 		calStartDate = setTimePaid(calStartDate);
 		return calStartDate.getTime();
 	}
-	
+
 	private Calendar setTimePaid(Calendar cal) {
 		cal.set(Calendar.SECOND, 1);
 		return cal;
 	}
-	
+
 	@SuppressWarnings("null")
 	private List<IncomingPayment> getSelectedPayments() {
 		Object[] selectedItems = ui
-		.getSelectedItems(incomingPaymentsTableComponent);
-		
+				.getSelectedItems(incomingPaymentsTableComponent);
+
 		if (selectedItems.length <= 0) {
 			ui.alert("Please select a payment to proceed.");
 			return null;
 		} else {
 			List<IncomingPayment> lstSelectedPayments = new ArrayList<IncomingPayment>();
-			
-			for(Object object: selectedItems) {
-				lstSelectedPayments.add(ui.getAttachedObject(object, IncomingPayment.class));
+
+			for (Object object : selectedItems) {
+				lstSelectedPayments.add(ui.getAttachedObject(object,
+						IncomingPayment.class));
 			}
 			return lstSelectedPayments;
 		}
 	}
-	
-	private Object createMenuItem(String text, String methodCall, String iconPath) {		
+
+	private Object createMenuItem(String text, String methodCall,
+			String iconPath) {
 		Object m = ui.createMenuitem("", text);
 		ui.setEnabled(m, true);
 		ui.setIcon(m, iconPath);
 		ui.setAction(m, methodCall, pnlIncomingPaymentsTableComponent, this);
 		return m;
 	}
-	
+
 	public void populateContextMenu(Object menu) {
 		ui.removeAll(menu);
 
 		List<IncomingPayment> lstSelectedPayments = getSelectedPayments();
-		if(lstSelectedPayments != null) {
-			boolean isGeneric = lstSelectedPayments.get(0).getAccount().isGenericAccount();
-			ui.add(menu, createMenuItem("Edit Incoming Payment", "editIncoming", "/icons/edit.png"));
-			ui.add(menu, createMenuItem("Delete Incoming Payment", "showDeleteConfirmationDialog('showAuthCode')", "/icons/delete.png"));
-						
-			ui.add(menu, createMenuItem("Export", "exportIncomingPayments", "/icons/export.png"));
-			ui.add(menu, createMenuItem("Re-Assign Payment", "postAuthCodeAction", "/icons/edit.png"));
+		if (lstSelectedPayments != null) {
+			boolean isGeneric = lstSelectedPayments.get(0).getAccount()
+					.isGenericAccount();
+			ui.add(menu,
+					createMenuItem("Edit Incoming Payment", "editIncoming",
+							"/icons/edit.png"));
+			ui.add(menu,
+					createMenuItem("Delete Incoming Payment",
+							"showDeleteConfirmationDialog('showAuthCode')",
+							"/icons/delete.png"));
 
-			ui.add(menu, createMenuItem("Disaggregate Payment", "disaggregateIncomingPayment", "/icons/edit.png"));
-			
-			if(isGeneric) {//lstSelectedPayments.get(0)
-				ui.add(menu, createMenuItem("Assign Generic Payment to an active Target", "authAssignPaymentTotarget", "/icons/edit.png"));
+			ui.add(menu,
+					createMenuItem("Export", "exportIncomingPayments",
+							"/icons/export.png"));
+			ui.add(menu,
+					createMenuItem("Re-Assign Payment", "postAuthCodeAction",
+							"/icons/edit.png"));
+
+			ui.add(menu,
+					createMenuItem("Disaggregate Payment",
+							"disaggregateIncomingPayment", "/icons/edit.png"));
+
+			if (isGeneric) {// lstSelectedPayments.get(0)
+				ui.add(menu,
+						createMenuItem(
+								"Assign Generic Payment to an active Target",
+								"authAssignPaymentTotarget", "/icons/edit.png"));
 			}
 		}
 	}
-	
+
 	// > EXPORTS...
 	public void exportIncomingPayments() {
 		if (ui.find(pnlBtns, BTN_DELETE_INCOMING_PAYMENT) != null) {
@@ -746,7 +773,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 
 	public final void showDeleteConfirmationDialog(String methodToBeCalled) {
 		dialogConfirmation = this.ui.showConfirmationDialog(methodToBeCalled,
-				this, CONFIRM_DELETE_INCOMING);
+				this, PaymentPluginConstants.CONFIRM_DELETE_INCOMING);
 	}
 
 	public final void showAutoReplyDialog() {
