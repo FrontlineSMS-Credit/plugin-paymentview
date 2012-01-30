@@ -245,7 +245,6 @@ public class DistributeConfirmationDialogHandler extends BaseDialog{
 	public void previous(){
 		new DistributeIncomingPaymentDialogHandler(ui, pluginController, parentIncomingPayment,children).showDialog();
 		this.removeDialog();
-
 	}
 	
 	@Override
@@ -256,8 +255,4 @@ public class DistributeConfirmationDialogHandler extends BaseDialog{
 	public void showDialog() {
 		ui.add(this.dialogComponent);
 	}
-	
-
-
-
 }
