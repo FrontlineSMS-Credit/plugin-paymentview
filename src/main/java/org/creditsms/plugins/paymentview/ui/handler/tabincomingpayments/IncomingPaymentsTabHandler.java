@@ -12,8 +12,10 @@ import java.util.List;
 
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.events.DatabaseEntityNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.plugins.payment.ui.PaymentPluginTabHandler;
 import net.frontlinesms.ui.HomeTabEventNotification;
@@ -101,6 +103,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 	private TargetAnalytics targetAnalytics;
 	private AccountDao accountDao;
 	private TargetDao targetDao;
+	private ContactDao contactDao;
 	private ThirdPartyResponseDao thirdPartyResponseDao;
 	private ResponseRecipientDao responseRecipientDao;
 	private IncomingPayment parentIncomingPayment;
@@ -120,6 +123,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		this.targetAnalytics.setIncomingPaymentDao(pluginController
 				.getIncomingPaymentDao());
 		this.targetDao = pluginController.getTargetDao();
+		this.contactDao = ui.getFrontlineController().getContactDao();
 		this.targetAnalytics.setTargetDao(targetDao);
 		this.accountDao = pluginController.getAccountDao();
 		this.thirdPartyResponseDao = pluginController
@@ -194,7 +198,8 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 				ui.createTableCell(clientDao.getClientByPhoneNumber(
 						incomingPayment.getPhoneNumber()).getFullName()));
 		ui.add(row, ui.createTableCell(incomingPayment.getPhoneNumber()));
-		ui.add(row, ui.createTableCell(formatter.format(incomingPayment.getAmountPaid())));
+		ui.add(row, ui.createTableCell(formatter.format(incomingPayment
+				.getAmountPaid())));
 		ui.add(row, ui.createTableCell(InternationalisationUtils
 				.getDatetimeFormat().format(
 						new Date(incomingPayment.getTimePaid()))));
@@ -269,13 +274,15 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 
 			if (startDate != null) {
 				calStartDate.setTime(startDate);
-				startDate = paymentDateSettings.setStartOfDay(calStartDate).getTime();
-			} 
+				startDate = paymentDateSettings.setStartOfDay(calStartDate)
+						.getTime();
+			}
 			if (endDate != null) {
 				calEndDate.setTime(endDate);
-				endDate = paymentDateSettings.setEndOfDayFormat(calEndDate).getTime();
+				endDate = paymentDateSettings.setEndOfDayFormat(calEndDate)
+						.getTime();
 			}
-			
+
 			if (strStartDate.isEmpty() && endDate != null) {
 				totalItemCount = this.incomingPaymentDao
 						.getIncomingPaymentsByEndDate(endDate).size();
@@ -577,19 +584,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		} else if (selectedItems.length > 1) {
 			ui.alert("You can only select one payment at a time.");
 		} else {
-			new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog(this,
-					"assignGenericPaymentToTarget");
-		}
-	}
 
-	public void assignGenericPaymentToTarget() throws DuplicateKeyException {
-		Object[] selectedItems = ui
-				.getSelectedItems(incomingPaymentsTableComponent);
-		if (selectedItems.length <= 0) {
-			ui.alert("Please select a payment to assign to an active target.");
-		} else if (selectedItems.length > 1) {
-			ui.alert("You can only select one payment at a time.");
-		} else {
 			clientSelector = new ClientSelector(ui, pluginController);
 			clientSelector.setExclusionList(new ArrayList<Client>(0));
 			clientSelector.setSelectionMethod("multiple");
@@ -600,45 +595,54 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			Account clientsNonGenericAccount = getNonGenericAccount(parentIncomingPayment
 					.getAccount().getClient());
 			if (clientsNonGenericAccount != null) {
-				Target tgt = targetDao
-						.getActiveTargetByAccount(clientsNonGenericAccount
-								.getAccountNumber());
-
-				parentIncomingPayment.setTarget(tgt);
-				parentIncomingPayment.setAccount(tgt.getAccount());
-
-				if (new Date().getTime() < tgt.getStartDate().getTime()) {
-					parentIncomingPayment.setTimePaid(getTimePaid(tgt
-							.getStartDate()));
-				} else {
-					parentIncomingPayment.setTimePaid(new Date());
-				}
-				incomingPaymentDao.updateIncomingPayment(parentIncomingPayment);
-
-				if (targetAnalytics.getStatus(tgt.getId()) == TargetAnalytics.Status.PAID) {
-					// Update target.completedDate
-					final Calendar calendar = Calendar.getInstance();
-					tgt.setCompletedDate(calendar.getTime());
-					targetDao.updateTarget(tgt);
-					// Update account.activeAccount
-					parentIncomingPayment.getAccount().setActiveAccount(false);
-					accountDao
-							.updateAccount(parentIncomingPayment.getAccount());
-				} else {
-					tgt.setStatus(targetAnalytics.getStatus(tgt.getId())
-							.toString());
-					targetDao.updateTarget(tgt);
-				}
-				ui.alert("Generic Payment was successfully assigned to "
-						+ clientDao.getClientByPhoneNumber(
-								parentIncomingPayment.getPhoneNumber())
-								.getFullName() + "'s active target.");
+				new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog(
+						this, "assignGenericPaymentToTarget");
 			} else {
 				ui.alert(clientDao.getClientByPhoneNumber(
 						parentIncomingPayment.getPhoneNumber()).getFullName()
 						+ " does not have an active target.");
 			}
 		}
+	}
+
+	public void assignGenericPaymentToTarget() throws DuplicateKeyException {
+		Account clientsNonGenericAccount = getNonGenericAccount(parentIncomingPayment
+				.getAccount().getClient());
+		if (clientsNonGenericAccount != null) {
+			Target tgt = targetDao
+					.getActiveTargetByAccount(clientsNonGenericAccount
+							.getAccountNumber());
+
+			parentIncomingPayment.setTarget(tgt);
+			parentIncomingPayment.setAccount(tgt.getAccount());
+
+			if (new Date().getTime() < tgt.getStartDate().getTime()) {
+				parentIncomingPayment.setTimePaid(getTimePaid(tgt
+						.getStartDate()));
+			} else {
+				parentIncomingPayment.setTimePaid(new Date());
+			}
+			incomingPaymentDao.updateIncomingPayment(parentIncomingPayment);
+
+			if (targetAnalytics.getStatus(tgt.getId()) == TargetAnalytics.Status.PAID) {
+				// Update target.completedDate
+				final Calendar calendar = Calendar.getInstance();
+				tgt.setCompletedDate(calendar.getTime());
+				targetDao.updateTarget(tgt);
+				// Update account.activeAccount
+				parentIncomingPayment.getAccount().setActiveAccount(false);
+				accountDao
+						.updateAccount(parentIncomingPayment.getAccount());
+			} else {
+				tgt.setStatus(targetAnalytics.getStatus(tgt.getId())
+						.toString());
+				targetDao.updateTarget(tgt);
+			}
+			ui.alert("Generic Payment was successfully assigned to "
+					+ clientDao.getClientByPhoneNumber(
+							parentIncomingPayment.getPhoneNumber())
+							.getFullName() + "'s active target.");
+		} 
 	}
 
 	Date getTimePaid(Date startDate) {
@@ -653,7 +657,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		cal.set(Calendar.SECOND, 1);
 		return cal;
 	}
-	
+
 	@SuppressWarnings("null")
 	private List<IncomingPayment> getSelectedPayments() {
 		Object[] selectedItems = ui
@@ -710,8 +714,7 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 
 			if (isGeneric) {// lstSelectedPayments.get(0)
 				ui.add(menu,
-						createMenuItem(
-								"Assign Generic Payment to an active Target",
+						createMenuItem("Assign to Target",
 								"authAssignPaymentTotarget", "/icons/edit.png"));
 			}
 		}
@@ -812,6 +815,17 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 					new FrontlineUiUpdateJob() {
 						public void run() {
 							IncomingPayment incomingPayment = (IncomingPayment) entity;
+							if(!incomingPayment.getAccount().getClient().isActive()){
+								Client clientInDb = incomingPayment.getAccount().getClient();
+								clientInDb.setActive(true);
+								clientDao.updateClient(clientInDb);
+								Contact contact = new Contact(clientInDb.getFullName(), clientInDb.getPhoneNumber(), "", "", "", true);
+								try {
+									contactDao.saveContact(contact);
+								} catch (DuplicateKeyException e) {
+									e.printStackTrace();
+								}
+							}
 							if (!incomingPayment.isChildPayment()) {
 								if (autoReplyProperties.isAutoReplyOn()) {
 									replyToPayment((IncomingPayment) entity);
