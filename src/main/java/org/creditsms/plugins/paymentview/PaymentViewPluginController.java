@@ -34,7 +34,7 @@ import net.frontlinesms.plugins.payment.monitor.PaymentServiceMonitorImplementat
 import net.frontlinesms.plugins.payment.service.PaymentService;
 import net.frontlinesms.plugins.payment.service.PaymentServiceException;
 import net.frontlinesms.plugins.payment.service.PaymentServiceStartRequest;
-import net.frontlinesms.plugins.payment.settings.ui.PaymentViewTing;
+import net.frontlinesms.plugins.payment.settings.ui.PaymentViewSettingsController;
 import net.frontlinesms.ui.HomeTabEventNotification;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -369,7 +369,7 @@ public class PaymentViewPluginController extends BasePluginController implements
 	
 	public PluginSettingsController getSettingsController(
 			UiGeneratorController uiController) {
-		return new PaymentViewTing(uiController, uiController
+		return new PaymentViewSettingsController(uiController, uiController
 				.getFrontlineController().getBean("paymentServiceSettingsDao",
 						PaymentServiceSettingsDao.class),
 				this.getName(InternationalisationUtils.getCurrentLocale()),

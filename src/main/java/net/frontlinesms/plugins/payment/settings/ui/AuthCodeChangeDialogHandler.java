@@ -9,10 +9,10 @@ import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
 import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.AuthorizationChecker;
 import org.creditsms.plugins.paymentview.userhomepropeties.authorizationcode.AuthorizationProperties;
 
-public class ChangeAuthorizationCodeDialog extends BaseDialog{
+public class AuthCodeChangeDialogHandler extends BaseDialog {
 	private static final String DIALOG_UPDATE_AUTHCODE_XML = "/ui/plugins/payment/settings/dlgChangeAuthSettings.xml";
 
-	public ChangeAuthorizationCodeDialog(UiGeneratorController ui) {
+	public AuthCodeChangeDialogHandler(UiGeneratorController ui) {
 		super(ui);
 		init();
 	}
