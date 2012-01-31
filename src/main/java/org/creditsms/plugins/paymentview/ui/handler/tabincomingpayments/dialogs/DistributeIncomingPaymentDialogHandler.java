@@ -34,25 +34,6 @@ public class DistributeIncomingPaymentDialogHandler extends BaseDialog{
 	private PaymentViewPluginController pluginController;
 	private BigDecimal totalAmount;
 	
-
-
-	
-//	public DistributeIncomingPaymentDialogHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, 
-//			IncomingPayment parentIncomingPayment, List<Client> clientList) {
-//		super(ui);
-//		this.pluginController = pluginController;
-//		this.incomingPaymentDao = pluginController.getIncomingPaymentDao();
-//		this.clientDao = pluginController.getClientDao();
-//		this.parentIncomingPayment = parentIncomingPayment;
-//		this.children = new ArrayList<Child>(clientList.size());
-//		for (Client c:clientList){
-//			children.add(new Child(c,new BigDecimal("0.00")));
-//		}
-//		this.totalAmount = new BigDecimal("0.00");
-//		init();
-//		refresh();
-//	}
-	
 	public DistributeIncomingPaymentDialogHandler(UiGeneratorController ui, PaymentViewPluginController pluginController, 
 			IncomingPayment parentIncomingPayment, List<Child> children) {
 		super(ui);

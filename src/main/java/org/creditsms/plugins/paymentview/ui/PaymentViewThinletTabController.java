@@ -45,8 +45,8 @@ public class PaymentViewThinletTabController
 		addTab(new IncomingPaymentsTabHandler(ui, getPluginController()));
 		addTab(new OutgoingPaymentsTabHandler(ui, getPluginController()));
 		addTab(new AnalyticsTabHandler(ui, getPluginController()));
-		addTab(new LogTabHandler(ui, getPluginController()));
 		addTab(new WalletTabHander(ui, getPluginController()));
+		addTab(new LogTabHandler(ui, getPluginController()));
 		
 		//For Tests Only
 		if(BuildProperties.getInstance().isSnapshot()) {

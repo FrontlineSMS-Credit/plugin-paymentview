@@ -92,7 +92,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						for (CustomValue cv : allCustomValues) {
 							if (cv.getCustomField().equals(curr)) {
 								items.add(PaymentViewUtils.getMarkerFromString(curr.getReadableName()));
-								items.add(cv.getStrValue());
+								items.add("=\""+cv.getStrValue()+"\"");
 								markerReplaced = true;
 							}
 						}
@@ -152,7 +152,7 @@ public class PaymentViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						PaymentViewCsvUtils.MARKER_INCOMING_CONFIRMATION_CODE,
 						incomingPayment.getConfirmationCode(),
 						PaymentViewCsvUtils.MARKER_NAME,
-						incomingPayment.getPaymentBy(),
+						incomingPayment.getAccount().getClient().getFullName(),
 						PaymentViewCsvUtils.MARKER_PHONE_NUMBER,
 						PaymentViewUtils.formatPhoneForExcel(incomingPayment.getPhoneNumber()),
 						PaymentViewCsvUtils.MARKER_AMOUNT_PAID,

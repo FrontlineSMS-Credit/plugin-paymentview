@@ -41,7 +41,9 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 		Object tableHeader = ui.createTableHeader();
 
 		ui.add(tableHeader, createTableColumn("Active"));
-		ui.add(tableHeader, createTableColumn("Name"));
+		Object col = createTableColumn("Name");
+		ui.setWidth(col, 270);
+		ui.add(tableHeader, col);
 		ui.add(tableHeader, createTableColumn("Balance"));
 		
 		Object table = Thinlet.create(Thinlet.TABLE);

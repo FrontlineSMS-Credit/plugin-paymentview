@@ -2,57 +2,52 @@
 <tab name="tab_incomingPayments" text="Incoming Payments" icon="/icons/user_receiver.png">
 	<panel weightx="1" weighty="1" top="5" right="5" left="5"
 		columns="1" gap="10">
-		<panel columns="2" gap="5" name="pnl_clients" weightx="1" weighty="1">
+		<panel columns="2" gap="5" name="pnl_clients" weightx="1"
+			weighty="1">
 			<panel colspan="2" gap="8" weightx="1">
 				<label text="Incoming Payments" font="20 Bold" weightx="1" />
 				<panel halign="right" weightx="1" gap="10">
-		                <label icon="/icons/date_start.png" text="i18n.common.from"/>
-		                <panel>
-		                    <textfield columns="10" name="txt_startDate" action="refresh" />
-		                    <button action="showDateSelecter(txt_startDate)" icon="/icons/date.png"/>
-		                </panel>
-		                <label icon="/icons/date_end.png" text="i18n.common.until" />
-		                <panel>
-		                    <textfield columns="10" name="txt_endDate" action="refresh" />
-		                    <button action="showDateSelecter(txt_endDate)" icon="/icons/date.png"/>
-		                </panel>
-	            </panel>
+					<label icon="/icons/date_start.png" text="i18n.common.from" />
+					<panel>
+						<textfield columns="10" name="txt_startDate" action="refresh" />
+						<button action="showDateSelecter(txt_startDate)" icon="/icons/date.png" />
+					</panel>
+					<label icon="/icons/date_end.png" text="i18n.common.until" />
+					<panel>
+						<textfield columns="10" name="txt_endDate" action="refresh" />
+						<button action="showDateSelecter(txt_endDate)" icon="/icons/date.png" />
+					</panel>
+				</panel>
 			</panel>
 
-			<table name="tbl_clients" weightx="1" weighty="1" colspan="2" selection="multiple" action="checkSelection" perform="editIncoming" >
+			<table name="tbl_clients" weightx="1" weighty="1" colspan="2"
+				selection="multiple" action="checkSelection" perform="editIncoming">
 				<header>
-					<column text="Confirmation Code" width="140"/>
+					<column text="Confirmation Code" width="140" />
 					<column text="Name" width="200" icon="/icons/user.png" />
 					<column text="Phone" width="150" icon="/icons/phone.png" />
 					<column text="Amount" width="100" icon="/icons/money.png" />
 					<column text="Date" width="130" icon="/icons/date.png" />
-					<column width="150" icon="/icons/description.png" text="i18n.plugins.paymentview.common.paymentid" />
+					<column width="150" icon="/icons/description.png"
+						text="i18n.plugins.paymentview.common.paymentid" />
 					<column icon="/icons/description.png" text="i18n.common.notes" />
 				</header>
-				<popupmenu name="menu">
-					<menuitem action="editIncoming" icon="/icons/edit.png" name="miEditIncoming" text="Edit Incoming Payment" />
-					<menuitem action="showDeleteConfirmationDialog('showAuthCode')" icon="/icons/delete.png" name="miDeleteIncoming"
-						text="i18n.plugins.paymentview.action.deleteincoming" />
-					<menuitem action="exportIncomingPayments" icon="/icons/export.png" name="miExportClient" text="Export" />
-					<menuitem icon="/icons/edit.png" action="reassignIncomingPayment" name="miReassignPayment" text="Re-Assign Payment" />
-					<menuitem icon="/icons/edit.png" action="disaggregateIncomingPayment" name="miDisaggregatePayment" text="Disaggregate Payment" />
-				</popupmenu>
 			</table>
 		</panel>
-		<panel gap="5" bottom="5" name="pnl_buttons"
-			weightx="1">
+		<panel gap="5" bottom="5" name="pnl_buttons" weightx="1">
 			<panel height="30" gap="5">
-				<button name="status" action="tryToggleAutoReply" tooltip="Click to change Auto-Reply status"/>
-				<label text="Auto-Reply"/>
+				<button name="status" action="tryToggleAutoReply"
+					tooltip="Click to change Auto-Reply status" />
+				<label text="Auto-Reply" />
 			</panel>
-			<button icon="/icons/sms_autoReply.png" action="showAutoReplyDialog" halign="right" name="btn_autoReplySetup"
-				text="Auto Reply Setup" />
-			<panel weightx="1"/>
+			<button icon="/icons/sms_autoReply.png" action="showAutoReplyDialog"
+				halign="right" name="btn_autoReplySetup" text="Auto Reply Setup" />
+			<panel weightx="1" />
 			<button action="showDeleteConfirmationDialog('showAuthCode')"
 				icon="/icons/delete.png" name="miDeleteIncoming"
 				text="i18n.plugins.paymentview.action.deleteincoming" />
-			<button icon="/icons/export.png" action="exportIncomingPayments" halign="right" name="btn_export"
-				text="Export" />
+			<button icon="/icons/export.png" action="exportIncomingPayments"
+				halign="right" name="btn_export" text="Export" />
 		</panel>
 	</panel>
 </tab>

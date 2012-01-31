@@ -19,14 +19,17 @@ public interface ClientDao {
 	 * return all the clients in the system
 	 * **/
 	public List<Client> getAllClients();
-	
+
 	/**
 	 * return all the clients in the system sorted
 	 * **/
-	public List<Client> getAllActiveClientsSorted(int startIndex, int limit, Field sortBy, Order order);
-	
-	
+	public List<Client> getAllActiveClientsSorted(int startIndex, int limit,
+			Field sortBy, Order order);
+
+	public List<Client> getAllClientsSorted(Field sortBy, Order order);
+
 	public List<Client> getAllActiveClientsSorted(Field sortBy, Order order);
+
 	/**
 	 * Returns all clients from a particular start index with a maximum number
 	 * of returned clients set.
@@ -38,16 +41,18 @@ public interface ClientDao {
 	 * @return
 	 */
 	public List<Client> getAllClients(int startIndex, int limit);
-	
+
 	/**
-	 * Returns all active clients from a particular start index with a maximum number
-	 * of returned clients set.
+	 * Returns all active clients from a particular start index with a maximum
+	 * number of returned clients set.
+	 * 
 	 * @return
 	 */
 	public List<Client> getAllActiveClients();
+
 	/**
-	 * Returns all active clients from a particular start index with a maximum number
-	 * of returned clients set.
+	 * Returns all active clients from a particular start index with a maximum
+	 * number of returned clients set.
 	 * 
 	 * @param startIndex
 	 *            index of the first client to fetch
@@ -75,20 +80,27 @@ public interface ClientDao {
 
 	/** @return number of clients in the system */
 	public int getClientCount();
-	
+
+	public List<Client> getAllClientsByNameFilter(String filter);
+
+	public List<Client> getAllClientsByFilter(String filter, int startIndex,
+			int limit);
+
 	/**
-	 * Returns a list of clients whose name,phone number or custom value are similar to the specified string
+	 * Returns a list of clients whose name,phone number or custom value are
+	 * similar to the specified string
 	 * 
 	 * @param filter
 	 * @return
 	 */
 	public List<Client> getClientsByFilter(String filter);
-	
+
 	public List<Client> getClientsByNameFilter(String filter);
 
 	/**
-	 * Returns a list of clients whose name,phone number or custom value are similar to the specified string
-	 * from a particular start index with a maximum number of returned clients
+	 * Returns a list of clients whose name,phone number or custom value are
+	 * similar to the specified string from a particular start index with a
+	 * maximum number of returned clients
 	 * 
 	 * @param filter
 	 * @param startIndex
@@ -97,7 +109,7 @@ public interface ClientDao {
 	 */
 	public List<Client> getClientsByFilter(String filter, int startIndex,
 			int limit);
-	
+
 	/**
 	 * Saves a client to the system
 	 * 

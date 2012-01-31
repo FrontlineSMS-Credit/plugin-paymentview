@@ -70,6 +70,12 @@ public interface IncomingPaymentDao {
 			long targetId, Date startDate, Date endDate);
 
 	/**
+	 * returns IncomingPayment(s) by targetId and dates
+	 * */
+	public List<IncomingPayment> getIncomingPaymentsByTargetAndDates(
+			long targetId, Date startDate, Date endDate);
+	
+	/**
 	 * returns IncomingPayment(s) by accountId
 	 * */
 	public List<IncomingPayment> getActiveIncomingPaymentsByAccountNumber(
@@ -80,6 +86,9 @@ public interface IncomingPaymentDao {
 	 * */
 	public List<IncomingPayment> getActiveIncomingPaymentsByAccountNumberOrderByTimepaid(
 			String accountNumber);
+	
+	public List<IncomingPayment> getActiveIncomingPaymentsByAccountNumberBtwnDateOrderByTimepaid(
+			String accountNumber, Date startDate, Date endDate);
 	
 	/**
 	 * returns IncomingPayment(s) by accountId by time ranges

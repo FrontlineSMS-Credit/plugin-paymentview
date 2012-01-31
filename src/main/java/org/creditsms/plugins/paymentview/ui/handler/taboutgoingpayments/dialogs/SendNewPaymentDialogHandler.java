@@ -26,6 +26,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	private static final String COMPONENT_CMB_OP_MOBILE_PAYMENT_SYSTEM = "cmb_MobilePaymentSystem";
 	private static final String COMPONENT_TEXT_OP_PAYMENT_ID = "txt_PaymentID";
 	private static final String COMPONENT_TEXT_OP_NOTES = "txt_Notes";
+	private static final String BTN_SEND_PAYMENT = "btn_SendPaymentNow";
 	
 	private final Logger log = FrontlineUtils.getLogger(getClass());
 
@@ -39,6 +40,9 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	private Object fieldOpPaymentId;
 	private Object fieldOpNotes;
 
+	//UI button 
+	private Object pnlBtns;
+	
 	//UI data
 	private String opMsisdn;
 	private String opAmount;
@@ -75,7 +79,8 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 		cmbOpMobilePaymentSystem = ui.find(dialogComponent, COMPONENT_CMB_OP_MOBILE_PAYMENT_SYSTEM);
 		fieldOpPaymentId = ui.find(dialogComponent, COMPONENT_TEXT_OP_PAYMENT_ID);
 		fieldOpNotes = ui.find(dialogComponent, COMPONENT_TEXT_OP_NOTES);
-		
+		pnlBtns = ui.find(dialogComponent, BTN_SEND_PAYMENT);
+		ui.setEnabled(ui.find(pnlBtns, BTN_SEND_PAYMENT), false);
 		setupPaymentServices();
 	}
 
@@ -103,7 +108,15 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 		ui.add(schedulePaymentAuthDialog);
 	}
 
+	public void enableSendButton() {
+		Object selectedPaymentServiceItem = ui.getSelectedItem(cmbOpMobilePaymentSystem);
+		if (selectedPaymentServiceItem != null){
+			ui.setEnabled(ui.find(pnlBtns, BTN_SEND_PAYMENT), true);
+		}
+	}
+	
 	public void showSendNewPaymentsAuthDialog() {
+		ui.setEnabled(ui.find(pnlBtns, BTN_SEND_PAYMENT), false);
 		// get the correct payment service in the paymentServices list
 		Object selectedPaymentServiceItem = ui.getSelectedItem(cmbOpMobilePaymentSystem);
 		if (selectedPaymentServiceItem != null){

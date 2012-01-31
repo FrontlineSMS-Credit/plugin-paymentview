@@ -106,10 +106,10 @@ public class TargetExportHandler extends ExportDialogHandler<Target> {
 				COMPONENT_CB_AMOUNT_REMAINING);		
 		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_PERCENTAGE,
 				COMPONENT_CB_PERCENTAGE_SAVED);
-		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_DATE_PAID,
-				COMPONENT_CB_LAST_PAYMENT_DATE);
 		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_LAST_AMOUNT_PAID,
 				COMPONENT_CB_LAST_PAYMENT);
+		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_DATE_PAID,
+				COMPONENT_CB_LAST_PAYMENT_DATE);
 		/*addMarker(rowFormat, PaymentViewCsvUtils.TARGET_MONTHLY_SAVINGS,
 				COMPONENT_CB_PAID_THIS_MONTH);*/
 		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_DAYS_REMAINING,

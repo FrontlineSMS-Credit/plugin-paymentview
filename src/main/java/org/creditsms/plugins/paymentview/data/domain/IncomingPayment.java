@@ -250,7 +250,7 @@ public class IncomingPayment {
 	
 	public String toStringForLogs() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy 'at' hh:mm a");
-		return "Incoming payment caracteristics:\nKsh " + this.amountPaid + " received from " + this.paymentBy +" "+ this.phoneNumber 
+		return "Incoming payment characteristics: Ksh " + this.amountPaid + " received from " + this.paymentBy +" "+ this.phoneNumber 
 		          + " on " + dateFormat.format(this.timePaid); 
 	}
 

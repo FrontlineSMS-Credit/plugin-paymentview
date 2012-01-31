@@ -146,14 +146,24 @@ public abstract class BaseClientTableHandler implements PagedComponentItemProvid
 	}
 
 	protected Object addCustomData(Client client, Object row) {
+		boolean isCustomValueUsed = false;
+		String customValStr = "";
 		if (!this.customFieldDao.getAllCustomFields().isEmpty()) {
 			for (CustomField cf : this.customFieldDao
 					.getAllCustomFields()) {
 				if (cf.isUsed() & cf.isActive()){
 					for (CustomValue cv : this.customValueDao.getCustomValuesByClientId(client.getId())) {
 						if (cv.getCustomField().equals(cf)) {
-							ui.add(row, ui.createTableCell(cv.getStrValue()));
-						}
+							isCustomValueUsed= true;
+							customValStr = cv.getStrValue();
+						} 
+					}
+					if(isCustomValueUsed) {
+						ui.add(row, ui.createTableCell(customValStr));
+						isCustomValueUsed = false;
+						customValStr = "";
+					} else {
+						ui.add(row, ui.createTableCell(""));
 					}
 				}
 			}

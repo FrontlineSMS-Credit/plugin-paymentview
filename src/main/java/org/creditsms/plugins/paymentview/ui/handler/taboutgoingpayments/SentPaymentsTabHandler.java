@@ -5,6 +5,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.OutgoingPayment;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.ui.handler.importexport.OutgoingPaymentsExportHandler;
+import org.creditsms.plugins.paymentview.analytics.PaymentDateSettings;
 
 public class SentPaymentsTabHandler extends BaseTabHandler implements PagedComponentItemProvider {
 	private static final String COMPONENT_SENT_PAYMENTS_TABLE = "tbl_clients";
@@ -40,7 +42,7 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	private Object pnlSentPaymentsTableComponent;
 
 	private SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
-	private NumberFormat formatter = new DecimalFormat("#,000.00");
+	private NumberFormat formatter = new DecimalFormat("###,###.00");
 	SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss a");
 	
 	private int totalItemCount;
@@ -49,6 +51,7 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 	private Date startDate;
 	private Date endDate;
 	private PaymentViewPluginController pluginController;
+	PaymentDateSettings paymentDateSettings = new PaymentDateSettings();
 
 	public SentPaymentsTabHandler(UiGeneratorController ui, Object tabOutgoingPayments, PaymentViewPluginController pluginController) {
 		super(ui, true);
@@ -103,7 +106,7 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 		Object[] listItems = toThinletComponents(sentPayments);
 		return new PagedListDetails(totalItemCount, listItems);
 	}
-
+	
 	private List<OutgoingPayment> getSentPaymentsForUI(int startIndex, int limit) {
 		List<OutgoingPayment> sentPayments ;
 		String strStartDate = ui.getText(fldStartDate);
@@ -132,6 +135,17 @@ public class SentPaymentsTabHandler extends BaseTabHandler implements PagedCompo
 			totalItemCount = this.outgoingPaymentDao.getOutgoingPaymentsCount();
 			
 		} else {
+			Calendar calStartDate = Calendar.getInstance();
+			Calendar calEndDate = Calendar.getInstance();
+
+			if (startDate != null) {
+				calStartDate.setTime(startDate);
+				startDate = paymentDateSettings.setStartOfDay(calStartDate).getTime();
+			} 
+			if (endDate != null) {
+				calEndDate.setTime(endDate);
+				endDate = paymentDateSettings.setEndOfDayFormat(calEndDate).getTime();
+			}
 			if (strStartDate.equals("") && endDate != null){
 				totalItemCount = this.outgoingPaymentDao.getOutgoingPaymentsByEndDate(endDate).size();
 				sentPayments = this.outgoingPaymentDao.getOutgoingPaymentsByEndDate(endDate, startIndex, limit);

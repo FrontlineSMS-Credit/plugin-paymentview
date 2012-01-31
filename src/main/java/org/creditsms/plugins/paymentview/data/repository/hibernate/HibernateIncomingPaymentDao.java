@@ -81,6 +81,16 @@ public class HibernateIncomingPaymentDao extends
 		return super.getList(criteria);
 	}
 	
+	public List<IncomingPayment> getIncomingPaymentsByTargetAndDates(
+			long targetId, Date startDate, Date endDate) {
+		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
+		criteria.add(Restrictions.eq("active", true));
+		DetachedCriteria accountCriteria = criteria.createCriteria("target");
+		criteria.add(Restrictions.between("timePaid", startDate.getTime(), endDate.getTime()));
+		accountCriteria.add(Restrictions.eq("id", targetId));
+		return super.getList(criteria);
+	}
+	
 	public List<IncomingPayment> getActiveIncomingPaymentsByAccountNumber(String accountNumber) {
 		DetachedCriteria criteria = super.getCriterion();
 		criteria.add(Restrictions.eq("active", true));
@@ -94,6 +104,16 @@ public class HibernateIncomingPaymentDao extends
 			String accountNumber) {
 		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.eq("active", true));
+		DetachedCriteria accountCriteria = criteria.createCriteria("account");
+		accountCriteria.add(Restrictions.eq("accountNumber", accountNumber));
+		return super.getList(criteria);    
+	}
+	
+	public List<IncomingPayment> getActiveIncomingPaymentsByAccountNumberBtwnDateOrderByTimepaid(
+			String accountNumber, Date startDate, Date endDate) {
+		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
+		criteria.add(Restrictions.eq("active", true));
+		criteria.add(Restrictions.between("timePaid", startDate.getTime(), endDate.getTime()));
 		DetachedCriteria accountCriteria = criteria.createCriteria("account");
 		accountCriteria.add(Restrictions.eq("accountNumber", accountNumber));
 		return super.getList(criteria);    
