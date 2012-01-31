@@ -2,6 +2,7 @@ package net.frontlinesms.plugins.payment.service;
 
 import java.math.BigDecimal;
 
+import net.frontlinesms.data.domain.PersistableSettings;
 import net.frontlinesms.plugins.payment.service.ui.PaymentServiceUiActionHandler;
 import net.frontlinesms.serviceconfig.ConfigurableService;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -29,4 +30,7 @@ public interface PaymentService extends ConfigurableService {
 	
 	/** @return action handler for additional service-specific user-triggered actions, or <code>null</code> if there are no additional actions. */
 	PaymentServiceUiActionHandler getServiceActionUiHandler(UiGeneratorController ui);
+	
+	/** @return <code>true</code> if the service should be restarted were the new settings applied; <code>false</code> otherwise. */
+	boolean isRestartRequired(PersistableSettings newSettings);
 }

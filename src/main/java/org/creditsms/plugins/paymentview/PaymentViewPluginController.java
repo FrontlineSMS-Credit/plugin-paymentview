@@ -33,7 +33,6 @@ import net.frontlinesms.plugins.payment.monitor.PaymentServiceMonitorImplementat
 import net.frontlinesms.plugins.payment.service.PaymentService;
 import net.frontlinesms.plugins.payment.service.PaymentServiceException;
 import net.frontlinesms.plugins.payment.service.PaymentServiceStartRequest;
-import net.frontlinesms.plugins.payment.settings.ui.PaymentServiceSettingsHandler;
 import net.frontlinesms.plugins.payment.settings.ui.PaymentViewTing;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -292,15 +291,15 @@ public class PaymentViewPluginController extends BasePluginController
 						stopService(settings);
 					} else if (notification instanceof EntityUpdatedNotification<?>) {
 						// Following commented out due to CREDIT-250
-//						PaymentService service = activeServices.get(settings.getId());
-//						if(service == null) return;
-//						service.stopService();
-//						service.setSettings(settings);
-//						try {
-//							service.startService();
-//						} catch (PaymentServiceException ex) {
-//							log.warn("Failed to restart PaymentService for settings " + settings.getId(), ex);
-//						}	
+						PaymentService service = activeServices.get(settings.getId());
+						if(service==null || !service.isRestartRequired(settings)) return;
+						service.stopService();
+						service.setSettings(settings);
+						try {
+							service.startService();
+						} catch (PaymentServiceException ex) {
+							log.warn("Failed to restart PaymentService for settings " + settings.getId(), ex);
+						}
 					}
 				}
 			}
