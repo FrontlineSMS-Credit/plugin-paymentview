@@ -46,7 +46,7 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 	private ServiceItemDao serviceItemDao;
 	private TargetServiceItemDao targetServiceItemDao;
 	private CreateSettingsHandler createSettingsHandler;
-	private NumberFormat formatter = new DecimalFormat("###,###.00");
+	private NumberFormat formatter = new DecimalFormat("###,##0.00");
 	
 	public CreateSettingsTableHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController,
