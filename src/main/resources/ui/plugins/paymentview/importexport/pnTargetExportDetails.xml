@@ -12,8 +12,8 @@
 		<checkbox action="columnCheckboxChanged" icon="/icons/money.png" name="cbAmountSaved" selected="true" text="i18n.plugins.paymentview.common.amountpaid" />
 		<checkbox action="columnCheckboxChanged" icon="/icons/money.png" name="cbAmountRemaining" selected="true" text="i18n.plugins.paymentview.common.amountremaining" />
 		<checkbox action="columnCheckboxChanged" icon="/icons/description.png" name="cbPercentageSaved" selected="true" text="i18n.plugins.paymentview.common.percentagesaved" />
-		<checkbox action="columnCheckboxChanged" icon="/icons/date.png" name="cbLastPaymentDate" selected="true" text="i18n.plugins.paymentview.common.lastpaymentdate" />
 		<checkbox action="columnCheckboxChanged" icon="/icons/money.png" name="cbLastPayment" selected="true" text="i18n.plugins.paymentview.common.lastpayment" />
+		<checkbox action="columnCheckboxChanged" icon="/icons/date.png" name="cbLastPaymentDate" selected="true" text="i18n.plugins.paymentview.common.lastpaymentdate" />
 		<!--  checkbox action="columnCheckboxChanged" icon="/icons/money.png" name="cbPaidThisMonth" selected="true" text="i18n.plugins.paymentview.common.paidthismonth" /-->
 		<checkbox action="columnCheckboxChanged" icon="/icons/description.png" name="cbDaysRemaining" selected="true" text="i18n.plugins.paymentview.common.daysremaining" />
 		<checkbox action="columnCheckboxChanged" icon="/icons/description.png" name="cbStatus" selected="true" text="i18n.plugins.paymentview.common.status" />
