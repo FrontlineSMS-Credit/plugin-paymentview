@@ -419,9 +419,14 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 		incomingPayment.setAccount(getAccount(reasignClient));
 		incomingPayment.setPhoneNumber(reasignClient.getPhoneNumber());
 		Target tgtIn = incomingPayment.getTarget();
-
-		Target tgt = targetDao.getActiveTargetByAccount(getAccount(
-				incomingPayment.getPhoneNumber()).getAccountNumber());
+		
+		Target tgt = new Target();
+		if(getAccount(incomingPayment.getPhoneNumber())!=null) {
+			tgt = targetDao.getActiveTargetByAccount(getAccount(
+					incomingPayment.getPhoneNumber()).getAccountNumber());
+		} else {
+			tgt = null;
+		}
 		incomingPayment.setTarget(tgt);
 
 		if (tgtIn != null) {
