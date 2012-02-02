@@ -98,9 +98,15 @@ public class ClientImportHandler extends ImportDialogHandler {
 					if (tableHeaderList.get(y).equals("Name") || tableHeaderList.get(y).equals("Phone")) {
 						if (tableHeaderList.get(y).equals("Name")) {
 							name = cellValue;
-							leanName = name.replaceAll("\\s+", " ");
-							firstName  = leanName.split(" ")[0];
-							otherName  = leanName.split(" ")[1];
+							if(name.trim().length()==0) {
+								firstName = "";
+								otherName = "";
+							} else {
+								leanName = name.replaceAll("\\s+", " ");
+								firstName  = leanName.split(" ")[0];
+								otherName  = leanName.split(" ")[1];								
+							}
+
 						} else {
 							phonenumber = PaymentViewUtils.parsePhoneFromExcel(cellValue);
 							if(phonePattern.formatPhoneNumber(phonenumber)) {
@@ -159,19 +165,33 @@ public class ClientImportHandler extends ImportDialogHandler {
 	protected void doSpecialImport(String dataPath) {
 		CsvRowFormat rowFormat = getRowFormatForClient();
 		try{
-			if(hasIncorrectlyFormatedPhoneNo) {
-				this.uiController.alert("There is one or more record(s) with" +
-						" incorrectly formatted phone numbers. " +
-						"Please set phone number with the following format: +2547XXXXXXXX or 07XXXXXXXX");
+			if(clntLst.size()<=0){
+				this.uiController.alert("No record imported, please import a csv file with client record(s) to proceed.");
 			} else {
-				this.importer.setSelectedClientLst(clntLst);
-				this.importer.setSelectedCustomFieldlst(cfLst);
-				this.importer.setSelectedCustomValueslst(cvLst);
-				this.importer.importClients(this.clientDao, rowFormat, pluginController, this.customValueDao);
-				this.clientsTabHandler.refresh();
-
-				this.uiController.infoMessage(InternationalisationUtils
-						.getI18nString(I18N_IMPORT_SUCCESSFUL));	
+				if(hasIncorrectlyFormatedPhoneNo) {
+					this.uiController.alert("There is one or more record(s) with" +
+							" incorrectly formatted phone numbers. " +
+							"Please set phone number with the following format: +2547XXXXXXXX or 07XXXXXXXX");
+				} else {
+					boolean hasIncorrectData = false;
+					for(Client client: clntLst) {
+						if(client.getFullName().trim().length()<=0) {
+							hasIncorrectData = true;
+						}
+					}
+					if(hasIncorrectData) {
+						this.uiController.alert("There is one or more record(s) without client name. Please add client name(s) to proceed.");
+					} else {
+						this.importer.setSelectedClientLst(clntLst);
+						this.importer.setSelectedCustomFieldlst(cfLst);
+						this.importer.setSelectedCustomValueslst(cvLst);
+						this.importer.importClients(this.clientDao, rowFormat, pluginController, this.customValueDao);
+						this.clientsTabHandler.refresh();
+	
+						this.uiController.infoMessage(InternationalisationUtils
+								.getI18nString(I18N_IMPORT_SUCCESSFUL));							
+					}
+				}
 			}
 		} catch (DuplicateKeyException e) {
 			pluginController.getUiGeneratorController().
