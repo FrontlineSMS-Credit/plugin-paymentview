@@ -18,6 +18,7 @@ import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.creditsms.plugins.paymentview.data.repository.LogMessageDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetDao;
+import org.creditsms.plugins.paymentview.ui.handler.AuthorisationCodeHandler;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabincomingpayments.IncomingPaymentsTabHandler.Child;
 import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
@@ -93,12 +94,16 @@ public class DistributeConfirmationDialogHandler extends BaseDialog{
 	}
 
 	public void create(){
-		dialogConfimDistributeIp = ((UiGeneratorController) ui).showConfirmationDialog("createInvidualIncomingPayments", this, PaymentPluginConstants.CONFIRM_ACCEPT_DISTRIBUTE_IP);
+		dialogConfimDistributeIp = ((UiGeneratorController) ui).showConfirmationDialog("authorizeDistribution", this, PaymentPluginConstants.CONFIRM_ACCEPT_DISTRIBUTE_IP);
 	}
 	
-	public void createInvidualIncomingPayments(){
+	public void authorizeDistribution(){
 		ui.removeDialog(dialogConfimDistributeIp);
-		
+		new AuthorisationCodeHandler(ui).showAuthorizationCodeDialog(this,
+		"createInvidualIncomingPayments");
+	}
+	
+	public void createInvidualIncomingPayments(){		
 		Target tgtIn = parentIncomingPayment.getTarget();
 		Target tgt = new Target();
 		
@@ -115,6 +120,13 @@ public class DistributeConfirmationDialogHandler extends BaseDialog{
 					//update parent incoming payment;
 					parentIncomingPayment.setActive(false);
 					incomingPaymentDao.updateIncomingPayment(parentIncomingPayment);
+					
+					try {
+						targetDao.updateTarget(tgtIn);
+					} catch (DuplicateKeyException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
 					logMessageDao.saveLogMessage(new LogMessage(LogMessage.LogLevel.INFO,"Group incoming payment disaggregated.",
 							parentIncomingPayment.toStringForLogs() + " Confimation Code: " + parentIncomingPayment.getConfirmationCode() ));
@@ -201,7 +213,6 @@ public class DistributeConfirmationDialogHandler extends BaseDialog{
 						+ parentIncomingPayment.getConfirmationCode()));
 			}
 		}
-				
 		this.removeDialog();
 		ui.infoMessage("You have successfully distribute the incoming payment " + parentIncomingPayment.getConfirmationCode());
 	}

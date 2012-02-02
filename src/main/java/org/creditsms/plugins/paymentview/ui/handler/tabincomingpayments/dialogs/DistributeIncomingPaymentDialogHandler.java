@@ -125,8 +125,4 @@ public class DistributeIncomingPaymentDialogHandler extends BaseDialog{
 	public void showDialog() {
 		ui.add(this.dialogComponent);
 	}
-	
-
-
-
 }

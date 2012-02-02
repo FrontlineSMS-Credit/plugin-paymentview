@@ -10,12 +10,13 @@ import net.frontlinesms.csv.CsvParseException;
 import net.frontlinesms.csv.CsvRowFormat;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.ContactDao;
-import net.frontlinesms.data.domain.Contact;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.CustomField;
 import org.creditsms.plugins.paymentview.data.domain.CustomValue;
+import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.utils.MoveClientDetailsToContacts;
@@ -36,6 +37,7 @@ public class ClientCsvImporter extends CsvImporter {
 	private List<Client> selectedClientLst = new ArrayList<Client>();
 	PhoneNumberPattern phonePattern = new PhoneNumberPattern();
 	private ContactDao contactDao;
+	private AccountDao accountDao;
 	private MoveClientDetailsToContacts moveClientDetailsToContacts = new MoveClientDetailsToContacts();
 	
 	// > INSTANCE PROPERTIES
@@ -73,12 +75,14 @@ public class ClientCsvImporter extends CsvImporter {
 			CsvRowFormat rowFormat, PaymentViewPluginController pluginController, CustomValueDao customValueDao) throws DuplicateKeyException {
 		log.trace("ENTER");
 		this.contactDao = pluginController.getUiGeneratorController().getFrontlineController().getContactDao();
-		
+		this.accountDao = pluginController.getAccountDao();
 		for (Client client : selectedClientLst) {
 			try{
 				if(phonePattern.formatPhoneNumber(client.getPhoneNumber())) {
 					client.setPhoneNumber(phonePattern.getNewPhoneNumberPattern());
 					clientDao.saveClient(client);
+					Account account = new Account(accountDao.createAccountNumber(), client, false, true);
+				    accountDao.saveAccount(account);
 					saveSelectedCustomFld(clientDao, client, pluginController, customValueDao);
 					moveClientDetailsToContacts.addToContact(this.contactDao, client);
 				}
@@ -116,39 +120,35 @@ public class ClientCsvImporter extends CsvImporter {
 
 		for (int y=0; y<selectedCustomFieldlst.size(); y++) {
 			CustomValue cv = selectedCustomValueslst.get(y);
-//			if(cv.getStrValue().trim().length()==0){
-//				//customValueDao.deleteCustomValue(cv);
-//			} else {
-				if(phonePattern.formatPhoneNumber(cv.getClient().getPhoneNumber())) {
-					cv.getClient().setPhoneNumber(phonePattern.getNewPhoneNumberPattern());
-					if(client.getPhoneNumber().equals(cv.getClient().getPhoneNumber())) {
-						Client c = clientDao.getClientByPhoneNumber(cv.getClient().getPhoneNumber());
-						cv.setClient(c);
-						boolean cValExist = false;
-						List<CustomValue> lstCustomValue = customValueDao.getCustomValuesByClientId(c.getId());
-						if (lstCustomValue==null){
-							customValueDao.saveCustomValue(cv);
-						} else {
-							for(CustomValue customVal: lstCustomValue) {
-								if(customVal.getCustomField().getId()==cv.getCustomField().getId()){
-									if (cv.getStrValue().trim().length()!=0) {
-										customVal.setStrValue(cv.getStrValue());
-										customValueDao.updateCustomValue(customVal);
-									} else {
-										customValueDao.deleteCustomValue(customVal);
-									}
-									cValExist=true;
-								} 
-							}
-							if(cValExist==false){
+			if(phonePattern.formatPhoneNumber(cv.getClient().getPhoneNumber())) {
+				cv.getClient().setPhoneNumber(phonePattern.getNewPhoneNumberPattern());
+				if(client.getPhoneNumber().equals(cv.getClient().getPhoneNumber())) {
+					Client c = clientDao.getClientByPhoneNumber(cv.getClient().getPhoneNumber());
+					cv.setClient(c);
+					boolean cValExist = false;
+					List<CustomValue> lstCustomValue = customValueDao.getCustomValuesByClientId(c.getId());
+					if (lstCustomValue==null){
+						customValueDao.saveCustomValue(cv);
+					} else {
+						for(CustomValue customVal: lstCustomValue) {
+							if(customVal.getCustomField().getId()==cv.getCustomField().getId()){
 								if (cv.getStrValue().trim().length()!=0) {
-									customValueDao.saveCustomValue(cv);
+									customVal.setStrValue(cv.getStrValue());
+									customValueDao.updateCustomValue(customVal);
+								} else {
+									customValueDao.deleteCustomValue(customVal);
 								}
+								cValExist=true;
+							} 
+						}
+						if(cValExist==false){
+							if (cv.getStrValue().trim().length()!=0) {
+								customValueDao.saveCustomValue(cv);
 							}
-						}	
-					}
+						}
+					}	
 				}
-			//}
+			}
 		}	
 	}
 	

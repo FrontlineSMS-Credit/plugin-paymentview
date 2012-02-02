@@ -155,6 +155,8 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 					}
 					outgoingPaymentDao.updateOutgoingPayment(o);
 				}
+				ui.removeAll(newPaymentsTableComponent);
+				ui.alert("Payments are being processed ");
 			}
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);

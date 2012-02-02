@@ -8,6 +8,7 @@ import net.frontlinesms.data.Order;
 import net.frontlinesms.data.domain.PersistableSettings;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 
+import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.IncomingPaymentDao;
 import org.hibernate.criterion.DetachedCriteria;
@@ -33,10 +34,15 @@ public class HibernateIncomingPaymentDao extends
 		criteria.add(Restrictions.eq("active", true));
 		return super.getList(criteria);
 	}
-	
+	/*
+	 * 				DetachedCriteria criteria = super.getSortCriterion(sortBy, order);
+		criteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
+				Boolean.TRUE));
+		return super.getList(criteria, startIndex, limit);
+	 * */
 	public List<IncomingPayment> getActiveIncomingPayments(int startingIndex, int limit) {
 		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
-		criteria.add(Restrictions.eq("active", true));
+		criteria.add(Restrictions.eq("active", Boolean.TRUE));
 		return super.getList(criteria, startingIndex, limit);
 	}
 

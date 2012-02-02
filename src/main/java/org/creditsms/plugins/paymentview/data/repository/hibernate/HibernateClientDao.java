@@ -70,7 +70,7 @@ public class HibernateClientDao extends BaseHibernateDao<Client> implements
 		DetachedCriteria criteria = super.getSortCriterion(sortBy, order);
 		criteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
 				Boolean.TRUE));
-		return super.getList(criteria, startIndex, limit);
+		return super.getList(criteria);
 	}
 	
 	public List<Client> getClientsByFilter(String filter) {
