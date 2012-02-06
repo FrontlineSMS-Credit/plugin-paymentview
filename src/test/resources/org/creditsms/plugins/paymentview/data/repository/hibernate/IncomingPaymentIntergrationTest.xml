@@ -10,4 +10,5 @@
 	<bean id="hibernateClientDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateClientDao" parent="baseHibernateDao"/>
 	<bean id="hibernateAccountDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateAccountDao" parent="baseHibernateDao"/>
 	<bean id="hibernateIncomingPaymentDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateIncomingPaymentDao" parent="baseHibernateDao"/>
+    <bean id="hibernateTargetDao" class="org.creditsms.plugins.paymentview.data.repository.hibernate.HibernateTargetDao" parent="baseHibernateDao"/>
 </beans>

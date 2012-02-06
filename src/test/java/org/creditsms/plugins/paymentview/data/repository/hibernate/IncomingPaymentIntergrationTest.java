@@ -1,6 +1,10 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
@@ -9,6 +13,7 @@ import net.frontlinesms.junit.HibernateTestCase;
 import org.creditsms.plugins.paymentview.data.domain.Account;
 import org.creditsms.plugins.paymentview.data.domain.Client;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
+import org.creditsms.plugins.paymentview.data.domain.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -21,11 +26,14 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase {
 	HibernateAccountDao hibernateAccountDao;
 	@Autowired
 	HibernateIncomingPaymentDao hibernateIncomingPaymentDao;
+	@Autowired    
+	HibernateTargetDao hibernateTargetDao;
 	
 	public void testSetup() {
 		assertNotNull(hibernateClientDao);
 		assertNotNull(hibernateAccountDao);
 		assertNotNull(hibernateIncomingPaymentDao);
+		assertNotNull(hibernateTargetDao);
 	}
 	
 	public void testSavingIncomingPayment() throws DuplicateKeyException{
@@ -119,10 +127,29 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase {
 		assertEquals(new BigDecimal("24500"), hibernateIncomingPaymentDao.getActiveIncomingPaymentByClientId(clientId).get(0).getAmountPaid());
 	}
 	
+	private Target createTarget(Account ac, String startDateStr, String endDateStr){
+		Target tgt = new Target();
+		tgt.setAccount(ac);
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		try { 
+			Date startDate = df.parse(startDateStr);  
+			Date endDate = df.parse(endDateStr);
+			tgt.setStartDate(startDate);
+			tgt.setEndDate(endDate);
+			tgt.setCompletedDate(null);
+			tgt.setTotalTargetCost(new BigDecimal("4500"));
+			hibernateTargetDao.saveTarget(tgt);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return tgt;
+	}
+	
 	private void assertEmptyDatabases(){
 		assertEquals(0, hibernateClientDao.getAllClients().size());
 		assertEquals(0, hibernateAccountDao.getAllAcounts().size());
 		assertEquals(0, hibernateIncomingPaymentDao.getAllIncomingPayments().size());
+		assertEquals(0, hibernateTargetDao.getAllActiveTargets().size());
 	}
 	
 	private void createAndSaveIncomingPayment(String phoneNumber, String amount, String by, Account account, int expectedPaymentCount) throws DuplicateKeyException {
@@ -154,6 +181,7 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase {
 		ip.setAmountPaid(new BigDecimal(amount));
 		ip.setPaymentBy(by);
 		ip.setActive(true);
+		ip.setTarget(createTarget(account,"24/04/2011", "24/07/2011"));
 		if(account != null) {
 			ip.setAccount(account);
 		} else {
@@ -185,5 +213,83 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase {
 		hibernateClientDao.saveClient(c);
 		assertEquals(expectedClientCount, hibernateClientDao.getAllClients().size());
 		return c;
+	}
+	
+	public void testGetAll() throws DuplicateKeyException {
+		createIncomingPayments();
+		assertEquals(55, hibernateIncomingPaymentDao.getAllIncomingPayments().size());
+	}
+	
+	public void testGettingActiveIncomingPayments() throws DuplicateKeyException{
+		createIncomingPayments();
+		assertEquals(50, hibernateIncomingPaymentDao.getActiveIncomingPayments(0, 50).size());
+	}
+	
+	public void testGettingActiveIncomingPaymentsOtherPages() throws DuplicateKeyException{
+		createIncomingPayments();
+		assertEquals(5, hibernateIncomingPaymentDao.getActiveIncomingPayments(50, 50).size());
+	}
+	
+	private void createIncomingPayments() throws DuplicateKeyException {
+		Client c = createAndSaveClient("0734000000", "John Doe",1);
+		Account ac = createAndSaveAccount("000201", 1, c);
+		
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Sang", ac, 1);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. JepTo", ac, 2);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Kim", ac, 3);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Muchai", ac, 4);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Anderson", ac, 5);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Kutalek", ac, 6);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Onyango", ac, 7);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Kamotho", ac, 8);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Kilunda", ac, 9);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Ndolo", ac, 10);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Zuraya", ac, 11);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Mburu", ac, 12);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Pliy", ac, 13);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Sang", ac, 14);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. JepTo", ac, 15);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Kim", ac, 16);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Muchai", ac, 17);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Anderson", ac, 18);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Kutalek", ac, 19);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Onyango", ac, 20);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Kamotho", ac, 21);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Kilunda", ac, 22);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Ndolo", ac, 23);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Zuraya", ac, 24);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Mburu", ac, 25);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Pliy", ac, 26);
+		
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Pliy", ac, 27);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Sang", ac, 28);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. JepTo", ac, 29);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Kim", ac, 30);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Muchai", ac, 31);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Anderson", ac, 32);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Kutalek", ac, 33);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Onyango", ac, 34);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Kamotho", ac, 35);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Kilunda", ac, 36);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Ndolo", ac, 37);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Zuraya", ac, 38);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Mburu", ac, 39);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Pliy", ac, 40);
+		
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Pliy", ac, 41);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Pliy", ac, 42);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Sang", ac, 43);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. JepTo", ac, 44);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Kim", ac, 45);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Muchai", ac, 46);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Anderson", ac, 47);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Kutalek", ac, 48);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Onyango", ac, 49);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Kamotho", ac, 50);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Kilunda", ac, 51);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Ndolo", ac, 52);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Zuraya", ac, 53);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Mburu", ac, 54);
+		createAndSaveIncomingPayment("0733000000", "24500", "Mr. Pliy", ac, 55);
 	}
 }

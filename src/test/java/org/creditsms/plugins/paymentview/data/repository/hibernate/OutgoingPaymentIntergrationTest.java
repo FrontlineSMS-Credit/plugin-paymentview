@@ -17,116 +17,151 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Roy
  */
 public class OutgoingPaymentIntergrationTest extends HibernateTestCase {
-	@Autowired                     
+	@Autowired
 	HibernateClientDao hibernateClientDao;
 	@Autowired
 	HibernateAccountDao hibernateAccountDao;
 	@Autowired
 	HibernateOutgoingPaymentDao hibernateOutgoingPaymentDao;
-	
+
 	public void testSetup() {
 		assertNotNull(hibernateClientDao);
 		assertNotNull(hibernateAccountDao);
 		assertNotNull(hibernateOutgoingPaymentDao);
 	}
-	
-	private void assertEmptyDatabases(){
+
+	private void assertEmptyDatabases() {
 		assertEquals(0, hibernateClientDao.getAllClients().size());
 		assertEquals(0, hibernateAccountDao.getAllAcounts().size());
-		assertEquals(0, hibernateOutgoingPaymentDao.getAllOutgoingPayments().size());
+		assertEquals(0, hibernateOutgoingPaymentDao.getAllOutgoingPayments()
+				.size());
 	}
 
-	public void testSavingOutgoingPayment() throws DuplicateKeyException{
+	public void testSavingOutgoingPayment() throws DuplicateKeyException {
 		assertEmptyDatabases();
 		Client c = createAndSaveClient("0719000000", "Anne Njoki", 1);
-		OutgoingPayment op = createOutgoingPayment(c,"8000", new Date(), Status.CREATED);
+		OutgoingPayment op = createOutgoingPayment(c, "8000", new Date(),
+				Status.CREATED);
 		hibernateOutgoingPaymentDao.saveOutgoingPayment(op);
-		assertEquals(1, hibernateOutgoingPaymentDao.getAllOutgoingPayments().size());
-		assertEquals(Status.CREATED, hibernateOutgoingPaymentDao.getOutgoingPaymentsByClientId(c.getId()).get(0).getStatus());
+		assertEquals(1, hibernateOutgoingPaymentDao.getAllOutgoingPayments()
+				.size());
+		assertEquals(Status.CREATED, hibernateOutgoingPaymentDao
+				.getOutgoingPaymentsByClientId(c.getId()).get(0).getStatus());
 	}
-	
-	public void testUpdatingOutgoingPayment() throws DuplicateKeyException{
+
+	public void testUpdatingOutgoingPayment() throws DuplicateKeyException {
 		assertEmptyDatabases();
 		Client c = createAndSaveClient("0719000000", "Anne Njoki", 1);
-		OutgoingPayment op = createOutgoingPayment(c,"8000", new Date(), Status.CREATED);
+		OutgoingPayment op = createOutgoingPayment(c, "8000", new Date(),
+				Status.CREATED);
 		hibernateOutgoingPaymentDao.saveOutgoingPayment(op);
-		
+
 		op.setStatus(Status.UNCONFIRMED);
 		hibernateOutgoingPaymentDao.updateOutgoingPayment(op);
-		assertEquals(1, hibernateOutgoingPaymentDao.getAllOutgoingPayments().size());
-		assertEquals(Status.UNCONFIRMED, hibernateOutgoingPaymentDao.getOutgoingPaymentsByClientId(c.getId()).get(0).getStatus());
-	}
-	
-	public void testDeletingOutgoingPayment() throws DuplicateKeyException{
-		assertEmptyDatabases();
-		Client c = createAndSaveClient("0719000000", "Anne Njoki", 1);
-		createAndSaveOutgoingPayment(c, "8000", new Date(), null, Status.UNCONFIRMED,1);
-		hibernateOutgoingPaymentDao.deleteOutgoingPayment(getOutgoingPayment());
-		assertEquals(0, hibernateOutgoingPaymentDao.getAllOutgoingPayments().size());
-	}
-	
-	public void testGettingOutgoingPaymentById() throws DuplicateKeyException{
-		assertEmptyDatabases();
-		Client c = createAndSaveClient("0719000000", "Anne Njoki", 1);
-		createAndSaveOutgoingPayment(c, "18000", new Date(), null, Status.CONFIRMED,1);
-		long opId = getOutgoingPayment().getId();
-		assertEquals(new BigDecimal("18000"), hibernateOutgoingPaymentDao.getOutgoingPaymentById(opId).getAmountPaid());
-	}
-	
-	public void testGettingOutgoingPaymentByPhoneNumber() throws DuplicateKeyException{
-		assertEmptyDatabases();
-		Client c = createAndSaveClient("0719000000", "Anne Njoki", 1);
-		createAndSaveOutgoingPayment(c, "23000000", new Date(), null, Status.CONFIRMED,1);
-		String phoneNumber = getOutgoingPayment().getClient().getPhoneNumber();
-	    assertEquals(new BigDecimal("23000000"), hibernateOutgoingPaymentDao.getOutgoingPaymentsByPhoneNo(phoneNumber).get(0).getAmountPaid());
+		assertEquals(1, hibernateOutgoingPaymentDao.getAllOutgoingPayments()
+				.size());
+		assertEquals(Status.UNCONFIRMED, hibernateOutgoingPaymentDao
+				.getOutgoingPaymentsByClientId(c.getId()).get(0).getStatus());
 	}
 
-	public void testGettingOutgoingPaymentsByAccountNumber() throws DuplicateKeyException{
+	public void testDeletingOutgoingPayment() throws DuplicateKeyException {
 		assertEmptyDatabases();
-		
+		Client c = createAndSaveClient("0719000000", "Anne Njoki", 1);
+		createAndSaveOutgoingPayment(c, "8000", new Date(), null,
+				Status.UNCONFIRMED, 1);
+		hibernateOutgoingPaymentDao.deleteOutgoingPayment(getOutgoingPayment());
+		assertEquals(0, hibernateOutgoingPaymentDao.getAllOutgoingPayments()
+				.size());
+	}
+
+	public void testGettingOutgoingPaymentById() throws DuplicateKeyException {
+		assertEmptyDatabases();
+		Client c = createAndSaveClient("0719000000", "Anne Njoki", 1);
+		createAndSaveOutgoingPayment(c, "18000", new Date(), null,
+				Status.CONFIRMED, 1);
+		long opId = getOutgoingPayment().getId();
+		assertEquals(new BigDecimal("18000"), hibernateOutgoingPaymentDao
+				.getOutgoingPaymentById(opId).getAmountPaid());
+	}
+
+	public void testGettingOutgoingPaymentByPhoneNumber()
+			throws DuplicateKeyException {
+		assertEmptyDatabases();
+		Client c = createAndSaveClient("0719000000", "Anne Njoki", 1);
+		createAndSaveOutgoingPayment(c, "23000000", new Date(), null,
+				Status.CONFIRMED, 1);
+		String phoneNumber = getOutgoingPayment().getClient().getPhoneNumber();
+		assertEquals(new BigDecimal("23000000"), hibernateOutgoingPaymentDao
+				.getOutgoingPaymentsByPhoneNo(phoneNumber).get(0)
+				.getAmountPaid());
+	}
+
+	public void testGettingOutgoingPaymentsByAccountNumber()
+			throws DuplicateKeyException {
+		assertEmptyDatabases();
+
 		Client c = createAndSaveClient("0719000000", "Anne Njoki", 1);
 		Account ac = createAndSaveAccount("983", 1, null);
-		createAndSaveOutgoingPayment(c, "900000", new Date(), ac, Status.CONFIRMED,1);
+		createAndSaveOutgoingPayment(c, "900000", new Date(), ac,
+				Status.CONFIRMED, 1);
 		String accNumber = getOutgoingPayment().getAccount().getAccountNumber();
-		assertEquals(new BigDecimal("900000"), hibernateOutgoingPaymentDao.
-				getOutgoingPaymentsByAccountNumber(accNumber).get(0).getAmountPaid());
+		assertEquals(new BigDecimal("900000"), hibernateOutgoingPaymentDao
+				.getOutgoingPaymentsByAccountNumber(accNumber).get(0)
+				.getAmountPaid());
 	}
-	
-	public void testGettingOutgoingPaymentByuserId() throws DuplicateKeyException{
+
+	public void testGettingOutgoingPaymentByuserId()
+			throws DuplicateKeyException {
 		assertEmptyDatabases();
-		
+
 		Client c = createAndSaveClient("0719000000", "Anne Njoki", 1);
 		Account ac = createAndSaveAccount("981", 1, c);
-		createAndSaveOutgoingPayment(c, "700000", new Date(), ac, Status.CONFIRMED,1);
+		createAndSaveOutgoingPayment(c, "700000", new Date(), ac,
+				Status.CONFIRMED, 1);
 		long clientId = getOutgoingPayment().getClient().getId();
-		assertEquals(new BigDecimal("700000"), hibernateOutgoingPaymentDao.getOutgoingPaymentsByClientId(clientId).get(0).getAmountPaid());
+		assertEquals(new BigDecimal("700000"), hibernateOutgoingPaymentDao
+				.getOutgoingPaymentsByClientId(clientId).get(0).getAmountPaid());
 	}
-	
-	public void testGettingOutgoingPaymentsByPhoneNumberAndAmountPaid() throws DuplicateKeyException{
+
+	public void testGettingOutgoingPaymentsByPhoneNumberAndAmountPaid()
+			throws DuplicateKeyException {
 		assertEmptyDatabases();
 		Client c = createAndSaveClient("0719000000", "Anne Njoki", 1);
 		Account ac = createAndSaveAccount("981", 1, c);
 		Date d1 = new Date();
 		Date d2 = new Date();
-		createAndSaveOutgoingPayment(c, "700000", d1, ac, Status.UNCONFIRMED,1);
-		createAndSaveOutgoingPayment(c, "700000", d2, ac, Status.UNCONFIRMED,2);
-		assertEquals(2,this.hibernateOutgoingPaymentDao.getAllOutgoingPayments().size());
-		assertEquals((Long) d2.getTime(), this.hibernateOutgoingPaymentDao.getByPhoneNumberAndAmountPaid(c.getPhoneNumber(),
-				new BigDecimal("700000"), Status.UNCONFIRMED).get(0).getTimePaid());
+		createAndSaveOutgoingPayment(c, "700000", d1, ac, Status.UNCONFIRMED, 1);
+		createAndSaveOutgoingPayment(c, "700000", d2, ac, Status.UNCONFIRMED, 2);
+		assertEquals(2, this.hibernateOutgoingPaymentDao
+				.getAllOutgoingPayments().size());
+		assertEquals(
+				(Long) d2.getTime(),
+				this.hibernateOutgoingPaymentDao
+						.getByPhoneNumberAndAmountPaid(c.getPhoneNumber(),
+								new BigDecimal("700000"), Status.UNCONFIRMED)
+						.get(0).getTimePaid());
 	}
-	
-	private OutgoingPayment getOutgoingPayment(){
-		List<OutgoingPayment> oPaymentsLst = hibernateOutgoingPaymentDao.getAllOutgoingPayments();
-		return(this.hibernateOutgoingPaymentDao.getOutgoingPaymentById(oPaymentsLst.get(0).getId()));
+
+	private OutgoingPayment getOutgoingPayment() {
+		List<OutgoingPayment> oPaymentsLst = hibernateOutgoingPaymentDao
+				.getAllOutgoingPayments();
+		return (this.hibernateOutgoingPaymentDao
+				.getOutgoingPaymentById(oPaymentsLst.get(0).getId()));
 	}
-	
-	private void createAndSaveOutgoingPayment(Client client, String amount, Date timePaid, Account account, Status status
-			, int expectedOutgoingPaymentCount) throws DuplicateKeyException{
-		this.hibernateOutgoingPaymentDao.saveOutgoingPayment(createOutgoingPayment(client, amount, timePaid, account, status));
-		assertEquals(expectedOutgoingPaymentCount, this.hibernateOutgoingPaymentDao.getAllOutgoingPayments().size());
+
+	private void createAndSaveOutgoingPayment(Client client, String amount,
+			Date timePaid, Account account, Status status,
+			int expectedOutgoingPaymentCount) throws DuplicateKeyException {
+		this.hibernateOutgoingPaymentDao
+				.saveOutgoingPayment(createOutgoingPayment(client, amount,
+						timePaid, account, status));
+		assertEquals(expectedOutgoingPaymentCount,
+				this.hibernateOutgoingPaymentDao.getAllOutgoingPayments()
+						.size());
 	}
-	
-	private OutgoingPayment createOutgoingPayment(Client client, String amount, Date timePaid, Status status){
+
+	private OutgoingPayment createOutgoingPayment(Client client, String amount,
+			Date timePaid, Status status) {
 		OutgoingPayment op = new OutgoingPayment();
 		op.setClient(client);
 		op.setTimePaid(timePaid);
@@ -134,33 +169,148 @@ public class OutgoingPaymentIntergrationTest extends HibernateTestCase {
 		op.setStatus(status);
 		return op;
 	}
-	
-	private OutgoingPayment createOutgoingPayment(Client client, String amount, Date timePaid, Account account, Status status){
+
+	private OutgoingPayment createOutgoingPayment(Client client, String amount,
+			Date timePaid, Account account, Status status) {
 		OutgoingPayment op = new OutgoingPayment();
 		op.setClient(client);
 		op.setTimePaid(timePaid);
 		op.setAmountPaid(new BigDecimal(amount));
 		op.setStatus(status);
-		if(account != null) op.setAccount(account);
+		if (account != null)
+			op.setAccount(account);
 		return op;
 	}
-	
-	private Account createAndSaveAccount(String accountNumber, int expectedAccountCount, Client client) throws DuplicateKeyException {
+
+	private Account createAndSaveAccount(String accountNumber,
+			int expectedAccountCount, Client client)
+			throws DuplicateKeyException {
 		Account ac = new Account();
 		ac.setAccountNumber(accountNumber);
 		ac.setActiveAccount(true);
-		if(client != null) ac.setClient(client);
+		if (client != null)
+			ac.setClient(client);
 		hibernateAccountDao.saveAccount(ac);
-		assertEquals(expectedAccountCount, hibernateAccountDao.getAllAcounts().size());
+		assertEquals(expectedAccountCount, hibernateAccountDao.getAllAcounts()
+				.size());
 		return ac;
 	}
-	
-	private Client createAndSaveClient(String phnNumber, String firstName, int expectedAccountCount) throws DuplicateKeyException{
+
+	private Client createAndSaveClient(String phnNumber, String firstName,
+			int expectedAccountCount) throws DuplicateKeyException {
 		Client c = new Client();
 		c.setPhoneNumber(phnNumber);
 		c.setFirstName(firstName);
 		hibernateClientDao.saveClient(c);
-		assertEquals(expectedAccountCount, hibernateClientDao.getAllClients().size());
+		assertEquals(expectedAccountCount, hibernateClientDao.getAllClients()
+				.size());
 		return c;
+	}
+
+	public void testGetAll() throws DuplicateKeyException {
+		createOutgoingPayments();
+		assertEquals(43, hibernateOutgoingPaymentDao.getAllOutgoingPayments().size());
+	}
+	
+	public void testGettingOutgoingPaymentsByStartPointAndLimit() throws DuplicateKeyException {
+		createOutgoingPayments();
+		assertEquals(30, hibernateOutgoingPaymentDao.getAllOutgoingPayments(0, 30).size());
+	}
+
+	public void testGettingOutgoingPaymentsByStartPointAndLimitOtherPages() throws DuplicateKeyException {
+		createOutgoingPayments();
+		assertEquals(13, hibernateOutgoingPaymentDao.getAllOutgoingPayments(30, 30).size());
+	}
+
+	private void createOutgoingPayments() throws DuplicateKeyException {
+		Client c = createAndSaveClient("0734000000", "John Doe", 1);
+		Account ac = createAndSaveAccount("000201", 1, c);
+
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 1);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 2);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 3);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 4);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 5);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 6);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 7);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 8);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 9);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 10);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 11);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 12);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 13);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 14);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 15);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 16);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 17);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 18);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 19);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 20);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 21);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 22);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 23);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 24);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 25);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 26);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 27);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 28);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 29);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 30);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 31);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 32);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 33);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 34);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 35);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 36);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 37);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 38);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 39);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 40);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 41);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 42);
+		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+				Status.CONFIRMED, 43);
 	}
 }
