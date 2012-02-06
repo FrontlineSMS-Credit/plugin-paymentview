@@ -220,8 +220,7 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase {
 		createIncomingPayments();
 		
 		// when
-		List<IncomingPayment> allIncomingPayments = hibernateIncomingPaymentDao.
-		getAllIncomingPayments();
+		List<IncomingPayment> allIncomingPayments = hibernateIncomingPaymentDao.getAllIncomingPayments();
 		
 		// then
 		assertEquals(55, allIncomingPayments.size());
@@ -232,8 +231,7 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase {
 		createIncomingPayments();
 		
 		// when
-		List<IncomingPayment> firstPageOfIncomingPayments = hibernateIncomingPaymentDao.
-		getActiveIncomingPayments(0, 50);
+		List<IncomingPayment> firstPageOfIncomingPayments = hibernateIncomingPaymentDao.getActiveIncomingPayments(0, 50);
 		
 		//then
 		assertEquals(50, firstPageOfIncomingPayments.size());
@@ -244,8 +242,7 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase {
 		createIncomingPayments();
 		
 		// when
-		List<IncomingPayment> secondPageOfIncomingPayments = hibernateIncomingPaymentDao.
-		getActiveIncomingPayments(50, 50);
+		List<IncomingPayment> secondPageOfIncomingPayments = hibernateIncomingPaymentDao.getActiveIncomingPayments(50, 50);
 
 		//then
 		assertEquals(5, secondPageOfIncomingPayments.size());
@@ -255,8 +252,8 @@ public class IncomingPaymentIntergrationTest extends HibernateTestCase {
 		Client c = createAndSaveClient("0734000000", "John Doe",1);
 		Account ac = createAndSaveAccount("000201", 1, c);
 		
-		for(int ip = 0; ip < 55; ip++) {
-			createAndSaveIncomingPayment("0733000000", "24500", "John Doe", ac, ip+1);
+		for(int ip=1; ip<=55; ip++) {
+			createAndSaveIncomingPayment("0733000000", "24500", "John Doe", ac, ip);
 		}
 	}
 }

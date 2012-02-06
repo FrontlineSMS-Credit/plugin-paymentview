@@ -34,7 +34,7 @@ public class HibernateOutgoingPaymentDao extends
 	
 	public List<OutgoingPayment> getAllOutgoingPayments(int startIndex,
 			int limit) {
-		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);		
+		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		List<OutgoingPayment> payments = getList(criteria);
 		return payments.subList(startIndex, Math.min(startIndex+limit, payments.size()));
 	}

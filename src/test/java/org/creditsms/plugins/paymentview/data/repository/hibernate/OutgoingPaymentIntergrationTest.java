@@ -239,7 +239,7 @@ public class OutgoingPaymentIntergrationTest extends HibernateTestCase {
 		
 		// when
 		List<OutgoingPayment> secondPageOfOutgoingPayments = hibernateOutgoingPaymentDao
-		.getAllOutgoingPayments(30, 30);
+				.getAllOutgoingPayments(30, 30);
 		
 		// then
 		assertEquals(13, secondPageOfOutgoingPayments.size());
@@ -249,9 +249,9 @@ public class OutgoingPaymentIntergrationTest extends HibernateTestCase {
 		Client c = createAndSaveClient("0734000000", "John Doe", 1);
 		Account ac = createAndSaveAccount("000201", 1, c);
 
-		for(int y=0; y<43; y++) {
+		for(int y=1; y<=43; y++) {
 			createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-					Status.CONFIRMED, y+1);
+					Status.CONFIRMED, y);
 		}
 	}
 }
