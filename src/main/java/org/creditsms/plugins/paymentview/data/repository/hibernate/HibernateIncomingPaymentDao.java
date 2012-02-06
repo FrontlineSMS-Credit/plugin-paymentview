@@ -1,6 +1,5 @@
 package org.creditsms.plugins.paymentview.data.repository.hibernate;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -38,13 +37,8 @@ public class HibernateIncomingPaymentDao extends
 	public List<IncomingPayment> getActiveIncomingPayments(int startingIndex, int limit) {
 		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.eq("active", Boolean.TRUE));
-
-		int paymentsSize = getActiveIncomingPayments().size();
-		if(startingIndex+limit > paymentsSize) {
-			return super.getList(criteria).subList(startingIndex, paymentsSize);
-		} else {
-			return super.getList(criteria).subList(startingIndex, startingIndex+limit);
-		}
+		List<IncomingPayment> payments = getList(criteria);
+		return payments.subList(startingIndex, Math.min(startingIndex+limit, payments.size()));
 	}
 
 	public List<IncomingPayment> getActiveIncomingPaymentByClientId(long clientId) {
@@ -175,13 +169,8 @@ public class HibernateIncomingPaymentDao extends
 		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.eq("active", true));
 		criteria.add(Restrictions.between("timePaid", startDate.getTime(), endDate.getTime()));
-
-		int paymentsSize = getIncomingPaymentsByDateRange(startDate, endDate).size();
-		if(startingIndex+limit > paymentsSize) {
-			return super.getList(criteria).subList(startingIndex, paymentsSize);
-		} else {
-			return super.getList(criteria).subList(startingIndex, startingIndex+limit);
-		}
+		List<IncomingPayment> payments = getList(criteria);
+		return payments.subList(startingIndex, Math.min(startingIndex+limit, payments.size()));
 	}
 	
 	public List<IncomingPayment> getIncomingPaymentsByDateRange(Date startDate,
@@ -196,13 +185,8 @@ public class HibernateIncomingPaymentDao extends
 		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.eq("active", true));
 		criteria.add(Restrictions.ge("timePaid", startDate.getTime()));
-
-		int paymentsSize = getIncomingPaymentsByStartDate(startDate).size();
-		if(startingIndex+limit > paymentsSize) {
-			return super.getList(criteria).subList(startingIndex, paymentsSize);
-		} else {
-			return super.getList(criteria).subList(startingIndex, startingIndex+limit);
-		}
+		List<IncomingPayment> payments = getList(criteria);
+		return payments.subList(startingIndex, Math.min(startingIndex+limit, payments.size()));
 	}
 	
 	public List<IncomingPayment> getIncomingPaymentsByStartDate(Date startDate) {
@@ -216,13 +200,8 @@ public class HibernateIncomingPaymentDao extends
 		DetachedCriteria criteria = super.getSortCriterion(IncomingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.eq("active", true));
 		criteria.add(Restrictions.le("timePaid", endDate.getTime()));
-		
-		int paymentsSize = getIncomingPaymentsByEndDate(endDate).size();
-		if(startingIndex+limit > paymentsSize) {
-			return super.getList(criteria).subList(startingIndex, paymentsSize);
-		} else {
-			return super.getList(criteria).subList(startingIndex, startingIndex+limit);
-		}
+		List<IncomingPayment> payments = getList(criteria);
+		return payments.subList(startingIndex, Math.min(startingIndex+limit, payments.size()));
 	}
 	
 	public List<IncomingPayment> getIncomingPaymentsByEndDate(Date endDate) {

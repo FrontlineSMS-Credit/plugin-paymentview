@@ -208,109 +208,50 @@ public class OutgoingPaymentIntergrationTest extends HibernateTestCase {
 	}
 
 	public void testGetAll() throws DuplicateKeyException {
+		// given
 		createOutgoingPayments();
-		assertEquals(43, hibernateOutgoingPaymentDao.getAllOutgoingPayments().size());
-	}
-	
-	public void testGettingOutgoingPaymentsByStartPointAndLimit() throws DuplicateKeyException {
-		createOutgoingPayments();
-		assertEquals(30, hibernateOutgoingPaymentDao.getAllOutgoingPayments(0, 30).size());
+
+		// when
+		List<OutgoingPayment> allOutgoingPayments = hibernateOutgoingPaymentDao
+				.getAllOutgoingPayments();
+
+		// then
+		assertEquals(43, allOutgoingPayments.size());
 	}
 
-	public void testGettingOutgoingPaymentsByStartPointAndLimitOtherPages() throws DuplicateKeyException {
+	public void testGettingOutgoingPaymentsByStartPointAndLimit()
+			throws DuplicateKeyException {
+		// given
 		createOutgoingPayments();
-		assertEquals(13, hibernateOutgoingPaymentDao.getAllOutgoingPayments(30, 30).size());
+
+		// when
+		List<OutgoingPayment> firtPageOfOutgoingPayments = hibernateOutgoingPaymentDao
+				.getAllOutgoingPayments(0, 30);
+
+		//then
+		assertEquals(30, firtPageOfOutgoingPayments.size());
+	}
+
+	public void testGettingOutgoingPaymentsByStartPointAndLimitOtherPages()
+			throws DuplicateKeyException {
+		// given
+		createOutgoingPayments();
+		
+		// when
+		List<OutgoingPayment> secondPageOfOutgoingPayments = hibernateOutgoingPaymentDao
+		.getAllOutgoingPayments(30, 30);
+		
+		// then
+		assertEquals(13, secondPageOfOutgoingPayments.size());
 	}
 
 	private void createOutgoingPayments() throws DuplicateKeyException {
 		Client c = createAndSaveClient("0734000000", "John Doe", 1);
 		Account ac = createAndSaveAccount("000201", 1, c);
 
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 1);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 2);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 3);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 4);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 5);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 6);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 7);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 8);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 9);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 10);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 11);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 12);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 13);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 14);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 15);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 16);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 17);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 18);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 19);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 20);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 21);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 22);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 23);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 24);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 25);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 26);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 27);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 28);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 29);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 30);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 31);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 32);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 33);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 34);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 35);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 36);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 37);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 38);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 39);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 40);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 41);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 42);
-		createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
-				Status.CONFIRMED, 43);
+		for(int y=0; y<43; y++) {
+			createAndSaveOutgoingPayment(c, "24500", new Date(), ac,
+					Status.CONFIRMED, y+1);
+		}
 	}
 }
