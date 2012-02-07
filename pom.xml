@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.frontlinesms.plugins</groupId>
 	<artifactId>frontlinesms-plugin-payment</artifactId>
-	<name>FrontlineSMS CreditSMS Plugin</name>
+	<name>FrontlineSMS Credit Plugin</name>
 	<description>CreditSMS plugin for FrontlineSMS</description>
 	<parent>
 		<groupId>net.frontlinesms.core</groupId>
