@@ -10,6 +10,9 @@ bin/
 .project
 .settings/
 
+# Redcar settings directory
+.redcar
+
 # Temporary working files and directory
 temp/
 /izpack-build.xml
