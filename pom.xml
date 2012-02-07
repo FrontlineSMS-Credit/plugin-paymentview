@@ -16,6 +16,13 @@
 	<scm>
 		<developerConnection>scm:git:git@github.com:${github.projectOwner}/${github.projectName}.git</developerConnection>
 	</scm>
+	
+	<properties>
+		<github.projectOwner>FrontlineSMS-Credit</github.projectOwner>
+		<github.projectName>plugin-paymentview</github.projectName>
+	</properties>
+
+
 	<distributionManagement>
 		<repository>
 			<id>frontlinesms.repo</id>
