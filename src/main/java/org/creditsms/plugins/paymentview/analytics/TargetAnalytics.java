@@ -81,8 +81,7 @@ public class TargetAnalytics {
 	}
 	
 	public BigDecimal getLastAmountPaid(long tartgetId){
-	    Target tgt = targetDao.getTargetById(tartgetId);
-	    List<IncomingPayment> incList = incomingPaymentDao.getActiveIncomingPaymentsByTargetAndDates(tartgetId , tgt.getStartDate(), tgt.getEndDate());
+	    List<IncomingPayment> incList = incomingPaymentDao.getActiveIncomingPaymentsByTarget(tartgetId);
 	    
 	    if(incList!=null && incList.size()>0){
 	    	return incList.get(0).getAmountPaid();
@@ -92,14 +91,12 @@ public class TargetAnalytics {
 	}
 	
 	private List<IncomingPayment> getIncomingPaymentsByTargetId(long targetId){
-		Target target = targetDao.getTargetById(targetId);
-	    List <IncomingPayment> incomingPayments = incomingPaymentDao.getIncomingPaymentsByTargetAndDates(targetId, target.getStartDate(), target.getEndDate());
+	    List <IncomingPayment> incomingPayments = incomingPaymentDao.getActiveIncomingPaymentsByTarget(targetId);
 		return incomingPayments;
 	}
 	
-	private List<IncomingPayment> getIncomingPaymentsByTargetIdByDates(long tartgetId, Date startDate, Date endDate){
-	    List <IncomingPayment> incomingPayments = incomingPaymentDao.
-	    getActiveIncomingPaymentsByTargetAndDates(tartgetId, startDate, endDate);
+	private List<IncomingPayment> getIncomingPaymentsByTargetIdByDates(long targetId, Date startDate, Date endDate){
+	    List <IncomingPayment> incomingPayments = incomingPaymentDao.getActiveIncomingPaymentsByTarget(targetId);
 		return incomingPayments;
 	}
 
@@ -153,10 +150,7 @@ public class TargetAnalytics {
 	}
 	
 	public Date getLastDatePaid(long targetId){
-	  //  String accountNumber = getAccountNumber(targetId);
-	    Target target =targetDao.getTargetById(targetId);
-	    List<IncomingPayment> incList = incomingPaymentDao.getActiveIncomingPaymentsByTargetAndDates(targetId, 
-	    		target.getStartDate(), target.getEndDate());
+	    List<IncomingPayment> incList = incomingPaymentDao.getActiveIncomingPaymentsByTarget(targetId);
 	    
 	    if(incList!=null && incList.size()>0){
 	    	return new Date(incList.get(0).getTimePaid());

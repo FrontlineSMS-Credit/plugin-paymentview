@@ -418,7 +418,6 @@ public class IncomingPaymentsTabHandler extends BaseTabHandler implements
 			clientSelector.setExclusionList(clients);
 			clientSelector.showClientSelectorDialog(this, "reassignForClient",
 					List.class);
-
 		}
 	}
 

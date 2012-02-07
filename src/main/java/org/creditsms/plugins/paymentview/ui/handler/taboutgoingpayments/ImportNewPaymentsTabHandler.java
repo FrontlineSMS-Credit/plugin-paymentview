@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.taboutgoingpayments;
 
+import java.util.Calendar;
 import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
@@ -145,6 +146,7 @@ public class ImportNewPaymentsTabHandler extends BaseTabHandler {
 				
 				for(OutgoingPayment o : newPaymentsLst) {
 					updateClient(o);
+					o.setTimePaid(Calendar.getInstance().getTime());
 					o.setStatus(OutgoingPayment.Status.CREATED);
 					o.setConfirmationCode("");
 					outgoingPaymentDao.saveOutgoingPayment(o);
