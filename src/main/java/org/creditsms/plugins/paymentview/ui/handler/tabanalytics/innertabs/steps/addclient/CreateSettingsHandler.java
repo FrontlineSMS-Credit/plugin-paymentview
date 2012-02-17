@@ -12,6 +12,7 @@ import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.handler.BasePanelHandler;
+import net.frontlinesms.ui.handler.core.ConfirmationDialogHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
@@ -34,7 +35,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 	private static final String TXT_QTY = "qty";
 	private static final String TBL_SERVICE_ITEMS_LIST = "tbl_serviceItemList";
 	private static final String XML_STEP_CREATE_SETTINGS = "/ui/plugins/paymentview/analytics/addclient/stepcreatesettings.xml";
-	private static String CONFIRM_ACCEPT_PARSED_DATE = "";
+	private String CONFIRM_ACCEPT_PARSED_DATE = "";
 
 	private final AddClientTabHandler addClientTabHandler;
 	private final SelectClientsHandler previousSelectClientsHandler;
@@ -48,7 +49,6 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 	private Object txtEndDate;
 	private Object txtTotalAmount;
 	private Object serviceItemsTableComponent;
-	private Object dialogConfimParsedEndDate;
 	private Date startDate;
 	private Date endDate;
 	private Date tempStartDate;
@@ -59,7 +59,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 	private BigDecimal totalAmount = BigDecimal.ZERO;
 
 	PaymentDateSettings paymentDateSettings = new PaymentDateSettings();
-	
+
 	protected CreateSettingsHandler(UiGeneratorController ui,
 			PaymentViewPluginController pluginController,
 			AddClientTabHandler addClientTabHandler,
@@ -121,7 +121,7 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 		cal.set(Calendar.MILLISECOND, 0);
 		return cal;
 	}
-	
+
 	boolean validateStartDate(Date startDate) {
 		Calendar calStartDate = Calendar.getInstance();
 		calStartDate = paymentDateSettings.setStartOfDay(calStartDate);
@@ -144,16 +144,12 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 	}
 
 	boolean validateEndDate(Date startDate, Date endDate) {
-		String methodToBeCalled = "setParsedEndDate";
-
 		if (startDate.compareTo(endDate) < 0) {
 			Calendar calStartDate = Calendar.getInstance();
 			calStartDate.setTime(startDate);
-			calStartDate = paymentDateSettings.setStartOfDay(calStartDate);
 
 			Calendar calEndDate = Calendar.getInstance();
 			calEndDate.setTime(endDate);
-			calEndDate = setEndOfDay(calEndDate);
 
 			int startDay = calStartDate.get(Calendar.DAY_OF_MONTH);
 			int endDay = calEndDate.get(Calendar.DAY_OF_MONTH);
@@ -173,8 +169,8 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 					} else {
 						calEndDate.setTime(calStartDate.getTime());
 						calEndDate.add(Calendar.MONTH, monthDiff);
-						calEndDate.add(Calendar.DATE, -1);
-						calEndDate = paymentDateSettings.setEndOfDayFormat(calEndDate);
+						calEndDate = paymentDateSettings
+								.setEndOfDayFormat(calEndDate);
 
 						CONFIRM_ACCEPT_PARSED_DATE = "The selected end date is incorrect. The parsed end date is: "
 								+ calEndDate.getTime()
@@ -182,17 +178,16 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 						if (startDay != endDay) {
 							setTempStartDate(calStartDate.getTime());
 							setTempEndDate(calEndDate.getTime());
-							dialogConfimParsedEndDate = ((UiGeneratorController) ui)
-									.showConfirmationDialog(methodToBeCalled,
-											this, CONFIRM_ACCEPT_PARSED_DATE);
+
+							new ConfirmationDialogHandler(ui,
+									this, "setParsedEndDate",
+									CONFIRM_ACCEPT_PARSED_DATE);
 							return false;
 						} else {
 							Calendar calendDate = Calendar.getInstance();
 							calendDate.setTime(endDate);
-							calendDate = paymentDateSettings.setEndOfDayFormat(calendDate);
 
 							this.endDate = calendDate.getTime();
-							this.startDate = calStartDate.getTime();
 							return true;
 						}
 					}
@@ -202,7 +197,6 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 
 				calEndDate.setTime(calStartDate.getTime());
 				calEndDate.add(Calendar.MONTH, monthDiff);
-				calEndDate.add(Calendar.DATE, -1);
 				calEndDate = paymentDateSettings.setEndOfDayFormat(calEndDate);
 
 				CONFIRM_ACCEPT_PARSED_DATE = "The selected end date is incorrect. The parsed end date is: "
@@ -211,17 +205,16 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 				if (startDay != endDay) {
 					setTempStartDate(calStartDate.getTime());
 					setTempEndDate(calEndDate.getTime());
-					dialogConfimParsedEndDate = ((UiGeneratorController) ui)
-							.showConfirmationDialog(methodToBeCalled, this,
-									CONFIRM_ACCEPT_PARSED_DATE);
+					new ConfirmationDialogHandler(ui, this,
+							"setParsedEndDate", CONFIRM_ACCEPT_PARSED_DATE);
 					return false;
 				} else {
 					Calendar calendDate = Calendar.getInstance();
 					calendDate.setTime(endDate);
-					calendDate = paymentDateSettings.setEndOfDayFormat(calendDate);
+					calendDate = paymentDateSettings
+							.setEndOfDayFormat(calendDate);
 
 					this.endDate = calendDate.getTime();
-					this.startDate = calStartDate.getTime();
 					return true;
 				}
 			}
@@ -232,7 +225,6 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 	}
 
 	public void setParsedEndDate() {
-		ui.remove(dialogConfimParsedEndDate);
 		this.endDate = getTempEndDate();
 		this.startDate = getTempStartDate();
 
@@ -260,11 +252,13 @@ public class CreateSettingsHandler extends BasePanelHandler implements
 			calendDate = paymentDateSettings.setEndOfDayFormat(calendDate);
 
 			endDate = calendDate.getTime();
-			return true;
-			/*
-			 * if(validateEndDate(startDate, endDate)){ return true; }else{
-			 * return false; }
-			 */
+
+			if (validateEndDate(startDate, endDate)) {
+				return true;
+			} else {
+				return false;
+			}
+
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}

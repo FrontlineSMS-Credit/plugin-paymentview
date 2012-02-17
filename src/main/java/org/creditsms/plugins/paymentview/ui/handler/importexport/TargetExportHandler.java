@@ -110,16 +110,16 @@ public class TargetExportHandler extends ExportDialogHandler<Target> {
 				COMPONENT_CB_LAST_PAYMENT);
 		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_DATE_PAID,
 				COMPONENT_CB_LAST_PAYMENT_DATE);
-		/*addMarker(rowFormat, PaymentViewCsvUtils.TARGET_MONTHLY_SAVINGS,
-				COMPONENT_CB_PAID_THIS_MONTH);*/
+		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_MONTHLY_SAVINGS,
+				COMPONENT_CB_PAID_THIS_MONTH);
 		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_DAYS_REMAINING,
 				COMPONENT_CB_DAYS_REMAINING);
 		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_STATUS,
 				COMPONENT_CB_STATUS);
-		/*addMarker(rowFormat, PaymentViewCsvUtils.MONTHLY_DUE,
+		addMarker(rowFormat, PaymentViewCsvUtils.MONTHLY_DUE,
 				COMPONENT_CB_CURRENT_AMOUNT_DUE);
 		addMarker(rowFormat, PaymentViewCsvUtils.TARGET_CURRENT_DUE_DATE,
-				COMPONENT_CB_CURRENT_DUE_DATE);*/
+				COMPONENT_CB_CURRENT_DUE_DATE);
 		return rowFormat;
 	}
 

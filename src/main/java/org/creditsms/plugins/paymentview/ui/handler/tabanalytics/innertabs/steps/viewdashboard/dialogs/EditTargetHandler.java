@@ -11,9 +11,11 @@ import java.util.List;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.ui.handler.core.ConfirmationDialogHandler;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.PaymentViewPluginController;
+import org.creditsms.plugins.paymentview.analytics.PaymentDateSettings;
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
 import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.domain.ServiceItem;
@@ -25,6 +27,7 @@ import org.creditsms.plugins.paymentview.data.repository.TargetDao;
 import org.creditsms.plugins.paymentview.data.repository.TargetServiceItemDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabanalytics.innertabs.steps.viewdashboard.CreateSettingsTableHandler;
 import org.creditsms.plugins.paymentview.utils.PaymentPluginConstants;
+import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
 
 public class EditTargetHandler implements ThinletUiEventHandler {
 	private static final String XML_EDIT_TARGET = "/ui/plugins/paymentview/analytics/viewdashboard/dialogs/dlgEditTarget.xml";
@@ -37,6 +40,7 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 	private static final String TXT_QTY = "qty";
 	private static final String TXT_TARGET_COST = "txt_TotalAmount";
 	private static final String TXT_TARGET_AMOUNT_PAID = "txt_TotalAmountPaid";
+	private String CONFIRM_ACCEPT_PARSED_DATE = "";
 	private DateFormat dateFormat = InternationalisationUtils.getDateFormat();
 	
 	private Object dialogComponent;
@@ -72,6 +76,7 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 
 	private final CreateSettingsTableHandler createsettingstblhndler;
 	private PaymentViewPluginController pluginController;
+	PaymentDateSettings paymentDateSettings = new PaymentDateSettings();
 	
 	public EditTargetHandler(PaymentViewPluginController pluginController, Target tgt, CreateSettingsTableHandler createsettingstblhndler) {
 		this.ui = pluginController.getUiGeneratorController();
@@ -383,6 +388,94 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 		((UiGeneratorController) ui).showDateSelecter(textField);
 	}
 
+	private int getMonthsDiffFromStart(Calendar calStartDate,
+			Calendar calNowDate) {
+		return (calStartDate.get(Calendar.YEAR) - calNowDate.get(Calendar.YEAR))
+				* 12
+				+ (calStartDate.get(Calendar.MONTH) - calNowDate
+						.get(Calendar.MONTH))
+				+ (calStartDate.get(Calendar.DAY_OF_MONTH) >= calNowDate
+						.get(Calendar.DAY_OF_MONTH) ? 0 : -1);
+	}
+	
+	boolean validateDate(Date startDate, Date endDate) {
+		if (startDate.compareTo(endDate) < 0) {
+			Calendar calStartDate = Calendar.getInstance();
+			calStartDate.setTime(startDate);
+
+			Calendar calEndDate = Calendar.getInstance();
+			calEndDate.setTime(endDate);
+
+			int startDay = calStartDate.get(Calendar.DAY_OF_MONTH);
+			int endDay = calEndDate.get(Calendar.DAY_OF_MONTH);
+
+			if (calStartDate.get(Calendar.YEAR) == calEndDate
+					.get(Calendar.YEAR)) {
+				if (calStartDate.get(Calendar.MONTH) == calEndDate
+						.get(Calendar.MONTH)) {
+					ui.alert("Target duration cannot be less than a month.");
+					return false;
+				} else {
+					int monthDiff = getMonthsDiffFromStart(calEndDate,
+							calStartDate);
+					if (monthDiff == 0) {
+						ui.alert("Target duration cannot be less than a month.");
+						return false;
+					} else {
+						calEndDate.setTime(calStartDate.getTime());
+						calEndDate.add(Calendar.MONTH, monthDiff);
+						calEndDate = paymentDateSettings.setEndOfDayFormat(calEndDate);
+						
+						CONFIRM_ACCEPT_PARSED_DATE = "The selected end date is incorrect. The parsed end date is: "
+								+ calEndDate.getTime()
+								+ ". Do you want to proceed?";
+						if (startDay != endDay) {
+							setTempStartDate(calStartDate.getTime());
+							setTempEndDate(calEndDate.getTime());
+							
+							new ConfirmationDialogHandler(ui, this,
+									"setParsedEndDate",
+									CONFIRM_ACCEPT_PARSED_DATE);
+							return false;
+						} else {
+							Calendar calendDate = Calendar.getInstance();
+							calendDate.setTime(endDate);
+
+							this.endDate = calendDate.getTime();
+							return true;
+						}
+					}
+				}
+			} else {
+				int monthDiff = getMonthsDiffFromStart(calEndDate, calStartDate);
+
+				calEndDate.setTime(calStartDate.getTime());
+				calEndDate.add(Calendar.MONTH, monthDiff);
+				calEndDate = paymentDateSettings.setEndOfDayFormat(calEndDate);
+
+				CONFIRM_ACCEPT_PARSED_DATE = "The selected end date is incorrect. The parsed end date is: "
+						+ PaymentViewUtils.formatDate(calEndDate.getTime())
+						+ ". Do you want to proceed?";
+				if (startDay != endDay) {
+					setTempStartDate(calStartDate.getTime());
+					setTempEndDate(calEndDate.getTime());
+					new ConfirmationDialogHandler(ui, this, "setParsedEndDate", CONFIRM_ACCEPT_PARSED_DATE);
+					return false;
+				} else {
+					Calendar calendDate = Calendar.getInstance();
+					calendDate.setTime(endDate);
+					calendDate = paymentDateSettings.setEndOfDayFormat(calendDate);
+
+					this.endDate = calendDate.getTime();
+					return true;
+				}
+			}
+		} else {
+			ui.alert("Invalid End Date");
+			return false;
+		}
+	}
+	
 	boolean validateEndDate(Date startDate, Date endDate){
 		if(startDate.compareTo(endDate)<0){
 			Calendar calStartDate = Calendar.getInstance();
@@ -395,7 +488,7 @@ public class EditTargetHandler implements ThinletUiEventHandler {
 			
 			this.endDate = calEndDate.getTime();
 			this.startDate = calStartDate.getTime();
-			return true;
+			return validateDate(this.startDate, this.endDate);
 		}else{
 			ui.alert("Invalid End Date");
 			return false;
