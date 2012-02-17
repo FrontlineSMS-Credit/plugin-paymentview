@@ -178,7 +178,7 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 		Object startDate = ui.createTableCell(dateFormat.format(target.getStartDate()));
 		Object endDate = ui.createTableCell(dateFormat.format(target.getEndDate()));
 		
-		//targetAnalytics.computeAnalyticsIntervalDatesAndSavings(target.getId());
+		targetAnalytics.computeAnalyticsIntervalDatesAndSavings(target.getId());
 	    Object monthlyAmountSaved = ui.createTableCell(formatter.format(targetAnalytics.getMonthlyAmountSaved()));
 	    Object remainingAmount = ui.createTableCell(formatter.format(target.getTotalTargetCost().subtract(targetAnalytics.getAmountSaved(target.getId()))));
 	    Object monthlyAmountDue = ui.createTableCell(formatter.format(targetAnalytics.getMonthlyAmountDue()));
@@ -190,7 +190,7 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 			endOfMonthlyInterval = ui.createTableCell("Target end date passed");
 		}
 	 			 	
-	 	//targetAnalytics.clearAnalyticsComputations();
+	 	targetAnalytics.clearAnalyticsComputations();
 	
 		String neededitems = "";
 		List<TargetServiceItem> lstTSI = targetServiceItemDao.getAllTargetServiceItemByTarget(target.getId());
@@ -213,11 +213,11 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 		ui.add(row, percentageToGo);
 		ui.add(row, lastAmountPaid);
 		ui.add(row, lastDatePaid);
-		/*ui.add(row, monthlyAmountSaved);*/
+		ui.add(row, monthlyAmountSaved);
 		ui.add(row, daysRemaining);
 		ui.add(row, targetStatus);
-		/*ui.add(row, monthlyAmountDue);
-		ui.add(row, endOfMonthlyInterval);*/
+		ui.add(row, monthlyAmountDue);
+		ui.add(row, endOfMonthlyInterval);
 		
 		trgtRowLst.add(row);
 		

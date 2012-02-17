@@ -79,17 +79,16 @@ public class TargetViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 							InternationalisationUtils.getI18nString(COMMON_LAST_PAYMENT),
 							PaymentViewCsvUtils.TARGET_DATE_PAID,
 							InternationalisationUtils.getI18nString(COMMON_LAST_PAYMENT_DATE),
-//							PaymentViewCsvUtils.TARGET_MONTHLY_SAVINGS,
-//							InternationalisationUtils.getI18nString(COMMON_PAID_THIS_MONTH),
+ 							PaymentViewCsvUtils.TARGET_MONTHLY_SAVINGS,
+ 							InternationalisationUtils.getI18nString(COMMON_PAID_THIS_MONTH),
 							PaymentViewCsvUtils.TARGET_DAYS_REMAINING,
 							InternationalisationUtils.getI18nString(COMMON_DAYS_REMAINING),
 							PaymentViewCsvUtils.TARGET_STATUS,
-							InternationalisationUtils.getI18nString(COMMON_TARGET_STATUS));
-//							PaymentViewCsvUtils.MONTHLY_DUE,
-//							InternationalisationUtils.getI18nString(COMMON_CURRENT_AMOUNT_DUE),
-//							PaymentViewCsvUtils.TARGET_CURRENT_DUE_DATE,
-//							InternationalisationUtils.getI18nString(COMMON_CURRENT_DUE_DATE));
-			
+							InternationalisationUtils.getI18nString(COMMON_TARGET_STATUS),
+							PaymentViewCsvUtils.MONTHLY_DUE,
+							InternationalisationUtils.getI18nString(COMMON_CURRENT_AMOUNT_DUE),
+							PaymentViewCsvUtils.TARGET_CURRENT_DUE_DATE,
+							InternationalisationUtils.getI18nString(COMMON_CURRENT_DUE_DATE));
 			
 			for (Target target : targetList) {
 				//targetAnalytics.computeAnalyticsIntervalDatesAndSavings(target.getId());
@@ -120,16 +119,16 @@ public class TargetViewCsvExporter extends net.frontlinesms.csv.CsvExporter {
 						targetAnalytics.getLastAmountPaid(target.getId()).toString(),
 						PaymentViewCsvUtils.TARGET_DATE_PAID,
 						lastDatePaid,
-//						PaymentViewCsvUtils.TARGET_MONTHLY_SAVINGS,
-//						targetAnalytics.getMonthlyAmountSaved().toString(),
+						PaymentViewCsvUtils.TARGET_MONTHLY_SAVINGS,
+						targetAnalytics.getMonthlyAmountSaved().toString(),
 						PaymentViewCsvUtils.TARGET_DAYS_REMAINING,
 						targetAnalytics.getDaysRemaining(target.getId()).toString(),
 						PaymentViewCsvUtils.TARGET_STATUS,
-						targetAnalytics.getStatus(target.getId()).toString());
-//						PaymentViewCsvUtils.MONTHLY_DUE,
-//						targetAnalytics.getMonthlyAmountDue().toString(),
-//						PaymentViewCsvUtils.TARGET_CURRENT_DUE_DATE,
-//						InternationalisationUtils.getDatetimeFormat().format(new Date(targetAnalytics.getEndMonthInterval().getTime())));
+						targetAnalytics.getStatus(target.getId()).toString(),
+						PaymentViewCsvUtils.MONTHLY_DUE,
+						targetAnalytics.getMonthlyAmountDue().toString(),
+						PaymentViewCsvUtils.TARGET_CURRENT_DUE_DATE,
+						InternationalisationUtils.getDatetimeFormat().format(new Date(targetAnalytics.getEndMonthInterval().getTime())));
 			}
 		} finally {
 			if (out != null)

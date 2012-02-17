@@ -18,9 +18,9 @@
 			    	<button name="targetEndDate" text="Target End Date" action="addConstantToDialog(replyContent.text, replyContent, 'TARGET_ENDDATE')" icon="/icons/date.png"/>
 			     	<button name="daysRemaining" text="Days Remaining" action="addConstantToDialog(replyContent.text, replyContent, 'DAYS_REMAINING')" icon="/icons/log_info.png"/>
 					<button name="amountRemaining" text="Amount Remaining" action="addConstantToDialog(replyContent.text, replyContent, 'AMOUNT_REMAINING')" icon="/icons/money.png"/>
-					<!--  button name="monthlySavings" text="Amount Paid This Month" action="addConstantToDialog(replyContent.text, replyContent, 'MONTHLY_SAVINGS')" icon="/icons/money.png"/>
+					<button name="monthlySavings" text="Amount Paid This Month" action="addConstantToDialog(replyContent.text, replyContent, 'MONTHLY_SAVINGS')" icon="/icons/money.png"/>
 			    	<button name="monthlyDue" text="Current Amount Due" action="addConstantToDialog(replyContent.text, replyContent, 'MONTHLY_DUE')" icon="/icons/money.png"/>
-			    	<button name="monthlyDueDate" text="Current Due Date" action="addConstantToDialog(replyContent.text, replyContent, 'END_MONTH_INTERVAL')"  icon="/icons/date.png"/-->
+			    	<button name="monthlyDueDate" text="Current Due Date" action="addConstantToDialog(replyContent.text, replyContent, 'END_MONTH_INTERVAL')"  icon="/icons/date.png"/>
 			    </panel>
 	    	</panel>
 	    </panel>

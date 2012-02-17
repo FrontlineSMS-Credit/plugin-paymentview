@@ -22,11 +22,11 @@
 			<column text="Percentage Paid"  width="95" />
 			<column text="Last payment" width="95" />
 			<column text="Last payment Date" width="120" />
-			<!--  column text="Paid this month" width="100" /-->
+			<column text="Paid this month" width="100" />
 			<column text="Days remaining" width="100" />
 			<column text="Target Status" width="90" />
-		    <!--  column text="Amount Due This Month" width="120" />
-            <column text="Month End" width="120" /-->
+		    <column text="Amount Due This Month" width="120" />
+            <column text="Month End" width="120" />
 		</header>
 		<popupmenu name="menu">
 			<menuitem action="viewEditTargetAnalytics" icon="/icons/edit.png" name="viewEditTargetAnalytics"
