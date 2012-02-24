@@ -30,6 +30,7 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 		this.ui = ui;
 		this.pluginController = pluginController;
 		this.settingsDao = pluginController.getPaymentServiceSettingsDao();
+		private NumberFormat formatter = new DecimalFormat("###,##0.00");
 		
 		tab = Thinlet.create("tab");
 		ui.setText(this.tab, "MWallets");
@@ -148,7 +149,7 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 		return ui.createTableRow(s,
 				/*active:*/  pluginController.isActive(s)? "YES": "NO", // TODO i18n
 				/*name:*/    getProviderName(s.getServiceClass()) + ":" + s.getId(),
-				/*balance:*/ balance.toString()); // TODO would be nice to i18n the decimalisation.
+				/*balance:*/ formatter.format(balance)); // TODO would be nice to i18n the decimalisation.
 	}
 
 	private void add(Object component) {

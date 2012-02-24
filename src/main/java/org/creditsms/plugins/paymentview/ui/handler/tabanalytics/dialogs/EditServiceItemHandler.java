@@ -3,7 +3,6 @@ package org.creditsms.plugins.paymentview.ui.handler.tabanalytics.dialogs;
 import java.math.BigDecimal;
 
 import net.frontlinesms.data.DuplicateKeyException;
-import net.frontlinesms.plugins.payment.service.PaymentServiceException;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
