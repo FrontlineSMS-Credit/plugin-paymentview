@@ -1,6 +1,8 @@
 package org.creditsms.plugins.paymentview.ui;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import net.frontlinesms.data.domain.PersistableSettings;
 import net.frontlinesms.plugins.payment.service.PaymentService;
@@ -25,6 +27,8 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 
 	private Object tab;
 	private Object panel;
+	// FIXME this should use normal number formats from i18nUtils
+	private NumberFormat formatter = new DecimalFormat("###,##0.00");
 	
 	public WalletTabHander(UiGeneratorController ui, PaymentViewPluginController pluginController) {
 		this.ui = ui;
