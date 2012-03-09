@@ -53,16 +53,27 @@ public class CreateNewServiceItemHandler implements ThinletUiEventHandler {
 	}
 
 	public void createServiceItem(String txtServiceItemName, String txtServiceItemAmount) {
+		boolean validAmount = true;
 		if (!(txtServiceItemAmount.isEmpty() & txtServiceItemName.isEmpty())){
-			ServiceItemDao serviceItemDao = pluginController.getServiceItemDao();
-			ServiceItem serviceItem = new ServiceItem();
-			serviceItem.setTargetName(txtServiceItemName);
-			serviceItem.setAmount(new BigDecimal(txtServiceItemAmount));
-			
-			serviceItemDao.saveServiceItem(serviceItem);
-								
-			ui.alert("Item Created successfully!");			
-			removeDialog();
+			try {
+				if (new BigDecimal(txtServiceItemAmount) != null) {
+				} else {
+					validAmount = false;
+				}
+			} catch (Exception ex) {
+				validAmount = false;
+			}
+			if(validAmount){
+				ServiceItemDao serviceItemDao = pluginController.getServiceItemDao();
+				ServiceItem serviceItem = new ServiceItem();
+				serviceItem.setTargetName(txtServiceItemName);
+				serviceItem.setAmount(new BigDecimal(txtServiceItemAmount));
+				serviceItemDao.saveServiceItem(serviceItem);
+				ui.alert("Item Created successfully!");			
+				removeDialog();	
+			} else {
+				ui.alert("Invalid Target Amount");
+			}
 		}else{
 			ui.alert("Please fill all the fields!");
 		}
