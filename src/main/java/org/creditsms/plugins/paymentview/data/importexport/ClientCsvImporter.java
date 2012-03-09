@@ -20,7 +20,7 @@ import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.utils.MoveClientDetailsToContacts;
-import org.creditsms.plugins.paymentview.utils.PhoneNumberPattern;
+import org.creditsms.plugins.paymentview.utils.PhoneNumberFormatter;
 import org.hibernate.NonUniqueObjectException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -35,7 +35,7 @@ public class ClientCsvImporter extends CsvImporter {
 	private List<CustomValue> selectedCustomValueslst = new ArrayList<CustomValue>();
 	private List<CustomField> selectedCustomFieldlst = new ArrayList<CustomField>();
 	private List<Client> selectedClientLst = new ArrayList<Client>();
-	PhoneNumberPattern phonePattern = new PhoneNumberPattern();
+	PhoneNumberFormatter phonePattern = new PhoneNumberFormatter();
 	private ContactDao contactDao;
 	private AccountDao accountDao;
 	private MoveClientDetailsToContacts moveClientDetailsToContacts = new MoveClientDetailsToContacts();
@@ -78,8 +78,8 @@ public class ClientCsvImporter extends CsvImporter {
 		this.accountDao = pluginController.getAccountDao();
 		for (Client client : selectedClientLst) {
 			try{
-				if(phonePattern.formatPhoneNumber(client.getPhoneNumber())) {
-					client.setPhoneNumber(phonePattern.getNewPhoneNumberPattern());
+				if(phonePattern.format(client.getPhoneNumber())) {
+					client.setPhoneNumber(phonePattern.getPhoneNumber());
 					clientDao.saveClient(client);
 					Account account = new Account(accountDao.createAccountNumber(), client, false, true);
 				    accountDao.saveAccount(account);
@@ -120,8 +120,8 @@ public class ClientCsvImporter extends CsvImporter {
 
 		for (int y=0; y<selectedCustomFieldlst.size(); y++) {
 			CustomValue cv = selectedCustomValueslst.get(y);
-			if(phonePattern.formatPhoneNumber(cv.getClient().getPhoneNumber())) {
-				cv.getClient().setPhoneNumber(phonePattern.getNewPhoneNumberPattern());
+			if(phonePattern.format(cv.getClient().getPhoneNumber())) {
+				cv.getClient().setPhoneNumber(phonePattern.getPhoneNumber());
 				if(client.getPhoneNumber().equals(cv.getClient().getPhoneNumber())) {
 					Client c = clientDao.getClientByPhoneNumber(cv.getClient().getPhoneNumber());
 					cv.setClient(c);

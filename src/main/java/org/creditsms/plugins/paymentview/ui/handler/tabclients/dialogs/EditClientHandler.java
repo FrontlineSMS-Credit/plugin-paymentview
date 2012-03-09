@@ -22,15 +22,16 @@ import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.base.BaseDialog;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
 import org.creditsms.plugins.paymentview.utils.MoveClientDetailsToContacts;
-import org.creditsms.plugins.paymentview.utils.PhoneNumberPattern;
+import org.creditsms.plugins.paymentview.utils.PhoneNumberFormatter;
 
 public class EditClientHandler extends BaseDialog{
 //> CONSTANTS
+	private static final String INVALID_PHONE_NUMBER_PLEASE_SET_PHONE_NUMBER_IN_VALID_LOCAL_OR_INTERNATIONAL_FORMAT_E_G_1234567890 = "Invalid phone number. Please set phone number in valid local or international format (e.g. +1234567890).";
 	private static final String COMPONENT_TEXT_FIRST_NAME = "fldFirstName";
 	private static final String COMPONENT_TEXT_OTHER_NAME = "fldOtherName";
 	private static final String COMPONENT_TEXT_PHONE_NUMBER = "fldPhoneNumber";
 	private static String XML_EDIT_CLIENT = "/ui/plugins/paymentview/clients/dialogs/dlgEditClient.xml";
-	PhoneNumberPattern phonePattern = new PhoneNumberPattern();
+	PhoneNumberFormatter phonePattern = new PhoneNumberFormatter();
 
 //>DAOs
 	private ClientDao clientDao;
@@ -97,12 +98,11 @@ public class EditClientHandler extends BaseDialog{
 
 	public void init() {
 		dialogComponent = ui.loadComponentFromFile(XML_EDIT_CLIENT, this);
-		compPanelFields = ui.find(dialogComponent, "pnlFields");
+		compPanelFields = find("pnlFields");
 
-		fieldFirstName = ui.find(dialogComponent, COMPONENT_TEXT_FIRST_NAME);
-		fieldPhoneNumber = ui
-				.find(dialogComponent, COMPONENT_TEXT_PHONE_NUMBER);
-		fieldOtherName = ui.find(dialogComponent, COMPONENT_TEXT_OTHER_NAME);
+		fieldFirstName = find(COMPONENT_TEXT_FIRST_NAME);
+		fieldPhoneNumber = find(COMPONENT_TEXT_PHONE_NUMBER);
+		fieldOtherName = find(COMPONENT_TEXT_OTHER_NAME);
 
 		List<CustomField> allUsedCustomFields = customFieldDao
 				.getAllActiveUsedCustomFields();
@@ -113,7 +113,6 @@ public class EditClientHandler extends BaseDialog{
 		for (CustomField cf : allUsedCustomFields) {
 			addField(cf, cf.getCamelCaseName(), cf.getReadableName());
 		}
-
 	}
 
 	public void addField(CustomField cf, String name, String readableName) {
@@ -151,10 +150,6 @@ public class EditClientHandler extends BaseDialog{
 					}
 				}
 			}
-
-//			for (Account acc : this.accountDao.getAccountsByClientId(getClientObj().getId())) {
-//				ui.add(fieldListAccounts, createListItem(acc));
-//			}
 		}
 	}
 
@@ -167,8 +162,8 @@ public class EditClientHandler extends BaseDialog{
 						client.setOtherName(ui.getText(fieldOtherName));
 						String phone = ui.getText(fieldPhoneNumber);
 						
-						if(phonePattern.formatPhoneNumber(phone)) {
-							client.setPhoneNumber(phonePattern.getNewPhoneNumberPattern());
+						if(phonePattern.format(phone)) {
+							client.setPhoneNumber(phonePattern.getPhoneNumber());
 							//test if phoneNumber already linked to another client
 							Client clientInDb = clientDao.getClientByPhoneNumber(client.getPhoneNumber());
 							if (clientInDb!=null && clientInDb.getId()!=client.getId()){
@@ -176,8 +171,6 @@ public class EditClientHandler extends BaseDialog{
 							} else {
 								clientDao.updateClient(client);
 								
-								Contact contact = contactDao.getFromMsisdn(client.getPhoneNumber());
-
 								moveClientDetailsToContacts.addToContact(contactDao, client);
 					
 								List<CustomField> allCustomFields = customFieldDao
@@ -220,16 +213,16 @@ public class EditClientHandler extends BaseDialog{
 								clientsTabHandler.refresh();
 							}
 						} else {
-							ui.infoMessage("Invalid phone number. Please set phone number with the following format: +2547XXXXXXXX or 07XXXXXXXX.");
+							ui.infoMessage(INVALID_PHONE_NUMBER_PLEASE_SET_PHONE_NUMBER_IN_VALID_LOCAL_OR_INTERNATIONAL_FORMAT_E_G_1234567890);
 						}
 					} else {
 						String fn = ui.getText(fieldFirstName);
 						String on = ui.getText(fieldOtherName);
 						String phone = ui.getText(fieldPhoneNumber);
 
-						if(phonePattern.formatPhoneNumber(phone)) {
+						if(phonePattern.format(phone)) {
 							//test if phoneNumber already linked to another client
-							phone = phonePattern.getNewPhoneNumberPattern();
+							phone = phonePattern.getPhoneNumber();
 							Client clientInDb = clientDao.getClientByPhoneNumber(phone);
 							if (clientInDb!=null ){
 								if (clientInDb.isActive()){
@@ -278,7 +271,7 @@ public class EditClientHandler extends BaseDialog{
 								clientsTabHandler.refresh();
 							}
 						} else {
-							ui.infoMessage("Invalid phone number. Please set phone number with the following format: +2547XXXXXXXX or 07XXXXXXXX");
+							ui.infoMessage(INVALID_PHONE_NUMBER_PLEASE_SET_PHONE_NUMBER_IN_VALID_LOCAL_OR_INTERNATIONAL_FORMAT_E_G_1234567890);
 						}
 					}
 				} catch (NumberFormatException e) {
@@ -291,7 +284,6 @@ public class EditClientHandler extends BaseDialog{
 	}
 	
 	/**
-	 * 
 	 * @return a generic account number
 	 */
 	public String createAccountNumber(){
@@ -309,5 +301,4 @@ public class EditClientHandler extends BaseDialog{
 	public Client getClientObj() { 
 		return client;
 	}
-
 }

@@ -23,7 +23,7 @@ import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomValueDao;
 import org.creditsms.plugins.paymentview.ui.handler.tabclients.ClientsTabHandler;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
-import org.creditsms.plugins.paymentview.utils.PhoneNumberPattern;
+import org.creditsms.plugins.paymentview.utils.PhoneNumberFormatter;
 
 import thinlet.Thinlet;
 
@@ -46,7 +46,7 @@ public class ClientImportHandler extends ImportDialogHandler {
 	private List<CustomValue> cvLst = new ArrayList<CustomValue>();
 	private List<CustomField> cfLst = new ArrayList<CustomField>();
 	private List<Client> clntLst = new ArrayList<Client>();
-	PhoneNumberPattern phonePattern = new PhoneNumberPattern();
+	PhoneNumberFormatter phonePattern = new PhoneNumberFormatter();
 	private boolean hasIncorrectlyFormatedPhoneNo = false;
 
 	public ClientImportHandler(
@@ -109,8 +109,8 @@ public class ClientImportHandler extends ImportDialogHandler {
 
 						} else {
 							phonenumber = PaymentViewUtils.parsePhoneFromExcel(cellValue);
-							if(phonePattern.formatPhoneNumber(phonenumber)) {
-								phonenumber = phonePattern.getNewPhoneNumberPattern();
+							if(phonePattern.format(phonenumber)) {
+								phonenumber = phonePattern.getPhoneNumber();
 							}else{
 								hasIncorrectlyFormatedPhoneNo = true;
 							}
