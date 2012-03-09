@@ -18,7 +18,7 @@ import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.OutgoingPaymentDao;
 import org.creditsms.plugins.paymentview.utils.PaymentViewUtils;
-import org.creditsms.plugins.paymentview.utils.PhoneNumberPattern;
+import org.creditsms.plugins.paymentview.utils.PhoneNumberFormatter;
 
 /**
  * @author Ian Onesmus Mukewa <ian@frontlinesms.com>, Roy
@@ -62,7 +62,7 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 		log.trace("ENTER");
 		
 		List<OutgoingPayment> importedPayments = new ArrayList<OutgoingPayment>();
-		PhoneNumberPattern phonePattern = new PhoneNumberPattern();
+		PhoneNumberFormatter phonePattern = new PhoneNumberFormatter();
 		incorrectCount = 0;
 		for (String[] lineValues : this.getRawValues()) {
 			String phoneNumber = rowFormat.getOptionalValue(lineValues,
@@ -77,13 +77,13 @@ public class OutgoingPaymentCsvImporter extends CsvImporter {
 			
 			phoneNumber = PaymentViewUtils.parsePhoneFromExcel(phoneNumber);
 			
-			if(phonePattern.formatPhoneNumber(phoneNumber)) {
+			if(phonePattern.format(phoneNumber)) {
 				OutgoingPayment outgoingPayment = new OutgoingPayment();
 				Client outgoingPaymentClient = new Client();
 				try{
 					BigDecimal amntToPay = new BigDecimal(amountPaid);
 					outgoingPayment.setAmountPaid(amntToPay.setScale(0, RoundingMode.HALF_UP));
-					outgoingPaymentClient.setPhoneNumber(phonePattern.getNewPhoneNumberPattern());
+					outgoingPaymentClient.setPhoneNumber(phonePattern.getPhoneNumber());
 					outgoingPayment.setClient(outgoingPaymentClient);
 					outgoingPayment.setPaymentId(paymentId);
 					outgoingPayment.setNotes(notes);

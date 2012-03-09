@@ -1,5 +1,6 @@
 package org.creditsms.plugins.paymentview.ui.handler.base;
 
+import thinlet.Thinlet;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -12,12 +13,8 @@ public class BaseDialog implements ThinletUiEventHandler{
 		this.ui = ui;
 	}
 	
-	protected void refresh() {
-	}
+	protected void refresh() {}
 	
-	/**
-	 * @return the customizeClientDialog
-	 */
 	public Object getDialog() {
 		return dialogComponent;
 	}
@@ -34,7 +31,7 @@ public class BaseDialog implements ThinletUiEventHandler{
 	
 	/** Remove a dialog from view. */
 	public Object find(String object) {
-		return ui.find(this.dialogComponent, object);
+		return Thinlet.find(this.dialogComponent, object);
 	}
 	
 	public void showDialog() {
