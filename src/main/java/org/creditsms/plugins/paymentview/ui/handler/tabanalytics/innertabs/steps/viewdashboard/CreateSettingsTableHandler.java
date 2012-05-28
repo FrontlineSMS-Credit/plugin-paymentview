@@ -219,9 +219,9 @@ public class CreateSettingsTableHandler extends BaseClientTableHandler implement
 			return clients;
 		}else{
 			if (clientListForAnalytics.isEmpty()){
+				totalItemCount = this.clientDao.getAllActiveClientsSorted(getClientsSortField(), getClientsSortOrder()).size();
 				List<Client> activeClientsSorted = this.clientDao.getAllActiveClientsSorted
 										(startIndex, limit, getClientsSortField(), getClientsSortOrder());
-				totalItemCount = activeClientsSorted.size();
 				return activeClientsSorted;
 			} else {
 				totalItemCount = clientListForAnalytics.size();

@@ -32,7 +32,7 @@ public class HibernateOutgoingPaymentDao extends
 	
 	public List<OutgoingPayment> getAllOutgoingPayments(int startIndex,
 			int limit) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		return super.getList(criteria, startIndex, limit);
 	}
 	
@@ -80,7 +80,7 @@ public class HibernateOutgoingPaymentDao extends
 	}
 	
 	public List<OutgoingPayment> getOutgoingPaymentsByDateRange(Date startDate,	Date endDate,int startIndex,int limit) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.between("timePaid", startDate.getTime(), endDate.getTime()));
 //		DetachedCriteria clientCriteria = criteria.createCriteria("client");
 //		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
@@ -88,7 +88,7 @@ public class HibernateOutgoingPaymentDao extends
 	}
 	
 	public List<OutgoingPayment> getOutgoingPaymentsByDateRange(Date startDate,	Date endDate) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.between("timePaid", startDate.getTime(), endDate.getTime()));
 //		DetachedCriteria clientCriteria = criteria.createCriteria("client");
 //		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
@@ -96,7 +96,7 @@ public class HibernateOutgoingPaymentDao extends
 	}
 	
 	public List<OutgoingPayment> getOutgoingPaymentsByStartDate(Date startDate, int startingIndex, int limit) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.ge("timePaid", startDate.getTime()));
 //		DetachedCriteria clientCriteria = criteria.createCriteria("client");
 //		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
@@ -104,7 +104,7 @@ public class HibernateOutgoingPaymentDao extends
 	}
 	
 	public List<OutgoingPayment> getOutgoingPaymentsByStartDate(Date startDate) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.ge("timePaid", startDate.getTime()));
 //		DetachedCriteria clientCriteria = criteria.createCriteria("client");
 //		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
@@ -112,7 +112,7 @@ public class HibernateOutgoingPaymentDao extends
 	}
 	
 	public List<OutgoingPayment> getOutgoingPaymentsByEndDate(Date endDate, int startingIndex, int limit) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.le("timePaid", endDate.getTime()));
 //		DetachedCriteria clientCriteria = criteria.createCriteria("client");
 //		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
@@ -120,7 +120,7 @@ public class HibernateOutgoingPaymentDao extends
 	}
 	
 	public List<OutgoingPayment> getOutgoingPaymentsByEndDate(Date endDate) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		criteria.add(Restrictions.le("timePaid", endDate.getTime()));
 //		DetachedCriteria clientCriteria = criteria.createCriteria("client");
 //		clientCriteria.add(Restrictions.eq("active", Boolean.TRUE));
@@ -128,7 +128,7 @@ public class HibernateOutgoingPaymentDao extends
 	}
 
 	public List<OutgoingPayment> getOutgoingPaymentsByPhoneNo(String phoneNo) {
-		DetachedCriteria criteria = super.getCriterion();
+		DetachedCriteria criteria = super.getSortCriterion(OutgoingPayment.Field.TIME_PAID, Order.DESCENDING);
 		DetachedCriteria clientCriteria = criteria.createCriteria("client");
 		clientCriteria.add(Restrictions.eq("phoneNumber", phoneNo));
 //		clientCriteria.add(Restrictions.eq(Client.Field.ACTIVE.getFieldName(),
