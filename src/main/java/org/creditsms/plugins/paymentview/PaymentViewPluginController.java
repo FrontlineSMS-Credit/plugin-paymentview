@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import net.frontlinesms.BuildProperties;
@@ -19,6 +20,7 @@ import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.PersistableSettings;
 import net.frontlinesms.data.events.DatabaseEntityNotification;
+import net.frontlinesms.data.events.EntityDeleteWarning;
 import net.frontlinesms.data.events.EntityDeletedNotification;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.data.events.EntityUpdatedNotification;
@@ -41,6 +43,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 import org.creditsms.plugins.paymentview.analytics.TargetAnalytics;
+import org.creditsms.plugins.paymentview.data.domain.IncomingPayment;
 import org.creditsms.plugins.paymentview.data.repository.AccountDao;
 import org.creditsms.plugins.paymentview.data.repository.ClientDao;
 import org.creditsms.plugins.paymentview.data.repository.CustomFieldDao;
@@ -308,6 +311,20 @@ public class PaymentViewPluginController extends BasePluginController implements
 			PersistableSettings settings = ((PaymentServiceStartRequest) notification)
 					.getSettings();
 			startServiceAndLogExceptions(settings);
+		} else if (notification instanceof EntityDeleteWarning<?>) {
+			Object entity = ((DatabaseEntityNotification<?>) notification)
+					.getDatabaseEntity();
+			if(entity instanceof PersistableSettings &&
+					PaymentService.class.isAssignableFrom(
+							((PersistableSettings) entity).getServiceClass())) {
+				PersistableSettings settings = (PersistableSettings) entity;
+				List<IncomingPayment> payments = 
+						incomingPaymentDao.getByPaymentServiceSettings(settings);
+				for(IncomingPayment p : payments) {
+					p.setServiceSettings(null);
+					incomingPaymentDao.saveIncomingPayment(p);
+				}
+			}
 		} else if (notification instanceof DatabaseEntityNotification<?>) {
 			Object entity = ((DatabaseEntityNotification<?>) notification)
 					.getDatabaseEntity();
