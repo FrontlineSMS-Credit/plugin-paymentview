@@ -35,6 +35,7 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	private long targetId;
 	private Date todaysDate; 
 	private Date endOfIntervalDate;
+	int paymentTimeDelta;
 	
 	@Override
 	protected void onSetUp() throws Exception {
@@ -79,9 +80,7 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	}
 	
 	public void testGetDaysRemaining() {
-		// FIXME this previously read 214, but has been changed because the build
-		// was broken FIXME FIXME please FIX THE ISSUE
-		assertEquals(Long.valueOf(215), this.targetAnalytics.getDaysRemaining(targetId));	
+		assertEquals(Long.valueOf(213), this.targetAnalytics.getDaysRemaining(targetId));	
 	}
 	
 	public void testTargetStatus() {
@@ -109,13 +108,13 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	}
 
 	private void setUpTestData() throws DuplicateKeyException{
-		Calendar calStartDat = Calendar.getInstance();
+		Calendar calStartDat = createCalendar();
 		calStartDat.add(Calendar.MONTH, -11);  
 		calStartDat.add(Calendar.DATE, 1);
 		calStartDat = setStartOfDay(calStartDat);
 		Date startDate = calStartDat.getTime();
 		
-		Calendar calEndDate = Calendar.getInstance();
+		Calendar calEndDate = createCalendar();
 		calEndDate.add(Calendar.MONTH, 7);  
 		calEndDate = setEndOfDay(calEndDate);
 		Date endDate = calEndDate.getTime();
@@ -129,6 +128,18 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		createIncomingPayment("0723000000","2000","Mr. Renyenjes", acc, tgt);
 	}
 
+	private Calendar createCalendar() {
+		Calendar c = Calendar.getInstance();
+		// start on an arbitrary, but fixed date so that
+		// calculations have a known answer.
+		c.setTime(createDate());
+		return c;
+	}
+
+	private Date createDate() {
+		return new Date(1344339416978L);
+	}
+	
 	private Target createTarget(Account ac, BigDecimal totalTargetCost, Date startDate, Date endDate) throws DuplicateKeyException {
 		Target tgt = new Target();
 		tgt.setTotalTargetCost(totalTargetCost);
@@ -152,10 +163,6 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	
 	private IncomingPayment createIncomingPayment(String phoneNumber, String amount,
 			String by, Account account, Target tgt) {
-
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {}
 		IncomingPayment ip = new IncomingPayment();
 		ip.setPhoneNumber(phoneNumber);
 		ip.setAmountPaid(new BigDecimal(amount));
@@ -163,11 +170,12 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		ip.setAccount(account);
 		ip.setTarget(tgt);
 		ip.setActive(true);
-		Date todaysDatesv = new Date(); 
+		Calendar earlier = createCalendar();
+		earlier.add(Calendar.HOUR_OF_DAY, -(10 - ++paymentTimeDelta));
+		Date todaysDatesv = earlier.getTime();
 		this.todaysDate = todaysDatesv;
 		ip.setTimePaid(todaysDatesv);
 		this.hibernateIncomingPaymentDao.saveIncomingPayment(ip);
 		return ip;
 	}
-	
 }
