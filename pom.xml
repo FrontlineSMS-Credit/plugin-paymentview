@@ -10,7 +10,7 @@
 		<version>1.7.0-beta-19</version>
 		<relativePath>../pom-parent</relativePath>
 	</parent>
-	<version>0.2.6</version>
+	<version>0.2.7-SNAPSHOT</version>
 
 	<scm>
 		<developerConnection>scm:git:git@github.com:${github.projectOwner}/${github.projectName}.git</developerConnection>
