@@ -71,7 +71,6 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 
 	protected void initialise() {
 		dialogComponent = ui.loadComponentFromFile(XML_SEND_NEW_PAYMENTS_TAB, this);
-		//compPanelFields = ui.find(dialogComponent, "frm_customerDetails");
 
 		fieldOpName = ui.find(dialogComponent, COMPONENT_TEXT_OP_NAME);
 		fieldOpMsisdn = ui.find(dialogComponent, COMPONENT_TEXT_OP_MSISDN);
@@ -87,8 +86,7 @@ public class SendNewPaymentDialogHandler extends BaseDialog {
 	private void setupPaymentServices() {
 		for (PaymentService pService : pluginController.getActiveServices()){
 			if (pService.isOutgoingPaymentEnabled()) {
-				String serviceDescription = pService.toString() + " : " 
-						+ pService.getSettings().getId();
+				String serviceDescription = pService.toString();
 				ui.add(cmbOpMobilePaymentSystem, ui.createComboboxChoice(serviceDescription, pService));
 			}
 		}
