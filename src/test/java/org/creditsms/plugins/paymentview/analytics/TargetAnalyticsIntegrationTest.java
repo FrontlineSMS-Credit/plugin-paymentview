@@ -79,9 +79,10 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 		assertEquals(new BigDecimal("2000"), this.targetAnalytics.getLastAmountPaid(targetId));
 	}
 	
-	public void testGetDaysRemaining() {
-		assertEquals(Long.valueOf(213), this.targetAnalytics.getDaysRemaining(targetId));	
-	}
+// FIXME this test will never make sense when reliant on today's date.
+//	public void testGetDaysRemaining() {
+//		assertEquals(Long.valueOf(213), this.targetAnalytics.getDaysRemaining(targetId));	
+//	}
 	
 	public void testTargetStatus() {
 		assertEquals(TargetAnalytics.Status.PAYING, this.targetAnalytics.getStatus(targetId));
