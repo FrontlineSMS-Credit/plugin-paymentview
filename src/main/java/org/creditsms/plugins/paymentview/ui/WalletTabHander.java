@@ -151,8 +151,8 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 		BigDecimal balance = service!=null? service.getBalanceAmount(): new BigDecimal("0");
 		return ui.createTableRow(s,
 				/*active:*/  pluginController.isActive(s)? "YES": "NO", // TODO i18n
-				/*name:*/    getProviderName(s.getServiceClass()) + ":" + s.getId(),
-				/*balance:*/ formatter.format(balance)); // TODO would be nice to i18n the decimalisation.
+				/*name:*/    getProviderName(s.getServiceClass()) + " : " + s.getId(),
+				/*balance:*/ balance.toString()); // TODO would be nice to i18n the decimalisation.
 	}
 
 	private void add(Object component) {
@@ -160,7 +160,7 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 	}
 	
 	private Object find(String componentName) {
-		return ui.find(panel, componentName);
+		return Thinlet.find(panel, componentName);
 	}
 	
 	private Object getServiceTable() {
@@ -168,13 +168,12 @@ public class WalletTabHander implements PaymentPluginTabHandler {
 	}
 	
 	public static String getProviderName(Class<?> clazz) {
-		String ret = clazz.getCanonicalName(); //Default return value
 		if (clazz.isAnnotationPresent(ConfigurableServiceProperties.class)) {
 			ConfigurableServiceProperties provider = clazz.getAnnotation(ConfigurableServiceProperties.class);
 			if (provider != null && !provider.name().equals("")) {
-				ret = provider.name();
+				return provider.name();
 			}
 		}
-		return ret;
+		return clazz.getCanonicalName();
 	}
 }

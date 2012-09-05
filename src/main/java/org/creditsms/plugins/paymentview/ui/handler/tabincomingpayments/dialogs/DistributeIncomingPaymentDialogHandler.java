@@ -104,6 +104,7 @@ public class DistributeIncomingPaymentDialogHandler extends BaseDialog{
 
 	public void next() throws DuplicateKeyException {
 		//validate total
+		// FIXME this rounding looks a bit presumptious.  Explain or correct.
 		if (totalAmount.equals(parentIncomingPayment.getAmountPaid().setScale(2, BigDecimal.ROUND_HALF_UP))){
 			new DistributeConfirmationDialogHandler(ui, pluginController, this.parentIncomingPayment, this.children,this).showDialog();
 			this.removeDialog();

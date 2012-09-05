@@ -26,6 +26,7 @@ import org.creditsms.plugins.paymentview.utils.PhoneNumberFormatter;
 
 public class EditClientHandler extends BaseDialog{
 //> CONSTANTS
+	private static final String INVALID_PHONE_NUMBER_PLEASE_SET_PHONE_NUMBER_IN_VALID_LOCAL_OR_INTERNATIONAL_FORMAT_E_G_1234567890 = "Invalid phone number. Please set phone number in valid local or international format (e.g. +1234567890).";
 	private static final String COMPONENT_TEXT_FIRST_NAME = "fldFirstName";
 	private static final String COMPONENT_TEXT_OTHER_NAME = "fldOtherName";
 	private static final String COMPONENT_TEXT_PHONE_NUMBER = "fldPhoneNumber";
@@ -212,7 +213,7 @@ public class EditClientHandler extends BaseDialog{
 								clientsTabHandler.refresh();
 							}
 						} else {
-							ui.infoMessage("Invalid phone number. Please set phone number in valid local or international format (e.g. +1234567890).");
+							ui.infoMessage(INVALID_PHONE_NUMBER_PLEASE_SET_PHONE_NUMBER_IN_VALID_LOCAL_OR_INTERNATIONAL_FORMAT_E_G_1234567890);
 						}
 					} else {
 						String fn = ui.getText(fieldFirstName);
@@ -270,7 +271,7 @@ public class EditClientHandler extends BaseDialog{
 								clientsTabHandler.refresh();
 							}
 						} else {
-							ui.infoMessage("Invalid phone number. Please set phone number with the following format: +2547XXXXXXXX or 07XXXXXXXX");
+							ui.infoMessage(INVALID_PHONE_NUMBER_PLEASE_SET_PHONE_NUMBER_IN_VALID_LOCAL_OR_INTERNATIONAL_FORMAT_E_G_1234567890);
 						}
 					}
 				} catch (NumberFormatException e) {

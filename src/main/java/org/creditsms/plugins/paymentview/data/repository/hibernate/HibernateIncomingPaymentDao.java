@@ -225,7 +225,7 @@ public class HibernateIncomingPaymentDao extends
 	
 	public List<IncomingPayment> getByPaymentServiceSettings(PersistableSettings paymentServiceSettings){
 		DetachedCriteria criteria = super.getCriterion();
-		DetachedCriteria paymentServiceSettingsCriteria = criteria.createCriteria("paymentServiceSettings");
+		DetachedCriteria paymentServiceSettingsCriteria = criteria.createCriteria("serviceSettings");
 		paymentServiceSettingsCriteria.add(Restrictions.eq("id", paymentServiceSettings.getId()));
 		return super.getList(criteria);
 	}
