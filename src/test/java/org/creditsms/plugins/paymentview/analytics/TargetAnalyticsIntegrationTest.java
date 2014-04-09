@@ -138,7 +138,10 @@ public class TargetAnalyticsIntegrationTest extends HibernateTestCase {
 	}
 
 	private Date createDate() {
-		return new Date(1344339416978L);
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		//c.add(Calendar.DATE, 355);
+		return c.getTime();
 	}
 	
 	private Target createTarget(Account ac, BigDecimal totalTargetCost, Date startDate, Date endDate) throws DuplicateKeyException {
