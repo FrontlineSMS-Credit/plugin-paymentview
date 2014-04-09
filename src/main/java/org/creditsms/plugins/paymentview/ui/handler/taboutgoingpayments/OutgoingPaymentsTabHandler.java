@@ -21,6 +21,7 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler implements Paymen
 	private SelectFromClientsTabHandler selectFromClientsTab;
 	private SentPaymentsTabHandler sentPaymentsTab;
 	private PaymentViewPluginController pluginController;
+	private ImportNewPaymentsTabHandler importNewPaymentsTabHandler;
 
 	public OutgoingPaymentsTabHandler(UiGeneratorController ui, final PaymentViewPluginController pluginController) {
 		super(ui, true);
@@ -33,6 +34,7 @@ public class OutgoingPaymentsTabHandler extends BaseTabHandler implements Paymen
 		outgoingPaymentsTab = ui.loadComponentFromFile(XML_OUTGOINGPAYMENTS_TAB, this);
 		sentPaymentsTab = new SentPaymentsTabHandler(ui, outgoingPaymentsTab, pluginController);
 		selectFromClientsTab = new SelectFromClientsTabHandler(ui, outgoingPaymentsTab, pluginController);
+		importNewPaymentsTabHandler=new ImportNewPaymentsTabHandler(ui, outgoingPaymentsTab, pluginController);
 
 		return outgoingPaymentsTab;
 	}
